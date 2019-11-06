@@ -1,0 +1,58 @@
+{
+  "name": "@-ui/styles",
+  "version": "1.0.0",
+  "homepage": "https://github.com/dash-ui/-ui#readme",
+  "repository": "github:dash-ui/-ui",
+  "bugs": "https://github.com/dash-ui/-ui/issues",
+  "license": "MIT",
+  "description": "Yet another CSS-in-JS library based on Facebook's internal styling library as seen at React Conf 2019",
+  "keywords": [
+    "styles"
+  ],
+  "main": "dist/cjs/index.js",
+  "module": "dist/es/index.js",
+  "files": [
+    "/dist"
+  ],
+  "sideEffects": false,
+  "scripts": {
+    "build": "npm run build:cjs && npm run build:es",
+    "build:cjs": "babel src -d dist/cjs -x .js --ignore \"**/*.test.js\",\"**/test.js\" --delete-dir-on-start",
+    "build:es": "cross-env BABEL_ENV=es babel src -d dist/es -x .js --ignore \"**/*.test.js\",\"**/test.js\" --delete-dir-on-start",
+    "format": "prettier --write \"**/*.{js,md,yml,json,babelrc,eslintrc,prettierrc}\"",
+    "lint": "eslint .",
+    "prepublishOnly": "npm run lint && npm run test && npm run build && npm run format",
+    "test": "jest",
+    "validate": "npm run lint && npm run test -- --coverage"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
+  "lint-staged": {
+    "**/*.js": [
+      "eslint",
+      "prettier --write"
+    ],
+    "**/*.{md,yml,json,babelrc,eslintrc,prettierrc}": [
+      "prettier --write"
+    ]
+  },
+  "devDependencies": {
+    "@lunde/create-pkg": "file:/Users/jaredlunde/.config/yarn/global/node_modules/@lunde/create-pkg/",
+    "@lunde/babel-preset-es": "latest",
+    "jest": "latest",
+    "babel-eslint": "latest",
+    "cross-env": "latest",
+    "eslint": "latest",
+    "eslint-import-resolver-jest": "latest",
+    "eslint-plugin-jest": "latest",
+    "husky": "latest",
+    "lint-staged": "latest",
+    "prettier": "latest",
+    "rimraf": "^2.6.3"
+  },
+  "dependencies": {},
+  "peerDependencies": {}
+}
