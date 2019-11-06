@@ -7,13 +7,8 @@
       "experimentalObjectRestSpread": true
     }
   },
-  "plugins": [
-    "jest"
-  ],
-  "extends": [
-    "eslint:recommended",
-    "plugin:jest/recommended"
-  ],
+  "plugins": ["jest"],
+  "extends": ["eslint:recommended", "plugin:jest/recommended"],
   "rules": {
     "no-console": "off",
     "no-prototype-builtins": "off"

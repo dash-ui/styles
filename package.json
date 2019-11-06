@@ -1,13 +1,23 @@
 {
   "name": "@-ui/styles",
   "version": "1.0.0",
-  "homepage": "https://github.com/dash-ui/-ui#readme",
-  "repository": "github:dash-ui/-ui",
-  "bugs": "https://github.com/dash-ui/-ui/issues",
+  "homepage": "https://github.com/dash-ui/styles#readme",
+  "repository": "github:dash-ui/styles",
+  "bugs": "https://github.com/dash-ui/styles/issues",
   "license": "MIT",
   "description": "Yet another CSS-in-JS library based on Facebook's internal styling library as seen at React Conf 2019",
   "keywords": [
-    "styles"
+    "styles",
+    "css-in-js",
+    "css",
+    "themes",
+    "theming",
+    "react",
+    "svelte",
+    "vue",
+    "stylesheet",
+    "stylesheets",
+    "ssr"
   ],
   "main": "dist/cjs/index.js",
   "module": "dist/es/index.js",
@@ -40,6 +50,7 @@
     ]
   },
   "devDependencies": {
+    "@essentials/benchmark": "^1.0.5",
     "@lunde/babel-preset-es": "latest",
     "babel-eslint": "latest",
     "cross-env": "latest",
@@ -52,6 +63,11 @@
     "prettier": "latest",
     "rimraf": "^2.6.3"
   },
-  "dependencies": {},
+  "dependencies": {
+    "@emotion/hash": "^0.7.3",
+    "@emotion/stylis": "^0.8.4",
+    "@emotion/unitless": "^0.7.4",
+    "trie-memoize": "^1.0.15"
+  },
   "peerDependencies": {}
 }

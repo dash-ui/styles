@@ -9,11 +9,11 @@
   <a href="https://bundlephobia.com/result?p=@-ui/styles">
     <img alt="Bundlephobia" src="https://img.shields.io/bundlephobia/minzip/@-ui/styles?style=for-the-badge&labelColor=24292e">
   </a>
-  <a aria-label="Code coverage report" href="https://codecov.io/gh/dash-ui/-ui">
-    <img alt="Code coverage" src="https://img.shields.io/codecov/c/gh/dash-ui/-ui?style=for-the-badge&labelColor=24292e">
+  <a aria-label="Code coverage report" href="https://codecov.io/gh/dash-ui/styles">
+    <img alt="Code coverage" src="https://img.shields.io/codecov/c/gh/dash-ui/styles?style=for-the-badge&labelColor=24292e">
   </a>
-  <a aria-label="Build status" href="https://travis-ci.org/dash-ui/-ui">
-    <img alt="Build status" src="https://img.shields.io/travis/dash-ui/-ui?style=for-the-badge&labelColor=24292e">
+  <a aria-label="Build status" href="https://travis-ci.org/dash-ui/styles">
+    <img alt="Build status" src="https://img.shields.io/travis/dash-ui/styles?style=for-the-badge&labelColor=24292e">
   </a>
   <a aria-label="NPM version" href="https://www.npmjs.com/package/@-ui/styles">
     <img alt="NPM Version" src="https://img.shields.io/npm/v/@-ui/styles?style=for-the-badge&labelColor=24292e">
@@ -26,12 +26,49 @@
 <pre align="center">npm i @-ui/styles</pre>
 <hr>
 
-
-
 ## Quick Start
 
-```js
-import _ from '@-ui/styles'
+```jsx harmony
+// React example
+import React from 'react'
+import styles from '@-ui/styles'
+
+const myStyles = styles({
+  blue: `
+    color: var(--blue);
+  `,
+  red: `
+    color: var(--red);
+  `,
+})
+
+const myOtherStyles = styles({
+  blue: `
+    ${myStyles('red')} {
+      color: var(--purple);
+    }
+  `,
+})
+
+const Component = props => (
+  <div className={myStyles({blue: props.blue, red: props.red})}>
+    Hello world
+    <span className={myStyles(props.blue && 'blue', props.red && 'red')}>
+      Hello world
+    </span>
+    <span className={myStyles('blue')}>I'm always blue</span>
+    <span className={myOtherStyles('blue')}>
+      I'm purple when my parent is red
+    </span>
+  </div>
+)
+
+// These components have 'Hello world' text that is always red
+// <Component blue red/>
+// <Component red blue/>
+
+// This component has 'Hello world' text that is always blue
+// <Component blue/>
 ```
 
 ## API
