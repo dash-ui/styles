@@ -464,9 +464,7 @@ function styles() {
 
     let name = hash(serializedStyles)
     let className = `${cache.key}-${name}`
-
     cache.insert(`.${className}`, name, serializedStyles, cache.sheet, true)
-
     return className
   }
 }
