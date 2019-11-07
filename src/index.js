@@ -21,7 +21,9 @@ const Sheet = {
   current: null,
 }
 
-const toSheet = block => {block && Sheet.current.insert(block + '}')}
+const toSheet = block => {
+  block && Sheet.current.insert(block + '}')
+}
 
 function ruleSheet(
   context,
@@ -446,7 +448,6 @@ function styles() {
     let serializedStyles
 
     if (arguments.length > 1) {
-      // loop-dee-loop
       const styleDefs = {}
 
       for (let i = 0; i < arguments.length; i++) {
