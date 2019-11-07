@@ -2,9 +2,10 @@
 // team for the core functionality and to Sebastian McKenzie at Facebook for
 // inspiring the API design
 import Stylis from '@emotion/stylis'
-import hash from '@emotion/hash'
+import hash_ from '@emotion/hash'
 import unitless from '@emotion/unitless'
 import memoize from 'trie-memoize'
+const hash = memoize([{}], hash_)
 
 //
 // Constants
@@ -20,9 +21,7 @@ const Sheet = {
   current: null,
 }
 
-const toSheet = block => {
-  block && Sheet.current.insert(block + '}')
-}
+const toSheet = block => {block && Sheet.current.insert(block + '}')}
 
 function ruleSheet(
   context,
@@ -75,8 +74,7 @@ function ruleSheet(
     }
     case -2: {
       const contents = content.split(RULE_NEEDLE)
-
-      for (let i = 0; i < contents.length; i++) toSheet(contents)
+      for (let i = 0; i < contents.length; i++) toSheet(contents[i])
     }
   }
 }
@@ -93,6 +91,7 @@ const removeLabel = (context, content) =>
 
 //
 // Configuration
+let cache
 let rootServerStylisCache = {}
 let getServerStylisCache = IS_BROWSER
   ? void 0
@@ -112,17 +111,16 @@ let getServerStylisCache = IS_BROWSER
       }
     })
 
-export function configure(options = {}) {
+export function configure({
+  key = '-ui',
+  nonce,
+  stylisPlugins,
+  prefix = true,
+  container = IS_BROWSER && document.head,
+  speedy,
+}) {
   // lifted from
   // https://github.com/emotion-js/emotion/blob/master/packages/cache/src/index.js
-  let {
-    key = '-ui',
-    nonce,
-    stylisPlugins,
-    prefix = true,
-    container = IS_BROWSER && document.head,
-    speedy,
-  } = options
   const stylis = new Stylis({prefix})
   speedy = speedy === void 0 || speedy === null ? false : !__DEV__
   let insert,
@@ -145,11 +143,13 @@ export function configure(options = {}) {
 
     stylis.use(stylisPlugins)(ruleSheet)
 
-    insert = (selector, serialized, sheet, shouldCache) => {
-      let name = serialized.name
+    insert = (selector, name, styles, sheet, shouldCache) => {
+      if (cache.inserted[name] === true) return
+
       Sheet.current = sheet
 
       if (__DEV__) {
+        /*
         if (serialized.map !== void 0) {
           let map = serialized.map
 
@@ -159,13 +159,17 @@ export function configure(options = {}) {
             },
           }
         }
+        */
       }
-      stylis(selector, serialized.styles)
+
+      Sheet.current.insert(stylis(selector, styles))
+
       if (shouldCache) {
         cache.inserted[name] = true
       }
     }
   } else {
+    // server side
     stylis.use(removeLabel)
     let serverStylisCache = rootServerStylisCache
 
@@ -176,52 +180,21 @@ export function configure(options = {}) {
       )(prefix)
     }
 
-    let getRules = (selector, serialized) => {
-      let name = serialized.name
+    insert = (selector, name, styles, sheet, shouldCache) => {
+      if (cache.inserted[name]) return
+      let rules = serverStylisCache[name]
 
       if (serverStylisCache[name] === void 0) {
-        serverStylisCache[name] = stylis(selector, serialized.styles)
+        rules = serverStylisCache[name] = stylis(selector, styles)
+      }
+      console.log('[Inserted rules]', rules)
+
+      // caches for ssr
+      if (shouldCache) {
+        cache.inserted[name] = rules
       }
 
-      return serverStylisCache[name]
-    }
-
-    insert = (selector, serialized, sheet, shouldCache) => {
-      let name = serialized.name
-      let rules = getRules(selector, serialized)
-
-      if (cache.compat === false) {
-        // in regular mode, we don't set the styles on the inserted cache
-        // since we don't need to and that would be wasting memory
-        // we return them so that they are rendered in a style tag
-        if (shouldCache) {
-          cache.inserted[name] = true
-        }
-
-        if (
-          // using === development instead of !== production
-          // because if people do ssr in tests, the source maps showing up would be annoying
-          process.env.NODE_ENV === 'development' &&
-          serialized.map !== void 0
-        ) {
-          return rules + serialized.map
-        }
-
-        return rules
-      } else {
-        // in compat mode, we put the styles on the inserted cache so
-        // that ssr can pull out the styles
-        // except when we don't want to cache it which was in Global but now
-        // is nowhere but we don't want to do a major right now
-        // and just in case we're going to leave the case here
-        // it's also not affecting client side bundle size
-        // so it's really not a big deal
-        if (shouldCache) {
-          cache.inserted[name] = rules
-        } else {
-          return rules
-        }
-      }
+      return rules
     }
   }
 
@@ -250,7 +223,7 @@ export function configure(options = {}) {
     })
   }
 
-  const cache = {
+  cache = {
     key,
     sheet: styleSheet({
       key,
@@ -262,11 +235,10 @@ export function configure(options = {}) {
     compat: false,
     insert,
     inserted,
-    registered: {},
   }
-
-  return cache
 }
+
+configure({})
 
 //
 // Style sheets
@@ -372,50 +344,6 @@ function getRegisteredStyles(registered, registeredStyles, classNames) {
   return rawClassName
 }
 */
-const insertStyles = (cache, serialized, isStringTag) => {
-  // lifted from https://github.com/emotion-js/emotion/tree/master/packages/cache
-  let className = `${cache.key}-${serialized.name}`
-
-  if (
-    // we only need to add the styles to the registered cache if the
-    // class name could be used further down
-    // the tree but if it's a string tag, we know it won't
-    // so we don't have to add it to registered cache.
-    // this improves memory usage since we can avoid storing the whole style string
-    (isStringTag === false ||
-      // we need to always store it if we're in compat mode and
-      // in node since ssr relies on whether a style is in
-      // the registered cache to know whether a style is global or not
-      // also, note that this check will be dead code eliminated in the browser
-      (IS_BROWSER === false && cache.compat !== false)) &&
-    cache.registered[className] === void 0
-  ) {
-    cache.registered[className] = serialized.styles
-  }
-
-  if (cache.inserted[serialized.name] === void 0) {
-    let stylesForSSR = ''
-    let current = serialized
-
-    do {
-      let maybeStyles = cache.insert(
-        `.${className}`,
-        current,
-        cache.sheet,
-        true
-      )
-      if (!IS_BROWSER && maybeStyles !== void 0) {
-        stylesForSSR += maybeStyles
-      }
-
-      current = current.next
-    } while (current !== void 0)
-
-    if (!IS_BROWSER && stylesForSSR.length !== 0) {
-      return stylesForSSR
-    }
-  }
-}
 
 const isCustomProperty = property => property.charCodeAt(1) === 45
 const isProcessableValue = value => value !== null && typeof value !== 'boolean'
@@ -459,7 +387,7 @@ let styleValue = (key, value) => {
   return value
 }
 
-const styleObjectToString = object => {
+const styleObjectToString = memoize([WeakMap], object => {
   let keys = Object.keys(object),
     string = '',
     i = 0
@@ -472,40 +400,74 @@ const styleObjectToString = object => {
   }
 
   return string
-}
+})
 
-function serialize() {
-
-}
-
-function styles() {
-  console.log(arguments)
-  if (arguments.length === 1) {
-    // unroll
-  } else {
-    // do a loop
-  }
-}
-
-export const css = styles => {
-  if (Array.isArray(styles)) {
-    let nextStyles = ''
-
-    for (let i = 0; i < styles.length; i++) {
-      const style = styles[i]
-      if (typeof style === 'object') {
-        nextStyles += styleObjectToString(style)
-      } else {
-        nextStyles += style
-      }
-    }
-
-    styles = nextStyles
+const serialize = (call, styles) => {
+  if (typeof styles === 'function') {
+    return serialize(call, styles(call))
   } else if (typeof styles === 'object') {
     styles = styleObjectToString(styles)
   }
 
+  styles = styles || ''
   return styles
+}
+
+function styles() {
+  let defs = arguments[0]
+
+  if (arguments.length > 1) {
+    defs = Object.assign({}, arguments)
+  }
+
+  function serializeToSelector() {
+    const name = hash(serializeStyles.apply(null, arguments))
+    return name ? `.${cache.key}-${name}` : name
+  }
+
+  function serializeStyles(getter) {
+    if (typeof getter === 'string') {
+      return serialize(serializeToSelector, defs[getter])
+    } else if (typeof getter === 'object') {
+      let keys = Object.keys(getter),
+        nextStyles = ''
+
+      for (let i = 0; i < keys.length; i++) {
+        if (getter[keys[i]]) {
+          nextStyles += serialize(serializeToSelector, defs[keys[i]])
+        }
+      }
+
+      return serialize(serializeToSelector, nextStyles)
+    }
+  }
+
+  return function style() {
+    let serializedStyles
+
+    if (arguments.length > 1) {
+      // loop-dee-loop
+      const styleDefs = {}
+
+      for (let i = 0; i < arguments.length; i++) {
+        const arg = arguments[i]
+
+        if (typeof arg === 'string') styleDefs[arg] = true
+        else if (typeof arg === 'object') Object.assign(styleDefs, arg)
+      }
+
+      serializedStyles = serializeStyles(styleDefs)
+    } else {
+      serializedStyles = serializeStyles(arguments[0])
+    }
+
+    let name = hash(serializedStyles)
+    let className = `${cache.key}-${name}`
+
+    cache.insert(`.${className}`, name, serializedStyles, cache.sheet, true)
+
+    return className
+  }
 }
 
 export default styles

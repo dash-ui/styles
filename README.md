@@ -34,19 +34,15 @@ import React from 'react'
 import styles from '@-ui/styles'
 
 const myStyles = styles({
-  blue: `
+  blue: styles => `
     color: var(--blue);
+
+    ${styles('red')} {
+      color: var(--purple);
+    }
   `,
   red: `
     color: var(--red);
-  `,
-})
-
-const myOtherStyles = styles({
-  blue: `
-    ${myStyles('red')} {
-      color: var(--purple);
-    }
   `,
 })
 

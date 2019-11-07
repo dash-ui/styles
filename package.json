@@ -26,6 +26,7 @@
   ],
   "sideEffects": false,
   "scripts": {
+    "bench": "babel-node ./benchmarks",
     "build": "npm run build:cjs && npm run build:es",
     "build:cjs": "babel src -d dist/cjs -x .js --ignore \"**/*.test.js\",\"**/test.js\" --delete-dir-on-start",
     "build:es": "cross-env BABEL_ENV=es babel src -d dist/es -x .js --ignore \"**/*.test.js\",\"**/test.js\" --delete-dir-on-start",
@@ -64,6 +65,7 @@
     "rimraf": "^2.6.3"
   },
   "dependencies": {
+    "@babel/node": "^7.7.0",
     "@emotion/hash": "^0.7.3",
     "@emotion/stylis": "^0.8.4",
     "@emotion/unitless": "^0.7.4",
