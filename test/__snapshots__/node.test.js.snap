@@ -1,0 +1,11 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Configure adds nonce to style tags 1`] = `"<style data-dash=\\"k008qs\\" nonce=\\"EDNnf03nceIOfn39fn3e9h3sdfa\\">.dash-k008qs{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;}</style>"`;
+
+exports[`Configure changes key to "css" 1`] = `"<style data-css=\\"k008qs\\">.dash-k008qs{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;}</style>"`;
+
+exports[`Configure removes vendor prefixing 1`] = `".dash-k008qs{display:flex;}"`;
+
+exports[`Usage caches styles 1`] = `"<style data-dash=\\"k008qs\\">.dash-k008qs{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;}</style><style data-dash=\\"49sf46\\">.dash-49sf46{border-radius:1000px;background:blue;color:white;}</style>"`;
+
+exports[`Usage extracts style tags 1`] = `"<style data-dash=\\"k008qs\\">.dash-k008qs{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;}</style><style data-dash=\\"49sf46\\">.dash-49sf46{border-radius:1000px;background:blue;color:white;}</style>"`;

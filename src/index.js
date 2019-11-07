@@ -50,7 +50,9 @@ function ruleSheet(
         case 108: {
           // charcode for b
           // this ignores label
-          if (content.charCodeAt(2) === 98) return ''
+          if (content.charCodeAt(2) === 98) {
+            return ''
+          }
         }
       }
       break
@@ -93,7 +95,6 @@ const removeLabel = (context, content) =>
 
 //
 // Configuration
-let cache
 let rootServerStylisCache = {}
 let getServerStylisCache = IS_BROWSER
   ? void 0
@@ -113,41 +114,40 @@ let getServerStylisCache = IS_BROWSER
       }
     })
 
-export function configure({
-  key = '-ui',
-  nonce,
-  stylisPlugins,
-  prefix = true,
-  container = IS_BROWSER && document.head,
-  speedy,
-}) {
+function configure(options = {}) {
   // lifted from
   // https://github.com/emotion-js/emotion/blob/master/packages/cache/src/index.js
+  let {
+    key = 'dash',
+    nonce,
+    stylisPlugins,
+    prefix = true,
+    container = IS_BROWSER && document.head,
+    speedy,
+  } = options
   const stylis = new Stylis({prefix})
-  speedy = speedy === void 0 || speedy === null ? false : !__DEV__
+  speedy = speedy === void 0 || speedy === null ? !__DEV__ : speedy
   let insert,
     inserted = {}
 
   if (IS_BROWSER) {
     container = container || document.head
-    const nodes = document.querySelectorAll(`style[data-ui-${key}]`)
+    const nodes = document.querySelectorAll(`style[data-${key}]`)
 
-    Array.prototype.forEach.call(nodes, node => {
-      const attrib = node.getAttribute(`data-ui-${key}`)
-      attrib.split(' ').forEach(id => {
-        inserted[id] = true
-      })
+    for (let node of nodes) {
+      const attr = node.getAttribute(`data-${key}`)
+      const ids = attr.split(' ')
+      for (let i = 0; i < ids.length; i++) inserted[ids[i]] = true
 
       if (node.parentNode !== container) {
         container.appendChild(node)
       }
-    })
+    }
 
     stylis.use(stylisPlugins)(ruleSheet)
 
     insert = (selector, name, styles, sheet, shouldCache) => {
       if (cache.inserted[name] === true) return
-
       Sheet.current = sheet
 
       if (__DEV__) {
@@ -164,11 +164,8 @@ export function configure({
         */
       }
 
-      Sheet.current.insert(stylis(selector, styles))
-
-      if (shouldCache) {
-        cache.inserted[name] = true
-      }
+      stylis(selector, styles)
+      if (shouldCache) cache.inserted[name] = true
     }
   } else {
     // server side
@@ -189,13 +186,8 @@ export function configure({
       if (serverStylisCache[name] === void 0) {
         rules = serverStylisCache[name] = stylis(selector, styles)
       }
-      console.log('[Inserted rules]', rules)
 
-      // caches for ssr
-      if (shouldCache) {
-        cache.inserted[name] = rules
-      }
-
+      if (shouldCache) cache.inserted[name] = rules
       return rules
     }
   }
@@ -225,7 +217,7 @@ export function configure({
     })
   }
 
-  cache = {
+  let cache = {
     key,
     sheet: styleSheet({
       key,
@@ -233,14 +225,15 @@ export function configure({
       nonce,
       speedy,
     }),
-    nonce,
-    compat: false,
     insert,
     inserted,
+    clear() {
+      this.inserted = inserted = {}
+    },
   }
-}
 
-configure({})
+  return cache
+}
 
 //
 // Style sheets
@@ -251,13 +244,15 @@ function styleSheet({key, container, nonce, speedy}) {
     tags = []
 
   return {
+    nonce,
     insert(rule) {
-      // the max length is how many rules we have per style tag, it's 65000 in speedy mode
-      // it's 1 in dev because we insert source maps that map a single rule to a location
-      // and you can only have one source map per style tag
+      // the max length is how many rules we have per style tag, it's 65000 in
+      // speedy mode it's 1 in dev because we insert source maps that map a
+      // single rule to a location and you can only have one source map per
+      // style tag
       if (size % (speedy ? 65000 : 1) === 0) {
         let tag = document.createElement('style')
-        tag.setAttribute('data-ui', key)
+        tag.setAttribute(`data-dash`, key)
         if (nonce !== void 0) tag.setAttribute('nonce', nonce)
         tag.appendChild(document.createTextNode(''))
 
@@ -302,9 +297,10 @@ function styleSheet({key, container, nonce, speedy}) {
             // _usually_(not always since there could be multiple style tags)
             // be the first ones in prod and generally later in dev
             // this shouldn't really matter in the real world though
-            // @import is generally only used for font faces from google fonts and etc.
-            // so while this could be technically correct then it would be slower and larger
-            // for a tiny bit of correctness that won't matter in the real world
+            // @import is generally only used for font faces from google fonts
+            // and etc. so while this could be technically correct then it
+            // would be slower and larger for a tiny bit of correctness that
+            // won't matter in the real world
             isImportRule ? 0 : sheet.cssRules.length
           )
         } catch (e) {
@@ -331,6 +327,7 @@ function styleSheet({key, container, nonce, speedy}) {
     },
   }
 }
+
 /*
 function getRegisteredStyles(registered, registeredStyles, classNames) {
   let rawClassName = ''
@@ -415,58 +412,105 @@ const serialize = (call, styles) => {
   return styles
 }
 
-function styles() {
-  let defs = arguments[0]
-
-  if (arguments.length > 1) {
-    defs = Object.assign({}, arguments)
-  }
-
-  function serializeToSelector() {
-    const name = hash(serializeStyles.apply(null, arguments))
-    return name ? `.${cache.key}-${name}` : name
-  }
-
-  function serializeStyles(getter) {
-    if (typeof getter === 'string') {
-      return serialize(serializeToSelector, defs[getter])
-    } else if (typeof getter === 'object') {
-      let keys = Object.keys(getter),
-        nextStyles = ''
-
-      for (let i = 0; i < keys.length; i++) {
-        if (getter[keys[i]]) {
-          nextStyles += serialize(serializeToSelector, defs[keys[i]])
-        }
-      }
-
-      return serialize(serializeToSelector, nextStyles)
-    }
-  }
-
-  return function style() {
-    let serializedStyles
+function createStyles(cache) {
+  function styles() {
+    let defs = arguments[0]
 
     if (arguments.length > 1) {
-      const styleDefs = {}
-
-      for (let i = 0; i < arguments.length; i++) {
-        const arg = arguments[i]
-
-        if (typeof arg === 'string') styleDefs[arg] = true
-        else if (typeof arg === 'object') Object.assign(styleDefs, arg)
-      }
-
-      serializedStyles = serializeStyles(styleDefs)
-    } else {
-      serializedStyles = serializeStyles(arguments[0])
+      defs = Object.assign({}, ...arguments)
     }
 
-    let name = hash(serializedStyles)
-    let className = `${cache.key}-${name}`
-    cache.insert(`.${className}`, name, serializedStyles, cache.sheet, true)
-    return className
+    function serializeToSelector() {
+      const name = hash(serializeStyles.apply(null, arguments))
+      return name ? `.${cache.key}-${name}` : name
+    }
+
+    function serializeStyles(getter) {
+      if (typeof getter === 'string') {
+        return serialize(serializeToSelector, defs[getter])
+      } else if (typeof getter === 'object') {
+        let keys = Object.keys(getter),
+          nextStyles = ''
+
+        for (let i = 0; i < keys.length; i++) {
+          if (getter[keys[i]]) {
+            nextStyles += serialize(serializeToSelector, defs[keys[i]])
+          }
+        }
+
+        return serialize(serializeToSelector, nextStyles)
+      }
+    }
+
+    return function style() {
+      let serializedStyles
+
+      if (arguments.length > 1) {
+        const styleDefs = {}
+
+        for (let i = 0; i < arguments.length; i++) {
+          const arg = arguments[i]
+
+          if (typeof arg === 'string') styleDefs[arg] = true
+          else if (typeof arg === 'object') Object.assign(styleDefs, arg)
+        }
+
+        serializedStyles = serializeStyles(styleDefs)
+      } else {
+        serializedStyles = serializeStyles(arguments[0])
+      }
+
+      if (!serializedStyles) return ''
+      let name = hash(serializedStyles)
+      let className = `${cache.key}-${name}`
+      cache.insert(`.${className}`, name, serializedStyles, cache.sheet, true)
+      return className
+    }
   }
+
+  styles.configure = options => {
+    const cache = configure(options)
+    return createStyles(cache)
+  }
+
+  styles.extract = (clear = true) => {
+    if (__DEV__) {
+      if (IS_BROWSER)
+        throw new Error('styles.extract() only works in node environments')
+    }
+
+    const keys = Object.keys(cache.inserted)
+    let output = ''
+
+    for (let i = 0; i < keys.length; i++) output += cache.inserted[keys[i]]
+
+    if (clear) cache.clear()
+    return output
+  }
+
+  styles.extractTags = (clear = true) => {
+    if (__DEV__) {
+      if (IS_BROWSER)
+        throw new Error('styles.extractTags() only works in node environments')
+    }
+
+    const keys = Object.keys(cache.inserted)
+    const nonceString = cache.sheet.nonce ? ` nonce="${cache.sheet.nonce}"` : ''
+    let output = ''
+
+    for (let i = 0; i < keys.length; i++) {
+      const key = keys[i]
+      output += `<style data-${cache.key}="${key}"${nonceString}>${cache.inserted[key]}</style>`
+    }
+
+    if (clear) cache.clear()
+    return output
+  }
+
+  styles.cache = cache
+  styles.sheet = cache.sheet
+  return styles
 }
 
-export default styles
+// Creates an initial cache
+export default createStyles(configure())

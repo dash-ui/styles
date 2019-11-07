@@ -1,3 +1,43 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`passes 1`] = `"hello world"`;
+exports[`Usage adds styles by order of definition when called: flex, block, inline 1`] = `
+<style
+  data-dash="dash"
+>
+  
+  .dash-imkh3o{display:flex;display:block;display:inline;}
+</style>
+`;
+
+exports[`Usage adds styles by order of definition when called: flex, block, inline 2`] = `
+<style
+  data-dash="dash"
+>
+  
+  .dash-imkh3o{display:flex;display:block;display:inline;}
+</style>
+`;
+
+exports[`Usage returns single class name 1`] = `"dash-k008qs"`;
+
+exports[`Usage returns single class name 2`] = `"dash-imkh3o"`;
+
+exports[`Usage returns single class name 3`] = `"dash-1bvyhaf"`;
+
+exports[`Usage supports internally nested styles w/ functions: dash-jk0pkr 1`] = `
+<style
+  data-dash="dash"
+>
+  
+  .dash-1hsqp50{color:blue;}
+</style>
+`;
+
+exports[`Usage supports internally nested styles w/ functions: dash-jk0pkr 2`] = `
+<style
+  data-dash="dash"
+>
+  
+  .dash-1hsqp50 .dash-jk0pkr{color:purple;}
+</style>
+`;

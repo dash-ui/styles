@@ -22,14 +22,16 @@
   "main": "dist/cjs/index.js",
   "module": "dist/es/index.js",
   "files": [
-    "/dist"
+    "/dist",
+    "/server"
   ],
   "sideEffects": false,
   "scripts": {
     "bench": "babel-node ./benchmarks",
-    "build": "npm run build:cjs && npm run build:es",
+    "build": "npm run build:cjs && npm run build:es && npm run build:server",
     "build:cjs": "babel src -d dist/cjs -x .js --ignore \"**/*.test.js\",\"**/test.js\" --delete-dir-on-start",
     "build:es": "cross-env BABEL_ENV=es babel src -d dist/es -x .js --ignore \"**/*.test.js\",\"**/test.js\" --delete-dir-on-start",
+    "build:server": "babel server-src -d server -x .js --ignore \"**/*.test.js\",\"**/test.js\" --delete-dir-on-start",
     "format": "prettier --write \"**/*.{js,md,yml,json,babelrc,eslintrc,prettierrc}\"",
     "lint": "eslint .",
     "prepublishOnly": "npm run lint && npm run test && npm run build && npm run format",
@@ -51,6 +53,7 @@
     ]
   },
   "devDependencies": {
+    "@babel/node": "^7.7.0",
     "@essentials/benchmark": "^1.0.5",
     "@lunde/babel-preset-es": "latest",
     "babel-eslint": "latest",
@@ -65,7 +68,6 @@
     "rimraf": "^2.6.3"
   },
   "dependencies": {
-    "@babel/node": "^7.7.0",
     "@emotion/hash": "^0.7.3",
     "@emotion/stylis": "^0.8.4",
     "@emotion/unitless": "^0.7.4",

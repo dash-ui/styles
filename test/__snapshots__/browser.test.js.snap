@@ -1,0 +1,44 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Configure adds nonce to style tags: DOM 1`] = `
+<style
+  data-dash="dash"
+  nonce="EDNnf03nceIOfn39fn3e9h3sdfa"
+>
+  
+  .dash-k008qs{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;}
+</style>
+`;
+
+exports[`Configure changes key to "css": DOM 1`] = `
+<style
+  data-dash="css"
+>
+  
+  .css-k008qs{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;}
+</style>
+`;
+
+exports[`Configure turns off vendor prefixing: DOM 1`] = `
+<style
+  data-dash="dash"
+>
+  
+  .dash-k008qs{display:flex;}
+</style>
+`;
+
+exports[`Configure turns on speedy 1`] = `
+Object {
+  ".dash-13o7eu2": Object {
+    "0": "display",
+    "display": "block",
+    "length": 1,
+  },
+  ".dash-k008qs": Object {
+    "0": "display",
+    "display": "flex",
+    "length": 1,
+  },
+}
+`;
