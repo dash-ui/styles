@@ -53,9 +53,7 @@ const Component = props => (
       Hello world
     </span>
     <span className={style('blue')}>I'm always blue</span>
-    <span className={style('blue')}>
-      I'm purple when my parent is red
-    </span>
+    <span className={style('blue')}>I'm purple when my parent is red</span>
   </div>
 )
 ```

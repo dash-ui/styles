@@ -31,6 +31,20 @@ describe('Usage', () => {
     expect(name.length).toBe(0)
   })
 
+  it('ignores unknown keys', () => {
+    const style = styles.configure()({
+      flex: {display: 'flex'},
+    })
+
+    let name = style('noop')
+    expect(typeof name).toBe('string')
+    expect(name.length).toBe(0)
+
+    name = style({noop: true})
+    expect(typeof name).toBe('string')
+    expect(name.length).toBe(0)
+  })
+
   it('allows unitless object values', () => {
     const style = styles.configure()({
       box: {width: 200, height: '200px'},
