@@ -319,11 +319,11 @@ let hyphenateRegex = /[A-Z]|^ms/g
 const interpolate = args => {
   let strings = args[0]
   if (typeof args[0] === 'string') return strings
-  let str = '';
+  let str = ''
   // eslint-disable-next-line
-  const [_, ...values] = args
+  const [_, ...values] = Array.prototype.slice.call(args)
   for (let i = 0; i < strings.length; i++) str += strings[i] + (values[i] || '')
-  return str;
+  return str
 }
 
 const styleName = memoize([{}], styleName =>
@@ -447,11 +447,11 @@ const createStyles = cache => {
 
       if (!serializedStyles) return ''
       let name = hash(serializedStyles)
+      let className = `${cache.key}-${name}`
       // explicit here on purpose so it's not in every test
       if (process.env.NODE_ENV === 'development') {
-        name = addLabels(name, arguments)
+        className = addLabels(className, arguments)
       }
-      let className = `${cache.key}-${name}`
       cache.insert(`.${className}`, name, serializedStyles, cache.sheet, true)
       return className
     }
@@ -510,10 +510,10 @@ const createStyles = cache => {
     return output
   }
 
-  styles.global = function () {
+  styles.global = function() {
     let styles = serialize(null, interpolate(arguments))
     if (!styles) return ''
-    cache.insert('', `global-${hash(styles)}`, styles, cache.sheet, true)
+    cache.insert('', `${cache.key}-global-${hash(styles)}`, styles, cache.sheet, true)
   }
 
   styles.cache = cache
