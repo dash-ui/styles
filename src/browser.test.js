@@ -4,12 +4,10 @@ const serializeRules = (selector = `style[data-dash]`) => {
   const els = document.querySelectorAll(selector)
   return els[0].sheet.cssRules
     .map(({selectorText, style: {// eslint-disable-next-line
-        ends, // eslint-disable-next-line
-        starts, // eslint-disable-next-line
-        _importants, // eslint-disable-next-line
-        __starts, // eslint-disable-next-line
-        parentRule, // eslint-disable-next-line
-        parentStyleSheet, ...other}}) => [selectorText, other])
+        ends, starts, _importants, __starts, parentRule, parentStyleSheet, ...other}}) => [ // eslint-disable-next-line // eslint-disable-next-line // eslint-disable-next-line // eslint-disable-next-line // eslint-disable-next-line
+      selectorText,
+      other,
+    ])
     .reduce((p, c) => {
       p[c[0]] = c[1]
       return p
@@ -62,6 +60,20 @@ describe('Configure', () => {
   })
 
   it('turns on speedy', () => {
+    const myStyles = styles.configure({speedy: true})
+    const style = myStyles({
+      flex: {display: 'flex'},
+      block: {display: 'block'},
+    })
+
+    style('flex')
+    style('block')
+    expect(serializeRules()).toMatchSnapshot()
+  })
+})
+
+describe('Usage', () => {
+  it('flushes sheet tags', () => {
     const myStyles = styles.configure({speedy: true})
     const style = myStyles({
       flex: {display: 'flex'},

@@ -44,7 +44,7 @@ describe('Usage', () => {
         border-radius: 1000px;
         background: blue;
         color: white;
-      `
+      `,
     })
 
     style('flex')
@@ -60,7 +60,7 @@ describe('Usage', () => {
         border-radius: 1000px;
         background: blue;
         color: white;
-      `
+      `,
     })
 
     style('flex')
@@ -70,4 +70,3 @@ describe('Usage', () => {
     expect(myStyles.extractTags()).toMatchSnapshot()
   })
 })
-

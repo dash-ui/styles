@@ -18,6 +18,19 @@ exports[`Usage adds styles by order of definition when called: flex, block, inli
 </style>
 `;
 
+exports[`Usage allows multiple arguments in styles() 1`] = `"dash-1hsqp50"`;
+
+exports[`Usage allows multiple arguments in styles() 2`] = `"dash-jk0pkr"`;
+
+exports[`Usage allows unitless object values: 200x200 1`] = `
+<style
+  data-dash="dash"
+>
+  
+  .dash-cl5oj8{width:200px;height:200px;}
+</style>
+`;
+
 exports[`Usage returns single class name 1`] = `"dash-k008qs"`;
 
 exports[`Usage returns single class name 2`] = `"dash-imkh3o"`;
@@ -41,3 +54,7 @@ exports[`Usage supports internally nested styles w/ functions: dash-jk0pkr 2`] =
   .dash-1hsqp50 .dash-jk0pkr{color:purple;}
 </style>
 `;
+
+exports[`Usage throws error for extract methods 1`] = `"style.extract is not a function"`;
+
+exports[`Usage throws error for extract methods 2`] = `"style.extractTags is not a function"`;
