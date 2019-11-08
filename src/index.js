@@ -128,7 +128,7 @@ function configure(options = {}) {
     speedy,
   } = options
   const stylis = new Stylis({prefix})
-  speedy = speedy === void 0 || speedy === null ? !(__DEV__) : speedy
+  speedy = speedy === void 0 || speedy === null ? !__DEV__ : speedy
   let insert,
     values = {}
 
@@ -527,7 +527,7 @@ function createStyles(cache) {
     const nonceString = cache.sheet.nonce ? ` nonce="${cache.sheet.nonce}"` : ''
     let output = ''
     // explicit check here for test envs
-    if (process.env.NODE_ENV === "development") {
+    if (process.env.NODE_ENV === 'development') {
       // uses separate tags in dev
       const keys = Object.keys(cache.values)
 

@@ -33,7 +33,7 @@
 import React from 'react'
 import styles from '@-ui/styles'
 
-const myStyles = styles({
+const style = styles({
   blue: styles => `
     color: var(--blue);
 
@@ -47,13 +47,13 @@ const myStyles = styles({
 })
 
 const Component = props => (
-  <div className={myStyles({blue: props.blue, red: props.red})}>
+  <div className={style({blue: props.blue, red: props.red})}>
     Hello world
-    <span className={myStyles(props.blue && 'blue', props.red && 'red')}>
+    <span className={style(props.blue && 'blue', props.red && 'red')}>
       Hello world
     </span>
-    <span className={myStyles('blue')}>I'm always blue</span>
-    <span className={myOtherStyles('blue')}>
+    <span className={style('blue')}>I'm always blue</span>
+    <span className={style('blue')}>
       I'm purple when my parent is red
     </span>
   </div>
