@@ -330,22 +330,8 @@ function styleSheet({key, container, nonce, speedy}) {
   }
 }
 
-/*
-function getRegisteredStyles(registered, registeredStyles, classNames) {
-  let rawClassName = ''
-
-  classNames.split(' ').forEach(className => {
-    if (registered[className] !== void 0) {
-      registeredStyles.push(registered[className])
-    } else {
-      rawClassName += `${className} `
-    }
-  })
-
-  return rawClassName
-}
-*/
-
+//
+// Style serialization
 const isCustomProperty = property => property.charCodeAt(1) === 45
 const isProcessableValue = value => value !== null && typeof value !== 'boolean'
 let hyphenateRegex = /[A-Z]|^ms/g
@@ -414,6 +400,8 @@ const serialize = (call, styles) => {
   return styles
 }
 
+//
+// Where the magic happens
 function createStyles(cache) {
   function styles() {
     let defs = arguments[0],
