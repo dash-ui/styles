@@ -46,14 +46,6 @@ function ruleSheet(
           Sheet.current.insert(content + ';')
           return ''
         }
-        // charcode for l
-        case 108: {
-          // charcode for b
-          // this ignores label
-          if (content.charCodeAt(2) === 98) {
-            return ''
-          }
-        }
       }
       break
     }
