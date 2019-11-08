@@ -1,10 +1,10 @@
 import styles from './index'
 
-describe('Usage', () => {
-  afterEach(() => {
-    document.getElementsByTagName('html')[0].innerHTML = ''
-  })
+afterEach(() => {
+  document.getElementsByTagName('html')[0].innerHTML = ''
+})
 
+describe('Usage', () => {
   it('returns single class name', () => {
     const style = styles.configure()({
       flex: {display: 'flex'},
@@ -143,7 +143,9 @@ describe('Usage', () => {
     )
     process.env.NODE_ENV = prevEnv
   })
+})
 
+describe('Exceptions', () => {
   it('throws error for extract methods', () => {
     const style = styles.configure()({
       flex: {display: 'flex'},
