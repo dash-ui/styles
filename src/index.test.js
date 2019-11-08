@@ -127,6 +127,45 @@ describe('Usage', () => {
     expect(style('flex')).toMatchSnapshot()
   })
 
+  it('injects global styles', () => {
+    const styles_ = styles.configure()
+    styles_.global(`
+      html {
+        font-size: 100%;
+      }
+    `)
+
+    for (let element of document.querySelectorAll(`style[data-dash]`)) {
+      expect(element).toMatchSnapshot()
+    }
+  })
+
+  it('should inject global styles once', () => {
+    const {global} = styles.configure()
+    global(`
+      :root {
+        --spacing-0: 0;
+      }
+      
+      html {
+        font-size: 100%;
+      }
+    `)
+    global`
+      :root {
+        --spacing-0: 0;
+      }
+      
+      html {
+        font-size: 100%;
+      }
+    `
+
+    for (let element of document.querySelectorAll(`style[data-dash]`)) {
+      expect(element).toMatchSnapshot()
+    }
+  })
+
   it('adds dev labels', () => {
     let prevEnv = process.env.NODE_ENV
     process.env.NODE_ENV = 'development'

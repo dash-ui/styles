@@ -25,7 +25,7 @@ const toSheet = block => {
   block && Sheet.current.insert(block + '}')
 }
 
-function ruleSheet(
+const ruleSheet = (
   context,
   content,
   selectors,
@@ -36,7 +36,7 @@ function ruleSheet(
   ns,
   depth,
   at
-) {
+) => {
   switch (context) {
     // property
     case 1: {
@@ -98,7 +98,7 @@ let getServerStylisCache = IS_BROWSER
       }
     })
 
-function configure(options = {}) {
+const configure = (options = {}) => {
   // lifted from
   // https://github.com/emotion-js/emotion/blob/master/packages/cache/src/index.js
   let {
@@ -220,7 +220,7 @@ function configure(options = {}) {
 
 //
 // Style sheets
-function styleSheet({key, container, nonce, speedy}) {
+const styleSheet = ({key, container, nonce, speedy}) => {
   // Based off emotion and glamor's StyleSheet
   let size = 0,
     before,
@@ -316,8 +316,15 @@ function styleSheet({key, container, nonce, speedy}) {
 const isCustomProperty = property => property.charCodeAt(1) === 45
 const isProcessableValue = value => value !== null && typeof value !== 'boolean'
 let hyphenateRegex = /[A-Z]|^ms/g
-// let animationRegex = /_EMO_([^_]+?)_([^]*?)_EMO_/g
-// let cursor
+const interpolate = args => {
+  let strings = args[0]
+  if (typeof args[0] === 'string') return strings
+  let str = '';
+  // eslint-disable-next-line
+  const [_, ...values] = args
+  for (let i = 0; i < strings.length; i++) str += strings[i] + (values[i] || '')
+  return str;
+}
 
 const styleName = memoize([{}], styleName =>
   isCustomProperty(styleName)
@@ -326,23 +333,6 @@ const styleName = memoize([{}], styleName =>
 )
 
 let styleValue = (key, value) => {
-  /*
-  switch (key) {
-    case 'animation':
-    case 'animationName': {
-      if (typeof value === 'string') {
-        return value.replace(animationRegex, (match, p1, p2) => {
-          cursor = {
-            name: p1,
-            styles: p2,
-            next: cursor
-          }
-          return p1
-        })
-      }
-    }
-  }
-  */
   if (
     unitless[key] !== 1 &&
     !isCustomProperty(key) &&
@@ -383,7 +373,7 @@ const serialize = (call, styles) => {
 
 //
 // Where the magic happens
-function createStyles(cache) {
+const createStyles = cache => {
   function styles() {
     let defs = arguments[0],
       addLabels
@@ -518,6 +508,12 @@ function createStyles(cache) {
 
     if (clear) cache.clear()
     return output
+  }
+
+  styles.global = function () {
+    let styles = serialize(null, interpolate(arguments))
+    if (!styles) return ''
+    cache.insert('', `global-${hash(styles)}`, styles, cache.sheet, true)
   }
 
   styles.cache = cache

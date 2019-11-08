@@ -45,11 +45,38 @@ exports[`Usage allows unitless object values: 200x200 1`] = `
 </style>
 `;
 
+exports[`Usage injects global styles 1`] = `
+<style
+  data-dash="dash"
+>
+  
+  html{font-size:100%;}
+</style>
+`;
+
 exports[`Usage returns single class name 1`] = `"dash-k008qs"`;
 
 exports[`Usage returns single class name 2`] = `"dash-imkh3o"`;
 
 exports[`Usage returns single class name 3`] = `"dash-1bvyhaf"`;
+
+exports[`Usage should inject global styles once 1`] = `
+<style
+  data-dash="dash"
+>
+  
+  :root{--spacing-0:0;}
+</style>
+`;
+
+exports[`Usage should inject global styles once 2`] = `
+<style
+  data-dash="dash"
+>
+  
+  html{font-size:100%;}
+</style>
+`;
 
 exports[`Usage supports internally nested styles w/ functions: dash-jk0pkr 1`] = `
 <style

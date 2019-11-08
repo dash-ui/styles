@@ -33,6 +33,12 @@
 import React from 'react'
 import styles from '@-ui/styles'
 
+styles.global`
+  html {
+    font-size: 100%;
+  }
+`
+
 const style = styles({
   red: `
     color: var(--red);
