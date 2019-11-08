@@ -500,7 +500,7 @@ const createStyles = cache => {
     if (!styles) return ''
     cache.insert(
       '',
-      `${cache.key}-global-${hash(styles)}`,
+      `${hash(styles)}-global`,
       styles,
       cache.sheet,
       true
