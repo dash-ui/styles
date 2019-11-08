@@ -4,7 +4,7 @@ const serializeRules = (selector = `style[data-dash]`) => {
   const els = document.querySelectorAll(selector)
   return els[0].sheet.cssRules
     .map(({selectorText, style: {// eslint-disable-next-line
-        ends, starts, _importants, __starts, parentRule, parentStyleSheet, ...other}}) => [ // eslint-disable-next-line // eslint-disable-next-line // eslint-disable-next-line // eslint-disable-next-line // eslint-disable-next-line
+        ends, starts, _importants, __starts, parentRule, parentStyleSheet, ...other}}) => [
       selectorText,
       other,
     ])
@@ -59,6 +59,19 @@ describe('Configure', () => {
     }
   })
 
+  it('changes container to document.body', () => {
+    const myStyles = styles.configure({container: document.body})
+    const style = myStyles({
+      flex: {display: 'flex'},
+    })
+
+    style('flex')
+
+    for (let element of document.querySelectorAll(`body style[data-dash]`)) {
+      expect(element).toMatchSnapshot('')
+    }
+  })
+
   it('turns on speedy', () => {
     const myStyles = styles.configure({speedy: true})
     const style = myStyles({
@@ -74,7 +87,7 @@ describe('Configure', () => {
 
 describe('Usage', () => {
   it('flushes sheet tags', () => {
-    const myStyles = styles.configure({speedy: true})
+    const myStyles = styles.configure({})
     const style = myStyles({
       flex: {display: 'flex'},
       block: {display: 'block'},
@@ -82,6 +95,47 @@ describe('Usage', () => {
 
     style('flex')
     style('block')
-    expect(serializeRules()).toMatchSnapshot()
+    expect(document.querySelectorAll(`style[data-dash]`).length).toBe(2)
+    myStyles.sheet.flush()
+    expect(document.querySelectorAll(`style[data-dash]`).length).toBe(0)
+  })
+
+  it('rehydrates', () => {
+    let tag = document.createElement('style')
+    tag.setAttribute(`data-dash`, 'k008qs')
+    tag.appendChild(
+      document.createTextNode(
+        `.dash-k008qs{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;}`
+      )
+    )
+    document.head.appendChild(tag)
+
+    const myStyles = styles.configure({})
+    const style = myStyles({
+      flex: {display: 'flex'},
+    })
+
+    style('flex')
+    expect(document.querySelectorAll(`style[data-dash]`).length).toBe(1)
+  })
+
+  it('rehydrates into custom container', () => {
+    let tag = document.createElement('style')
+    tag.setAttribute(`data-dash`, 'k008qs')
+    tag.appendChild(
+      document.createTextNode(
+        `.dash-k008qs{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;}`
+      )
+    )
+    document.head.appendChild(tag)
+
+    const myStyles = styles.configure({container: document.body})
+    const style = myStyles({
+      flex: {display: 'flex'},
+    })
+
+    style('flex')
+    expect(document.querySelectorAll(`head style[data-dash]`).length).toBe(0)
+    expect(document.querySelectorAll(`body style[data-dash]`).length).toBe(1)
   })
 })

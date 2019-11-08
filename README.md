@@ -58,13 +58,6 @@ const Component = props => (
     </span>
   </div>
 )
-
-// These components have 'Hello world' text that is always red
-// <Component blue red/>
-// <Component red blue/>
-
-// This component has 'Hello world' text that is always blue
-// <Component blue/>
 ```
 
 ## API

@@ -10,6 +10,15 @@ exports[`Configure adds nonce to style tags: DOM 1`] = `
 </style>
 `;
 
+exports[`Configure changes container to document.body 1`] = `
+<style
+  data-dash="dash"
+>
+  
+  .dash-k008qs{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;}
+</style>
+`;
+
 exports[`Configure changes key to "css": DOM 1`] = `
 <style
   data-dash="css"

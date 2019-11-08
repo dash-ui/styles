@@ -107,9 +107,11 @@ let getServerStylisCache = IS_BROWSER
         if (prefix === void 0 || prefix === true) {
           return prefixTrueCache
         }
+
         if (prefix === false) {
           return prefixFalseCache
         }
+
         return getCache(prefix)
       }
     })
@@ -128,16 +130,15 @@ function configure(options = {}) {
   const stylis = new Stylis({prefix})
   speedy = speedy === void 0 || speedy === null ? !__DEV__ : speedy
   let insert,
-    inserted = {}
+    values = {}
 
   if (IS_BROWSER) {
-    container = container || document.head
     const nodes = document.querySelectorAll(`style[data-${key}]`)
 
     for (let node of nodes) {
       const attr = node.getAttribute(`data-${key}`)
       const ids = attr.split(' ')
-      for (let i = 0; i < ids.length; i++) inserted[ids[i]] = true
+      for (let i = 0; i < ids.length; i++) values[ids[i]] = true
 
       if (node.parentNode !== container) {
         container.appendChild(node)
@@ -147,7 +148,7 @@ function configure(options = {}) {
     stylis.use(stylisPlugins)(ruleSheet)
 
     insert = (selector, name, styles, sheet, shouldCache) => {
-      if (cache.inserted[name] === true) return
+      if (cache.values[name] === true) return
       Sheet.current = sheet
 
       if (__DEV__) {
@@ -165,7 +166,7 @@ function configure(options = {}) {
       }
 
       stylis(selector, styles)
-      if (shouldCache) cache.inserted[name] = true
+      if (shouldCache) cache.values[name] = true
     }
   } else {
     // server side
@@ -180,14 +181,14 @@ function configure(options = {}) {
     }
 
     insert = (selector, name, styles, sheet, shouldCache) => {
-      if (cache.inserted[name]) return
+      if (cache.values[name]) return
       let rules = serverStylisCache[name]
 
       if (serverStylisCache[name] === void 0) {
         rules = serverStylisCache[name] = stylis(selector, styles)
       }
 
-      if (shouldCache) cache.inserted[name] = rules
+      if (shouldCache) cache.values[name] = rules
       return rules
     }
   }
@@ -226,9 +227,9 @@ function configure(options = {}) {
       speedy,
     }),
     insert,
-    inserted,
+    values,
     clear() {
-      this.inserted = inserted = {}
+      this.values = values = {}
     },
   }
 
@@ -414,15 +415,39 @@ const serialize = (call, styles) => {
 
 function createStyles(cache) {
   function styles() {
-    let defs = arguments[0]
+    let defs = arguments[0],
+      addLabels
+    // explicit here on purpose so it's not in every test
+    if (process.env.NODE_ENV === 'development') {
+      addLabels = (name, args) => {
+        // add helpful labels to the name in development
+        for (let i = 0; i < args.length; i++) {
+          const arg = args[i]
+          if (typeof arg === 'string') name += `-${arg}`
+          else if (typeof arg === 'object') {
+            const keys = Object.keys(arg).filter(k => arg[k])
+            if (keys.length) name += `-${keys.join('-')}`
+          }
+        }
+
+        return name
+      }
+    }
 
     if (arguments.length > 1) {
       defs = Object.assign({}, ...arguments)
     }
 
     function serializeToSelector() {
-      const name = hash(serializeStyles.apply(null, arguments))
-      return name ? `.${cache.key}-${name}` : name
+      let name = hash(serializeStyles.apply(null, arguments))
+      name = `.${cache.key}-${name}`
+      // explicit here on purpose so it's not in every test
+      if (process.env.NODE_ENV === 'development') {
+        if (name) {
+          name = addLabels(name, arguments)
+        }
+      }
+      return name ? name : name
     }
 
     function serializeStyles(getter) {
@@ -462,6 +487,10 @@ function createStyles(cache) {
 
       if (!serializedStyles) return ''
       let name = hash(serializedStyles)
+      // explicit here on purpose so it's not in every test
+      if (process.env.NODE_ENV === 'development') {
+        name = addLabels(name, arguments)
+      }
       let className = `${cache.key}-${name}`
       cache.insert(`.${className}`, name, serializedStyles, cache.sheet, true)
       return className
@@ -479,10 +508,10 @@ function createStyles(cache) {
         throw new Error('styles.extract() only works in node environments')
     }
 
-    const keys = Object.keys(cache.inserted)
+    const keys = Object.keys(cache.values)
     let output = ''
 
-    for (let i = 0; i < keys.length; i++) output += cache.inserted[keys[i]]
+    for (let i = 0; i < keys.length; i++) output += cache.values[keys[i]]
 
     if (clear) cache.clear()
     return output
@@ -494,13 +523,13 @@ function createStyles(cache) {
         throw new Error('styles.extractTags() only works in node environments')
     }
 
-    const keys = Object.keys(cache.inserted)
+    const keys = Object.keys(cache.values)
     const nonceString = cache.sheet.nonce ? ` nonce="${cache.sheet.nonce}"` : ''
     let output = ''
 
     for (let i = 0; i < keys.length; i++) {
       const key = keys[i]
-      output += `<style data-${cache.key}="${key}"${nonceString}>${cache.inserted[key]}</style>`
+      output += `<style data-${cache.key}="${key}"${nonceString}>${cache.values[key]}</style>`
     }
 
     if (clear) cache.clear()

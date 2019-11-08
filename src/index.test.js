@@ -84,23 +84,54 @@ describe('Usage', () => {
   })
 
   it('allows multiple arguments in styles()', () => {
-    const style = styles.configure({prefix: false})({
-      blue: style => `
+    const style = styles.configure({prefix: false})(
+      {
+        blue: style => `
         color: blue;
         ${style('red')} {
           color: purple;
         }
       `,
-    }, {
-      red: 'color: red;',
-    })
+      },
+      {
+        red: 'color: red;',
+      }
+    )
 
     expect(style('blue')).toMatchSnapshot()
     expect(style('red')).toMatchSnapshot()
   })
 
+  it('allows comments', () => {
+    const style = styles.configure()({
+      flex: `
+        /* this is a flex style */
+        display: flex;
+      `,
+    })
+
+    expect(style('flex')).toMatchSnapshot()
+  })
+
+  it('adds dev labels', () => {
+    let prevEnv = process.env.NODE_ENV
+    process.env.NODE_ENV = 'development'
+    const style = styles.configure()({
+      flex: `display: flex;`,
+      block: `display: block`,
+      inline: `display: inline;`,
+    })
+
+    expect(style('flex')).toMatchSnapshot('-flex')
+    expect(style('flex', 'inline')).toMatchSnapshot('-flex-inline')
+    expect(style('flex', {inline: false, block: true})).toMatchSnapshot(
+      '-flex-block'
+    )
+    process.env.NODE_ENV = prevEnv
+  })
+
   it('throws error for extract methods', () => {
-    const style = styles({
+    const style = styles.configure()({
       flex: {display: 'flex'},
     })
 
@@ -110,6 +141,19 @@ describe('Usage', () => {
 
     expect(() => {
       style.extractTags()
+    }).toThrowErrorMatchingSnapshot()
+  })
+
+  it('throws for unterminated comments', () => {
+    const style = styles.configure()({
+      flex: `
+        /* this is a flex style with an unterminated comment ;)
+        display: flex;
+      `,
+    })
+
+    expect(() => {
+      style('flex')
     }).toThrowErrorMatchingSnapshot()
   })
 })

@@ -29,6 +29,19 @@
           }
         ]
       ]
+    },
+    "umd": {
+      "presets": [
+        [
+          "@lunde/es",
+          {
+            "env": {
+              "targets": "> 0.5%, ie >= 10, safari >= 9, firefox >= 43, ios >= 8"
+            },
+            "typescript": false
+          }
+        ]
+      ]
     }
   }
 }

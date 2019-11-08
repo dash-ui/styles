@@ -21,6 +21,8 @@
   ],
   "main": "dist/cjs/index.js",
   "module": "dist/es/index.js",
+  "umd:main": "dist/umd/-ui.min.js",
+  "unpkg": "dist/umd/-ui.min.js",
   "files": [
     "/dist",
     "/server"
@@ -28,10 +30,11 @@
   "sideEffects": false,
   "scripts": {
     "bench": "babel-node ./benchmarks",
-    "build": "npm run build:cjs && npm run build:es && npm run build:server",
+    "build": "npm run build:cjs && npm run build:es && npm run build:server && npm run build:umd",
     "build:cjs": "babel src -d dist/cjs -x .js --ignore \"**/*.test.js\",\"**/test.js\" --delete-dir-on-start",
     "build:es": "cross-env BABEL_ENV=es babel src -d dist/es -x .js --ignore \"**/*.test.js\",\"**/test.js\" --delete-dir-on-start",
     "build:server": "babel server-src -d server -x .js --ignore \"**/*.test.js\",\"**/test.js\" --delete-dir-on-start",
+    "build:umd": "rollup -c",
     "format": "prettier --write \"**/*.{js,md,yml,json,babelrc,eslintrc,prettierrc}\"",
     "lint": "eslint .",
     "prepublishOnly": "npm run lint && npm run test && npm run build && npm run format",
@@ -65,7 +68,13 @@
     "jest": "latest",
     "lint-staged": "latest",
     "prettier": "latest",
-    "rimraf": "^2.6.3"
+    "rimraf": "^2.6.3",
+    "rollup": "^1.26.3",
+    "rollup-plugin-babel": "^4.3.3",
+    "rollup-plugin-commonjs": "^10.1.0",
+    "rollup-plugin-node-resolve": "^5.2.0",
+    "rollup-plugin-replace": "^2.2.0",
+    "rollup-plugin-terser": "^5.1.2"
   },
   "dependencies": {
     "@emotion/hash": "^0.7.3",
