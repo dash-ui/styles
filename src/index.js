@@ -133,21 +133,6 @@ const configure = (options = {}) => {
     insert = (selector, name, styles, sheet, shouldCache) => {
       if (cache.values[name] === true) return
       Sheet.current = sheet
-
-      if (__DEV__) {
-        /*
-        if (serialized.map !== void 0) {
-          let map = serialized.map
-
-          Sheet.current = {
-            insert: rule => {
-              sheet.insert(rule + map)
-            },
-          }
-        }
-        */
-      }
-
       stylis(selector, styles)
       if (shouldCache) cache.values[name] = true
     }
@@ -513,7 +498,13 @@ const createStyles = cache => {
   styles.global = function() {
     let styles = serialize(null, interpolate(arguments))
     if (!styles) return ''
-    cache.insert('', `${cache.key}-global-${hash(styles)}`, styles, cache.sheet, true)
+    cache.insert(
+      '',
+      `${cache.key}-global-${hash(styles)}`,
+      styles,
+      cache.sheet,
+      true
+    )
   }
 
   styles.cache = cache

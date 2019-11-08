@@ -78,6 +78,15 @@ exports[`Usage should inject global styles once 2`] = `
 </style>
 `;
 
+exports[`Usage should inject global styles once 3`] = `
+<style
+  data-dash="dash"
+>
+  
+  :root{--spacing-1:0.5rem;}
+</style>
+`;
+
 exports[`Usage supports internally nested styles w/ functions: dash-jk0pkr 1`] = `
 <style
   data-dash="dash"

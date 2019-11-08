@@ -160,6 +160,11 @@ describe('Usage', () => {
         font-size: 100%;
       }
     `
+    global`
+      :root {
+        --spacing-1: 0.5rem;
+      }
+    `
 
     for (let element of document.querySelectorAll(`style[data-dash]`)) {
       expect(element).toMatchSnapshot()
