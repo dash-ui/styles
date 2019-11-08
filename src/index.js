@@ -83,16 +83,6 @@ function ruleSheet(
   }
 }
 
-const removeLabel = (context, content) =>
-  context === 1 &&
-  // charcode for l
-  content.charCodeAt(0) === 108 &&
-  // charcode for b
-  content.charCodeAt(2) === 98
-    ? // this ignores label
-      ''
-    : void 0
-
 //
 // Configuration
 let rootServerStylisCache = {}
@@ -171,7 +161,6 @@ function configure(options = {}) {
     }
   } else {
     // server side
-    stylis.use(removeLabel)
     let serverStylisCache = rootServerStylisCache
 
     if (stylisPlugins || prefix !== void 0) {
