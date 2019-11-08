@@ -34,8 +34,10 @@ import React from 'react'
 import styles from '@-ui/styles'
 
 styles.global`
-  html {
-    font-size: 100%;
+  :root {
+    --red: #c1272d;
+    --blue: blue;
+    --purple: purple;
   }
 `
 
