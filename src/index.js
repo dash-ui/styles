@@ -156,7 +156,6 @@ const configure = (options = {}) => {
       }
 
       if (shouldCache) cache.values[name] = rules
-      return rules
     }
   }
 
@@ -498,13 +497,7 @@ const createStyles = cache => {
   styles.global = function() {
     let styles = serialize(null, interpolate(arguments))
     if (!styles) return ''
-    cache.insert(
-      '',
-      `${hash(styles)}-global`,
-      styles,
-      cache.sheet,
-      true
-    )
+    cache.insert('', `${hash(styles)}-global`, styles, cache.sheet, true)
   }
 
   styles.cache = cache
