@@ -34,15 +34,15 @@ import React from 'react'
 import styles from '@-ui/styles'
 
 const style = styles({
+  red: `
+    color: var(--red);
+  `,
   blue: styles => `
     color: var(--blue);
 
     ${styles('red')} {
       color: var(--purple);
     }
-  `,
-  red: `
-    color: var(--red);
   `,
 })
 
@@ -53,7 +53,7 @@ const Component = props => (
       Hello world
     </span>
     <span className={style('blue')}>I'm always blue</span>
-    <span className={style('blue')}>I'm purple when my parent is red</span>
+    <span className={style('red')}>I'm purple when my parent is blue</span>
   </div>
 )
 ```
