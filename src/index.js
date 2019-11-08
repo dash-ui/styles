@@ -128,14 +128,15 @@ function configure(options = {}) {
     speedy,
   } = options
   const stylis = new Stylis({prefix})
-  speedy = speedy === void 0 || speedy === null ? !__DEV__ : speedy
+  speedy = speedy === void 0 || speedy === null ? !(__DEV__) : speedy
   let insert,
     values = {}
 
   if (IS_BROWSER) {
     const nodes = document.querySelectorAll(`style[data-${key}]`)
 
-    for (let node of nodes) {
+    for (let i = 0; i < nodes.length; i++) {
+      const node = nodes[i]
       const attr = node.getAttribute(`data-${key}`)
       const ids = attr.split(' ')
       for (let i = 0; i < ids.length; i++) values[ids[i]] = true
@@ -523,13 +524,27 @@ function createStyles(cache) {
         throw new Error('styles.extractTags() only works in node environments')
     }
 
-    const keys = Object.keys(cache.values)
     const nonceString = cache.sheet.nonce ? ` nonce="${cache.sheet.nonce}"` : ''
     let output = ''
+    // explicit check here for test envs
+    if (process.env.NODE_ENV === "development") {
+      // uses separate tags in dev
+      const keys = Object.keys(cache.values)
 
-    for (let i = 0; i < keys.length; i++) {
-      const key = keys[i]
-      output += `<style data-${cache.key}="${key}"${nonceString}>${cache.values[key]}</style>`
+      for (let i = 0; i < keys.length; i++) {
+        const key = keys[i]
+        output +=
+          `<style data-${cache.key}="${key}"${nonceString}>` +
+          cache.values[key] +
+          `</style>`
+      }
+    } else {
+      // uses one tag in prod
+      const names = Object.keys(cache.values).join(' ')
+      output =
+        `<style data-${cache.key}="${names}"${nonceString}>` +
+        styles.extract(false) +
+        `</style>`
     }
 
     if (clear) cache.clear()

@@ -8,6 +8,8 @@ exports[`Configure has customized vendor prefixing 1`] = `".dash-12p1lqr{display
 
 exports[`Configure removes vendor prefixing 1`] = `".dash-k008qs{display:flex;}"`;
 
-exports[`Usage caches styles 1`] = `"<style data-dash=\\"k008qs\\">.dash-k008qs{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;}</style><style data-dash=\\"49sf46\\">.dash-49sf46{border-radius:1000px;background:blue;color:white;}</style>"`;
+exports[`Usage caches styles 1`] = `"<style data-dash=\\"k008qs 49sf46\\">.dash-k008qs{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;}.dash-49sf46{border-radius:1000px;background:blue;color:white;}</style>"`;
 
-exports[`Usage extracts style tags 1`] = `"<style data-dash=\\"k008qs\\">.dash-k008qs{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;}</style><style data-dash=\\"49sf46\\">.dash-49sf46{border-radius:1000px;background:blue;color:white;}</style>"`;
+exports[`Usage extracts multiple style tags in dev 1`] = `"<style data-dash=\\"k008qs-flex\\">.dash-k008qs-flex{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;}</style><style data-dash=\\"49sf46-btn\\">.dash-49sf46-btn{border-radius:1000px;background:blue;color:white;}</style>"`;
+
+exports[`Usage extracts single style tag in prod 1`] = `"<style data-dash=\\"k008qs 49sf46\\">.dash-k008qs{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;}.dash-49sf46{border-radius:1000px;background:blue;color:white;}</style>"`;

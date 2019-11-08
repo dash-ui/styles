@@ -61,7 +61,26 @@ describe('Configure', () => {
 })
 
 describe('Usage', () => {
-  it('extracts style tags', () => {
+  it('extracts multiple style tags in dev', () => {
+    const prevEnv = process.env.NODE_ENV
+    process.env.NODE_ENV = 'development'
+    const myStyles = styles.configure({})
+    const style = myStyles({
+      flex: {display: 'flex'},
+      btn: `
+        border-radius: 1000px;
+        background: blue;
+        color: white;
+      `,
+    })
+
+    style('flex')
+    style('btn')
+    expect(myStyles.extractTags()).toMatchSnapshot()
+    process.env.NODE_ENV = prevEnv
+  })
+
+  it('extracts single style tag in prod', () => {
     const myStyles = styles.configure({})
     const style = myStyles({
       flex: {display: 'flex'},
