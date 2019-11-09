@@ -1,4 +1,4 @@
-import crc from 'crc';
+import crc from 'crc'
 import styles from './index'
 
 const serializeRules = (selector = `style[data-dash]`) => {

@@ -110,7 +110,7 @@ let getServerStylisCache = IS_BROWSER
       }
     })
 
-const configure = (options = {}) => {
+export const createDash = (options = {}) => {
   // lifted from
   // https://github.com/emotion-js/emotion/blob/master/packages/cache/src/index.js
   let {
@@ -524,7 +524,7 @@ const createStyles = dash => {
 
   //
   // Methods
-  styles.create = options => createStyles(configure(options))
+  styles.create = options => createStyles(createDash(options))
 
   styles.extract = (clear = true) => {
     if (__DEV__) {
@@ -618,5 +618,5 @@ const createStyles = dash => {
 }
 
 // Creates an initial cache
-export const styles = createStyles(configure())
+export const styles = createStyles(createDash())
 export default styles
