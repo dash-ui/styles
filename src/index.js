@@ -12,7 +12,7 @@ const IS_BROWSER = typeof document !== 'undefined'
 //
 // Hashing
 // murmurhash2 via https://github.com/garycourt/murmurhash-js/blob/master/murmurhash2_gc.js
-const hash = memoize([{}], str => {
+export const hash = memoize([{}], str => {
   let l = str.length,
     h = l ^ l,
     i = 0,

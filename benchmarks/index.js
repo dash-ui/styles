@@ -1,6 +1,6 @@
 import bench from '@essentials/benchmark'
 import styles from '../src'
-import {writeStyles} from '../server-src'
+import {writeStyles} from '../server'
 
 bench('create styles [object]', () => styles({foo: {display: 'flex'}}))
 const style = styles({foo: {display: 'flex'}})
