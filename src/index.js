@@ -433,22 +433,22 @@ const serializeVariables_ = (cacheKey, vars, names) => {
 
   return {variables, styles}
 }
-
 const serializeVariables = memoize([{}, WeakMap], serializeVariables_)
 
-const merge = memoize([WeakMap, WeakMap], (target, source) => {
+const merge_ = (target, source) => {
   const keys = Object.keys(source)
 
   for (let i = 0; i < keys.length; i++) {
     const key = keys[i],
       value = source[key]
     if (typeof value === 'object' && value !== null)
-      target[key] = merge(target[key] || {}, value)
+      target[key] = merge_(target[key] || {}, value)
     else target[key] = value
   }
 
   return target
-})
+}
+const merge = memoize([WeakMap, WeakMap], merge_)
 
 function unique() {
   const set = {},
