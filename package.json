@@ -1,6 +1,6 @@
 {
   "name": "@-ui/styles",
-  "version": "1.0.8",
+  "version": "1.0.9",
   "homepage": "https://github.com/dash-ui/styles#readme",
   "repository": "github:dash-ui/styles",
   "bugs": "https://github.com/dash-ui/styles/issues",
@@ -77,7 +77,6 @@
     "rollup-plugin-terser": "^5.1.2"
   },
   "dependencies": {
-    "@emotion/hash": "^0.7.3",
     "@emotion/stylis": "^0.8.4",
     "@emotion/unitless": "^0.7.4",
     "trie-memoize": "^1.0.15"

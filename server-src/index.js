@@ -1,6 +1,6 @@
 import fs from 'fs'
 import path from 'path'
-import hash from '@emotion/hash'
+import {hash} from '../dist/cjs'
 
 export const writeStyles = async (styles, outputPath, options = {}) => {
   const {name, clearCache = true} = options
