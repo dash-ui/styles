@@ -1,6 +1,7 @@
 import fs from 'fs'
 import path from 'path'
-import {hash} from '../dist/cjs'
+const packageJson = require('../package.json')
+const {hash} = require(path.join('..', packageJson.main))
 
 export const writeStyles = async (styles, outputPath, options = {}) => {
   const {name, clearCache = true} = options
