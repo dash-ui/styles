@@ -96,6 +96,46 @@ describe('Usage', () => {
     expect(myStyles.extractTags()).toMatchSnapshot()
   })
 
+  it('extracts global styles', () => {
+    const myStyles = styles.configure({})
+    myStyles.global`
+      :root {
+        --hello: "world";
+      } 
+    `
+
+    expect(myStyles.extractTags()).toMatchSnapshot()
+  })
+
+  it('extracts global variables', () => {
+    const myStyles = styles.configure({})
+    myStyles.variables({
+      colors: {
+        blue: '#09a'
+      }
+    })
+
+    expect(myStyles.extractTags()).toMatchSnapshot()
+  })
+
+  it('extracts theme variables', () => {
+    const myStyles = styles.configure({})
+    myStyles.themes({
+      dark: {
+        colors: {
+          primary: '#000'
+        }
+      },
+      light: {
+        colors: {
+          primary: '#fff'
+        }
+      }
+    })
+
+    expect(myStyles.extractTags()).toMatchSnapshot()
+  })
+
   it('caches styles', () => {
     const myStyles = styles.configure({})
     const style = myStyles({

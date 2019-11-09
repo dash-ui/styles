@@ -10,6 +10,12 @@ exports[`Configure removes vendor prefixing 1`] = `".dash-k008qs{display:flex;}"
 
 exports[`Usage caches styles 1`] = `"<style data-dash=\\"k008qs 49sf46\\">.dash-k008qs{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;}.dash-49sf46-btn{border-radius:1000px;background:blue;color:white;}</style>"`;
 
+exports[`Usage extracts global styles 1`] = `"<style data-dash=\\"dvz39v-global\\">:root{--hello:\\"world\\";}</style>"`;
+
+exports[`Usage extracts global variables 1`] = `"<style data-dash=\\"1o1o5qx-variables\\">:root{--dash-colors-blue:#09a;}</style>"`;
+
 exports[`Usage extracts multiple style tags in dev 1`] = `"<style data-dash=\\"k008qs\\">.dash-k008qs{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;}</style><style data-dash=\\"49sf46\\">.dash-49sf46-btn{border-radius:1000px;background:blue;color:white;}</style>"`;
 
 exports[`Usage extracts single style tag in prod 1`] = `"<style data-dash=\\"k008qs 49sf46\\">.dash-k008qs{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;}.dash-49sf46-btn{border-radius:1000px;background:blue;color:white;}</style>"`;
+
+exports[`Usage extracts theme variables 1`] = `"<style data-dash=\\"1ah86d8-variables 1jehvhf-variables\\">.dash-dark-theme{--dash-colors-primary:#000;}.dash-light-theme{--dash-colors-primary:#fff;}</style>"`;
