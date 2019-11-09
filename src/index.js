@@ -578,7 +578,7 @@ const createStyles = cache => {
     cache.insert(':root', name, serialized.styles, cache.sheet)
   }
 
-  styles.themes = vars => Object.assign(themes, vars)
+  styles.themes = vars => {Object.assign(themes, vars)}
   styles.theme = theme => {
     const serialized = serializeVariables(cache.key, themes[theme])
     merge(variables, serialized.variables)
