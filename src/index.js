@@ -495,6 +495,8 @@ const createStyles = cache => {
     }
   }
 
+  //
+  // Methods
   styles.configure = options => {
     const cache = configure(options)
     return createStyles(cache)
@@ -554,8 +556,6 @@ const createStyles = cache => {
     return output
   }
 
-  //
-  // Methods
   styles.variables = vars => {
     const serialized = serializeVariables(cache.key, vars)
     merge(variables, serialized.variables)
