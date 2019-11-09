@@ -10,16 +10,17 @@ import memoize from 'trie-memoize'
 const IS_BROWSER = typeof document !== 'undefined'
 
 //
-// Hashing
-const OFFSET_BASIS_32 = 2166136261;
+// Hashing (fnv1a)
+const OFFSET_BASIS_32 = 2166136261
 export const fnvHash = memoize([{}], string => {
-  // fnv1a
-  let out = OFFSET_BASIS_32, i = 0, len = string.length;
+  let out = OFFSET_BASIS_32,
+    i = 0,
+    len = string.length
   for (; i < len; ++i) {
-    out ^= string.charCodeAt(i);
-    out += (out << 1) + (out << 4) + (out << 7) + (out << 8) + (out << 24);
+    out ^= string.charCodeAt(i)
+    out += (out << 1) + (out << 4) + (out << 7) + (out << 8) + (out << 24)
   }
-  return (out >>> 0).toString(36);
+  return (out >>> 0).toString(36)
 })
 
 //
@@ -124,8 +125,8 @@ const configure = (options = {}) => {
   const stylis = new Stylis({prefix})
   speedy = speedy === void 0 || speedy === null ? !__DEV__ : speedy
   let insert,
-    values = {},
-    serverStylisCache
+    insertCache = {},
+    stylisCache
 
   if (IS_BROWSER) {
     const nodes = document.querySelectorAll(`style[data-${key}]`)
@@ -134,7 +135,7 @@ const configure = (options = {}) => {
       const node = nodes[i]
       const attr = node.getAttribute(`data-${key}`)
       const ids = attr.split(' ')
-      for (let i = 0; i < ids.length; i++) values[ids[i]] = 1
+      for (let i = 0; i < ids.length; i++) insertCache[ids[i]] = 1
 
       if (node.parentNode !== container) {
         container.appendChild(node)
@@ -144,28 +145,28 @@ const configure = (options = {}) => {
     stylis.use(stylisPlugins)(ruleSheet)
 
     insert = (selector, name, styles, sheet) => {
-      if (cache.values[name] === 1) return
+      if (dash.insertCache[name] === 1) return
       Sheet.current = sheet
-      cache.values[name] = 1
+      dash.insertCache[name] = 1
       stylis(selector, styles)
     }
   } else {
     // server side
-    serverStylisCache = rootServerStylisCache
+    stylisCache = rootServerStylisCache
 
     if (stylisPlugins || prefix !== void 0) {
       stylis.use(stylisPlugins)
-      serverStylisCache = getServerStylisCache(
+      stylisCache = getServerStylisCache(
         stylisPlugins || rootServerStylisCache
       )(prefix)
     }
 
     insert = (selector, name, styles) => {
-      if (cache.values[name]) return
-      if (serverStylisCache[name] === void 0) {
-        serverStylisCache[name] = stylis(selector, styles)
+      if (dash.insertCache[name]) return
+      if (stylisCache[name] === void 0) {
+        stylisCache[name] = stylis(selector, styles)
       }
-      cache.values[name] = 1
+      dash.insertCache[name] = 1
     }
   }
 
@@ -194,7 +195,7 @@ const configure = (options = {}) => {
     })
   }
 
-  let cache = {
+  let dash = {
     key,
     sheet: styleSheet({
       key,
@@ -204,15 +205,15 @@ const configure = (options = {}) => {
     }),
     hash,
     stylis,
-    stylisCache: serverStylisCache,
+    stylisCache,
     insert,
-    values,
+    insertCache,
     clear() {
-      this.values = values = {}
+      this.insertCache = insertCache = {}
     },
   }
 
-  return cache
+  return dash
 }
 
 //
@@ -434,7 +435,7 @@ function unique() {
 
 //
 // Where the magic happens
-const createStyles = cache => {
+const createStyles = dash => {
   const variables = {},
     variablesStyles = [],
     themes = {},
@@ -506,27 +507,24 @@ const createStyles = cache => {
       }
 
       if (!serializedStyles) return ''
-      let name = cache.hash(serializedStyles)
-      let className = `${cache.key}-${name}`
+      let name = dash.hash(serializedStyles)
+      let className = `${dash.key}-${name}`
       // explicit here on purpose so it's not in every test
       if (process.env.NODE_ENV === 'development') {
         className = addLabels(className, arguments)
       }
-      cache.insert(`.${className}`, name, serializedStyles, cache.sheet)
+      dash.insert(`.${className}`, name, serializedStyles, dash.sheet)
       return className
     }
 
-    style.cache = cache
+    style.dash = dash
     style.styles = defs
     return style
   }
 
   //
   // Methods
-  styles.create = options => {
-    const cache = configure(options)
-    return createStyles(cache)
-  }
+  styles.create = options => createStyles(configure(options))
 
   styles.extract = (clear = true) => {
     if (__DEV__) {
@@ -537,12 +535,12 @@ const createStyles = cache => {
     const cachedStyles = unique(
       variablesStyles,
       globalStyles,
-      Object.keys(cache.values)
+      Object.keys(dash.insertCache)
     )
     let output = ''
     for (let i = 0; i < cachedStyles.length; i++)
-      output += cache.stylisCache[cachedStyles[i]]
-    if (clear) cache.clear()
+      output += dash.stylisCache[cachedStyles[i]]
+    if (clear) dash.clear()
     return output
   }
 
@@ -552,12 +550,12 @@ const createStyles = cache => {
         throw new Error('styles.extractTags() only works in node environments')
     }
 
-    const nonceString = cache.sheet.nonce ? ` nonce="${cache.sheet.nonce}"` : ''
+    const nonceString = dash.sheet.nonce ? ` nonce="${dash.sheet.nonce}"` : ''
     let output = ''
     const cachedStyles = unique(
       variablesStyles,
       globalStyles,
-      Object.keys(cache.values)
+      Object.keys(dash.insertCache)
     )
     // explicit check here for test envs
     if (process.env.NODE_ENV === 'development') {
@@ -565,29 +563,29 @@ const createStyles = cache => {
       for (let i = 0; i < cachedStyles.length; i++) {
         const key = cachedStyles[i]
         output +=
-          `<style data-${cache.key}="${key}"${nonceString}>` +
-          cache.stylisCache[key] +
+          `<style data-${dash.key}="${key}"${nonceString}>` +
+          dash.stylisCache[key] +
           `</style>`
       }
     } else {
       // uses one tag in prod
       const names = cachedStyles.join(' ')
       output =
-        `<style data-${cache.key}="${names}"${nonceString}>` +
+        `<style data-${dash.key}="${names}"${nonceString}>` +
         styles.extract(false) +
         `</style>`
     }
 
-    if (clear) cache.clear()
+    if (clear) dash.clear()
     return output
   }
 
   styles.variables = vars => {
-    const serialized = serializeVariables(cache.key, vars)
+    const serialized = serializeVariables(dash.key, vars)
     merge(variables, serialized.variables)
-    const name = `${cache.hash(serialized.styles)}-variables`
+    const name = `${dash.hash(serialized.styles)}-variables`
     if (variablesStyles.indexOf(name) === -1) variablesStyles.push(name)
-    cache.insert(':root', name, serialized.styles, cache.sheet)
+    dash.insert(':root', name, serialized.styles, dash.sheet)
   }
 
   styles.themes = vars => {
@@ -595,11 +593,11 @@ const createStyles = cache => {
   }
 
   styles.theme = theme => {
-    const serialized = serializeVariables(cache.key, themes[theme])
+    const serialized = serializeVariables(dash.key, themes[theme])
     merge(variables, serialized.variables)
-    const name = `${cache.hash(serialized.styles)}-variables`
-    const className = `${cache.key}-${theme}-theme`
-    cache.insert(`.${className}`, name, serialized.styles, cache.sheet)
+    const name = `${dash.hash(serialized.styles)}-variables`
+    const className = `${dash.key}-${theme}-theme`
+    dash.insert(`.${className}`, name, serialized.styles, dash.sheet)
     return className
   }
 
@@ -610,12 +608,12 @@ const createStyles = cache => {
         : interpolate(arguments)
     styles = serialize(variables, styles)
     if (!styles) return ''
-    const name = `${cache.hash(styles)}-global`
+    const name = `${dash.hash(styles)}-global`
     if (globalStyles.indexOf(name) === -1) globalStyles.push(name)
-    cache.insert('', name, styles, cache.sheet)
+    dash.insert('', name, styles, dash.sheet)
   }
 
-  styles.cache = cache
+  styles.dash = dash
   return styles
 }
 

@@ -107,8 +107,8 @@ describe('Usage', () => {
       expect(element).toMatchSnapshot('flex, block, inline')
     }
 
-    styles.cache.clear()
-    styles.cache.sheet.flush()
+    styles.dash.clear()
+    styles.dash.sheet.flush()
     style({flex: true, block: true, inline: true})
 
     for (let element of document.querySelectorAll(`style[data-dash]`)) {
