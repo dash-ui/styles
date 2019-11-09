@@ -5,7 +5,7 @@ import styles from './index'
 
 describe('Configure', () => {
   it('removes vendor prefixing', () => {
-    const myStyles = styles.configure({prefix: false})
+    const myStyles = styles.create({prefix: false})
     const style = myStyles({
       flex: {display: 'flex'},
     })
@@ -30,7 +30,7 @@ describe('Configure', () => {
       }
     }
 
-    const myStyles = styles.configure({prefix})
+    const myStyles = styles.create({prefix})
     const style = myStyles({
       flex: {display: 'flex', transform: 'translateX(30px)'},
     })
@@ -40,7 +40,7 @@ describe('Configure', () => {
   })
 
   it('adds nonce to style tags', () => {
-    const myStyles = styles.configure({nonce: 'EDNnf03nceIOfn39fn3e9h3sdfa'})
+    const myStyles = styles.create({nonce: 'EDNnf03nceIOfn39fn3e9h3sdfa'})
     const style = myStyles({
       flex: {display: 'flex'},
     })
@@ -50,7 +50,7 @@ describe('Configure', () => {
   })
 
   it('changes key to "css"', () => {
-    const myStyles = styles.configure({key: 'css'})
+    const myStyles = styles.create({key: 'css'})
     const style = myStyles({
       flex: {display: 'flex'},
     })
@@ -64,7 +64,7 @@ describe('Usage', () => {
   it('extracts multiple style tags in dev', () => {
     const prevEnv = process.env.NODE_ENV
     process.env.NODE_ENV = 'development'
-    const myStyles = styles.configure({})
+    const myStyles = styles.create({})
     const style = myStyles({
       flex: {display: 'flex'},
       btn: `
@@ -81,7 +81,7 @@ describe('Usage', () => {
   })
 
   it('extracts single style tag in prod', () => {
-    const myStyles = styles.configure({})
+    const myStyles = styles.create({})
     const style = myStyles({
       flex: {display: 'flex'},
       btn: `
@@ -97,7 +97,7 @@ describe('Usage', () => {
   })
 
   it('extracts global styles', () => {
-    const myStyles = styles.configure({})
+    const myStyles = styles.create({})
     myStyles.global`
       :root {
         --hello: "world";
@@ -108,7 +108,7 @@ describe('Usage', () => {
   })
 
   it('extracts global variables', () => {
-    const myStyles = styles.configure({})
+    const myStyles = styles.create({})
     myStyles.variables({
       colors: {
         blue: '#09a',
@@ -119,7 +119,7 @@ describe('Usage', () => {
   })
 
   it('extracts theme variables', () => {
-    const myStyles = styles.configure({})
+    const myStyles = styles.create({})
     myStyles.themes({
       dark: {
         colors: {
@@ -141,7 +141,7 @@ describe('Usage', () => {
   })
 
   it('caches styles', () => {
-    const myStyles = styles.configure({})
+    const myStyles = styles.create({})
     const style = myStyles({
       flex: {display: 'flex'},
       btn: `

@@ -6,7 +6,7 @@ exports[`Configure adds nonce to style tags: DOM 1`] = `
   nonce="EDNnf03nceIOfn39fn3e9h3sdfa"
 >
   
-  .dash-k008qs{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;}
+  .dash-1ut9bc3{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;}
 </style>
 `;
 
@@ -15,7 +15,7 @@ exports[`Configure changes container to document.body 1`] = `
   data-dash="dash"
 >
   
-  .dash-k008qs{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;}
+  .dash-1ut9bc3{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;}
 </style>
 `;
 
@@ -24,7 +24,7 @@ exports[`Configure changes key to "css": DOM 1`] = `
   data-dash="css"
 >
   
-  .css-k008qs{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;}
+  .css-1ut9bc3{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;}
 </style>
 `;
 
@@ -33,18 +33,18 @@ exports[`Configure turns off vendor prefixing: DOM 1`] = `
   data-dash="dash"
 >
   
-  .dash-k008qs{display:flex;}
+  .dash-1ut9bc3{display:flex;}
 </style>
 `;
 
 exports[`Configure turns on speedy 1`] = `
 Object {
-  ".dash-13o7eu2": Object {
+  ".dash-1abu38z": Object {
     "0": "display",
     "display": "block",
     "length": 1,
   },
-  ".dash-k008qs": Object {
+  ".dash-1ut9bc3": Object {
     "0": "display",
     "display": "flex",
     "length": 1,

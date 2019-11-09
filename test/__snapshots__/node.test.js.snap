@@ -1,25 +1,25 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Configure adds nonce to style tags 1`] = `"<style data-dash=\\"k008qs\\" nonce=\\"EDNnf03nceIOfn39fn3e9h3sdfa\\">.dash-k008qs{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;}</style>"`;
+exports[`Configure adds nonce to style tags 1`] = `"<style data-dash=\\"1ut9bc3\\" nonce=\\"EDNnf03nceIOfn39fn3e9h3sdfa\\">.dash-1ut9bc3{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;}</style>"`;
 
-exports[`Configure changes key to "css" 1`] = `"<style data-css=\\"k008qs\\">.dash-k008qs{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;}</style>"`;
+exports[`Configure changes key to "css" 1`] = `"<style data-css=\\"1ut9bc3\\">.dash-1ut9bc3{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;}</style>"`;
 
-exports[`Configure has customized vendor prefixing 1`] = `".dash-12p1lqr{display:flex;-webkit-transform:translateX(30px);-ms-transform:translateX(30px);transform:translateX(30px);}"`;
+exports[`Configure has customized vendor prefixing 1`] = `".dash-1vlpa1m{display:flex;-webkit-transform:translateX(30px);-ms-transform:translateX(30px);transform:translateX(30px);}"`;
 
-exports[`Configure removes vendor prefixing 1`] = `".dash-k008qs{display:flex;}"`;
+exports[`Configure removes vendor prefixing 1`] = `".dash-1ut9bc3{display:flex;}"`;
 
-exports[`Usage caches styles 1`] = `"<style data-dash=\\"k008qs 49sf46\\">.dash-k008qs{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;}.dash-49sf46-btn{border-radius:1000px;background:blue;color:white;}</style>"`;
+exports[`Usage caches styles 1`] = `"<style data-dash=\\"1ut9bc3 2qtxn6\\">.dash-1ut9bc3{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;}.dash-2qtxn6-btn{border-radius:1000px;background:blue;color:white;}</style>"`;
 
-exports[`Usage extracts global styles 1`] = `"<style data-dash=\\"dvz39v-global\\">:root{--hello:\\"world\\";}</style>"`;
+exports[`Usage extracts global styles 1`] = `"<style data-dash=\\"qmpg4s-global\\">:root{--hello:\\"world\\";}</style>"`;
 
-exports[`Usage extracts global variables 1`] = `"<style data-dash=\\"1o1o5qx-variables\\">:root{--dash-colors-blue:#09a;}</style>"`;
+exports[`Usage extracts global variables 1`] = `"<style data-dash=\\"25dsyb-variables\\">:root{--dash-colors-blue:#09a;}</style>"`;
 
-exports[`Usage extracts multiple style tags in dev 1`] = `"<style data-dash=\\"k008qs\\">.dash-k008qs{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;}</style><style data-dash=\\"49sf46\\">.dash-49sf46-btn{border-radius:1000px;background:blue;color:white;}</style>"`;
+exports[`Usage extracts multiple style tags in dev 1`] = `"<style data-dash=\\"1ut9bc3\\">.dash-1ut9bc3{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;}</style><style data-dash=\\"2qtxn6\\">.dash-2qtxn6-btn{border-radius:1000px;background:blue;color:white;}</style>"`;
 
-exports[`Usage extracts single style tag in prod 1`] = `"<style data-dash=\\"k008qs 49sf46\\">.dash-k008qs{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;}.dash-49sf46-btn{border-radius:1000px;background:blue;color:white;}</style>"`;
+exports[`Usage extracts single style tag in prod 1`] = `"<style data-dash=\\"1ut9bc3 2qtxn6\\">.dash-1ut9bc3{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;}.dash-2qtxn6-btn{border-radius:1000px;background:blue;color:white;}</style>"`;
 
 exports[`Usage extracts theme variables 1`] = `"<style data-dash=\\"\\"></style>"`;
 
-exports[`Usage extracts theme variables 2`] = `"<style data-dash=\\"1ah86d8-variables\\">.dash-dark-theme{--dash-colors-primary:#000;}</style>"`;
+exports[`Usage extracts theme variables 2`] = `"<style data-dash=\\"pdf8y1-variables\\">.dash-dark-theme{--dash-colors-primary:#000;}</style>"`;
 
-exports[`Usage extracts theme variables 3`] = `"<style data-dash=\\"1jehvhf-variables\\">.dash-light-theme{--dash-colors-primary:#fff;}</style>"`;
+exports[`Usage extracts theme variables 3`] = `"<style data-dash=\\"1o5cjbb-variables\\">.dash-light-theme{--dash-colors-primary:#fff;}</style>"`;

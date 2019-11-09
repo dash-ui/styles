@@ -6,18 +6,18 @@ exports[`Exceptions throws error for extract methods 2`] = `"style.extractTags i
 
 exports[`Exceptions throws for unterminated comments 1`] = `"Your styles have an unterminated comment (\\"/*\\" without corresponding \\"*/\\")."`;
 
-exports[`Usage adds dev labels: -flex 1`] = `"dash-17vxl0k-flex"`;
+exports[`Usage adds dev labels: -flex 1`] = `"dash-1gsnvr5-flex"`;
 
-exports[`Usage adds dev labels: -flex-block 1`] = `"dash-1uu46n0-flex-block"`;
+exports[`Usage adds dev labels: -flex-block 1`] = `"dash-1auscot-flex-block"`;
 
-exports[`Usage adds dev labels: -flex-inline 1`] = `"dash-fdxav6-flex-inline"`;
+exports[`Usage adds dev labels: -flex-inline 1`] = `"dash-17gir1n-flex-inline"`;
 
 exports[`Usage adds styles by order of definition when called: flex, block, inline 1`] = `
 <style
   data-dash="dash"
 >
   
-  .dash-imkh3o{display:flex;display:block;display:inline;}
+  .dash-1fwol6f{display:flex;display:block;display:inline;}
 </style>
 `;
 
@@ -26,18 +26,18 @@ exports[`Usage adds styles by order of definition when called: flex, block, inli
   data-dash="dash"
 >
   
-  .dash-imkh3o{display:flex;display:block;display:inline;}
+  .dash-1fwol6f{display:flex;display:block;display:inline;}
 </style>
 `;
 
-exports[`Usage allows comments 1`] = `"dash-uixogt"`;
+exports[`Usage allows comments 1`] = `"dash-1s6c5ui"`;
 
 exports[`Usage allows multiple arguments 1`] = `
 <style
   data-dash="dash"
 >
   
-  .dash-1m9xrcd{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;display:block;display:inline;}
+  .dash-1t77otj{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;display:block;display:inline;}
 </style>
 `;
 
@@ -46,7 +46,7 @@ exports[`Usage allows style functions in arguments 1`] = `
   data-dash="dash"
 >
   
-  .dash-1m9xrcd{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;display:block;display:inline;}
+  .dash-1t77otj{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;display:block;display:inline;}
 </style>
 `;
 
@@ -55,7 +55,7 @@ exports[`Usage allows unitless object values: 200x200 1`] = `
   data-dash="dash"
 >
   
-  .dash-cl5oj8{width:200px;height:200px;}
+  .dash-haiabg{width:200px;height:200px;}
 </style>
 `;
 
@@ -121,11 +121,11 @@ Object {
 }
 `;
 
-exports[`Usage returns single class name 1`] = `"dash-k008qs"`;
+exports[`Usage returns single class name 1`] = `"dash-1ut9bc3"`;
 
-exports[`Usage returns single class name 2`] = `"dash-imkh3o"`;
+exports[`Usage returns single class name 2`] = `"dash-1fwol6f"`;
 
-exports[`Usage returns single class name 3`] = `"dash-1bvyhaf"`;
+exports[`Usage returns single class name 3`] = `"dash-yz87pd"`;
 
 exports[`Usage should inject global styles once 1`] = `
 <style

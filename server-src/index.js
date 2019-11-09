@@ -1,12 +1,10 @@
 import fs from 'fs'
 import path from 'path'
-const packageJson = require('../package.json')
-const {hash} = require(path.join('..', packageJson.main))
 
 export const writeStyles = async (styles, outputPath, options = {}) => {
   const {name, clearCache = true} = options
   const stylesString = styles.extract(clearCache)
-  const filename = path.join(outputPath, `${name || hash(stylesString)}.css`)
+  const filename = path.join(outputPath, `${name || styles.cache.hash(stylesString)}.css`)
   await fs.promises.writeFile(filename, stylesString)
   return {filename, styles: stylesString}
 }

@@ -11,51 +11,15 @@ const IS_BROWSER = typeof document !== 'undefined'
 
 //
 // Hashing
-// murmurhash2 via https://github.com/garycourt/murmurhash-js/blob/master/murmurhash2_gc.js
-export const hash = memoize([{}], str => {
-  let l = str.length,
-    h = l ^ l,
-    i = 0,
-    k
-
-  while (l >= 4) {
-    k =
-      (str.charCodeAt(i) & 0xff) |
-      ((str.charCodeAt(++i) & 0xff) << 8) |
-      ((str.charCodeAt(++i) & 0xff) << 16) |
-      ((str.charCodeAt(++i) & 0xff) << 24)
-
-    k = (k & 0xffff) * 0x5bd1e995 + ((((k >>> 16) * 0x5bd1e995) & 0xffff) << 16)
-    k ^= k >>> 24
-    k = (k & 0xffff) * 0x5bd1e995 + ((((k >>> 16) * 0x5bd1e995) & 0xffff) << 16)
-
-    h =
-      ((h & 0xffff) * 0x5bd1e995 +
-        ((((h >>> 16) * 0x5bd1e995) & 0xffff) << 16)) ^
-      k
-
-    l -= 4
-    ++i
+const OFFSET_BASIS_32 = 2166136261;
+export const fnvHash = memoize([{}], string => {
+  // fnv1a
+  let out = OFFSET_BASIS_32, i = 0, len = string.length;
+  for (; i < len; ++i) {
+    out ^= string.charCodeAt(i);
+    out += (out << 1) + (out << 4) + (out << 7) + (out << 8) + (out << 24);
   }
-
-  switch (l) {
-    case 3:
-      h ^= (str.charCodeAt(i + 2) & 0xff) << 16
-    // eslint-disable-next-line
-    case 2:
-      h ^= (str.charCodeAt(i + 1) & 0xff) << 8
-    // eslint-disable-next-line
-    case 1:
-      h ^= str.charCodeAt(i) & 0xff
-      h =
-        (h & 0xffff) * 0x5bd1e995 + ((((h >>> 16) * 0x5bd1e995) & 0xffff) << 16)
-  }
-
-  h ^= h >>> 13
-  h = (h & 0xffff) * 0x5bd1e995 + ((((h >>> 16) * 0x5bd1e995) & 0xffff) << 16)
-  h ^= h >>> 15
-
-  return (h >>> 0).toString(36)
+  return (out >>> 0).toString(36);
 })
 
 //
@@ -151,6 +115,7 @@ const configure = (options = {}) => {
   let {
     key = 'dash',
     nonce,
+    hash = fnvHash,
     stylisPlugins,
     prefix = true,
     container = IS_BROWSER && document.head,
@@ -237,6 +202,7 @@ const configure = (options = {}) => {
       nonce,
       speedy,
     }),
+    hash,
     stylis,
     stylisCache: serverStylisCache,
     insert,
@@ -540,7 +506,7 @@ const createStyles = cache => {
       }
 
       if (!serializedStyles) return ''
-      let name = hash(serializedStyles)
+      let name = cache.hash(serializedStyles)
       let className = `${cache.key}-${name}`
       // explicit here on purpose so it's not in every test
       if (process.env.NODE_ENV === 'development') {
@@ -557,7 +523,7 @@ const createStyles = cache => {
 
   //
   // Methods
-  styles.configure = options => {
+  styles.create = options => {
     const cache = configure(options)
     return createStyles(cache)
   }
@@ -619,7 +585,7 @@ const createStyles = cache => {
   styles.variables = vars => {
     const serialized = serializeVariables(cache.key, vars)
     merge(variables, serialized.variables)
-    const name = `${hash(serialized.styles)}-variables`
+    const name = `${cache.hash(serialized.styles)}-variables`
     if (variablesStyles.indexOf(name) === -1) variablesStyles.push(name)
     cache.insert(':root', name, serialized.styles, cache.sheet)
   }
@@ -631,7 +597,7 @@ const createStyles = cache => {
   styles.theme = theme => {
     const serialized = serializeVariables(cache.key, themes[theme])
     merge(variables, serialized.variables)
-    const name = `${hash(serialized.styles)}-variables`
+    const name = `${cache.hash(serialized.styles)}-variables`
     const className = `${cache.key}-${theme}-theme`
     cache.insert(`.${className}`, name, serialized.styles, cache.sheet)
     return className
@@ -644,7 +610,7 @@ const createStyles = cache => {
         : interpolate(arguments)
     styles = serialize(variables, styles)
     if (!styles) return ''
-    const name = `${hash(styles)}-global`
+    const name = `${cache.hash(styles)}-global`
     if (globalStyles.indexOf(name) === -1) globalStyles.push(name)
     cache.insert('', name, styles, cache.sheet)
   }

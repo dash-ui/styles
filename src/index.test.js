@@ -6,7 +6,7 @@ afterEach(() => {
 
 describe('Usage', () => {
   it('creates global variables', () => {
-    styles.configure().variables({
+    styles.create().variables({
       colors: {
         blue: '#09a',
         red: '#c12',
@@ -22,7 +22,7 @@ describe('Usage', () => {
   })
 
   it('creates theme variables', () => {
-    styles.configure().themes({
+    styles.create().themes({
       dark: {
         colors: {
           bg: '#000',
@@ -43,7 +43,7 @@ describe('Usage', () => {
   })
 
   it('returns single class name', () => {
-    const style = styles.configure()({
+    const style = styles.create()({
       flex: {display: 'flex'},
       block: {display: 'block'},
       inline: 'display: inline;',
@@ -55,7 +55,7 @@ describe('Usage', () => {
   })
 
   it('returns empty string when falsy', () => {
-    const style = styles.configure()({
+    const style = styles.create()({
       flex: {display: 'flex'},
     })
 
@@ -69,7 +69,7 @@ describe('Usage', () => {
   })
 
   it('ignores unknown keys', () => {
-    const style = styles.configure()({
+    const style = styles.create()({
       flex: {display: 'flex'},
     })
 
@@ -83,7 +83,7 @@ describe('Usage', () => {
   })
 
   it('allows unitless object values', () => {
-    const style = styles.configure()({
+    const style = styles.create()({
       box: {width: 200, height: '200px'},
     })
 
@@ -95,7 +95,7 @@ describe('Usage', () => {
   })
 
   it('adds styles by order of definition when called', () => {
-    const style = styles.configure({prefix: false})({
+    const style = styles.create({prefix: false})({
       inline: 'display: inline;',
       flex: {display: 'flex'},
       block: {display: 'block'},
@@ -117,7 +117,7 @@ describe('Usage', () => {
   })
 
   it('allows comments', () => {
-    const style = styles.configure()({
+    const style = styles.create()({
       flex: `
         /* this is a flex style */
         display: flex;
@@ -128,7 +128,7 @@ describe('Usage', () => {
   })
 
   it('passes variables to style callbacks', () => {
-    const myStyles = styles.configure()
+    const myStyles = styles.create()
     myStyles.variables({
       colors: {
         blue: '#09a',
@@ -163,7 +163,7 @@ describe('Usage', () => {
   })
 
   it('passes variables to global styles', () => {
-    const myStyles = styles.configure()
+    const myStyles = styles.create()
     myStyles.variables({
       colors: {
         blue: '#09a',
@@ -193,7 +193,7 @@ describe('Usage', () => {
   })
 
   it('injects global styles', () => {
-    const styles_ = styles.configure()
+    const styles_ = styles.create()
     styles_.global(`
       html {
         font-size: 100%;
@@ -206,7 +206,7 @@ describe('Usage', () => {
   })
 
   it('should inject global styles once', () => {
-    const {global} = styles.configure()
+    const {global} = styles.create()
     global(`
       :root {
         --spacing-0: 0;
@@ -239,7 +239,7 @@ describe('Usage', () => {
   it('adds dev labels', () => {
     let prevEnv = process.env.NODE_ENV
     process.env.NODE_ENV = 'development'
-    const style = styles.configure()({
+    const style = styles.create()({
       flex: `display: flex;`,
       block: `display: block;`,
       inline: `display: inline;`,
@@ -254,7 +254,7 @@ describe('Usage', () => {
   })
 
   it('allows multiple arguments', () => {
-    const style = styles.configure()(
+    const style = styles.create()(
       {
         flex: `display: flex;`,
         block: `display: block;`,
@@ -272,7 +272,7 @@ describe('Usage', () => {
   })
 
   it('allows style functions in arguments', () => {
-    const myStyles = styles.configure()
+    const myStyles = styles.create()
     const styleA = myStyles({
       flex: `display: flex;`,
       block: `display: block;`,
@@ -294,7 +294,7 @@ describe('Usage', () => {
 
 describe('Exceptions', () => {
   it('throws error for extract methods', () => {
-    const style = styles.configure()({
+    const style = styles.create()({
       flex: {display: 'flex'},
     })
 
@@ -308,7 +308,7 @@ describe('Exceptions', () => {
   })
 
   it('throws for unterminated comments', () => {
-    const style = styles.configure()({
+    const style = styles.create()({
       flex: `
         /* this is a flex style with an unterminated comment ;)
         display: flex;
