@@ -406,36 +406,35 @@ const serialize = (variables, styles) => {
   return styles
 }
 
-const serializeVariables = memoize(
-  [{}, WeakMap, {}],
-  (cacheKey, vars, names) => {
-    const keys = Object.keys(vars)
-    const variables = {}
-    let styles = ''
+const serializeVariables_ = (cacheKey, vars, names) => {
+  const keys = Object.keys(vars)
+  const variables = {}
+  let styles = ''
 
-    for (let i = 0; i < keys.length; i++) {
-      const key = keys[i]
-      const value = vars[key]
+  for (let i = 0; i < keys.length; i++) {
+    const key = keys[i]
+    const value = vars[key]
 
-      if (typeof value === 'object') {
-        names = names || []
-        const result = serializeVariables(cacheKey, value, names.concat(key))
-        variables[key] = result.variables
-        styles += result.styles
-      } else {
-        let name = `--${cacheKey}`
-        if (names !== void 0 && names.length > 0) {
-          name += `-${names.reverse().join('-')}`
-        }
-        name += `-${key}`
-        variables[key] = `var(${name})`
-        styles += `${name}: ${value};`
+    if (typeof value === 'object') {
+      names = names || []
+      const result = serializeVariables_(cacheKey, value, names.concat(key))
+      variables[key] = result.variables
+      styles += result.styles
+    } else {
+      let name = `--${cacheKey}`
+      if (names !== void 0 && names.length > 0) {
+        name += `-${names.reverse().join('-')}`
       }
+      name += `-${key}`
+      variables[key] = `var(${name})`
+      styles += `${name}: ${value};`
     }
-
-    return {variables, styles}
   }
-)
+
+  return {variables, styles}
+}
+
+const serializeVariables = memoize([{}, WeakMap], serializeVariables_)
 
 const merge = memoize([WeakMap, WeakMap], (target, source) => {
   const keys = Object.keys(source)
