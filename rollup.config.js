@@ -11,6 +11,7 @@ const config = (filename, env, plugins = []) => ({
   output: {
     file: filename,
     format: 'umd',
+    exports: 'named',
     name: 'DashUI',
   },
   plugins: [

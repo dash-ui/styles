@@ -204,7 +204,7 @@ const configure = (options = {}) => {
 
 //
 // Style sheets
-const styleSheet = ({key, container, nonce, speedy}) => {
+export const styleSheet = ({key, container, nonce, speedy}) => {
   // Based off emotion and glamor's StyleSheet
   let size = 0,
     before,
@@ -344,9 +344,9 @@ const styleObjectToString = memoize([WeakMap], object => {
   return string
 })
 
-const serialize = (call, styles) => {
+const serialize = (variables, styles) => {
   if (typeof styles === 'function') {
-    return serialize(call, styles(call))
+    return serialize(variables, styles(variables))
   } else if (typeof styles === 'object') {
     styles = styleObjectToString(styles)
   }
@@ -355,59 +355,85 @@ const serialize = (call, styles) => {
   return styles
 }
 
+const serializeVariables = (cacheKey, vars, names) => {
+  const keys = Object.keys(vars)
+  const variables = {}
+  let styles = ''
+
+  for (let i = 0; i < keys.length; i++) {
+    const key = keys[i]
+    const value = vars[key]
+
+    if (typeof value === 'object') {
+      names = names || []
+      const result = serializeVariables(cacheKey, value, names.concat(key))
+      variables[key] = result.variables
+      styles += result.styles
+    }
+    else {
+      let name = `--${cacheKey}`
+      if (names !== void 0 && names.length > 0) {
+        name += `-${names.reverse().join('-')}`
+      }
+      name += `-${key}`
+      variables[key] = `var(${name})`
+      styles += `${name}: ${value};`
+    }
+  }
+
+  return {variables, styles}
+}
+
+const merge = (target, source) => {
+  const keys = Object.keys(source)
+
+  for (let i = 0; i < keys.length; i++) {
+    const key = keys[i], value = source[key]
+    if (typeof value === 'object' && value !== null)
+      target[key] = merge(target[key] || {}, value)
+    else target[key] = value
+  }
+
+  return target
+}
+
 //
 // Where the magic happens
 const createStyles = cache => {
-  function styles() {
-    let defs = arguments[0],
-      addLabels
-    // explicit here on purpose so it's not in every test
-    if (process.env.NODE_ENV === 'development') {
-      addLabels = (name, args) => {
-        // add helpful labels to the name in development
-        for (let i = 0; i < args.length; i++) {
-          const arg = args[i]
-          if (typeof arg === 'string') name += `-${arg}`
-          else if (typeof arg === 'object') {
-            const keys = Object.keys(arg).filter(k => arg[k])
-            if (keys.length) name += `-${keys.join('-')}`
-          }
-        }
-
-        return name
-      }
-    }
-
-    if (arguments.length > 1) {
-      defs = Object.assign({}, ...arguments)
-    }
-
-    function serializeToSelector() {
-      let name = hash(serializeStyles.apply(null, arguments))
-      name = `.${cache.key}-${name}`
-      // explicit here on purpose so it's not in every test
-      if (process.env.NODE_ENV === 'development') {
-        if (name) {
-          name = addLabels(name, arguments)
+  const variables = {}
+  let addLabels
+  // explicit here on purpose so it's not in every test
+  if (process.env.NODE_ENV === 'development') {
+    addLabels = (name, args) => {
+      // add helpful labels to the name in development
+      for (let i = 0; i < args.length; i++) {
+        const arg = args[i]
+        if (typeof arg === 'string') name += `-${arg}`
+        else if (typeof arg === 'object') {
+          const keys = Object.keys(arg).filter(k => arg[k])
+          if (keys.length) name += `-${keys.join('-')}`
         }
       }
-      return name ? name : name
-    }
 
+      return name
+    }
+  }
+
+  function styles(defs) {
     function serializeStyles(getter) {
       if (typeof getter === 'string') {
-        return serialize(serializeToSelector, defs[getter])
+        return serialize(variables, defs[getter])
       } else if (typeof getter === 'object') {
         let keys = Object.keys(getter),
           nextStyles = ''
 
         for (let i = 0; i < keys.length; i++) {
           if (getter[keys[i]]) {
-            nextStyles += serialize(serializeToSelector, defs[keys[i]])
+            nextStyles += serialize(variables, defs[keys[i]])
           }
         }
 
-        return serialize(serializeToSelector, nextStyles)
+        return serialize(variables, nextStyles)
       }
     }
 
@@ -494,8 +520,28 @@ const createStyles = cache => {
     return output
   }
 
+  styles.variables = vars => {
+    const serialized = serializeVariables(cache.key, vars)
+    merge(variables, serialized.variables)
+    const styles = `:root{${serialized.styles}}`
+    cache.insert('', `${hash(styles)}-variables`, styles, cache.sheet, true)
+  }
+
+  styles.themes = vars => {
+    const keys = Object.keys(vars)
+    for (let i = 0; i < keys.length; i++) {
+      const key = keys[i]
+      const serialized = serializeVariables(cache.key, vars[key])
+      merge(variables, serialized.variables)
+      const className = `.${cache.key}-${key}-theme`
+      cache.insert(className, `${hash(serialized.styles)}-variables`, serialized.styles, cache.sheet, true)
+    }
+  }
+
+  styles.theme = name => `${cache.key}-${name}-theme`
+
   styles.global = function() {
-    let styles = serialize(null, interpolate(arguments))
+    let styles = serialize(variables, interpolate(arguments))
     if (!styles) return ''
     cache.insert('', `${hash(styles)}-global`, styles, cache.sheet, true)
   }
@@ -506,4 +552,5 @@ const createStyles = cache => {
 }
 
 // Creates an initial cache
-export default createStyles(configure())
+export const styles = createStyles(configure())
+export default styles

@@ -33,23 +33,23 @@
 import React from 'react'
 import styles from '@-ui/styles'
 
-styles.global`
-  :root {
-    --red: #c1272d;
-    --blue: blue;
-    --purple: purple;
+styles.variables({
+  colors: {
+    red: '#c12',
+    blue: '#09a',
+    purple: '#800080'
   }
-`
+})
 
 const style = styles({
   red: `
-    color: var(--red);
+    color: var(--dash-colors-red);
   `,
-  blue: styles => `
-    color: var(--blue);
+  blue: ({colors}) => `
+    color: ${colors.blue};
 
-    ${styles('red')} {
-      color: var(--purple);
+    .${style('red')} {
+      color: ${colors.purple};
     }
   `,
 })

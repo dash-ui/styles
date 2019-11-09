@@ -5,6 +5,43 @@ afterEach(() => {
 })
 
 describe('Usage', () => {
+  it('creates global variables', () => {
+    styles.configure().variables({
+      colors: {
+        blue: '#09a',
+        red: '#c12'
+      },
+      spacing: {
+        xs: '1rem'
+      }
+    })
+
+    for (let element of document.querySelectorAll(`style[data-dash]`)) {
+      expect(element).toMatchSnapshot(':root')
+    }
+  })
+
+  it('creates theme variables', () => {
+    styles.configure().themes({
+      dark: {
+        colors: {
+          bg: '#000',
+          text: '#fff'
+        }
+      },
+      light: {
+        colors: {
+          bg: '#fff',
+          text: '#000'
+        }
+      }
+    })
+
+    for (let element of document.querySelectorAll(`style[data-dash]`)) {
+      expect(element).toMatchSnapshot(':root')
+    }
+  })
+
   it('returns single class name', () => {
     const style = styles.configure()({
       flex: {display: 'flex'},
@@ -79,43 +116,6 @@ describe('Usage', () => {
     }
   })
 
-  it('supports internally nested styles w/ functions', () => {
-    const style = styles.configure({prefix: false})({
-      blue: style => `
-        color: blue;
-        ${style('red')} {
-          color: purple;
-        }
-      `,
-      red: 'color: red;',
-    })
-
-    style('blue')
-
-    for (let element of document.querySelectorAll(`style[data-dash]`)) {
-      expect(element).toMatchSnapshot(style('red'))
-    }
-  })
-
-  it('allows multiple arguments in styles()', () => {
-    const style = styles.configure({prefix: false})(
-      {
-        blue: style => `
-        color: blue;
-        ${style('red')} {
-          color: purple;
-        }
-      `,
-      },
-      {
-        red: 'color: red;',
-      }
-    )
-
-    expect(style('blue')).toMatchSnapshot()
-    expect(style('red')).toMatchSnapshot()
-  })
-
   it('allows comments', () => {
     const style = styles.configure()({
       flex: `
@@ -125,6 +125,37 @@ describe('Usage', () => {
     })
 
     expect(style('flex')).toMatchSnapshot()
+  })
+
+  it('passes variables to style callbacks', () => {
+    const myStyles = styles.configure()
+    myStyles.variables({
+      colors: {
+        blue: '#09a',
+        red: '#c12'
+      }
+    })
+
+    myStyles.themes({
+      dark: {
+        colors: {
+          bg: '#000',
+          text: '#fff'
+        }
+      },
+      light: {
+        colors: {
+          bg: '#fff',
+          text: '#000'
+        }
+      }
+    })
+
+    const style = myStyles({
+      box: vars => expect(vars).toMatchSnapshot(),
+    })
+
+    style('box')
   })
 
   it('injects global styles', () => {

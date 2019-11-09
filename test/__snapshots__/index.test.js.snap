@@ -32,16 +32,39 @@ exports[`Usage adds styles by order of definition when called: flex, block, inli
 
 exports[`Usage allows comments 1`] = `"dash-uixogt"`;
 
-exports[`Usage allows multiple arguments in styles() 1`] = `"dash-1hsqp50"`;
-
-exports[`Usage allows multiple arguments in styles() 2`] = `"dash-jk0pkr"`;
-
 exports[`Usage allows unitless object values: 200x200 1`] = `
 <style
   data-dash="dash"
 >
   
   .dash-cl5oj8{width:200px;height:200px;}
+</style>
+`;
+
+exports[`Usage creates global variables: :root 1`] = `
+<style
+  data-dash="dash"
+>
+  
+  :root{--dash-colors-blue:#09a;--dash-colors-red:#c12;--dash-spacing-xs:1rem;}
+</style>
+`;
+
+exports[`Usage creates theme variables: :root 1`] = `
+<style
+  data-dash="dash"
+>
+  
+  .dash-dark-theme{--dash-colors-bg:#000;--dash-colors-text:#fff;}
+</style>
+`;
+
+exports[`Usage creates theme variables: :root 2`] = `
+<style
+  data-dash="dash"
+>
+  
+  .dash-light-theme{--dash-colors-bg:#fff;--dash-colors-text:#000;}
 </style>
 `;
 
@@ -52,6 +75,17 @@ exports[`Usage injects global styles 1`] = `
   
   html{font-size:100%;}
 </style>
+`;
+
+exports[`Usage passes variables to style callbacks 1`] = `
+Object {
+  "colors": Object {
+    "bg": "var(--dash-colors-bg)",
+    "blue": "var(--dash-colors-blue)",
+    "red": "var(--dash-colors-red)",
+    "text": "var(--dash-colors-text)",
+  },
+}
 `;
 
 exports[`Usage returns single class name 1`] = `"dash-k008qs"`;
@@ -84,23 +118,5 @@ exports[`Usage should inject global styles once 3`] = `
 >
   
   :root{--spacing-1:0.5rem;}
-</style>
-`;
-
-exports[`Usage supports internally nested styles w/ functions: dash-jk0pkr 1`] = `
-<style
-  data-dash="dash"
->
-  
-  .dash-1hsqp50{color:blue;}
-</style>
-`;
-
-exports[`Usage supports internally nested styles w/ functions: dash-jk0pkr 2`] = `
-<style
-  data-dash="dash"
->
-  
-  .dash-1hsqp50 .dash-jk0pkr{color:purple;}
 </style>
 `;
