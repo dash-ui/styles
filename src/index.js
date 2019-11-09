@@ -112,7 +112,8 @@ const configure = (options = {}) => {
   const stylis = new Stylis({prefix})
   speedy = speedy === void 0 || speedy === null ? !__DEV__ : speedy
   let insert,
-    values = {}
+    values = {},
+    serverStylisCache
 
   if (IS_BROWSER) {
     const nodes = document.querySelectorAll(`style[data-${key}]`)
@@ -121,7 +122,7 @@ const configure = (options = {}) => {
       const node = nodes[i]
       const attr = node.getAttribute(`data-${key}`)
       const ids = attr.split(' ')
-      for (let i = 0; i < ids.length; i++) values[ids[i]] = true
+      for (let i = 0; i < ids.length; i++) values[ids[i]] = 1
 
       if (node.parentNode !== container) {
         container.appendChild(node)
@@ -131,14 +132,14 @@ const configure = (options = {}) => {
     stylis.use(stylisPlugins)(ruleSheet)
 
     insert = (selector, name, styles, sheet) => {
-      if (cache.values[name] === true) return true
+      if (cache.values[name] === 1) return
       Sheet.current = sheet
-      cache.values[name] = true
-      return stylis(selector, styles)
+      cache.values[name] = 1
+      stylis(selector, styles)
     }
   } else {
     // server side
-    let serverStylisCache = rootServerStylisCache
+    serverStylisCache = rootServerStylisCache
 
     if (stylisPlugins || prefix !== void 0) {
       stylis.use(stylisPlugins)
@@ -148,15 +149,11 @@ const configure = (options = {}) => {
     }
 
     insert = (selector, name, styles) => {
-      if (cache.values[name]) return cache.values[name]
-      let rules = serverStylisCache[name]
-
+      if (cache.values[name]) return
       if (serverStylisCache[name] === void 0) {
-        rules = serverStylisCache[name] = stylis(selector, styles)
+        serverStylisCache[name] = stylis(selector, styles)
       }
-
-      cache.values[name] = rules
-      return rules
+      cache.values[name] = 1
     }
   }
 
@@ -193,6 +190,7 @@ const configure = (options = {}) => {
       nonce,
       speedy,
     }),
+    stylis: serverStylisCache,
     insert,
     values,
     clear() {
@@ -372,8 +370,7 @@ const serializeVariables = (cacheKey, vars, names) => {
       const result = serializeVariables(cacheKey, value, names.concat(key))
       variables[key] = result.variables
       styles += result.styles
-    }
-    else {
+    } else {
       let name = `--${cacheKey}`
       if (names !== void 0 && names.length > 0) {
         name += `-${names.reverse().join('-')}`
@@ -391,7 +388,8 @@ const merge = (target, source) => {
   const keys = Object.keys(source)
 
   for (let i = 0; i < keys.length; i++) {
-    const key = keys[i], value = source[key]
+    const key = keys[i],
+      value = source[key]
     if (typeof value === 'object' && value !== null)
       target[key] = merge(target[key] || {}, value)
     else target[key] = value
@@ -400,10 +398,28 @@ const merge = (target, source) => {
   return target
 }
 
+function unique () {
+  const set = {},
+    out = [];
+
+  for (let i = 0; i < arguments.length; i++) {
+    for (let j = 0; j < arguments[i].length; j++) {
+      const value = arguments[i][j];
+      if (set[value] === 1) continue;
+      set[value] = 1;
+      out.push(value);
+    }
+  }
+
+  return out;
+}
+
 //
 // Where the magic happens
 const createStyles = cache => {
-  const variables = {}, variablesStyles = {}, globalStyles = {}
+  const variables = {},
+    variablesStyles = [],
+    globalStyles = []
   let addLabels
   // explicit here on purpose so it's not in every test
   if (process.env.NODE_ENV === 'development') {
@@ -481,10 +497,9 @@ const createStyles = cache => {
         throw new Error('styles.extract() only works in node environments')
     }
 
-    const cacheValues = Object.assign({}, variablesStyles, globalStyles, cache.values)
-    const keys = Object.keys(cacheValues)
+    const cachedStyles = unique(variablesStyles, globalStyles, Object.keys(cache.values))
     let output = ''
-    for (let i = 0; i < keys.length; i++) output += cache.values[keys[i]]
+    for (let i = 0; i < cachedStyles.length; i++) output += cache.stylis[cachedStyles[i]]
     if (clear) cache.clear()
     return output
   }
@@ -497,22 +512,20 @@ const createStyles = cache => {
 
     const nonceString = cache.sheet.nonce ? ` nonce="${cache.sheet.nonce}"` : ''
     let output = ''
-    const cacheValues = Object.assign({}, variablesStyles, globalStyles, cache.values)
+    const cachedStyles = unique(variablesStyles, globalStyles, Object.keys(cache.values))
     // explicit check here for test envs
     if (process.env.NODE_ENV === 'development') {
       // uses separate tags in dev
-      const keys = Object.keys(cacheValues)
-
-      for (let i = 0; i < keys.length; i++) {
-        const key = keys[i]
+      for (let i = 0; i < cachedStyles.length; i++) {
+        const key = cachedStyles[i]
         output +=
           `<style data-${cache.key}="${key}"${nonceString}>` +
-          cacheValues[key] +
+          cache.stylis[key] +
           `</style>`
       }
     } else {
       // uses one tag in prod
-      const names = Object.keys(cacheValues).join(' ')
+      const names = cachedStyles.join(' ')
       output =
         `<style data-${cache.key}="${names}"${nonceString}>` +
         styles.extract(false) +
@@ -527,7 +540,13 @@ const createStyles = cache => {
     const serialized = serializeVariables(cache.key, vars)
     merge(variables, serialized.variables)
     const name = `${hash(serialized.styles)}-variables`
-    variablesStyles[name] = cache.insert(':root', `${hash(serialized.styles)}-variables`, serialized.styles, cache.sheet)
+    if (variablesStyles.indexOf(name) === -1) variablesStyles.push(name)
+    cache.insert(
+      ':root',
+      `${hash(serialized.styles)}-variables`,
+      serialized.styles,
+      cache.sheet
+    )
   }
 
   styles.themes = vars => {
@@ -538,7 +557,13 @@ const createStyles = cache => {
       merge(variables, serialized.variables)
       const className = `.${cache.key}-${key}-theme`
       const name = `${hash(serialized.styles)}-variables`
-      variablesStyles[name] = cache.insert(className, name, serialized.styles, cache.sheet)
+      if (variablesStyles.indexOf(name) === -1) variablesStyles.push(name)
+      cache.insert(
+        className,
+        name,
+        serialized.styles,
+        cache.sheet
+      )
     }
   }
 
@@ -548,7 +573,8 @@ const createStyles = cache => {
     let styles = serialize(variables, interpolate(arguments))
     if (!styles) return ''
     const name = `${hash(styles)}-global`
-    globalStyles[name] = cache.insert('', name, styles, cache.sheet)
+    if (globalStyles.indexOf(name) === -1) globalStyles.push(name)
+    cache.insert('', name, styles, cache.sheet)
   }
 
   styles.cache = cache

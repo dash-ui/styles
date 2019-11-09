@@ -111,8 +111,8 @@ describe('Usage', () => {
     const myStyles = styles.configure({})
     myStyles.variables({
       colors: {
-        blue: '#09a'
-      }
+        blue: '#09a',
+      },
     })
 
     expect(myStyles.extractTags()).toMatchSnapshot()
@@ -123,14 +123,14 @@ describe('Usage', () => {
     myStyles.themes({
       dark: {
         colors: {
-          primary: '#000'
-        }
+          primary: '#000',
+        },
       },
       light: {
         colors: {
-          primary: '#fff'
-        }
-      }
+          primary: '#fff',
+        },
+      },
     })
 
     expect(myStyles.extractTags()).toMatchSnapshot()
