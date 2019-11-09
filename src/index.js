@@ -445,7 +445,10 @@ const createStyles = cache => {
     }
   }
 
-  function styles(defs) {
+  function styles() {
+    let defs = arguments[0]
+    if (arguments.length > 1) defs = Object.assign({}, ...arguments)
+
     function serializeStyles(getter) {
       if (typeof getter === 'string') {
         return serialize(variables, defs[getter])
@@ -465,7 +468,7 @@ const createStyles = cache => {
 
     //
     // style()
-    return function style() {
+    function style() {
       let serializedStyles
 
       if (arguments.length > 1) {
@@ -493,6 +496,10 @@ const createStyles = cache => {
       cache.insert(`.${className}`, name, serializedStyles, cache.sheet)
       return className
     }
+
+    style.cache = cache
+    style.styles = defs
+    return style
   }
 
   //
@@ -583,7 +590,6 @@ const createStyles = cache => {
   }
 
   styles.cache = cache
-  styles.sheet = cache.sheet
   return styles
 }
 

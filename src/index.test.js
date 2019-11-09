@@ -108,7 +108,7 @@ describe('Usage', () => {
     }
 
     styles.cache.clear()
-    styles.sheet.flush()
+    styles.cache.sheet.flush()
     style({flex: true, block: true, inline: true})
 
     for (let element of document.querySelectorAll(`style[data-dash]`)) {

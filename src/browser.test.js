@@ -15,7 +15,7 @@ const serializeRules = (selector = `style[data-dash]`) => {
 }
 
 afterEach(() => {
-  styles.sheet.flush()
+  styles.cache.sheet.flush()
   document.getElementsByTagName('html')[0].innerHTML = ''
 })
 
@@ -96,7 +96,7 @@ describe('Usage', () => {
     style('flex')
     style('block')
     expect(document.querySelectorAll(`style[data-dash]`).length).toBe(2)
-    myStyles.sheet.flush()
+    myStyles.cache.sheet.flush()
     expect(document.querySelectorAll(`style[data-dash]`).length).toBe(0)
   })
 
