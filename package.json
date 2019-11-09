@@ -60,6 +60,7 @@
     "@essentials/benchmark": "^1.0.5",
     "@lunde/babel-preset-es": "latest",
     "babel-eslint": "latest",
+    "crc": "^3.8.0",
     "cross-env": "latest",
     "eslint": "latest",
     "eslint-import-resolver-jest": "latest",

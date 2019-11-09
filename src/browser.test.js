@@ -1,3 +1,4 @@
+import crc from 'crc';
 import styles from './index'
 
 const serializeRules = (selector = `style[data-dash]`) => {
@@ -31,6 +32,22 @@ describe('Configure', () => {
     for (let element of document.querySelectorAll(`style[data-dash]`)) {
       expect(element).toMatchSnapshot('DOM')
     }
+  })
+
+  it('configures hash algorithm', () => {
+    const customHash = string => crc.crc32(string).toString(16)
+    const myStyles = styles.create({hash: customHash})
+    const style = myStyles({
+      flex: {display: 'flex'},
+    })
+
+    expect(style('flex')).toMatchSnapshot()
+
+    const style2 = styles.create()({
+      flex: {display: 'flex'},
+    })
+
+    expect(style2('flex')).not.toBe(style('flex'))
   })
 
   it('adds nonce to style tags', () => {

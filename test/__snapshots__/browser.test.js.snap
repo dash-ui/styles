@@ -28,6 +28,8 @@ exports[`Configure changes key to "css": DOM 1`] = `
 </style>
 `;
 
+exports[`Configure configures hash algorithm 1`] = `"dash-e038ab58"`;
+
 exports[`Configure turns off vendor prefixing: DOM 1`] = `
 <style
   data-dash="dash"
