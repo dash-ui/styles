@@ -190,6 +190,7 @@ const configure = (options = {}) => {
       nonce,
       speedy,
     }),
+    stylis,
     stylisCache: serverStylisCache,
     insert,
     values,
@@ -462,6 +463,8 @@ const createStyles = cache => {
       }
     }
 
+    //
+    // style()
     return function style() {
       let serializedStyles
 
@@ -551,6 +554,8 @@ const createStyles = cache => {
     return output
   }
 
+  //
+  // Methods
   styles.variables = vars => {
     const serialized = serializeVariables(cache.key, vars)
     merge(variables, serialized.variables)
