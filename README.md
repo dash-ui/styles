@@ -37,8 +37,8 @@ styles.variables({
   colors: {
     red: '#c12',
     blue: '#09a',
-    purple: '#800080'
-  }
+    purple: '#800080',
+  },
 })
 
 const style = styles({

@@ -211,8 +211,6 @@ export const styleSheet = ({key, container, nonce, speedy}) => {
 
   return {
     nonce,
-    container,
-    speedy,
     insert(rule) {
       // the max length is how many rules we have per style tag, it's 65000 in
       // speedy mode it's 1 in dev because we insert source maps that map a
@@ -398,20 +396,20 @@ const merge = (target, source) => {
   return target
 }
 
-function unique () {
+function unique() {
   const set = {},
-    out = [];
+    out = []
 
   for (let i = 0; i < arguments.length; i++) {
     for (let j = 0; j < arguments[i].length; j++) {
-      const value = arguments[i][j];
-      if (set[value] === 1) continue;
-      set[value] = 1;
-      out.push(value);
+      const value = arguments[i][j]
+      if (set[value] === 1) continue
+      set[value] = 1
+      out.push(value)
     }
   }
 
-  return out;
+  return out
 }
 
 //
@@ -497,9 +495,14 @@ const createStyles = cache => {
         throw new Error('styles.extract() only works in node environments')
     }
 
-    const cachedStyles = unique(variablesStyles, globalStyles, Object.keys(cache.values))
+    const cachedStyles = unique(
+      variablesStyles,
+      globalStyles,
+      Object.keys(cache.values)
+    )
     let output = ''
-    for (let i = 0; i < cachedStyles.length; i++) output += cache.stylis[cachedStyles[i]]
+    for (let i = 0; i < cachedStyles.length; i++)
+      output += cache.stylis[cachedStyles[i]]
     if (clear) cache.clear()
     return output
   }
@@ -512,7 +515,11 @@ const createStyles = cache => {
 
     const nonceString = cache.sheet.nonce ? ` nonce="${cache.sheet.nonce}"` : ''
     let output = ''
-    const cachedStyles = unique(variablesStyles, globalStyles, Object.keys(cache.values))
+    const cachedStyles = unique(
+      variablesStyles,
+      globalStyles,
+      Object.keys(cache.values)
+    )
     // explicit check here for test envs
     if (process.env.NODE_ENV === 'development') {
       // uses separate tags in dev
@@ -558,12 +565,7 @@ const createStyles = cache => {
       const className = `.${cache.key}-${key}-theme`
       const name = `${hash(serialized.styles)}-variables`
       if (variablesStyles.indexOf(name) === -1) variablesStyles.push(name)
-      cache.insert(
-        className,
-        name,
-        serialized.styles,
-        cache.sheet
-      )
+      cache.insert(className, name, serialized.styles, cache.sheet)
     }
   }
 

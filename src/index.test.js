@@ -9,11 +9,11 @@ describe('Usage', () => {
     styles.configure().variables({
       colors: {
         blue: '#09a',
-        red: '#c12'
+        red: '#c12',
       },
       spacing: {
-        xs: '1rem'
-      }
+        xs: '1rem',
+      },
     })
 
     for (let element of document.querySelectorAll(`style[data-dash]`)) {
@@ -26,15 +26,15 @@ describe('Usage', () => {
       dark: {
         colors: {
           bg: '#000',
-          text: '#fff'
-        }
+          text: '#fff',
+        },
       },
       light: {
         colors: {
           bg: '#fff',
-          text: '#000'
-        }
-      }
+          text: '#000',
+        },
+      },
     })
 
     for (let element of document.querySelectorAll(`style[data-dash]`)) {
@@ -132,23 +132,23 @@ describe('Usage', () => {
     myStyles.variables({
       colors: {
         blue: '#09a',
-        red: '#c12'
-      }
+        red: '#c12',
+      },
     })
 
     myStyles.themes({
       dark: {
         colors: {
           bg: '#000',
-          text: '#fff'
-        }
+          text: '#fff',
+        },
       },
       light: {
         colors: {
           bg: '#fff',
-          text: '#000'
-        }
-      }
+          text: '#000',
+        },
+      },
     })
 
     const style = myStyles({
