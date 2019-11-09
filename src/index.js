@@ -447,7 +447,14 @@ const createStyles = cache => {
 
   function styles() {
     let defs = arguments[0]
-    if (arguments.length > 1) defs = Object.assign({}, ...arguments)
+    if (arguments.length > 1) {
+      defs = Object.assign(
+        {},
+        ...Array.prototype.slice
+          .call(arguments)
+          .map(arg => (typeof arg === 'function' ? arg.styles : arg))
+      )
+    }
 
     function serializeStyles(getter) {
       if (typeof getter === 'string') {
@@ -582,7 +589,11 @@ const createStyles = cache => {
   }
 
   styles.global = function() {
-    let styles = serialize(variables, interpolate(arguments))
+    let styles =
+      typeof arguments[0] === 'function'
+        ? arguments[0](variables)
+        : interpolate(arguments)
+    styles = serialize(variables, styles)
     if (!styles) return ''
     const name = `${hash(styles)}-global`
     if (globalStyles.indexOf(name) === -1) globalStyles.push(name)

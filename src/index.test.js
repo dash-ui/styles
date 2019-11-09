@@ -162,6 +162,36 @@ describe('Usage', () => {
     style('box')
   })
 
+  it('passes variables to global styles', () => {
+    const myStyles = styles.configure()
+    myStyles.variables({
+      colors: {
+        blue: '#09a',
+        red: '#c12',
+      },
+    })
+
+    myStyles.themes({
+      dark: {
+        colors: {
+          bg: '#000',
+          text: '#fff',
+        },
+      },
+      light: {
+        colors: {
+          bg: '#fff',
+          text: '#000',
+        },
+      },
+    })
+
+    myStyles.global(vars => {
+      expect(vars).toMatchSnapshot()
+      return ''
+    })
+  })
+
   it('injects global styles', () => {
     const styles_ = styles.configure()
     styles_.global(`
@@ -211,7 +241,7 @@ describe('Usage', () => {
     process.env.NODE_ENV = 'development'
     const style = styles.configure()({
       flex: `display: flex;`,
-      block: `display: block`,
+      block: `display: block;`,
       inline: `display: inline;`,
     })
 
@@ -221,6 +251,44 @@ describe('Usage', () => {
       '-flex-block'
     )
     process.env.NODE_ENV = prevEnv
+  })
+
+  it('allows multiple arguments', () => {
+    const style = styles.configure()(
+      {
+        flex: `display: flex;`,
+        block: `display: block;`,
+      },
+      {
+        inline: `display: inline;`,
+      }
+    )
+
+    style('flex', 'block', 'inline')
+
+    for (let element of document.querySelectorAll(`style[data-dash]`)) {
+      expect(element).toMatchSnapshot()
+    }
+  })
+
+  it('allows style functions in arguments', () => {
+    const myStyles = styles.configure()
+    const styleA = myStyles({
+      flex: `display: flex;`,
+      block: `display: block;`,
+    })
+    const styleB = myStyles(
+      {
+        inline: `display: inline;`,
+      },
+      styleA
+    )
+
+    styleB('flex', 'block', 'inline')
+
+    for (let element of document.querySelectorAll(`style[data-dash]`)) {
+      expect(element).toMatchSnapshot()
+    }
   })
 })
 
