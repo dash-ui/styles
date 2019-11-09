@@ -190,7 +190,7 @@ const configure = (options = {}) => {
       nonce,
       speedy,
     }),
-    stylis: serverStylisCache,
+    stylisCache: serverStylisCache,
     insert,
     values,
     clear() {
@@ -210,7 +210,11 @@ export const styleSheet = ({key, container, nonce, speedy}) => {
     tags = []
 
   return {
+    // include all keys so it the object can be cloned via styleSheet(sheet)
+    key,
     nonce,
+    container,
+    speedy,
     insert(rule) {
       // the max length is how many rules we have per style tag, it's 65000 in
       // speedy mode it's 1 in dev because we insert source maps that map a
@@ -354,33 +358,36 @@ const serialize = (variables, styles) => {
   return styles
 }
 
-const serializeVariables = memoize([{}, WeakMap, {}], (cacheKey, vars, names) => {
-  const keys = Object.keys(vars)
-  const variables = {}
-  let styles = ''
+const serializeVariables = memoize(
+  [{}, WeakMap, {}],
+  (cacheKey, vars, names) => {
+    const keys = Object.keys(vars)
+    const variables = {}
+    let styles = ''
 
-  for (let i = 0; i < keys.length; i++) {
-    const key = keys[i]
-    const value = vars[key]
+    for (let i = 0; i < keys.length; i++) {
+      const key = keys[i]
+      const value = vars[key]
 
-    if (typeof value === 'object') {
-      names = names || []
-      const result = serializeVariables(cacheKey, value, names.concat(key))
-      variables[key] = result.variables
-      styles += result.styles
-    } else {
-      let name = `--${cacheKey}`
-      if (names !== void 0 && names.length > 0) {
-        name += `-${names.reverse().join('-')}`
+      if (typeof value === 'object') {
+        names = names || []
+        const result = serializeVariables(cacheKey, value, names.concat(key))
+        variables[key] = result.variables
+        styles += result.styles
+      } else {
+        let name = `--${cacheKey}`
+        if (names !== void 0 && names.length > 0) {
+          name += `-${names.reverse().join('-')}`
+        }
+        name += `-${key}`
+        variables[key] = `var(${name})`
+        styles += `${name}: ${value};`
       }
-      name += `-${key}`
-      variables[key] = `var(${name})`
-      styles += `${name}: ${value};`
     }
-  }
 
-  return {variables, styles}
-})
+    return {variables, styles}
+  }
+)
 
 const merge = memoize([WeakMap, WeakMap], (target, source) => {
   const keys = Object.keys(source)
@@ -503,7 +510,7 @@ const createStyles = cache => {
     )
     let output = ''
     for (let i = 0; i < cachedStyles.length; i++)
-      output += cache.stylis[cachedStyles[i]]
+      output += cache.stylisCache[cachedStyles[i]]
     if (clear) cache.clear()
     return output
   }
@@ -528,7 +535,7 @@ const createStyles = cache => {
         const key = cachedStyles[i]
         output +=
           `<style data-${cache.key}="${key}"${nonceString}>` +
-          cache.stylis[key] +
+          cache.stylisCache[key] +
           `</style>`
       }
     } else {
