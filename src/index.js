@@ -617,6 +617,7 @@ const createStyles = dash => {
   return styles
 }
 
-// Creates an initial cache
+//
+// Creates default dash styles function
 export const styles = createStyles(createDash())
 export default styles
