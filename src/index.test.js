@@ -156,6 +156,10 @@ describe('Usage', () => {
     })
 
     style('box')
+    expect(myStyles.theme('dark')).toMatchSnapshot()
+    style('box')
+    expect(myStyles.theme('light')).toMatchSnapshot()
+    style('box')
   })
 
   it('injects global styles', () => {

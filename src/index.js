@@ -354,7 +354,7 @@ const serialize = (variables, styles) => {
   return styles
 }
 
-const serializeVariables = (cacheKey, vars, names) => {
+const serializeVariables = memoize([{}, WeakMap, {}], (cacheKey, vars, names) => {
   const keys = Object.keys(vars)
   const variables = {}
   let styles = ''
@@ -380,9 +380,9 @@ const serializeVariables = (cacheKey, vars, names) => {
   }
 
   return {variables, styles}
-}
+})
 
-const merge = (target, source) => {
+const merge = memoize([WeakMap, WeakMap], (target, source) => {
   const keys = Object.keys(source)
 
   for (let i = 0; i < keys.length; i++) {
@@ -394,7 +394,7 @@ const merge = (target, source) => {
   }
 
   return target
-}
+})
 
 function unique() {
   const set = {},
@@ -417,6 +417,7 @@ function unique() {
 const createStyles = cache => {
   const variables = {},
     variablesStyles = [],
+    themes = {},
     globalStyles = []
   let addLabels
   // explicit here on purpose so it's not in every test
@@ -556,20 +557,15 @@ const createStyles = cache => {
     )
   }
 
-  styles.themes = vars => {
-    const keys = Object.keys(vars)
-    for (let i = 0; i < keys.length; i++) {
-      const key = keys[i]
-      const serialized = serializeVariables(cache.key, vars[key])
-      merge(variables, serialized.variables)
-      const className = `.${cache.key}-${key}-theme`
-      const name = `${hash(serialized.styles)}-variables`
-      if (variablesStyles.indexOf(name) === -1) variablesStyles.push(name)
-      cache.insert(className, name, serialized.styles, cache.sheet)
-    }
+  styles.themes = vars => Object.assign(themes, vars)
+  styles.theme = theme => {
+    const serialized = serializeVariables(cache.key, themes[theme])
+    merge(variables, serialized.variables)
+    const name = `${hash(serialized.styles)}-variables`
+    const className = `${cache.key}-${theme}-theme`
+    cache.insert(`.${className}`, name, serialized.styles, cache.sheet)
+    return className
   }
-
-  styles.theme = name => `${cache.key}-${name}-theme`
 
   styles.global = function() {
     let styles = serialize(variables, interpolate(arguments))

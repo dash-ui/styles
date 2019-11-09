@@ -134,6 +134,10 @@ describe('Usage', () => {
     })
 
     expect(myStyles.extractTags()).toMatchSnapshot()
+    myStyles.theme('dark')
+    expect(myStyles.extractTags()).toMatchSnapshot()
+    myStyles.theme('light')
+    expect(myStyles.extractTags()).toMatchSnapshot()
   })
 
   it('caches styles', () => {

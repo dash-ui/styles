@@ -50,24 +50,6 @@ exports[`Usage creates global variables: :root 1`] = `
 </style>
 `;
 
-exports[`Usage creates theme variables: :root 1`] = `
-<style
-  data-dash="dash"
->
-  
-  .dash-dark-theme{--dash-colors-bg:#000;--dash-colors-text:#fff;}
-</style>
-`;
-
-exports[`Usage creates theme variables: :root 2`] = `
-<style
-  data-dash="dash"
->
-  
-  .dash-light-theme{--dash-colors-bg:#fff;--dash-colors-text:#000;}
-</style>
-`;
-
 exports[`Usage injects global styles 1`] = `
 <style
   data-dash="dash"
@@ -78,6 +60,30 @@ exports[`Usage injects global styles 1`] = `
 `;
 
 exports[`Usage passes variables to style callbacks 1`] = `
+Object {
+  "colors": Object {
+    "blue": "var(--dash-colors-blue)",
+    "red": "var(--dash-colors-red)",
+  },
+}
+`;
+
+exports[`Usage passes variables to style callbacks 2`] = `"dash-dark-theme"`;
+
+exports[`Usage passes variables to style callbacks 3`] = `
+Object {
+  "colors": Object {
+    "bg": "var(--dash-colors-bg)",
+    "blue": "var(--dash-colors-blue)",
+    "red": "var(--dash-colors-red)",
+    "text": "var(--dash-colors-text)",
+  },
+}
+`;
+
+exports[`Usage passes variables to style callbacks 4`] = `"dash-light-theme"`;
+
+exports[`Usage passes variables to style callbacks 5`] = `
 Object {
   "colors": Object {
     "bg": "var(--dash-colors-bg)",

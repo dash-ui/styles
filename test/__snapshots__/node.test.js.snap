@@ -18,4 +18,8 @@ exports[`Usage extracts multiple style tags in dev 1`] = `"<style data-dash=\\"k
 
 exports[`Usage extracts single style tag in prod 1`] = `"<style data-dash=\\"k008qs 49sf46\\">.dash-k008qs{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;}.dash-49sf46-btn{border-radius:1000px;background:blue;color:white;}</style>"`;
 
-exports[`Usage extracts theme variables 1`] = `"<style data-dash=\\"1ah86d8-variables 1jehvhf-variables\\">.dash-dark-theme{--dash-colors-primary:#000;}.dash-light-theme{--dash-colors-primary:#fff;}</style>"`;
+exports[`Usage extracts theme variables 1`] = `"<style data-dash=\\"\\"></style>"`;
+
+exports[`Usage extracts theme variables 2`] = `"<style data-dash=\\"1ah86d8-variables\\">.dash-dark-theme{--dash-colors-primary:#000;}</style>"`;
+
+exports[`Usage extracts theme variables 3`] = `"<style data-dash=\\"1jehvhf-variables\\">.dash-light-theme{--dash-colors-primary:#fff;}</style>"`;
