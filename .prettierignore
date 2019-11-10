@@ -1,3 +1,3 @@
 node_modules
 /coverage
-/dist/umd
+/dist/umd/-ui.min.js
