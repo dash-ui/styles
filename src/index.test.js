@@ -21,6 +21,16 @@ describe('Usage', () => {
     }
   })
 
+  it('creates global variables w/ scales', () => {
+    styles.create().variables({
+      spacing: ['1rem', '2rem', '4rem'],
+    })
+
+    for (let element of document.querySelectorAll(`style[data-dash]`)) {
+      expect(element).toMatchSnapshot(':root')
+    }
+  })
+
   it('creates theme variables', () => {
     styles.create().themes({
       dark: {

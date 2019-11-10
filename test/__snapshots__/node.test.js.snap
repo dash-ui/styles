@@ -18,7 +18,7 @@ exports[`Usage extracts multiple style tags in dev 1`] = `"<style data-dash=\\"1
 
 exports[`Usage extracts single style tag in prod 1`] = `"<style data-dash=\\"1ut9bc3 2qtxn6\\">.dash-1ut9bc3{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;}.dash-2qtxn6-btn{border-radius:1000px;background:blue;color:white;}</style>"`;
 
-exports[`Usage extracts theme variables 1`] = `"<style data-dash=\\"\\"></style>"`;
+exports[`Usage extracts theme variables 1`] = `"<style data-dash=\\"pdf8y1-variables\\">.dash-dark-theme{--dash-colors-primary:#000;}</style>"`;
 
 exports[`Usage extracts theme variables 2`] = `"<style data-dash=\\"pdf8y1-variables\\">.dash-dark-theme{--dash-colors-primary:#000;}</style>"`;
 

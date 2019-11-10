@@ -1,9 +1,10 @@
 {
   "name": "@-ui/styles",
-  "version": "1.0.13",
+  "version": "1.0.14",
   "homepage": "https://github.com/dash-ui/styles#readme",
   "repository": "github:dash-ui/styles",
   "bugs": "https://github.com/dash-ui/styles/issues",
+  "author": "Jared Lunde <jared.lunde@gmail.com> (https://jaredLunde.com)",
   "license": "MIT",
   "description": "Yet another CSS-in-JS library based on Facebook's internal styling library as seen at React Conf 2019",
   "keywords": [

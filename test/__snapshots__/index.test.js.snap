@@ -59,12 +59,30 @@ exports[`Usage allows unitless object values: 200x200 1`] = `
 </style>
 `;
 
+exports[`Usage creates global variables w/ scales: :root 1`] = `
+<style
+  data-dash="dash"
+>
+  
+  :root{--dash-spacing-0:1rem;--dash-spacing-1:2rem;--dash-spacing-2:4rem;}
+</style>
+`;
+
 exports[`Usage creates global variables: :root 1`] = `
 <style
   data-dash="dash"
 >
   
   :root{--dash-colors-blue:#09a;--dash-colors-red:#c12;--dash-spacing-xs:1rem;}
+</style>
+`;
+
+exports[`Usage creates theme variables: :root 1`] = `
+<style
+  data-dash="dash"
+>
+  
+  .dash-dark-theme{--dash-colors-bg:#000;--dash-colors-text:#fff;}
 </style>
 `;
 
@@ -80,8 +98,10 @@ exports[`Usage injects global styles 1`] = `
 exports[`Usage passes variables to global styles 1`] = `
 Object {
   "colors": Object {
+    "bg": "var(--dash-colors-bg)",
     "blue": "var(--dash-colors-blue)",
     "red": "var(--dash-colors-red)",
+    "text": "var(--dash-colors-text)",
   },
 }
 `;
@@ -89,8 +109,10 @@ Object {
 exports[`Usage passes variables to style callbacks 1`] = `
 Object {
   "colors": Object {
+    "bg": "var(--dash-colors-bg)",
     "blue": "var(--dash-colors-blue)",
     "red": "var(--dash-colors-red)",
+    "text": "var(--dash-colors-text)",
   },
 }
 `;

@@ -208,6 +208,10 @@ export const createDash = (options = {}) => {
     stylisCache,
     insert,
     insertCache,
+    variables: {},
+    variablesCache: [],
+    themes: {},
+    globalCache: [],
     clear() {
       this.insertCache = insertCache = {}
     },
@@ -362,9 +366,9 @@ const styleObjectToString = memoize([WeakMap], object => {
   return string
 })
 
-const serialize = (variables, styles) => {
+export const serializeStyles = (styles, variables) => {
   if (typeof styles === 'function') {
-    return serialize(variables, styles(variables))
+    return serializeStyles(styles(variables), variables)
   } else if (typeof styles === 'object') {
     styles = styleObjectToString(styles)
   }
@@ -400,7 +404,7 @@ const serializeVariables_ = (cacheKey, vars, names) => {
 
   return {variables, styles}
 }
-const serializeVariables = memoize([{}, WeakMap], serializeVariables_)
+export const serializeVariables = memoize([{}, WeakMap], serializeVariables_)
 
 const merge_ = (target, source) => {
   const keys = Object.keys(source)
@@ -415,7 +419,7 @@ const merge_ = (target, source) => {
 
   return target
 }
-const merge = memoize([WeakMap, WeakMap], merge_)
+const mergeVariables = memoize([WeakMap, WeakMap], merge_)
 
 function unique() {
   const set = {},
@@ -436,10 +440,6 @@ function unique() {
 //
 // Where the magic happens
 const createStyles = dash => {
-  const variables = {},
-    variablesStyles = [],
-    themes = {},
-    globalStyles = []
   let addLabels
   // explicit here on purpose so it's not in every test
   if (process.env.NODE_ENV === 'development') {
@@ -447,6 +447,7 @@ const createStyles = dash => {
       // add helpful labels to the name in development
       for (let i = 0; i < args.length; i++) {
         const arg = args[i]
+
         if (typeof arg === 'string') name += `-${arg}`
         else if (typeof arg === 'object') {
           const keys = Object.keys(arg).filter(k => arg[k])
@@ -469,20 +470,20 @@ const createStyles = dash => {
       )
     }
 
-    function serializeStyles(getter) {
+    function serializeDefStyles(getter) {
       if (typeof getter === 'string') {
-        return serialize(variables, defs[getter])
+        return serializeStyles(defs[getter], dash.variables)
       } else if (typeof getter === 'object') {
         let keys = Object.keys(getter),
           nextStyles = ''
 
         for (let i = 0; i < keys.length; i++) {
           if (getter[keys[i]]) {
-            nextStyles += serialize(variables, defs[keys[i]])
+            nextStyles += serializeStyles(defs[keys[i]], dash.variables)
           }
         }
 
-        return serialize(variables, nextStyles)
+        return serializeStyles(nextStyles, dash.variables)
       }
     }
 
@@ -501,9 +502,9 @@ const createStyles = dash => {
           else if (typeof arg === 'object') Object.assign(styleDefs, arg)
         }
 
-        serializedStyles = serializeStyles(styleDefs)
+        serializedStyles = serializeDefStyles(styleDefs)
       } else {
-        serializedStyles = serializeStyles(arguments[0])
+        serializedStyles = serializeDefStyles(arguments[0])
       }
 
       if (!serializedStyles) return ''
@@ -533,8 +534,8 @@ const createStyles = dash => {
     }
 
     const cachedStyles = unique(
-      variablesStyles,
-      globalStyles,
+      dash.variablesCache,
+      dash.globalCache,
       Object.keys(dash.insertCache)
     )
     let output = ''
@@ -553,8 +554,8 @@ const createStyles = dash => {
     const nonceString = dash.sheet.nonce ? ` nonce="${dash.sheet.nonce}"` : ''
     let output = ''
     const cachedStyles = unique(
-      variablesStyles,
-      globalStyles,
+      dash.variablesCache,
+      dash.globalCache,
       Object.keys(dash.insertCache)
     )
     // explicit check here for test envs
@@ -582,19 +583,20 @@ const createStyles = dash => {
 
   styles.variables = vars => {
     const serialized = serializeVariables(dash.key, vars)
-    merge(variables, serialized.variables)
+    mergeVariables(dash.variables, serialized.variables)
     const name = `${dash.hash(serialized.styles)}-variables`
-    if (variablesStyles.indexOf(name) === -1) variablesStyles.push(name)
+    if (dash.variablesCache.indexOf(name) === -1) dash.variablesCache.push(name)
     dash.insert(':root', name, serialized.styles, dash.sheet)
   }
 
   styles.themes = vars => {
-    Object.assign(themes, vars)
+    Object.assign(dash.themes, vars)
+    styles.theme(dash.themes.default ? 'default' : Object.keys(dash.themes)[0])
   }
 
   styles.theme = theme => {
-    const serialized = serializeVariables(dash.key, themes[theme])
-    merge(variables, serialized.variables)
+    const serialized = serializeVariables(dash.key, dash.themes[theme])
+    mergeVariables(dash.variables, serialized.variables)
     const name = `${dash.hash(serialized.styles)}-variables`
     const className = `${dash.key}-${theme}-theme`
     dash.insert(`.${className}`, name, serialized.styles, dash.sheet)
@@ -604,12 +606,12 @@ const createStyles = dash => {
   styles.global = function() {
     let styles =
       typeof arguments[0] === 'function'
-        ? arguments[0](variables)
+        ? arguments[0](dash.variables)
         : interpolate(arguments)
-    styles = serialize(variables, styles)
+    styles = serializeStyles(styles, dash.variables)
     if (!styles) return ''
     const name = `${dash.hash(styles)}-global`
-    if (globalStyles.indexOf(name) === -1) globalStyles.push(name)
+    if (dash.globalCache.indexOf(name) === -1) dash.globalCache.push(name)
     dash.insert('', name, styles, dash.sheet)
   }
 
