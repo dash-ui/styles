@@ -2,6 +2,15 @@
 # yarn lockfile v1
 
 
+"@-ui/styles@^1.0.14":
+  version "1.0.14"
+  resolved "https://registry.yarnpkg.com/@-ui/styles/-/styles-1.0.14.tgz#3be44f5534c1bb60d4367560861e2694320c1d3a"
+  integrity sha512-wZupqidwTr1yFMH2y2LYSvj1QlGMPeYlE3ny/KI8WuZ7KCp6Kg9Qqd4ly4ifHQ9Kyyr0sIcXRYuhSxrm3OiHAw==
+  dependencies:
+    "@emotion/stylis" "^0.8.4"
+    "@emotion/unitless" "^0.7.4"
+    trie-memoize "^1.0.15"
+
 "@babel/cli@latest":
   version "7.7.0"
   resolved "https://registry.yarnpkg.com/@babel/cli/-/cli-7.7.0.tgz#8d10c9acb2acb362d7614a9493e1791c69100d89"

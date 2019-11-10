@@ -57,6 +57,7 @@
     ]
   },
   "devDependencies": {
+    "@-ui/styles": "^1.0.14",
     "@babel/node": "^7.7.0",
     "@essentials/benchmark": "^1.0.5",
     "@lunde/babel-preset-es": "latest",
