@@ -49,41 +49,28 @@ const ruleSheet = (
   depth,
   at
 ) => {
-  switch (context) {
-    // property
-    case 1: {
-      switch (content.charCodeAt(0)) {
-        case 64: {
-          // @import
-          Sheet.current.insert(content + ';')
-          return ''
-        }
-      }
-      break
+  // property
+  if (context === 1) {
+    if (content.charCodeAt(0) === 64) {
+      // @import
+      Sheet.current.insert(content + ';')
+      return ''
     }
-    // selector
-    case 2: {
-      if (ns === 0) return content + RULE_DELIMITER
-      break
-    }
-    // at-rule
-    case 3: {
-      switch (ns) {
-        // @font-face, @page
-        case 102:
-        case 112: {
-          Sheet.current.insert(selectors[0] + content)
-          return ''
-        }
-        default: {
-          return content + (at === 0 ? RULE_DELIMITER : '')
-        }
-      }
-    }
-    case -2: {
-      const contents = content.split(RULE_NEEDLE)
-      for (let i = 0; i < contents.length; i++) toSheet(contents[i])
-    }
+  }
+  // selector
+  else if (context === 2) {
+    if (ns === 0) return content + RULE_DELIMITER
+  }
+  // at-rule
+  else if (context === 3) {
+    // @font-face, @page
+    if (ns === 102 || ns === 112) {
+      Sheet.current.insert(selectors[0] + content)
+      return ''
+    } else return content + (at === 0 ? RULE_DELIMITER : '')
+  } else if (context === -2) {
+    const contents = content.split(RULE_NEEDLE)
+    for (let i = 0; i < contents.length; i++) toSheet(contents[i])
   }
 }
 
