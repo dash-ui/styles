@@ -12,7 +12,7 @@ const config = (filename, env, plugins = []) => ({
     file: filename,
     format: 'umd',
     exports: 'named',
-    name: 'DashUI',
+    name: 'Dash',
   },
   plugins: [
     resolve(),
