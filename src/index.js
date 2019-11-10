@@ -325,6 +325,7 @@ let hyphenateRegex = /[A-Z]|^ms/g
 const interpolate = args => {
   let strings = args[0]
   if (typeof strings === 'string') return strings
+  if (!strings) return ''
   let str = ''
   // eslint-disable-next-line
   const [_, ...values] = Array.prototype.slice.call(args)
