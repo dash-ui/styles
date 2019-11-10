@@ -515,11 +515,11 @@ const createStyles = dash => {
 
       if (!serializedStyles) return ''
       let name = dash.hash(serializedStyles)
-      let className = `${dash.key}-${name}`
       // explicit here on purpose so it's not in every test
       if (process.env.NODE_ENV === 'development') {
-        className = addLabels(className, arguments)
+        name = addLabels(name, arguments)
       }
+      const className = `${dash.key}-${name}`
       dash.insert(`.${className}`, name, serializedStyles, dash.sheet)
       return className
     }

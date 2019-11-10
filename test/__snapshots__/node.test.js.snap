@@ -8,15 +8,15 @@ exports[`Configure has customized vendor prefixing 1`] = `".dash-1vlpa1m{display
 
 exports[`Configure removes vendor prefixing 1`] = `".dash-1ut9bc3{display:flex;}"`;
 
-exports[`Usage caches styles 1`] = `"<style data-dash=\\"1ut9bc3 1i986zm\\">.dash-1ut9bc3{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;}.dash-1i986zm-btn{border-radius:1000px;background:blue;color:white;}</style>"`;
+exports[`Usage caches styles 1`] = `"<style data-dash=\\"1ut9bc3 1i986zm\\">.dash-1ut9bc3{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;}.dash-1i986zm{border-radius:1000px;background:blue;color:white;}</style>"`;
 
 exports[`Usage extracts global styles 1`] = `"<style data-dash=\\"1r8lpmu-global\\">:root{--hello:\\"world\\";}</style>"`;
 
 exports[`Usage extracts global variables 1`] = `"<style data-dash=\\"wq8gql-variables\\">:root{--dash-colors-blue:#09a;}</style>"`;
 
-exports[`Usage extracts multiple style tags in dev 1`] = `"<style data-dash=\\"1ut9bc3\\">.dash-1ut9bc3{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;}</style><style data-dash=\\"1i986zm\\">.dash-1i986zm-btn{border-radius:1000px;background:blue;color:white;}</style>"`;
+exports[`Usage extracts multiple style tags in dev 1`] = `"<style data-dash=\\"1ut9bc3-flex\\">.dash-1ut9bc3-flex{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;}</style><style data-dash=\\"1i986zm-btn\\">.dash-1i986zm-btn{border-radius:1000px;background:blue;color:white;}</style>"`;
 
-exports[`Usage extracts single style tag in prod 1`] = `"<style data-dash=\\"1ut9bc3 1i986zm\\">.dash-1ut9bc3{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;}.dash-1i986zm-btn{border-radius:1000px;background:blue;color:white;}</style>"`;
+exports[`Usage extracts single style tag in prod 1`] = `"<style data-dash=\\"1ut9bc3 1i986zm\\">.dash-1ut9bc3{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;}.dash-1i986zm{border-radius:1000px;background:blue;color:white;}</style>"`;
 
 exports[`Usage extracts theme variables 1`] = `"<style data-dash=\\"9y11pf-variables\\">.dash-dark-theme{--dash-colors-primary:#000;}</style>"`;
 
