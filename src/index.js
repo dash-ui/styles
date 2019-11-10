@@ -610,7 +610,7 @@ const createStyles = dash => {
         ? arguments[0](dash.variables)
         : interpolate(arguments)
     styles = serializeStyles(styles, dash.variables)
-    if (!styles) return ''
+    if (!styles) return () => {}
     const name = `${dash.hash(styles)}-global`
     const sheet = styleSheet(dash.sheet)
     if (dash.globalCache.indexOf(name) === -1) dash.globalCache.push(name)
