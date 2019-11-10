@@ -617,7 +617,7 @@ const createStyles = dash => {
     dash.insert('', name, styles, sheet)
 
     return () => {
-      delete dash.insertCache[sheet.key]
+      delete dash.insertCache[name]
       if (dash.globalCache.indexOf(name) === -1) dash.globalCache.push(name)
       sheet.flush()
     }
