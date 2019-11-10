@@ -157,6 +157,7 @@ describe('Usage', () => {
         colors: {
           bg: '#fff',
           text: '#000',
+          lightSpecific: '#ccc',
         },
       },
     })
