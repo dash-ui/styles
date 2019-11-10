@@ -246,6 +246,20 @@ describe('Usage', () => {
     }
   })
 
+  it('unmounts global styles w/ callback', () => {
+    const styles_ = styles.create()
+    const unmount = styles_.global(`
+      html {
+        font-size: 100%;
+      }
+    `)
+
+    expect(document.querySelectorAll(`style[data-dash]`).length).toBe(1)
+    expect(document.querySelectorAll(`style[data-dash]`)[0]).toMatchSnapshot()
+    unmount()
+    expect(document.querySelectorAll(`style[data-dash]`).length).toBe(0)
+  })
+
   it('adds dev labels', () => {
     let prevEnv = process.env.NODE_ENV
     process.env.NODE_ENV = 'development'

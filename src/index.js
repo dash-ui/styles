@@ -324,7 +324,7 @@ const isProcessableValue = value => value !== null && typeof value !== 'boolean'
 let hyphenateRegex = /[A-Z]|^ms/g
 const interpolate = args => {
   let strings = args[0]
-  if (typeof args[0] === 'string') return strings
+  if (typeof strings === 'string') return strings
   let str = ''
   // eslint-disable-next-line
   const [_, ...values] = Array.prototype.slice.call(args)
@@ -611,8 +611,15 @@ const createStyles = dash => {
     styles = serializeStyles(styles, dash.variables)
     if (!styles) return ''
     const name = `${dash.hash(styles)}-global`
+    const sheet = styleSheet(dash.sheet)
     if (dash.globalCache.indexOf(name) === -1) dash.globalCache.push(name)
-    dash.insert('', name, styles, dash.sheet)
+    dash.insert('', name, styles, sheet)
+
+    return () => {
+      delete dash.insertCache[sheet.key]
+      if (dash.globalCache.indexOf(name) === -1) dash.globalCache.push(name)
+      sheet.flush()
+    }
   }
 
   styles.dash = dash

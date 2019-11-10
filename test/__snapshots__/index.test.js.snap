@@ -175,3 +175,12 @@ exports[`Usage should inject global styles once 3`] = `
   :root{--spacing-1:0.5rem;}
 </style>
 `;
+
+exports[`Usage unmounts global styles w/ callback 1`] = `
+<style
+  data-dash="dash"
+>
+  
+  html{font-size:100%;}
+</style>
+`;
