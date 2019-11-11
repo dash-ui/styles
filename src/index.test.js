@@ -10,6 +10,7 @@ describe('Usage', () => {
       colors: {
         blue: '#09a',
         red: '#c12',
+        lightRed: '#c1a',
       },
       spacing: {
         xs: '1rem',

@@ -308,7 +308,8 @@ export const styleSheet = ({key, container, nonce, speedy}) => {
 // Style serialization
 const isCustomProperty = property => property.charCodeAt(1) === 45
 const isProcessableValue = value => value !== null && typeof value !== 'boolean'
-let hyphenateRegex = /[A-Z]|^ms/g
+let cssCaseRe = /[A-Z]|^ms/g
+const cssCase = string => string.replace(cssCaseRe, '-$&').toLowerCase()
 const interpolate = args => {
   let strings = args[0]
   if (typeof strings === 'string') return strings
@@ -321,9 +322,7 @@ const interpolate = args => {
 }
 
 const styleName = memoize([{}], styleName =>
-  isCustomProperty(styleName)
-    ? styleName
-    : styleName.replace(hyphenateRegex, '-$&').toLowerCase()
+  isCustomProperty(styleName) ? styleName : cssCase(styleName)
 )
 
 let styleValue = (key, value) => {
@@ -382,26 +381,27 @@ const normalizeStyles_ = (styles, variables) => {
 
 export const normalizeStyles = memoize([Map, WeakMap], normalizeStyles_)
 
-const serializeVariables_ = (cacheKey, vars, names) => {
+const serializeVariables_ = (prefix, vars, names) => {
   const keys = Object.keys(vars)
   const variables = {}
   let styles = ''
 
   for (let i = 0; i < keys.length; i++) {
     const key = keys[i]
+    const cssKey = cssCase(key)
     const value = vars[key]
 
     if (typeof value === 'object') {
       names = names || []
-      const result = serializeVariables_(cacheKey, value, names.concat(key))
+      const result = serializeVariables_(prefix, value, names.concat(cssKey))
       variables[key] = result.variables
       styles += result.styles
     } else {
-      let name = `--${cacheKey}`
+      let name = `--${prefix}`
       if (names !== void 0 && names.length > 0) {
         name += `-${names.reverse().join('-')}`
       }
-      name += `-${key}`
+      name += `-${cssKey}`
       variables[key] = `var(${name})`
       styles += `${name}:${value};`
     }

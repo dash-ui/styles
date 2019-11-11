@@ -73,7 +73,7 @@ exports[`Usage creates global variables: :root 1`] = `
   data-dash="dash"
 >
   
-  :root{--dash-colors-blue:#09a;--dash-colors-red:#c12;--dash-spacing-xs:1rem;}
+  :root{--dash-colors-blue:#09a;--dash-colors-red:#c12;--dash-colors-light-red:#c1a;--dash-spacing-xs:1rem;}
 </style>
 `;
 
@@ -137,7 +137,7 @@ Object {
   "colors": Object {
     "bg": "var(--dash-colors-bg)",
     "blue": "var(--dash-colors-blue)",
-    "lightSpecific": "var(--dash-colors-lightSpecific)",
+    "lightSpecific": "var(--dash-colors-light-specific)",
     "red": "var(--dash-colors-red)",
     "text": "var(--dash-colors-text)",
   },
