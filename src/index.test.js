@@ -15,6 +15,9 @@ describe('Usage', () => {
       spacing: {
         xs: '1rem',
       },
+      system: {
+        p: {md: '1rem', xs: '0.25rem', sm: '0.5rem', lg: '2rem', xl: '4rem'},
+      },
     })
 
     for (let element of document.querySelectorAll(`style[data-dash]`)) {

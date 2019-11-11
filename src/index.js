@@ -398,9 +398,7 @@ const serializeVariables_ = (prefix, vars, names) => {
       styles += result.styles
     } else {
       let name = `--${prefix}`
-      if (names !== void 0 && names.length > 0) {
-        name += `-${names.reverse().join('-')}`
-      }
+      if (names !== void 0 && names.length > 0) name += `-${names.join('-')}`
       name += `-${cssKey}`
       variables[key] = `var(${name})`
       styles += `${name}:${value};`
@@ -409,7 +407,7 @@ const serializeVariables_ = (prefix, vars, names) => {
 
   return {variables, styles}
 }
-export const serializeVariables = memoize([{}, WeakMap], serializeVariables_)
+const serializeVariables = memoize([{}, WeakMap], serializeVariables_)
 
 const mergeVariables_ = (target, source) => {
   target = Object.assign({}, target)

@@ -73,7 +73,7 @@ exports[`Usage creates global variables: :root 1`] = `
   data-dash="dash"
 >
   
-  :root{--dash-colors-blue:#09a;--dash-colors-red:#c12;--dash-colors-light-red:#c1a;--dash-spacing-xs:1rem;}
+  :root{--dash-colors-blue:#09a;--dash-colors-red:#c12;--dash-colors-light-red:#c1a;--dash-spacing-xs:1rem;--dash-system-p-md:1rem;--dash-system-p-xs:0.25rem;--dash-system-p-sm:0.5rem;--dash-system-p-lg:2rem;--dash-system-p-xl:4rem;}
 </style>
 `;
 
