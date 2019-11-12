@@ -68,6 +68,20 @@ describe('Usage', () => {
     expect(style({flex: true, block: false, inline: true})).toMatchSnapshot()
   })
 
+  it('returns css styles', () => {
+    const style = styles.create()({
+      flex: {display: 'flex'},
+      block: {display: 'block'},
+      inline: 'display: inline;',
+    })
+
+    expect(style.css('flex')).toMatchSnapshot()
+    expect(style.css('flex', 'block', 'inline')).toMatchSnapshot()
+    expect(
+      style.css({flex: true, block: false, inline: true})
+    ).toMatchSnapshot()
+  })
+
   it('returns empty string when falsy', () => {
     const style = styles.create()({
       flex: {display: 'flex'},

@@ -353,34 +353,6 @@ const styleObjectToString = object => {
   return string
 }
 
-const minifyRe = [
-  /\s{2,}|\n|\t/g,
-  /([:;,([{}>~/])\s+/g,
-  /\s+([;,)\]{}>~/!])/g,
-  /(\/\*)\s+/,
-  /\s+(\*\/)/,
-]
-
-const normalizeStyles_ = (styles, variables) => {
-  if (typeof styles === 'function') {
-    return normalizeStyles_(styles(variables), variables)
-  } else if (typeof styles === 'object') {
-    styles = styleObjectToString(styles)
-  }
-
-  return !styles
-    ? ''
-    : styles
-        .replace(minifyRe[0], ' ')
-        .replace(minifyRe[1], '$1')
-        .replace(minifyRe[2], '$1')
-        .replace(minifyRe[3], '$1')
-        .replace(minifyRe[4], '$1')
-        .trim()
-}
-
-export const normalizeStyles = memoize([Map, WeakMap], normalizeStyles_)
-
 const serializeVariables_ = (prefix, vars, names) => {
   const keys = Object.keys(vars)
   const variables = {}
@@ -441,6 +413,65 @@ function unique() {
   return out
 }
 
+const minifyRe = [
+  /\s{2,}|\n|\t/g,
+  /([:;,([{}>~/])\s+/g,
+  /\s+([;,)\]{}>~/!])/g,
+  /(\/\*)\s+/,
+  /\s+(\*\/)/,
+]
+
+const normalizeStyles_ = (styles, variables) => {
+  if (typeof styles === 'function') {
+    return normalizeStyles_(styles(variables), variables)
+  } else if (typeof styles === 'object') {
+    styles = styleObjectToString(styles)
+  }
+
+  return !styles
+    ? ''
+    : styles
+        .replace(minifyRe[0], ' ')
+        .replace(minifyRe[1], '$1')
+        .replace(minifyRe[2], '$1')
+        .replace(minifyRe[3], '$1')
+        .replace(minifyRe[4], '$1')
+        .trim()
+}
+
+export const normalizeStyles = memoize([Map, WeakMap], normalizeStyles_)
+
+const normalizeStyleDefs = (dash, styleDefs, styleName) => {
+  if (typeof styleName === 'string') {
+    return normalizeStyles(styleDefs[styleName], dash.variables)
+  } else if (typeof styleName === 'object') {
+    let keys = Object.keys(styleName),
+      nextStyles = ''
+
+    for (let i = 0; i < keys.length; i++) {
+      if (styleName[keys[i]]) {
+        nextStyles += normalizeStyles(styleDefs[keys[i]], dash.variables)
+      }
+    }
+
+    return normalizeStyles(nextStyles, dash.variables)
+  }
+}
+
+const normalizeArgs = (dash, styleDefs, args) => {
+  if (args.length > 1) {
+    const argDefs = {}
+
+    for (let i = 0; i < args.length; i++) {
+      const arg = args[i]
+      if (typeof arg === 'string') argDefs[arg] = true
+      else if (typeof arg === 'object') Object.assign(argDefs, arg)
+    }
+
+    return normalizeStyleDefs(dash, styleDefs, argDefs)
+  } else return normalizeStyleDefs(dash, styleDefs, args[0])
+}
+
 //
 // Where the magic happens
 const createStyles = dash => {
@@ -474,54 +505,24 @@ const createStyles = dash => {
       )
     }
 
-    function normalizeDefs(getter) {
-      if (typeof getter === 'string') {
-        return normalizeStyles(defs[getter], dash.variables)
-      } else if (typeof getter === 'object') {
-        let keys = Object.keys(getter),
-          nextStyles = ''
-
-        for (let i = 0; i < keys.length; i++) {
-          if (getter[keys[i]]) {
-            nextStyles += normalizeStyles(defs[keys[i]], dash.variables)
-          }
-        }
-
-        return normalizeStyles(nextStyles, dash.variables)
-      }
-    }
-
     //
     // style()
     function style() {
-      let serializedStyles
-
-      if (arguments.length > 1) {
-        const styleDefs = {}
-
-        for (let i = 0; i < arguments.length; i++) {
-          const arg = arguments[i]
-
-          if (typeof arg === 'string') styleDefs[arg] = true
-          else if (typeof arg === 'object') Object.assign(styleDefs, arg)
-        }
-
-        serializedStyles = normalizeDefs(styleDefs)
-      } else {
-        serializedStyles = normalizeDefs(arguments[0])
-      }
-
-      if (!serializedStyles) return ''
-      let name = dash.hash(serializedStyles)
+      let normalizedStyles = normalizeArgs(dash, defs, arguments)
+      if (!normalizedStyles) return ''
+      let name = dash.hash(normalizedStyles)
       // explicit here on purpose so it's not in every test
       if (process.env.NODE_ENV === 'development') {
         name = addLabels(name, arguments)
       }
       const className = `${dash.key}-${name}`
-      dash.insert(`.${className}`, name, serializedStyles, dash.sheet)
+      dash.insert(`.${className}`, name, normalizedStyles, dash.sheet)
       return className
     }
 
+    style.css = function() {
+      return normalizeArgs(dash, defs, arguments)
+    }
     style.dash = dash
     style.styles = defs
     return style
