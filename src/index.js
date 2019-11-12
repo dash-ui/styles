@@ -371,7 +371,7 @@ const serializeVariables_ = (prefix, vars, names) => {
     } else {
       let name = `--${prefix}`
       if (names !== void 0 && names.length > 0) name += `-${names.join('-')}`
-      name += `-${cssKey}`
+      name += name === '--' ? cssKey : `-${cssKey}`
       variables[key] = `var(${name})`
       styles += `${name}:${value};`
     }
