@@ -68,7 +68,7 @@ const Component = props => (
 
 ## API
 
-Coming soon. Until then [check out this React example on CodeSandbox](https://codesandbox.io/s/dash-ui-react-example-029p5)
+Coming soon. Until then [play with this React example on CodeSandbox](https://codesandbox.io/s/dash-ui-react-example-029p5)
 
 ## LICENSE
 
