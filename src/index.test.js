@@ -296,6 +296,22 @@ describe('Usage', () => {
     process.env.NODE_ENV = prevEnv
   })
 
+  it('replaces disallowed characters in dev labels', () => {
+    let prevEnv = process.env.NODE_ENV
+    process.env.NODE_ENV = 'development'
+    const style = styles.create()({
+      'box=big': {width: 400, height: '400px'},
+    })
+
+    style('box=big')
+
+    for (let element of document.querySelectorAll(`style[data-dash]`)) {
+      expect(element).toMatchSnapshot('400x400')
+    }
+
+    process.env.NODE_ENV = prevEnv
+  })
+
   it('allows multiple arguments', () => {
     const style = styles.create()(
       {

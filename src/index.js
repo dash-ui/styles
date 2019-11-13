@@ -12,7 +12,7 @@ const IS_BROWSER = typeof document !== 'undefined'
 //
 // Hashing (fnv1a)
 const OFFSET_BASIS_32 = 2166136261
-export const fnvHash = memoize([{}], string => {
+export const fnvHash = string => {
   let out = OFFSET_BASIS_32,
     i = 0,
     len = string.length
@@ -21,7 +21,14 @@ export const fnvHash = memoize([{}], string => {
     out += (out << 1) + (out << 4) + (out << 7) + (out << 8) + (out << 24)
   }
   return (out >>> 0).toString(36)
-})
+}
+const unsafeClassName = /^[0-9]/
+const safeHash = (key, hash) =>
+  memoize([{}], string => {
+    let out = hash(string)
+    // allows class names to start with numbers
+    return !key && unsafeClassName.test(out) ? `_${out}` : out
+  })
 
 //
 // Stylis plugins
@@ -190,7 +197,7 @@ export const createDash = (options = {}) => {
       nonce,
       speedy,
     }),
-    hash,
+    hash: safeHash(key, hash),
     stylis,
     stylisCache,
     insert,
@@ -473,6 +480,7 @@ const normalizeArgs = (dash, styleDefs, args) => {
   } else return normalizeStyleDefs(dash, styleDefs, args[0])
 }
 
+const disallowedClassChars = /[^a-z0-9_-]/gi
 //
 // Where the magic happens
 const createStyles = dash => {
@@ -491,7 +499,7 @@ const createStyles = dash => {
         }
       }
 
-      return name
+      return name.replace(disallowedClassChars, '-')
     }
   }
 

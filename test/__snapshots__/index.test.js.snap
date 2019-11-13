@@ -144,6 +144,15 @@ Object {
 }
 `;
 
+exports[`Usage replaces disallowed characters in dev labels: 400x400 1`] = `
+<style
+  data-dash="dash"
+>
+  
+  .dash-49mne8-box-big{width:400px;height:400px;}
+</style>
+`;
+
 exports[`Usage returns css styles 1`] = `"display:flex;"`;
 
 exports[`Usage returns css styles 2`] = `"display:flex;display:block;display:inline;"`;

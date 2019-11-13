@@ -122,7 +122,7 @@ describe('Usage', () => {
     tag.setAttribute(`data-dash`, '1ut9bc3')
     tag.appendChild(
       document.createTextNode(
-        `.dash-1ut9bc3{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;}`
+        `.dash-_1ut9bc3{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;}`
       )
     )
     document.head.appendChild(tag)
@@ -141,7 +141,7 @@ describe('Usage', () => {
     tag.setAttribute(`data-dash`, '1ut9bc3')
     tag.appendChild(
       document.createTextNode(
-        `.dash-1ut9bc3{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;}`
+        `.dash-_1ut9bc3{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;}`
       )
     )
     document.head.appendChild(tag)
