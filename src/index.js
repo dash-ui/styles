@@ -387,7 +387,8 @@ const serializeVariables_ = (prefix, vars, names) => {
 
   return {variables, styles}
 }
-const serializeVariables = memoize([{}, WeakMap], serializeVariables_)
+
+export const serializeVariables = memoize([{}, WeakMap], serializeVariables_)
 
 const mergeVariables_ = (target, source) => {
   target = Object.assign({}, target)
@@ -403,23 +404,8 @@ const mergeVariables_ = (target, source) => {
 
   return target
 }
-const mergeVariables = memoize([WeakMap, WeakMap], mergeVariables_)
 
-function unique() {
-  const set = {},
-    out = []
-
-  for (let i = 0; i < arguments.length; i++) {
-    for (let j = 0; j < arguments[i].length; j++) {
-      const value = arguments[i][j]
-      if (set[value] === 1) continue
-      set[value] = 1
-      out.push(value)
-    }
-  }
-
-  return out
-}
+export const mergeVariables = memoize([WeakMap, WeakMap], mergeVariables_)
 
 const minifyRe = [
   /\s{2,}|\n|\t/g,
@@ -540,60 +526,6 @@ const createStyles = dash => {
   //
   // Methods
   styles.create = options => createStyles(createDash(options))
-
-  styles.extract = (clear = true) => {
-    if (__DEV__) {
-      if (IS_BROWSER)
-        throw new Error('styles.extract() only works in node environments')
-    }
-
-    const cachedStyles = unique(
-      dash.variablesCache,
-      dash.globalCache,
-      Object.keys(dash.insertCache)
-    )
-    let output = ''
-    for (let i = 0; i < cachedStyles.length; i++)
-      output += dash.stylisCache[cachedStyles[i]]
-    if (clear) dash.clear()
-    return output
-  }
-
-  styles.extractTags = (clear = true) => {
-    if (__DEV__) {
-      if (IS_BROWSER)
-        throw new Error('styles.extractTags() only works in node environments')
-    }
-
-    const nonceString = dash.sheet.nonce ? ` nonce="${dash.sheet.nonce}"` : ''
-    let output = ''
-    const cachedStyles = unique(
-      dash.variablesCache,
-      dash.globalCache,
-      Object.keys(dash.insertCache)
-    )
-    // explicit check here for test envs
-    if (process.env.NODE_ENV === 'development') {
-      // uses separate tags in dev
-      for (let i = 0; i < cachedStyles.length; i++) {
-        const key = cachedStyles[i]
-        output +=
-          `<style data-${dash.key}="${key}"${nonceString}>` +
-          dash.stylisCache[key] +
-          `</style>`
-      }
-    } else {
-      // uses one tag in prod
-      const names = cachedStyles.join(' ')
-      output =
-        `<style data-${dash.key}="${names}"${nonceString}>` +
-        styles.extract(false) +
-        `</style>`
-    }
-
-    if (clear) dash.clear()
-    return output
-  }
 
   styles.variables = vars => {
     const serialized = serializeVariables(dash.key, vars)
