@@ -388,7 +388,7 @@ const serializeVariables_ = (prefix, vars, names) => {
   return {variables, styles}
 }
 
-export const serializeVariables = memoize([{}, WeakMap], serializeVariables_)
+const serializeVariables = memoize([{}, WeakMap], serializeVariables_)
 
 const mergeVariables_ = (target, source) => {
   target = Object.assign({}, target)
@@ -405,7 +405,7 @@ const mergeVariables_ = (target, source) => {
   return target
 }
 
-export const mergeVariables = memoize([WeakMap, WeakMap], mergeVariables_)
+const mergeVariables = memoize([WeakMap, WeakMap], mergeVariables_)
 
 const minifyRe = [
   /\s{2,}|\n|\t/g,
