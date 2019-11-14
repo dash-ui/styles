@@ -10,7 +10,7 @@ export const writeStyles = async (
   styles = styles || defaultStyles
   let {name, hash = styles.dash.hash, clearCache = true} = options
   const stylesString = styles.extract(clearCache)
-  name = `${name || hash(stylesString)}.css`
+  name = `${name || styles.dash.key + '-' + hash(stylesString)}.css`
   const filename = path.join(outputPath, name)
   await fs.promises.writeFile(filename, stylesString)
   return {filename, name, path: outputPath, styles: stylesString}
@@ -25,7 +25,7 @@ export const writeStylesFromString = async (
   styles = styles || defaultStyles
   let {name, hash = styles.dash.hash, clearCache = true} = options
   const stylesString = extractStylesFromString(string, styles, {clearCache})
-  name = `${name || hash(stylesString)}.css`
+  name = `${name || styles.dash.key + '-' + hash(stylesString)}.css`
   const filename = path.join(outputPath, name)
   await fs.promises.writeFile(filename, stylesString)
   return {filename, name, path: outputPath, styles: stylesString}
