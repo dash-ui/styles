@@ -8,4 +8,4 @@ bench('style', () => style('foo'))
 bench('multi-style', () => style('foo', 'bar'))
 bench('object-style', () => style({foo: true, bar: false}, 'bar'))
 
-writeStyles(styles, __dirname).then(console.log)
+writeStyles(__dirname, styles).then(console.log)
