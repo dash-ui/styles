@@ -1,10 +1,16 @@
 /**
  * @jest-environment node
  */
-// import styles from '../src'
+import fs from 'fs'
+import styles from '../src'
+import {
+  createStyleTagFromString,
+  createStyleTagFromCache,
+  writeStylesFromCache,
+  writeStylesFromString,
+} from './index'
 
 describe('Configure', () => {
-  /*
   it('removes vendor prefixing', () => {
     const myStyles = styles.create({prefix: false})
     const style = myStyles({
@@ -12,7 +18,7 @@ describe('Configure', () => {
     })
 
     style('flex')
-    expect(myStyles.extract()).toMatchSnapshot()
+    expect(createStyleTagFromCache(myStyles)).toMatchSnapshot()
   })
 
   it('has customized vendor prefixing', () => {
@@ -37,17 +43,7 @@ describe('Configure', () => {
     })
 
     style('flex')
-    expect(myStyles.extract()).toMatchSnapshot()
-  })
-
-  it('adds nonce to style tags', () => {
-    const myStyles = styles.create({nonce: 'EDNnf03nceIOfn39fn3e9h3sdfa'})
-    const style = myStyles({
-      flex: {display: 'flex'},
-    })
-
-    style('flex')
-    expect(myStyles.extractTags()).toMatchSnapshot()
+    expect(createStyleTagFromCache(myStyles)).toMatchSnapshot()
   })
 
   it('changes key to "css"', () => {
@@ -57,25 +53,19 @@ describe('Configure', () => {
     })
 
     style('flex')
-    expect(myStyles.extractTags()).toMatchSnapshot()
+    expect(createStyleTagFromCache(myStyles)).toMatchSnapshot()
   })
 })
 
-describe('Usage', () => {
-  it('extracts single style tag in prod', () => {
-    const myStyles = styles.create({})
+describe('createStyleTagFromCache', () => {
+  it('adds nonce to style tags', () => {
+    const myStyles = styles.create({nonce: 'EDNnf03nceIOfn39fn3e9h3sdfa'})
     const style = myStyles({
       flex: {display: 'flex'},
-      btn: `
-        border-radius: 1000px;
-        background: blue;
-        color: white;
-      `,
     })
 
     style('flex')
-    style('btn')
-    expect(myStyles.extractTags()).toMatchSnapshot()
+    expect(createStyleTagFromCache(myStyles)).toMatchSnapshot()
   })
 
   it('extracts global styles', () => {
@@ -86,7 +76,7 @@ describe('Usage', () => {
       } 
     `
 
-    expect(myStyles.extractTags()).toMatchSnapshot()
+    expect(createStyleTagFromCache(myStyles)).toMatchSnapshot()
   })
 
   it('extracts global variables', () => {
@@ -97,7 +87,7 @@ describe('Usage', () => {
       },
     })
 
-    expect(myStyles.extractTags()).toMatchSnapshot()
+    expect(createStyleTagFromCache(myStyles)).toMatchSnapshot()
   })
 
   it('extracts theme variables', () => {
@@ -115,11 +105,11 @@ describe('Usage', () => {
       },
     })
 
-    expect(myStyles.extractTags()).toMatchSnapshot()
+    expect(createStyleTagFromCache(myStyles)).toMatchSnapshot()
     myStyles.theme('dark')
-    expect(myStyles.extractTags()).toMatchSnapshot()
+    expect(createStyleTagFromCache(myStyles)).toMatchSnapshot()
     myStyles.theme('light')
-    expect(myStyles.extractTags()).toMatchSnapshot()
+    expect(createStyleTagFromCache(myStyles)).toMatchSnapshot()
   })
 
   it('caches styles', () => {
@@ -137,10 +127,266 @@ describe('Usage', () => {
     style('btn')
     style('flex')
     style('btn')
-    expect(myStyles.extractTags()).toMatchSnapshot()
+    expect(createStyleTagFromCache(myStyles)).toMatchSnapshot()
   })
-   */
-  it('passes', () => {
-    expect(true).toBe(true)
+})
+
+describe('createStyleTagFromString', () => {
+  it('adds nonce to style tags', () => {
+    const myStyles = styles.create({nonce: 'EDNnf03nceIOfn39fn3e9h3sdfa'})
+    const style = myStyles({
+      flex: {display: 'flex'},
+    })
+
+    style('flex')
+    expect(
+      createStyleTagFromString(`<div className=${style('flex')}>`, myStyles)
+    ).toMatchSnapshot()
+  })
+
+  it('extracts global styles', () => {
+    const myStyles = styles.create({})
+    myStyles.global`
+      :root {
+        --hello: "world";
+      }
+    `
+
+    expect(createStyleTagFromString('', myStyles)).toMatchSnapshot()
+  })
+
+  it('extracts global variables', () => {
+    const myStyles = styles.create({})
+    myStyles.variables({
+      colors: {
+        blue: '#09a',
+      },
+    })
+
+    expect(createStyleTagFromString('', myStyles)).toMatchSnapshot()
+  })
+
+  it('caches styles', () => {
+    const myStyles = styles.create({})
+    const style = myStyles({
+      flex: {display: 'flex'},
+      btn: `
+        border-radius: 1000px;
+        background: blue;
+        color: white;
+      `,
+    })
+
+    style('flex')
+    style('btn')
+    style('flex')
+    style('btn')
+    expect(
+      createStyleTagFromString(
+        `
+      <div class=${style('flex')}>
+        <div class=${style('btn')}>
+          Hello
+        </div>
+      </div>
+    `,
+        myStyles
+      )
+    ).toMatchSnapshot()
+  })
+})
+
+describe('writeStylesFromString', () => {
+  it('writes', async () => {
+    const myStyles = styles.create({})
+    const style = myStyles({
+      flex: {display: 'flex'},
+      btn: `
+        border-radius: 1000px;
+        background: blue;
+        color: white;
+      `,
+    })
+
+    const finfo = await writeStylesFromString(
+      `
+        <div class=${style('flex')}>
+          <div class=${style('btn')}>
+            Hello
+          </div>
+        </div>
+      `,
+      './',
+      myStyles
+    )
+    expect(fs.existsSync(finfo.filename)).toBe(true)
+    fs.unlinkSync(finfo.filename)
+    expect(finfo).toMatchSnapshot()
+  })
+
+  it('writes custom name', async () => {
+    const myStyles = styles.create({})
+    const style = myStyles({
+      flex: {display: 'flex'},
+      btn: `
+        border-radius: 1000px;
+        background: blue;
+        color: white;
+      `,
+    })
+    style('flex')
+    style('btn')
+
+    const finfo = await writeStylesFromString(
+      `
+        <div class=${style('flex')}>
+          <div class=${style('btn')}>
+            Hello
+          </div>
+        </div>
+      `,
+      './',
+      myStyles,
+      {name: 'foo.css'}
+    )
+    expect(fs.existsSync(finfo.filename)).toBe(true)
+    fs.unlinkSync(finfo.filename)
+    expect(finfo).toMatchSnapshot()
+  })
+
+  it('writes custom key', async () => {
+    const myStyles = styles.create({key: 'css'})
+    const style = myStyles({
+      flex: {display: 'flex'},
+      btn: `
+        border-radius: 1000px;
+        background: blue;
+        color: white;
+      `,
+    })
+    style('flex')
+    style('btn')
+
+    const finfo = await writeStylesFromString(
+      `
+        <div class=${style('flex')}>
+          <div class=${style('btn')}>
+            Hello
+          </div>
+        </div>
+      `,
+      './',
+      myStyles
+    )
+    expect(fs.existsSync(finfo.filename)).toBe(true)
+    fs.unlinkSync(finfo.filename)
+    expect(finfo).toMatchSnapshot()
+  })
+
+  it('writes custom hash', async () => {
+    const myStyles = styles.create({hash: () => 'f8bCooDawg'})
+    const style = myStyles({
+      flex: {display: 'flex'},
+      btn: `
+        border-radius: 1000px;
+        background: blue;
+        color: white;
+      `,
+    })
+    style('flex')
+    style('btn')
+
+    const finfo = await writeStylesFromString(
+      `
+        <div class=${style('flex')}>
+          <div class=${style('btn')}>
+            Hello
+          </div>
+        </div>
+      `,
+      './',
+      myStyles
+    )
+    expect(fs.existsSync(finfo.filename)).toBe(true)
+    fs.unlinkSync(finfo.filename)
+    expect(finfo).toMatchSnapshot()
+  })
+})
+
+describe('writeStylesFromCache', () => {
+  it('writes', async () => {
+    const myStyles = styles.create({})
+    const style = myStyles({
+      flex: {display: 'flex'},
+      btn: `
+        border-radius: 1000px;
+        background: blue;
+        color: white;
+      `,
+    })
+    style('flex')
+    style('btn')
+
+    const finfo = await writeStylesFromCache('./', myStyles)
+    expect(fs.existsSync(finfo.filename)).toBe(true)
+    fs.unlinkSync(finfo.filename)
+    expect(finfo).toMatchSnapshot()
+  })
+
+  it('writes custom name', async () => {
+    const myStyles = styles.create({})
+    const style = myStyles({
+      flex: {display: 'flex'},
+      btn: `
+        border-radius: 1000px;
+        background: blue;
+        color: white;
+      `,
+    })
+    style('flex')
+    style('btn')
+
+    const finfo = await writeStylesFromCache('./', myStyles, {name: 'foo.css'})
+    expect(fs.existsSync(finfo.filename)).toBe(true)
+    fs.unlinkSync(finfo.filename)
+    expect(finfo).toMatchSnapshot()
+  })
+
+  it('writes custom key', async () => {
+    const myStyles = styles.create({key: 'css'})
+    const style = myStyles({
+      flex: {display: 'flex'},
+      btn: `
+        border-radius: 1000px;
+        background: blue;
+        color: white;
+      `,
+    })
+    style('flex')
+    style('btn')
+
+    const finfo = await writeStylesFromCache('./', myStyles)
+    expect(fs.existsSync(finfo.filename)).toBe(true)
+    fs.unlinkSync(finfo.filename)
+    expect(finfo).toMatchSnapshot()
+  })
+
+  it('writes custom hash', async () => {
+    const myStyles = styles.create({hash: () => 'f8bCooDawg'})
+    const style = myStyles({
+      flex: {display: 'flex'},
+      btn: `
+        border-radius: 1000px;
+        background: blue;
+        color: white;
+      `,
+    })
+    style('flex')
+    style('btn')
+
+    const finfo = await writeStylesFromCache('./', myStyles)
+    expect(fs.existsSync(finfo.filename)).toBe(true)
+    fs.unlinkSync(finfo.filename)
+    expect(finfo).toMatchSnapshot()
   })
 })

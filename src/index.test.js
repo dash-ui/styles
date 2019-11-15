@@ -503,20 +503,6 @@ describe('Usage', () => {
 })
 
 describe('Exceptions', () => {
-  it('throws error for extract methods', () => {
-    const style = styles.create()({
-      flex: {display: 'flex'},
-    })
-
-    expect(() => {
-      style.extract()
-    }).toThrowErrorMatchingSnapshot()
-
-    expect(() => {
-      style.extractTags()
-    }).toThrowErrorMatchingSnapshot()
-  })
-
   it('throws for unterminated comments', () => {
     const style = styles.create()({
       flex: `

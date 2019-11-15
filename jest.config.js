@@ -10,7 +10,7 @@ module.exports = {
   // moduleNameMapper: {},
   setupFilesAfterEnv: [require.resolve('./test/setup.js')],
   snapshotResolver: require.resolve('./test/resolve-snapshot.js'),
-  collectCoverageFrom: ['**/src/**/*.js'],
+  collectCoverageFrom: ['**/{src,server-src}/**/*.js'],
   // coverageThreshold: {
   //   global: {
   //     statements:17,

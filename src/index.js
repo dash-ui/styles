@@ -82,27 +82,22 @@ const ruleSheet = (
 }
 
 //
-// Configuration
-let rootServerStylisCache = {}
+// Configuration=
 let getServerStylisCache = IS_BROWSER
   ? void 0
-  : memoize([WeakMap], () => {
+  : memoize([{}, WeakMap], () => {
       let getCache = memoize([WeakMap], () => ({}))
       let prefixTrueCache = {}
       let prefixFalseCache = {}
 
       return prefix => {
-        if (prefix === void 0 || prefix === true) {
-          return prefixTrueCache
-        }
-
-        if (prefix === false) {
-          return prefixFalseCache
-        }
-
+        if (prefix === void 0 || prefix === true) return prefixTrueCache
+        if (prefix === false) return prefixFalseCache
         return getCache(prefix)
       }
     })
+
+const emptyArr = []
 
 export const createDash = (options = {}) => {
   // lifted from
@@ -146,19 +141,15 @@ export const createDash = (options = {}) => {
     }
   } else {
     // server side
-    stylisCache = rootServerStylisCache
-
     if (stylisPlugins || prefix !== void 0) {
       stylis.use(stylisPlugins)
-      stylisCache = getServerStylisCache(
-        stylisPlugins || rootServerStylisCache
-      )(prefix)
     }
+    stylisCache = getServerStylisCache(key, stylisPlugins || emptyArr)(prefix)
 
     insert = (selector, name, styles) => {
       if (dash.insertCache[name]) return
-      if (stylisCache[name] === void 0) {
-        stylisCache[name] = stylis(selector, styles)
+      if (dash.stylisCache[name] === void 0) {
+        dash.stylisCache[name] = stylis(selector, styles)
       }
       dash.insertCache[name] = 1
     }

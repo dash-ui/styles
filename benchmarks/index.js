@@ -1,6 +1,11 @@
 import bench from '@essentials/benchmark'
 import styles from '../src'
-import {writeStylesFromString, createStyleTagsFromString} from '../server'
+import {
+  writeStylesFromString,
+  writeStylesFromCache,
+  createStyleTagFromString,
+  createStyleTagFromCache,
+} from '../server'
 
 bench('create styles [object]', () => styles({foo: {display: 'flex'}}))
 const style = styles({foo: {display: 'flex'}})
@@ -1479,13 +1484,21 @@ const DOC = `
 </html>
 `
 
-console.log(createStyleTagsFromString(DOC, styles))
+console.log(createStyleTagFromString(DOC, styles, {clearCache: false}))
 bench('create styles from string A', () => {
-  createStyleTagsFromString(DOC, styles)
+  createStyleTagFromString(DOC, styles, {clearCache: false})
+})
+
+console.log(createStyleTagFromCache(styles, {clearCache: false}))
+bench('create styles from cache A', () => {
+  createStyleTagFromCache(styles, {clearCache: false})
 })
 
 writeStylesFromString(
   '<div className="dash-dash-1ut9bc3">',
   __dirname,
-  styles
+  styles,
+  {clearCache: false}
 ).then(console.log)
+
+writeStylesFromCache(__dirname, styles).then(console.log)

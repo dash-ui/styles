@@ -54,10 +54,6 @@ Object {
 }
 `;
 
-exports[`Exceptions throws error for extract methods 1`] = `"style.extract is not a function"`;
-
-exports[`Exceptions throws error for extract methods 2`] = `"style.extractTags is not a function"`;
-
 exports[`Exceptions throws for unterminated comments 1`] = `"Your styles have an unterminated comment (\\"/*\\" without corresponding \\"*/\\")."`;
 
 exports[`Usage adds dev labels: -flex 1`] = `"dash-1ut9bc3-flex"`;

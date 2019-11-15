@@ -1,0 +1,101 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Configure changes key to "css" 1`] = `"<style data-css=\\"1ut9bc3\\">.css-1ut9bc3{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;}</style>"`;
+
+exports[`Configure has customized vendor prefixing 1`] = `"<style data-dash=\\"1vlpa1m\\">.dash-1vlpa1m{display:flex;-webkit-transform:translateX(30px);-ms-transform:translateX(30px);transform:translateX(30px);}</style>"`;
+
+exports[`Configure removes vendor prefixing 1`] = `"<style data-dash=\\"1ut9bc3\\">.dash-1ut9bc3{display:flex;}</style>"`;
+
+exports[`createStyleTagFromCache adds nonce to style tags 1`] = `"<style data-dash=\\"1ut9bc3\\" nonce=\\"EDNnf03nceIOfn39fn3e9h3sdfa\\">.dash-1ut9bc3{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;}</style>"`;
+
+exports[`createStyleTagFromCache caches styles 1`] = `"<style data-dash=\\"1ut9bc3 1i986zm\\">.dash-1ut9bc3{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;}.dash-1i986zm{border-radius:1000px;background:blue;color:white;}</style>"`;
+
+exports[`createStyleTagFromCache extracts global styles 1`] = `"<style data-dash=\\"1r8lpmu-global\\">:root{--hello:\\"world\\";}</style>"`;
+
+exports[`createStyleTagFromCache extracts global variables 1`] = `"<style data-dash=\\"wq8gql-variables\\">:root{--dash-colors-blue:#09a;}</style>"`;
+
+exports[`createStyleTagFromCache extracts theme variables 1`] = `"<style data-dash=\\"9y11pf-variables\\">.dash-dark-theme{--dash-colors-primary:#000;}</style>"`;
+
+exports[`createStyleTagFromCache extracts theme variables 2`] = `"<style data-dash=\\"9y11pf-variables\\">.dash-dark-theme{--dash-colors-primary:#000;}</style>"`;
+
+exports[`createStyleTagFromCache extracts theme variables 3`] = `"<style data-dash=\\"v60dlp-variables\\">.dash-light-theme{--dash-colors-primary:#fff;}</style>"`;
+
+exports[`createStyleTagFromString adds nonce to style tags 1`] = `"<style data-dash=\\"1ut9bc3\\" nonce=\\"EDNnf03nceIOfn39fn3e9h3sdfa\\">.dash-1ut9bc3{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;}</style>"`;
+
+exports[`createStyleTagFromString caches styles 1`] = `"<style data-dash=\\"1ut9bc3 1i986zm\\">.dash-1ut9bc3{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;}.dash-1i986zm{border-radius:1000px;background:blue;color:white;}</style>"`;
+
+exports[`createStyleTagFromString extracts global styles 1`] = `"<style data-dash=\\"1r8lpmu-global\\">:root{--hello:\\"world\\";}</style>"`;
+
+exports[`createStyleTagFromString extracts global variables 1`] = `"<style data-dash=\\"wq8gql-variables\\">:root{--dash-colors-blue:#09a;}</style>"`;
+
+exports[`writeStylesFromCache writes 1`] = `
+Object {
+  "filename": "dash-1h0h8u0.css",
+  "name": "dash-1h0h8u0.css",
+  "path": "./",
+  "styles": ".dash-1ut9bc3{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;}.dash-1i986zm{border-radius:1000px;background:blue;color:white;}",
+}
+`;
+
+exports[`writeStylesFromCache writes custom hash 1`] = `
+Object {
+  "filename": "dash-f8bCooDawg.css",
+  "name": "dash-f8bCooDawg.css",
+  "path": "./",
+  "styles": ".dash-f8bCooDawg{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;}",
+}
+`;
+
+exports[`writeStylesFromCache writes custom key 1`] = `
+Object {
+  "filename": "css-mz4oaa.css",
+  "name": "css-mz4oaa.css",
+  "path": "./",
+  "styles": ".css-1ut9bc3{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;}.css-1i986zm{border-radius:1000px;background:blue;color:white;}",
+}
+`;
+
+exports[`writeStylesFromCache writes custom name 1`] = `
+Object {
+  "filename": "foo.css",
+  "name": "foo.css",
+  "path": "./",
+  "styles": ".dash-1ut9bc3{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;}.dash-1i986zm{border-radius:1000px;background:blue;color:white;}",
+}
+`;
+
+exports[`writeStylesFromString writes 1`] = `
+Object {
+  "filename": "dash-1h0h8u0.css",
+  "name": "dash-1h0h8u0.css",
+  "path": "./",
+  "styles": ".dash-1ut9bc3{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;}.dash-1i986zm{border-radius:1000px;background:blue;color:white;}",
+}
+`;
+
+exports[`writeStylesFromString writes custom hash 1`] = `
+Object {
+  "filename": "dash-f8bCooDawg.css",
+  "name": "dash-f8bCooDawg.css",
+  "path": "./",
+  "styles": ".dash-f8bCooDawg{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;}",
+}
+`;
+
+exports[`writeStylesFromString writes custom key 1`] = `
+Object {
+  "filename": "css-mz4oaa.css",
+  "name": "css-mz4oaa.css",
+  "path": "./",
+  "styles": ".css-1ut9bc3{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;}.css-1i986zm{border-radius:1000px;background:blue;color:white;}",
+}
+`;
+
+exports[`writeStylesFromString writes custom name 1`] = `
+Object {
+  "filename": "foo.css",
+  "name": "foo.css",
+  "path": "./",
+  "styles": ".dash-1ut9bc3{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;}.dash-1i986zm{border-radius:1000px;background:blue;color:white;}",
+}
+`;
