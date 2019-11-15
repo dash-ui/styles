@@ -1484,10 +1484,56 @@ const DOC = `
 </html>
 `
 
+const classRe = /class\s*=(["']|)(.+?)\1+[^>]*?>/g
+
+export const createStylesFromStringRe = (string, styles, options) => {
+  const {clearCache = true} = options
+  const {dash} = styles
+  const styleCache = dash.stylisCache
+
+  let css = '',
+    names = styles.dash.variablesCache.concat(styles.dash.globalCache),
+    i = 0,
+    result
+
+  for (; i < names.length; i++) css += styleCache[names[i]]
+  const replacer = `${styles.dash.key}-`
+  while((result = classRe.exec(string)) !== null) {
+    const cname = result[2].replace(replacer, '')
+    if (cname.indexOf(' ') !== -1) {
+      const matches = cname.split(' ')
+      for (i = 0; i < matches.length; i++) {
+        const match = matches[i]
+        const style = styleCache[match]
+        if (styleCache[match]) {
+          css += style
+          names.push(match)
+        }
+      }
+    }
+    else {
+      const style = styleCache[cname]
+      if (styleCache[cname]) {
+        css += style
+        names.push(cname)
+      }
+    }
+  }
+
+  if (clearCache) dash.clear()
+  return {names, css}
+}
+
 console.log(createStyleTagFromString(DOC, styles, {clearCache: false}))
 bench('create styles from string A', () => {
   createStyleTagFromString(DOC, styles, {clearCache: false})
 })
+
+console.log(createStylesFromStringRe(DOC, styles, {clearCache: false}))
+bench('create styles from string B', () => {
+  createStylesFromStringRe(DOC, styles, {clearCache: false})
+})
+
 
 console.log(createStyleTagFromCache(styles, {clearCache: false}))
 bench('create styles from cache A', () => {

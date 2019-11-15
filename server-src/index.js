@@ -55,7 +55,7 @@ export const createStyleTagFromCache = (
     : ''
 
   return (
-    `<style data-${styles.dash.key}="${names.join(' ')}"${nonceString}>` +
+    `<style data-dash="${names.join(' ')}" data-cache="${styles.dash.key}"${nonceString}>` +
     css +
     `</style>`
   )
@@ -116,7 +116,7 @@ export const createStyleTagFromString = (
     : ''
 
   return (
-    `<style data-${styles.dash.key}="${names.join(' ')}"${nonceString}>` +
+    `<style data-dash="${names.join(' ')}" data-cache="${styles.dash.key}"${nonceString}>` +
     css +
     `</style>`
   )
@@ -138,4 +138,46 @@ export const writeStylesFromString = async (
   const filename = path.join(outputPath, name)
   await fs.promises.writeFile(filename, stylesString)
   return {filename, name, path: outputPath, styles: stylesString}
+}
+
+// TODO: perf test this against existing solution for LARGE projects
+const classRe = /class\s*=(["']|)(.+?)\1+[^>]*?>/g
+/* istanbul ignore next */
+// eslint-disable-next-line
+const createStylesFromStringRe = (string, styles, options) => {
+  const {clearCache = true} = options
+  const {dash} = styles
+  const styleCache = dash.stylisCache
+
+  let css = '',
+    names = styles.dash.variablesCache.concat(styles.dash.globalCache),
+    i = 0,
+    result
+
+  for (; i < names.length; i++) css += styleCache[names[i]]
+  const replacer = `${styles.dash.key}-`
+  while((result = classRe.exec(string)) !== null) {
+    const cname = result[2].replace(replacer, '')
+    if (cname.indexOf(' ') !== -1) {
+      const matches = cname.split(' ')
+      for (i = 0; i < matches.length; i++) {
+        const match = matches[i]
+        const style = styleCache[match]
+        if (styleCache[match]) {
+          css += style
+          names.push(match)
+        }
+      }
+    }
+    else {
+      const style = styleCache[cname]
+      if (styleCache[cname]) {
+        css += style
+        names.push(cname)
+      }
+    }
+  }
+
+  if (clearCache) dash.clear()
+  return {names, css}
 }

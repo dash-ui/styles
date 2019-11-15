@@ -82,7 +82,7 @@ const ruleSheet = (
 }
 
 //
-// Configuration=
+// Configuration
 let getServerStylisCache = IS_BROWSER
   ? void 0
   : memoize([{}, WeakMap], () => {
@@ -118,11 +118,11 @@ export const createDash = (options = {}) => {
     stylisCache
 
   if (IS_BROWSER) {
-    const nodes = document.querySelectorAll(`style[data-${key}]`)
+    const nodes = document.querySelectorAll(`style[data-cache="${key}"]`)
 
     for (let i = 0; i < nodes.length; i++) {
       const node = nodes[i]
-      const attr = node.getAttribute(`data-${key}`)
+      const attr = node.getAttribute(`data-dash`)
       const ids = attr.split(' ')
       for (let i = 0; i < ids.length; i++) insertCache[ids[i]] = 1
 
@@ -246,6 +246,7 @@ export const styleSheet = ({key, container, nonce, speedy}) => {
 
         if (!sheet) {
           // this weirdness brought to you by firefox
+          /* istanbul ignore next */
           for (let i = 0; i < document.styleSheets.length; i++) {
             if (document.styleSheets[i].ownerNode === tag) {
               sheet = document.styleSheets[i]
@@ -278,6 +279,7 @@ export const styleSheet = ({key, container, nonce, speedy}) => {
             isImportRule ? 0 : sheet.cssRules.length
           )
         } catch (e) {
+          /* istanbul ignore next */
           if (__DEV__) {
             console.warn(
               `There was a problem inserting the following rule: "${rule}"`,
