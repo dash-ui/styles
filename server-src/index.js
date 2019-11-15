@@ -1,4 +1,6 @@
-import defaultStyles from '../'
+const path = require('path')
+const {main} = require('../package.json')
+const defaultStyles = require(path.join('../', main)).default
 
 function unique() {
   const set = {},
