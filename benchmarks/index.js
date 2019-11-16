@@ -1498,7 +1498,7 @@ export const createStylesFromStringRe = (string, styles, options) => {
 
   for (; i < names.length; i++) css += styleCache[names[i]]
   const replacer = `${styles.dash.key}-`
-  while((result = classRe.exec(string)) !== null) {
+  while ((result = classRe.exec(string)) !== null) {
     const cname = result[2].replace(replacer, '')
     if (cname.indexOf(' ') !== -1) {
       const matches = cname.split(' ')
@@ -1510,8 +1510,7 @@ export const createStylesFromStringRe = (string, styles, options) => {
           names.push(match)
         }
       }
-    }
-    else {
+    } else {
       const style = styleCache[cname]
       if (styleCache[cname]) {
         css += style
@@ -1533,7 +1532,6 @@ console.log(createStylesFromStringRe(DOC, styles, {clearCache: false}))
 bench('create styles from string B', () => {
   createStylesFromStringRe(DOC, styles, {clearCache: false})
 })
-
 
 console.log(createStyleTagFromCache(styles, {clearCache: false}))
 bench('create styles from cache A', () => {

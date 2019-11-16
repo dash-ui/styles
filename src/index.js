@@ -103,7 +103,7 @@ export const createDash = (options = {}) => {
   // lifted from
   // https://github.com/emotion-js/emotion/blob/master/packages/cache/src/index.js
   let {
-    key = 'dash',
+    key = '-ui',
     nonce,
     hash = fnvHash,
     stylisPlugins,
@@ -125,10 +125,7 @@ export const createDash = (options = {}) => {
       const attr = node.getAttribute(`data-dash`)
       const ids = attr.split(' ')
       for (let i = 0; i < ids.length; i++) insertCache[ids[i]] = 1
-
-      if (node.parentNode !== container) {
-        container.appendChild(node)
-      }
+      if (node.parentNode !== container) container.appendChild(node)
     }
 
     stylis.use(stylisPlugins)(ruleSheet)
@@ -141,9 +138,7 @@ export const createDash = (options = {}) => {
     }
   } else {
     // server side
-    if (stylisPlugins || prefix !== void 0) {
-      stylis.use(stylisPlugins)
-    }
+    if (stylisPlugins || prefix !== void 0) stylis.use(stylisPlugins)
     stylisCache = getServerStylisCache(key, stylisPlugins || emptyArr)(prefix)
 
     insert = (selector, name, styles) => {
@@ -229,19 +224,16 @@ export const styleSheet = ({key, container, nonce, speedy}) => {
         tag.setAttribute(`data-dash`, key)
         if (nonce !== void 0) tag.setAttribute('nonce', nonce)
         tag.appendChild(document.createTextNode(''))
-
-        let insertBefore
-        if (tags.length === 0) {
-          insertBefore = before
-        } else {
-          insertBefore = tags[tags.length - 1].nextSibling
-        }
-        container.insertBefore(tag, insertBefore)
+        container.insertBefore(
+          tag,
+          tags.length === 0 ? before : tags[tags.length - 1].nextSibling
+        )
         tags.push(tag)
       }
-      const tag = tags[tags.length - 1]
 
-      if (speedy) {
+      const tag = tags[tags.length - 1]
+      if (!speedy) tag.appendChild(document.createTextNode(rule))
+      else {
         let sheet = tag.sheet
 
         if (!sheet) {
@@ -287,8 +279,6 @@ export const styleSheet = ({key, container, nonce, speedy}) => {
             )
           }
         }
-      } else {
-        tag.appendChild(document.createTextNode(rule))
       }
 
       size++
@@ -306,7 +296,6 @@ export const styleSheet = ({key, container, nonce, speedy}) => {
 
 //
 // Style serialization
-const isCustomProperty = property => property.charCodeAt(1) === 45
 const isProcessableValue = value => value !== null && typeof value !== 'boolean'
 let cssCaseRe = /[A-Z]|^ms/g
 const cssCase = string => string.replace(cssCaseRe, '-$&').toLowerCase()
@@ -321,22 +310,16 @@ const interpolate = args => {
   return str
 }
 
-const styleName = memoize([{}], styleName =>
+const isCustomProperty = property => property.charCodeAt(1) === 45
+const styleName = styleName =>
   isCustomProperty(styleName) ? styleName : cssCase(styleName)
-)
-
-let styleValue = (key, value) => {
-  if (
-    unitless[key] !== 1 &&
-    !isCustomProperty(key) &&
-    typeof value === 'number' &&
-    value !== 0
-  ) {
-    return `${value}px`
-  }
-
-  return value
-}
+let styleValue = (key, value) =>
+  unitless[key] !== 1 &&
+  !isCustomProperty(key) &&
+  typeof value === 'number' &&
+  value !== 0
+    ? `${value}px`
+    : value
 
 const styleObjectToString = object => {
   let keys = Object.keys(object),
@@ -369,7 +352,7 @@ const serializeVariables_ = (prefix, vars, names) => {
       variables[key] = result.variables
       styles += result.styles
     } else {
-      let name = `--${prefix}`
+      let name = `--${prefix.replace(/^-+/, '')}`
       if (names !== void 0 && names.length > 0)
         name += name === '--' ? names.join('-') : `-${names.join('-')}`
       name += name === '--' ? cssKey : `-${cssKey}`
@@ -409,11 +392,13 @@ const minifyRe = [
 ]
 
 const normalizeStyles_ = (styles, variables) => {
-  if (typeof styles === 'function') {
-    return normalizeStyles_(styles(variables), variables)
-  } else if (typeof styles === 'object') {
-    styles = styleObjectToString(styles)
-  }
+  const tof = typeof styles
+  styles =
+    tof === 'function'
+      ? normalizeStyles_(styles(variables), variables)
+      : tof === 'object'
+      ? styleObjectToString(styles)
+      : styles
 
   return !styles
     ? ''
@@ -428,18 +413,16 @@ const normalizeStyles_ = (styles, variables) => {
 
 export const normalizeStyles = memoize([Map, WeakMap], normalizeStyles_)
 
-const normalizeStyleDefs = (dash, styleDefs, styleName) => {
+const normalizeStyleObject = (dash, styleDefs, styleName) => {
   if (typeof styleName === 'string') {
     return normalizeStyles(styleDefs[styleName], dash.variables)
   } else if (typeof styleName === 'object') {
     let keys = Object.keys(styleName),
       nextStyles = ''
 
-    for (let i = 0; i < keys.length; i++) {
-      if (styleName[keys[i]]) {
+    for (let i = 0; i < keys.length; i++)
+      if (styleName[keys[i]])
         nextStyles += normalizeStyles(styleDefs[keys[i]], dash.variables)
-      }
-    }
 
     return normalizeStyles(nextStyles, dash.variables)
   }
@@ -455,8 +438,8 @@ const normalizeArgs = (dash, styleDefs, args) => {
       else if (typeof arg === 'object') Object.assign(argDefs, arg)
     }
 
-    return normalizeStyleDefs(dash, styleDefs, argDefs)
-  } else return normalizeStyleDefs(dash, styleDefs, args[0])
+    return normalizeStyleObject(dash, styleDefs, argDefs)
+  } else return normalizeStyleObject(dash, styleDefs, args[0])
 }
 
 const disallowedClassChars = /[^a-z0-9_-]/gi
@@ -494,7 +477,7 @@ const createStyles = dash => {
     }
 
     //
-    // style()
+    // style(text, space, {})
     function style() {
       let normalizedStyles = normalizeArgs(dash, defs, arguments)
       if (!normalizedStyles) return ''
@@ -520,12 +503,13 @@ const createStyles = dash => {
   // Methods
   styles.create = options => createStyles(createDash(options))
 
-  styles.variables = vars => {
+  styles.variables = (vars, selector = ':root') => {
     const serialized = serializeVariables(dash.key, vars)
     dash.variables = mergeVariables(dash.variables, serialized.variables)
     const name = `${dash.hash(serialized.styles)}-variables`
     if (dash.variablesCache.indexOf(name) === -1) dash.variablesCache.push(name)
-    dash.insert(':root', name, serialized.styles, dash.sheet)
+    dash.insert(selector, name, serialized.styles, dash.sheet)
+    return name
   }
 
   styles.themes = vars => {
@@ -534,11 +518,8 @@ const createStyles = dash => {
   }
 
   styles.theme = theme => {
-    const serialized = serializeVariables(dash.key, dash.themes[theme])
-    dash.variables = mergeVariables(dash.variables, serialized.variables)
-    const name = `${dash.hash(serialized.styles)}-variables`
     const className = `${dash.key}-${theme}-theme`
-    dash.insert(`.${className}`, name, serialized.styles, dash.sheet)
+    styles.variables(dash.themes[theme], `.${className}`)
     return className
   }
 

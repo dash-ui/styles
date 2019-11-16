@@ -120,10 +120,10 @@ describe('Usage', () => {
   it('rehydrates', () => {
     let tag = document.createElement('style')
     tag.setAttribute(`data-dash`, '1ut9bc3')
-    tag.setAttribute('data-cache', 'dash')
+    tag.setAttribute('data-cache', '-ui')
     tag.appendChild(
       document.createTextNode(
-        `.dash-_1ut9bc3{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;}`
+        `.-ui-_1ut9bc3{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;}`
       )
     )
     document.head.appendChild(tag)
@@ -140,11 +140,11 @@ describe('Usage', () => {
   it('rehydrates into custom container', () => {
     let tag = document.createElement('style')
     tag.setAttribute(`data-dash`, '1ut9bc3')
-    tag.setAttribute('data-cache', 'dash')
+    tag.setAttribute('data-cache', '-ui')
 
     tag.appendChild(
       document.createTextNode(
-        `.dash-_1ut9bc3{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;}`
+        `.-ui-_1ut9bc3{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;}`
       )
     )
     document.head.appendChild(tag)

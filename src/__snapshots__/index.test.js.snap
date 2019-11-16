@@ -2,20 +2,20 @@
 
 exports[`Configure adds nonce to style tags: DOM 1`] = `
 <style
-  data-dash="dash"
+  data-dash="-ui"
   nonce="EDNnf03nceIOfn39fn3e9h3sdfa"
 >
   
-  .dash-1ut9bc3{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;}
+  .-ui-1ut9bc3{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;}
 </style>
 `;
 
 exports[`Configure changes container to document.body 1`] = `
 <style
-  data-dash="dash"
+  data-dash="-ui"
 >
   
-  .dash-1ut9bc3{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;}
+  .-ui-1ut9bc3{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;}
 </style>
 `;
 
@@ -28,25 +28,25 @@ exports[`Configure changes key to "css": DOM 1`] = `
 </style>
 `;
 
-exports[`Configure configures hash algorithm 1`] = `"dash-e038ab58"`;
+exports[`Configure configures hash algorithm 1`] = `"-ui-e038ab58"`;
 
 exports[`Configure turns off vendor prefixing: DOM 1`] = `
 <style
-  data-dash="dash"
+  data-dash="-ui"
 >
   
-  .dash-1ut9bc3{display:flex;}
+  .-ui-1ut9bc3{display:flex;}
 </style>
 `;
 
 exports[`Configure turns on speedy 1`] = `
 Object {
-  ".dash-1abu38z": Object {
+  ".-ui-1abu38z": Object {
     "0": "display",
     "display": "block",
     "length": 1,
   },
-  ".dash-1ut9bc3": Object {
+  ".-ui-1ut9bc3": Object {
     "0": "display",
     "display": "flex",
     "length": 1,
@@ -56,89 +56,89 @@ Object {
 
 exports[`Exceptions throws for unterminated comments 1`] = `"Your styles have an unterminated comment (\\"/*\\" without corresponding \\"*/\\")."`;
 
-exports[`Usage adds dev labels: -flex 1`] = `"dash-1ut9bc3-flex"`;
+exports[`Usage adds dev labels: -flex 1`] = `"-ui-1ut9bc3-flex"`;
 
-exports[`Usage adds dev labels: -flex-block 1`] = `"dash-14t38od-flex-block"`;
+exports[`Usage adds dev labels: -flex-block 1`] = `"-ui-14t38od-flex-block"`;
 
-exports[`Usage adds dev labels: -flex-inline 1`] = `"dash-broszf-flex-inline"`;
+exports[`Usage adds dev labels: -flex-inline 1`] = `"-ui-broszf-flex-inline"`;
 
 exports[`Usage adds styles by order of definition when called: flex, block, inline 1`] = `
 <style
-  data-dash="dash"
+  data-dash="-ui"
 >
   
-  .dash-qaw0al{display:flex;display:block;display:inline;}
+  .-ui-qaw0al{display:flex;display:block;display:inline;}
 </style>
 `;
 
 exports[`Usage adds styles by order of definition when called: flex, block, inline 2`] = `
 <style
-  data-dash="dash"
+  data-dash="-ui"
 >
   
-  .dash-qaw0al{display:flex;display:block;display:inline;}
+  .-ui-qaw0al{display:flex;display:block;display:inline;}
 </style>
 `;
 
-exports[`Usage allows comments 1`] = `"dash-xmqurs"`;
+exports[`Usage allows comments 1`] = `"-ui-xmqurs"`;
 
 exports[`Usage allows multiple arguments 1`] = `
 <style
-  data-dash="dash"
+  data-dash="-ui"
 >
   
-  .dash-qaw0al{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;display:block;display:inline;}
+  .-ui-qaw0al{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;display:block;display:inline;}
 </style>
 `;
 
 exports[`Usage allows style functions in arguments 1`] = `
 <style
-  data-dash="dash"
+  data-dash="-ui"
 >
   
-  .dash-qaw0al{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;display:block;display:inline;}
+  .-ui-qaw0al{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;display:block;display:inline;}
 </style>
 `;
 
 exports[`Usage allows unitless object values: 200x200 1`] = `
 <style
-  data-dash="dash"
+  data-dash="-ui"
 >
   
-  .dash-haiabg{width:200px;height:200px;}
+  .-ui-haiabg{width:200px;height:200px;}
 </style>
 `;
 
 exports[`Usage creates global variables w/ scales: :root 1`] = `
 <style
-  data-dash="dash"
+  data-dash="-ui"
 >
   
-  :root{--dash-spacing-0:1rem;--dash-spacing-1:2rem;--dash-spacing-2:4rem;}
+  :root{--ui-spacing-0:1rem;--ui-spacing-1:2rem;--ui-spacing-2:4rem;}
 </style>
 `;
 
 exports[`Usage creates global variables: :root 1`] = `
 <style
-  data-dash="dash"
+  data-dash="-ui"
 >
   
-  :root{--dash-colors-blue:#09a;--dash-colors-red:#c12;--dash-colors-light-red:#c1a;--dash-spacing-xs:1rem;--dash-system-p-md:1rem;--dash-system-p-xs:0.25rem;--dash-system-p-sm:0.5rem;--dash-system-p-lg:2rem;--dash-system-p-xl:4rem;}
+  :root{--ui-colors-blue:#09a;--ui-colors-red:#c12;--ui-colors-light-red:#c1a;--ui-spacing-xs:1rem;--ui-system-p-md:1rem;--ui-system-p-xs:0.25rem;--ui-system-p-sm:0.5rem;--ui-system-p-lg:2rem;--ui-system-p-xl:4rem;}
 </style>
 `;
 
 exports[`Usage creates theme variables: :root 1`] = `
 <style
-  data-dash="dash"
+  data-dash="-ui"
 >
   
-  .dash-dark-theme{--dash-colors-bg:#000;--dash-colors-text:#fff;}
+  .-ui-dark-theme{--ui-colors-bg:#000;--ui-colors-text:#fff;}
 </style>
 `;
 
 exports[`Usage injects global styles 1`] = `
 <style
-  data-dash="dash"
+  data-dash="-ui"
 >
   
   html{font-size:100%;}
@@ -148,10 +148,10 @@ exports[`Usage injects global styles 1`] = `
 exports[`Usage passes variables to global styles 1`] = `
 Object {
   "colors": Object {
-    "bg": "var(--dash-colors-bg)",
-    "blue": "var(--dash-colors-blue)",
-    "red": "var(--dash-colors-red)",
-    "text": "var(--dash-colors-text)",
+    "bg": "var(--ui-colors-bg)",
+    "blue": "var(--ui-colors-blue)",
+    "red": "var(--ui-colors-red)",
+    "text": "var(--ui-colors-text)",
   },
 }
 `;
@@ -159,47 +159,47 @@ Object {
 exports[`Usage passes variables to style callbacks 1`] = `
 Object {
   "colors": Object {
-    "bg": "var(--dash-colors-bg)",
-    "blue": "var(--dash-colors-blue)",
-    "red": "var(--dash-colors-red)",
-    "text": "var(--dash-colors-text)",
+    "bg": "var(--ui-colors-bg)",
+    "blue": "var(--ui-colors-blue)",
+    "red": "var(--ui-colors-red)",
+    "text": "var(--ui-colors-text)",
   },
 }
 `;
 
-exports[`Usage passes variables to style callbacks 2`] = `"dash-dark-theme"`;
+exports[`Usage passes variables to style callbacks 2`] = `"-ui-dark-theme"`;
 
 exports[`Usage passes variables to style callbacks 3`] = `
 Object {
   "colors": Object {
-    "bg": "var(--dash-colors-bg)",
-    "blue": "var(--dash-colors-blue)",
-    "red": "var(--dash-colors-red)",
-    "text": "var(--dash-colors-text)",
+    "bg": "var(--ui-colors-bg)",
+    "blue": "var(--ui-colors-blue)",
+    "red": "var(--ui-colors-red)",
+    "text": "var(--ui-colors-text)",
   },
 }
 `;
 
-exports[`Usage passes variables to style callbacks 4`] = `"dash-light-theme"`;
+exports[`Usage passes variables to style callbacks 4`] = `"-ui-light-theme"`;
 
 exports[`Usage passes variables to style callbacks 5`] = `
 Object {
   "colors": Object {
-    "bg": "var(--dash-colors-bg)",
-    "blue": "var(--dash-colors-blue)",
-    "lightSpecific": "var(--dash-colors-light-specific)",
-    "red": "var(--dash-colors-red)",
-    "text": "var(--dash-colors-text)",
+    "bg": "var(--ui-colors-bg)",
+    "blue": "var(--ui-colors-blue)",
+    "lightSpecific": "var(--ui-colors-light-specific)",
+    "red": "var(--ui-colors-red)",
+    "text": "var(--ui-colors-text)",
   },
 }
 `;
 
 exports[`Usage replaces disallowed characters in dev labels: 400x400 1`] = `
 <style
-  data-dash="dash"
+  data-dash="-ui"
 >
   
-  .dash-49mne8-box-big{width:400px;height:400px;}
+  .-ui-49mne8-box-big{width:400px;height:400px;}
 </style>
 `;
 
@@ -209,15 +209,15 @@ exports[`Usage returns css styles 2`] = `"display:flex;display:block;display:inl
 
 exports[`Usage returns css styles 3`] = `"display:flex;display:inline;"`;
 
-exports[`Usage returns single class name 1`] = `"dash-1ut9bc3"`;
+exports[`Usage returns single class name 1`] = `"-ui-1ut9bc3"`;
 
-exports[`Usage returns single class name 2`] = `"dash-qaw0al"`;
+exports[`Usage returns single class name 2`] = `"-ui-qaw0al"`;
 
-exports[`Usage returns single class name 3`] = `"dash-broszf"`;
+exports[`Usage returns single class name 3`] = `"-ui-broszf"`;
 
 exports[`Usage should inject global styles once 1`] = `
 <style
-  data-dash="dash"
+  data-dash="-ui"
 >
   
   :root{--spacing-0:0;}
@@ -226,7 +226,7 @@ exports[`Usage should inject global styles once 1`] = `
 
 exports[`Usage should inject global styles once 2`] = `
 <style
-  data-dash="dash"
+  data-dash="-ui"
 >
   
   html{font-size:100%;}
@@ -235,7 +235,7 @@ exports[`Usage should inject global styles once 2`] = `
 
 exports[`Usage should inject global styles once 3`] = `
 <style
-  data-dash="dash"
+  data-dash="-ui"
 >
   
   :root{--spacing-1:0.5rem;}
@@ -244,7 +244,7 @@ exports[`Usage should inject global styles once 3`] = `
 
 exports[`Usage unmounts global styles w/ callback 1`] = `
 <style
-  data-dash="dash"
+  data-dash="-ui"
 >
   
   html{font-size:100%;}

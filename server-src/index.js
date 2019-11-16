@@ -55,7 +55,9 @@ export const createStyleTagFromCache = (
     : ''
 
   return (
-    `<style data-dash="${names.join(' ')}" data-cache="${styles.dash.key}"${nonceString}>` +
+    `<style data-dash="${names.join(' ')}" data-cache="${
+      styles.dash.key
+    }"${nonceString}>` +
     css +
     `</style>`
   )
@@ -116,7 +118,9 @@ export const createStyleTagFromString = (
     : ''
 
   return (
-    `<style data-dash="${names.join(' ')}" data-cache="${styles.dash.key}"${nonceString}>` +
+    `<style data-dash="${names.join(' ')}" data-cache="${
+      styles.dash.key
+    }"${nonceString}>` +
     css +
     `</style>`
   )
@@ -156,7 +160,7 @@ const createStylesFromStringRe = (string, styles, options) => {
 
   for (; i < names.length; i++) css += styleCache[names[i]]
   const replacer = `${styles.dash.key}-`
-  while((result = classRe.exec(string)) !== null) {
+  while ((result = classRe.exec(string)) !== null) {
     const cname = result[2].replace(replacer, '')
     if (cname.indexOf(' ') !== -1) {
       const matches = cname.split(' ')
@@ -168,8 +172,7 @@ const createStylesFromStringRe = (string, styles, options) => {
           names.push(match)
         }
       }
-    }
-    else {
+    } else {
       const style = styleCache[cname]
       if (styleCache[cname]) {
         css += style
