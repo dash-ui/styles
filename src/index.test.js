@@ -20,7 +20,7 @@ afterEach(() => {
   document.getElementsByTagName('html')[0].innerHTML = ''
 })
 
-describe('Configure', () => {
+describe('styles.create()', () => {
   it('turns off vendor prefixing', () => {
     const myStyles = styles.create({prefix: false})
     const style = myStyles({
@@ -102,114 +102,7 @@ describe('Configure', () => {
   })
 })
 
-describe('Usage', () => {
-  it('flushes sheet tags', () => {
-    const myStyles = styles.create({})
-    const style = myStyles({
-      flex: {display: 'flex'},
-      block: {display: 'block'},
-    })
-
-    style('flex')
-    style('block')
-    expect(document.querySelectorAll(`style[data-dash]`).length).toBe(2)
-    myStyles.dash.sheet.flush()
-    expect(document.querySelectorAll(`style[data-dash]`).length).toBe(0)
-  })
-
-  it('rehydrates', () => {
-    let tag = document.createElement('style')
-    tag.setAttribute(`data-dash`, '1ut9bc3')
-    tag.setAttribute('data-cache', '-ui')
-    tag.appendChild(
-      document.createTextNode(
-        `.-ui-_1ut9bc3{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;}`
-      )
-    )
-    document.head.appendChild(tag)
-
-    const myStyles = styles.create({})
-    const style = myStyles({
-      flex: {display: 'flex'},
-    })
-
-    style('flex')
-    expect(document.querySelectorAll(`style[data-dash]`).length).toBe(1)
-  })
-
-  it('rehydrates into custom container', () => {
-    let tag = document.createElement('style')
-    tag.setAttribute(`data-dash`, '1ut9bc3')
-    tag.setAttribute('data-cache', '-ui')
-
-    tag.appendChild(
-      document.createTextNode(
-        `.-ui-_1ut9bc3{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;}`
-      )
-    )
-    document.head.appendChild(tag)
-
-    const myStyles = styles.create({container: document.body})
-    const style = myStyles({
-      flex: {display: 'flex'},
-    })
-
-    style('flex')
-    expect(document.querySelectorAll(`head style[data-dash]`).length).toBe(0)
-    expect(document.querySelectorAll(`body style[data-dash]`).length).toBe(1)
-  })
-
-  it('creates global variables', () => {
-    styles.create().variables({
-      colors: {
-        blue: '#09a',
-        red: '#c12',
-        lightRed: '#c1a',
-      },
-      spacing: {
-        xs: '1rem',
-      },
-      system: {
-        p: {md: '1rem', xs: '0.25rem', sm: '0.5rem', lg: '2rem', xl: '4rem'},
-      },
-    })
-
-    for (let element of document.querySelectorAll(`style[data-dash]`)) {
-      expect(element).toMatchSnapshot(':root')
-    }
-  })
-
-  it('creates global variables w/ scales', () => {
-    styles.create().variables({
-      spacing: ['1rem', '2rem', '4rem'],
-    })
-
-    for (let element of document.querySelectorAll(`style[data-dash]`)) {
-      expect(element).toMatchSnapshot(':root')
-    }
-  })
-
-  it('creates theme variables', () => {
-    styles.create().themes({
-      dark: {
-        colors: {
-          bg: '#000',
-          text: '#fff',
-        },
-      },
-      light: {
-        colors: {
-          bg: '#fff',
-          text: '#000',
-        },
-      },
-    })
-
-    for (let element of document.querySelectorAll(`style[data-dash]`)) {
-      expect(element).toMatchSnapshot(':root')
-    }
-  })
-
+describe('styles()', () => {
   it('returns single class name', () => {
     const style = styles.create()({
       flex: {display: 'flex'},
@@ -345,6 +238,190 @@ describe('Usage', () => {
     style('box')
   })
 
+  it('adds dev labels', () => {
+    let prevEnv = process.env.NODE_ENV
+    process.env.NODE_ENV = 'development'
+    const style = styles.create()({
+      flex: `display: flex;`,
+      block: `display: block;`,
+      inline: `display: inline;`,
+    })
+
+    expect(style('flex')).toMatchSnapshot('-flex')
+    expect(style('flex', 'inline')).toMatchSnapshot('-flex-inline')
+    expect(style('flex', {inline: false, block: true})).toMatchSnapshot(
+      '-flex-block'
+    )
+    process.env.NODE_ENV = prevEnv
+  })
+
+  it('replaces disallowed characters in dev labels', () => {
+    let prevEnv = process.env.NODE_ENV
+    process.env.NODE_ENV = 'development'
+    const style = styles.create()({
+      'box=big': {width: 400, height: '400px'},
+    })
+
+    style('box=big')
+
+    for (let element of document.querySelectorAll(`style[data-dash]`)) {
+      expect(element).toMatchSnapshot('400x400')
+    }
+
+    process.env.NODE_ENV = prevEnv
+  })
+
+  it('allows multiple arguments', () => {
+    const style = styles.create()(
+      {
+        flex: `display: flex;`,
+        block: `display: block;`,
+      },
+      {
+        inline: `display: inline;`,
+      }
+    )
+
+    style('flex', 'block', 'inline')
+
+    for (let element of document.querySelectorAll(`style[data-dash]`)) {
+      expect(element).toMatchSnapshot()
+    }
+  })
+
+  it('allows style functions in arguments', () => {
+    const myStyles = styles.create()
+    const styleA = myStyles({
+      flex: `display: flex;`,
+      block: `display: block;`,
+    })
+    const styleB = myStyles(
+      {
+        inline: `display: inline;`,
+      },
+      styleA
+    )
+
+    styleB('flex', 'block', 'inline')
+
+    for (let element of document.querySelectorAll(`style[data-dash]`)) {
+      expect(element).toMatchSnapshot()
+    }
+  })
+
+  it('flushes sheet tags', () => {
+    const myStyles = styles.create({})
+    const style = myStyles({
+      flex: {display: 'flex'},
+      block: {display: 'block'},
+    })
+
+    style('flex')
+    style('block')
+    expect(document.querySelectorAll(`style[data-dash]`).length).toBe(2)
+    myStyles.dash.sheet.flush()
+    expect(document.querySelectorAll(`style[data-dash]`).length).toBe(0)
+  })
+
+  it('rehydrates', () => {
+    let tag = document.createElement('style')
+    tag.setAttribute(`data-dash`, '1ut9bc3')
+    tag.setAttribute('data-cache', '-ui')
+    tag.appendChild(
+      document.createTextNode(
+        `.-ui-_1ut9bc3{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;}`
+      )
+    )
+    document.head.appendChild(tag)
+
+    const myStyles = styles.create({})
+    const style = myStyles({
+      flex: {display: 'flex'},
+    })
+
+    style('flex')
+    expect(document.querySelectorAll(`style[data-dash]`).length).toBe(1)
+  })
+
+  it('rehydrates into custom container', () => {
+    let tag = document.createElement('style')
+    tag.setAttribute(`data-dash`, '1ut9bc3')
+    tag.setAttribute('data-cache', '-ui')
+
+    tag.appendChild(
+      document.createTextNode(
+        `.-ui-_1ut9bc3{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;}`
+      )
+    )
+    document.head.appendChild(tag)
+
+    const myStyles = styles.create({container: document.body})
+    const style = myStyles({
+      flex: {display: 'flex'},
+    })
+
+    style('flex')
+    expect(document.querySelectorAll(`head style[data-dash]`).length).toBe(0)
+    expect(document.querySelectorAll(`body style[data-dash]`).length).toBe(1)
+  })
+})
+
+describe(`styles.variables()`, () => {
+  it('creates variables', () => {
+    styles.create().variables({
+      colors: {
+        blue: '#09a',
+        red: '#c12',
+        lightRed: '#c1a',
+      },
+      spacing: {
+        xs: '1rem',
+      },
+      system: {
+        p: {md: '1rem', xs: '0.25rem', sm: '0.5rem', lg: '2rem', xl: '4rem'},
+      },
+    })
+
+    for (let element of document.querySelectorAll(`style[data-dash]`)) {
+      expect(element).toMatchSnapshot(':root')
+    }
+  })
+
+  it('creates variables w/ scales', () => {
+    styles.create().variables({
+      spacing: ['1rem', '2rem', '4rem'],
+    })
+
+    for (let element of document.querySelectorAll(`style[data-dash]`)) {
+      expect(element).toMatchSnapshot(':root')
+    }
+  })
+})
+
+describe(`styles.themes()`, () => {
+  it('creates variables', () => {
+    styles.create().themes({
+      dark: {
+        colors: {
+          bg: '#000',
+          text: '#fff',
+        },
+      },
+      light: {
+        colors: {
+          bg: '#fff',
+          text: '#000',
+        },
+      },
+    })
+
+    for (let element of document.querySelectorAll(`style[data-dash]`)) {
+      expect(element).toMatchSnapshot(':root')
+    }
+  })
+})
+
+describe(`styles.global()`, () => {
   it('passes variables to global styles', () => {
     const myStyles = styles.create()
     myStyles.variables({
@@ -433,75 +510,97 @@ describe('Usage', () => {
     expect(document.querySelectorAll(`style[data-dash]`).length).toBe(0)
   })
 
-  it('adds dev labels', () => {
-    let prevEnv = process.env.NODE_ENV
-    process.env.NODE_ENV = 'development'
-    const style = styles.create()({
-      flex: `display: flex;`,
-      block: `display: block;`,
-      inline: `display: inline;`,
-    })
-
-    expect(style('flex')).toMatchSnapshot('-flex')
-    expect(style('flex', 'inline')).toMatchSnapshot('-flex-inline')
-    expect(style('flex', {inline: false, block: true})).toMatchSnapshot(
-      '-flex-block'
-    )
-    process.env.NODE_ENV = prevEnv
-  })
-
-  it('replaces disallowed characters in dev labels', () => {
-    let prevEnv = process.env.NODE_ENV
-    process.env.NODE_ENV = 'development'
-    const style = styles.create()({
-      'box=big': {width: 400, height: '400px'},
-    })
-
-    style('box=big')
-
-    for (let element of document.querySelectorAll(`style[data-dash]`)) {
-      expect(element).toMatchSnapshot('400x400')
-    }
-
-    process.env.NODE_ENV = prevEnv
-  })
-
-  it('allows multiple arguments', () => {
-    const style = styles.create()(
-      {
-        flex: `display: flex;`,
-        block: `display: block;`,
-      },
-      {
-        inline: `display: inline;`,
+  it('allows @font-face', () => {
+    const {global} = styles.create()
+    global`
+      @font-face {
+        font-family: "Open Sans";
+        src: url("/fonts/OpenSans-Regular-webfont.woff2") format("woff2"),
+             url("/fonts/OpenSans-Regular-webfont.woff") format("woff");
       }
-    )
+    `
 
-    style('flex', 'block', 'inline')
-
-    for (let element of document.querySelectorAll(`style[data-dash]`)) {
-      expect(element).toMatchSnapshot()
-    }
+    expect(document.querySelectorAll(`style[data-dash]`).length).toBe(1)
+    expect(document.querySelectorAll(`style[data-dash]`)[0]).toMatchSnapshot()
   })
 
-  it('allows style functions in arguments', () => {
+  it('allows @import', () => {
+    const {global} = styles.create()
+    global`
+      @import url("navigation.css");
+    `
+
+    expect(document.querySelectorAll(`style[data-dash]`).length).toBe(1)
+    expect(document.querySelectorAll(`style[data-dash]`)[0]).toMatchSnapshot()
+  })
+})
+
+describe('styles.one()', () => {
+  it('creates style w/ template literal', () => {
     const myStyles = styles.create()
-    const styleA = myStyles({
-      flex: `display: flex;`,
-      block: `display: block;`,
-    })
-    const styleB = myStyles(
-      {
-        inline: `display: inline;`,
-      },
-      styleA
-    )
+    const myCls = myStyles.one`
+      display: flex;
+    `
 
-    styleB('flex', 'block', 'inline')
+    myCls()
+    expect(document.querySelectorAll(`style[data-dash]`).length).toBe(1)
+    expect(document.querySelectorAll(`style[data-dash]`)[0]).toMatchSnapshot()
+  })
 
-    for (let element of document.querySelectorAll(`style[data-dash]`)) {
-      expect(element).toMatchSnapshot()
-    }
+  it(`won't create style if function call is provided falsy value`, () => {
+    const myStyles = styles.create()
+    const myCls = myStyles.one`
+      display: flex;
+    `
+
+    myCls(false)
+    myCls(null)
+    myCls(0)
+    myCls('')
+
+    expect(document.querySelectorAll(`style[data-dash]`).length).toBe(0)
+  })
+
+  it(`returns a class name when toString() is called`, () => {
+    const myStyles = styles.create()
+    const myCls = myStyles.one`
+      display: flex;
+    `
+
+    String(myCls)
+    expect(document.querySelectorAll(`style[data-dash]`).length).toBe(1)
+    expect(document.querySelectorAll(`style[data-dash]`)[0]).toMatchSnapshot()
+  })
+
+  it(`returns css when css() is called`, () => {
+    const myStyles = styles.create()
+    const myCls = myStyles.one`
+      display: flex;
+    `
+
+    expect(myCls.css()).toMatchSnapshot()
+  })
+
+  it(`returns css when css.toString() is called`, () => {
+    const myStyles = styles.create()
+    const myCls = myStyles.one`
+      display: flex;
+    `
+
+    expect(`${myCls.css}`).toMatchSnapshot()
+  })
+
+  it(`can be called as a function w/ string value`, () => {
+    const myStyles = styles.create()
+    const myCls = myStyles.one('display: flex;')
+    expect(myCls()).toMatchSnapshot()
+  })
+
+  it(`can be called as a function w/ function value`, () => {
+    const myStyles = styles.create()
+    myStyles.variables({color: {blue: 'blue'}})
+    const myCls = myStyles.one(({color}) => `color: ${color.blue};`)
+    expect(myCls.css()).toMatchSnapshot()
   })
 })
 

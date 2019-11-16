@@ -503,6 +503,20 @@ const createStyles = dash => {
   // Methods
   styles.create = options => createStyles(createDash(options))
 
+  styles.one = function() {
+    let css =
+      typeof arguments[0] === 'function'
+        ? arguments[0](dash.variables)
+        : interpolate(arguments)
+    const name = `${dash.hash(css)}-one`
+    const style = styles({[name]: css})
+    const callback = value => style(value || value === void 0 ? name : '')
+    callback.toString = () => callback()
+    callback.css = () => style.css(name)
+    callback.css.toString = callback.css
+    return callback
+  }
+
   styles.variables = (vars, selector = ':root') => {
     const serialized = serializeVariables(dash.key, vars)
     dash.variables = mergeVariables(dash.variables, serialized.variables)
