@@ -1,6 +1,5 @@
-const path = require('path')
 const {main} = require('../package.json')
-const defaultStyles = require(path.join('../', main)).default
+const defaultStyles = require(`../${main}`).default
 
 function unique() {
   const set = {},
