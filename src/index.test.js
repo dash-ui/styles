@@ -420,7 +420,8 @@ describe(`styles.variables()`, () => {
   })
 
   it('removes variables when eject is called', () => {
-    const eject = styles.create().variables({
+    const myStyles = styles.create()
+    const eject = myStyles.variables({
       colors: {
         blue: '#09a',
         red: '#c12',
@@ -436,8 +437,58 @@ describe(`styles.variables()`, () => {
 
     expect(document.querySelectorAll(`style[data-dash]`).length).toBe(1)
     expect(document.querySelectorAll(`style[data-dash]`)).toMatchSnapshot()
+    expect(Object.keys(myStyles.dash.insertCache).length).toBe(1)
+    expect(myStyles.dash.variablesCache.length).toBe(1)
     eject()
     expect(document.querySelectorAll(`style[data-dash]`).length).toBe(0)
+    expect(Object.keys(myStyles.dash.insertCache).length).toBe(0)
+    expect(myStyles.dash.variablesCache.length).toBe(0)
+  })
+
+  it('still exists in caches when used more than once', () => {
+    const myStyles = styles.create()
+    const ejectA = myStyles.variables({
+      colors: {
+        blue: '#09a',
+        red: '#c12',
+        lightRed: '#c1a',
+      },
+      spacing: {
+        xs: '1rem',
+      },
+      system: {
+        p: {md: '1rem', xs: '0.25rem', sm: '0.5rem', lg: '2rem', xl: '4rem'},
+      },
+    })
+    const ejectB = myStyles.variables({
+      colors: {
+        blue: '#09a',
+        red: '#c12',
+        lightRed: '#c1a',
+      },
+      spacing: {
+        xs: '1rem',
+      },
+      system: {
+        p: {md: '1rem', xs: '0.25rem', sm: '0.5rem', lg: '2rem', xl: '4rem'},
+      },
+    })
+
+    expect(document.querySelectorAll(`style[data-dash]`).length).toBe(1)
+    expect(document.querySelectorAll(`style[data-dash]`)[0]).toMatchSnapshot()
+    expect(Object.keys(myStyles.dash.insertCache).length).toBe(1)
+    expect(Object.keys(myStyles.dash.variablesSheetCache).length).toBe(1)
+    expect(myStyles.dash.variablesCache.length).toBe(2)
+    ejectA()
+    expect(document.querySelectorAll(`style[data-dash]`).length).toBe(1)
+    expect(Object.keys(myStyles.dash.insertCache).length).toBe(1)
+    expect(Object.keys(myStyles.dash.variablesSheetCache).length).toBe(1)
+    expect(myStyles.dash.variablesCache.length).toBe(1)
+    ejectB()
+    expect(document.querySelectorAll(`style[data-dash]`).length).toBe(0)
+    expect(Object.keys(myStyles.dash.insertCache).length).toBe(0)
+    expect(Object.keys(myStyles.dash.variablesSheetCache).length).toBe(0)
+    expect(myStyles.dash.variablesCache.length).toBe(0)
   })
 
   it('creates variables w/ scales', () => {
@@ -474,7 +525,8 @@ describe(`styles.themes()`, () => {
   })
 
   it('removes variables when eject is called', () => {
-    const eject = styles.create().themes({
+    const myStyles = styles.create()
+    const eject = myStyles.themes({
       dark: {
         colors: {
           bg: '#000',
@@ -491,8 +543,12 @@ describe(`styles.themes()`, () => {
 
     expect(document.querySelectorAll(`style[data-dash]`).length).toBe(1)
     expect(document.querySelectorAll(`style[data-dash]`)).toMatchSnapshot()
+    expect(Object.keys(myStyles.dash.insertCache).length).toBe(1)
+    expect(myStyles.dash.variablesCache.length).toBe(1)
     eject('dark')
     expect(document.querySelectorAll(`style[data-dash]`).length).toBe(0)
+    expect(Object.keys(myStyles.dash.insertCache).length).toBe(0)
+    expect(myStyles.dash.variablesCache.length).toBe(0)
   })
 })
 
@@ -566,14 +622,15 @@ describe(`styles.global()`, () => {
       }
     `
 
+    expect(document.querySelectorAll(`style[data-dash]`).length).toBe(3)
     for (let element of document.querySelectorAll(`style[data-dash]`)) {
       expect(element).toMatchSnapshot()
     }
   })
 
-  it('unmounts global styles w/ callback', () => {
-    const styles_ = styles.create()
-    const unmount = styles_.global(`
+  it('ejects global styles when callback is called', () => {
+    const myStyles = styles.create()
+    const eject = myStyles.global(`
       html {
         font-size: 100%;
       }
@@ -581,8 +638,42 @@ describe(`styles.global()`, () => {
 
     expect(document.querySelectorAll(`style[data-dash]`).length).toBe(1)
     expect(document.querySelectorAll(`style[data-dash]`)[0]).toMatchSnapshot()
-    unmount()
+    expect(Object.keys(myStyles.dash.insertCache).length).toBe(1)
+    expect(myStyles.dash.globalCache.length).toBe(1)
+    eject()
     expect(document.querySelectorAll(`style[data-dash]`).length).toBe(0)
+    expect(Object.keys(myStyles.dash.insertCache).length).toBe(0)
+    expect(myStyles.dash.globalCache.length).toBe(0)
+  })
+
+  it('still exists in caches when a global is used more than once but ejected once', () => {
+    const myStyles = styles.create()
+    const ejectA = myStyles.global(`
+      html {
+        font-size: 100%;
+      }
+    `)
+    const ejectB = myStyles.global(`
+      html {
+        font-size: 100%;
+      }
+    `)
+
+    expect(document.querySelectorAll(`style[data-dash]`).length).toBe(1)
+    expect(document.querySelectorAll(`style[data-dash]`)[0]).toMatchSnapshot()
+    expect(Object.keys(myStyles.dash.insertCache).length).toBe(1)
+    expect(Object.keys(myStyles.dash.globalSheetCache).length).toBe(1)
+    expect(myStyles.dash.globalCache.length).toBe(2)
+    ejectA()
+    expect(document.querySelectorAll(`style[data-dash]`).length).toBe(1)
+    expect(Object.keys(myStyles.dash.insertCache).length).toBe(1)
+    expect(Object.keys(myStyles.dash.globalSheetCache).length).toBe(1)
+    expect(myStyles.dash.globalCache.length).toBe(1)
+    ejectB()
+    expect(document.querySelectorAll(`style[data-dash]`).length).toBe(0)
+    expect(Object.keys(myStyles.dash.insertCache).length).toBe(0)
+    expect(Object.keys(myStyles.dash.globalSheetCache).length).toBe(0)
+    expect(myStyles.dash.globalCache.length).toBe(0)
   })
 
   it('allows @font-face', () => {

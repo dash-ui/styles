@@ -219,6 +219,15 @@ exports[`styles.global() allows @import 1`] = `
 </style>
 `;
 
+exports[`styles.global() ejects global styles when callback is called 1`] = `
+<style
+  data-dash="-ui"
+>
+  
+  html{font-size:100%;}
+</style>
+`;
+
 exports[`styles.global() injects global styles 1`] = `
 <style
   data-dash="-ui"
@@ -266,7 +275,7 @@ exports[`styles.global() should inject global styles once 3`] = `
 </style>
 `;
 
-exports[`styles.global() unmounts global styles w/ callback 1`] = `
+exports[`styles.global() still exists in caches when a global is used more than once but ejected once 1`] = `
 <style
   data-dash="-ui"
 >
@@ -348,4 +357,13 @@ NodeList [
     :root{--ui-colors-blue:#09a;--ui-colors-red:#c12;--ui-colors-light-red:#c1a;--ui-spacing-xs:1rem;--ui-system-p-md:1rem;--ui-system-p-xs:0.25rem;--ui-system-p-sm:0.5rem;--ui-system-p-lg:2rem;--ui-system-p-xl:4rem;}
   </style>,
 ]
+`;
+
+exports[`styles.variables() still exists in caches when used more than once 1`] = `
+<style
+  data-dash="-ui"
+>
+  
+  :root{--ui-colors-blue:#09a;--ui-colors-red:#c12;--ui-colors-light-red:#c1a;--ui-spacing-xs:1rem;--ui-system-p-md:1rem;--ui-system-p-xs:0.25rem;--ui-system-p-sm:0.5rem;--ui-system-p-lg:2rem;--ui-system-p-xl:4rem;}
+</style>
 `;
