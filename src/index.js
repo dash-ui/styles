@@ -545,7 +545,7 @@ const createStyles = dash => {
   styles.themes = vars => {
     Object.assign(dash.themes, vars)
     styles.theme(dash.themes.default ? 'default' : Object.keys(dash.themes)[0])
-    return name => dash.ejectThemes[name]()
+    return name => dash.ejectThemes[name] && dash.ejectThemes[name]()
   }
 
   styles.theme = theme => {
