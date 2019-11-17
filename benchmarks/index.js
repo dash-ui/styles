@@ -1429,7 +1429,7 @@ const DOC = `
       <li class="mr-3 mr-lg-0"><a href="https://training.github.com" data-ga-click="Footer, go to training, text:training">Training</a></li>
         <li class="mr-3 mr-lg-0"><a href="https://github.blog" data-ga-click="Footer, go to blog, text:blog">Blog</a></li>
         <li><a data-ga-click="Footer, go to about, text:about" href="https://github.com/about">About</a></li>
-    <div class='dash-1ut9bc3'>foo bar baz</div>
+    <div class='-ui-1ut9bc3'>foo bar baz</div>
     </ul>
   </div>
   <div class="d-flex flex-justify-center pb-6">
@@ -1538,11 +1538,8 @@ bench('create styles from cache A', () => {
   createStyleTagFromCache(styles, {clearCache: false})
 })
 
-writeStylesFromString(
-  '<div className="dash-dash-1ut9bc3">',
-  __dirname,
-  styles,
-  {clearCache: false}
-).then(console.log)
+writeStylesFromString('<div className="-ui-1ut9bc3">', __dirname, styles, {
+  clearCache: false,
+}).then(console.log)
 
 writeStylesFromCache(__dirname, styles).then(console.log)

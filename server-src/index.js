@@ -26,9 +26,9 @@ export const createStylesFromCache = (styles = defaultStyles, options = {}) => {
   let css = '',
     seen = new Set(),
     names = unique(
-      dash.variablesCache
-        .concat(dash.globalCache)
-        .concat(Object.keys(dash.insertCache))
+      dash.variablesCache,
+      dash.globalCache,
+      Object.keys(dash.insertCache)
     )
 
   for (let i = 0; i < names.length; i++) {
@@ -90,7 +90,7 @@ export const createStylesFromString = (
   const styleIds = Object.keys(styleCache)
 
   let css = '',
-    names = styles.dash.variablesCache.concat(styles.dash.globalCache)
+    names = unique(styles.dash.variablesCache, styles.dash.globalCache)
 
   for (let i = 0; i < names.length; i++) css += styleCache[names[i]]
 
@@ -153,7 +153,7 @@ const createStylesFromStringRe = (string, styles, options) => {
   const styleCache = dash.stylisCache
 
   let css = '',
-    names = styles.dash.variablesCache.concat(styles.dash.globalCache),
+    names = unique(styles.dash.variablesCache, styles.dash.globalCache),
     i = 0,
     result
 

@@ -1,6 +1,6 @@
-// A huge amount (almost all) of credit for this library goes to the emotion
-// team for the core functionality and to Sebastian McKenzie at Facebook for
-// inspiring the API design
+// A huge amount of credit for this library goes to the emotion
+// team and to Sebastian McKenzie at Facebook for inspiring the
+// API design
 import Stylis from '@emotion/stylis'
 import unitless from '@emotion/unitless'
 import memoize from 'trie-memoize'
@@ -100,7 +100,7 @@ let getServerStylisCache = IS_BROWSER
 const emptyArr = []
 
 export const createDash = (options = {}) => {
-  // lifted from
+  // Based on
   // https://github.com/emotion-js/emotion/blob/master/packages/cache/src/index.js
   let {
     key = '-ui',
@@ -191,6 +191,7 @@ export const createDash = (options = {}) => {
     variables: {},
     variablesCache: [],
     themes: {},
+    ejectThemes: {},
     globalCache: [],
     clear() {
       this.insertCache = insertCache = {}
@@ -414,18 +415,23 @@ const normalizeStyles_ = (styles, variables) => {
 export const normalizeStyles = memoize([Map, WeakMap], normalizeStyles_)
 
 const normalizeStyleObject = (dash, styleDefs, styleName) => {
-  if (typeof styleName === 'string') {
-    return normalizeStyles(styleDefs[styleName], dash.variables)
+  let nextStyles = styleDefs.default
+    ? normalizeStyles(styleDefs.default, dash.variables)
+    : ''
+
+  if (typeof styleName === 'string' && styleName !== 'default') {
+    nextStyles += normalizeStyles(styleDefs[styleName], dash.variables)
   } else if (typeof styleName === 'object') {
-    let keys = Object.keys(styleName),
-      nextStyles = ''
+    let keys = Object.keys(styleName)
 
     for (let i = 0; i < keys.length; i++)
-      if (styleName[keys[i]])
+      if (styleName[keys[i]] && keys[i] !== 'default')
         nextStyles += normalizeStyles(styleDefs[keys[i]], dash.variables)
 
-    return normalizeStyles(nextStyles, dash.variables)
+    nextStyles = normalizeStyles(nextStyles, dash.variables)
   }
+
+  return nextStyles
 }
 
 const normalizeArgs = (dash, styleDefs, args) => {
@@ -508,9 +514,8 @@ const createStyles = dash => {
       typeof arguments[0] === 'function'
         ? arguments[0](dash.variables)
         : interpolate(arguments)
-    const name = `${dash.hash(css)}-one`
-    const style = styles({[name]: css})
-    const callback = value => style(value || value === void 0 ? name : '')
+    const style = styles({default: css})
+    const callback = value => (value || value === void 0 ? style() : '')
     callback.toString = () => callback()
     callback.css = () => style.css(name)
     callback.css.toString = callback.css
@@ -520,20 +525,30 @@ const createStyles = dash => {
   styles.variables = (vars, selector = ':root') => {
     const serialized = serializeVariables(dash.key, vars)
     dash.variables = mergeVariables(dash.variables, serialized.variables)
+    const sheet = styleSheet(dash.sheet)
     const name = `${dash.hash(serialized.styles)}-variables`
-    if (dash.variablesCache.indexOf(name) === -1) dash.variablesCache.push(name)
-    dash.insert(selector, name, serialized.styles, dash.sheet)
-    return name
+    dash.variablesCache.push(name)
+    dash.insert(selector, name, serialized.styles, sheet)
+    return () => {
+      dash.variablesCache.splice(dash.variablesCache.indexOf(name), 1)
+      if (dash.variablesCache.indexOf(name) === -1)
+        delete dash.insertCache[name]
+      sheet.flush()
+    }
   }
 
   styles.themes = vars => {
     Object.assign(dash.themes, vars)
     styles.theme(dash.themes.default ? 'default' : Object.keys(dash.themes)[0])
+    return name => dash.ejectThemes[name]()
   }
 
   styles.theme = theme => {
     const className = `${dash.key}-${theme}-theme`
-    styles.variables(dash.themes[theme], `.${className}`)
+    dash.ejectThemes[theme] = styles.variables(
+      dash.themes[theme],
+      `.${className}`
+    )
     return className
   }
 
@@ -546,12 +561,12 @@ const createStyles = dash => {
     if (!styles) return () => {}
     const name = `${dash.hash(styles)}-global`
     const sheet = styleSheet(dash.sheet)
-    if (dash.globalCache.indexOf(name) === -1) dash.globalCache.push(name)
+    dash.globalCache.push(name)
     dash.insert('', name, styles, sheet)
 
     return () => {
-      delete dash.insertCache[name]
-      if (dash.globalCache.indexOf(name) === -1) dash.globalCache.push(name)
+      dash.globalCache.splice(dash.globalCache.indexOf(name), 1)
+      if (dash.globalCache.indexOf(name) === -1) delete dash.insertCache[name]
       sheet.flush()
     }
   }

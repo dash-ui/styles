@@ -289,6 +289,38 @@ describe('styles()', () => {
     }
   })
 
+  it('allows default styles', () => {
+    const style = styles.create()({
+      default: `display: flex;`,
+      block: `display: block;`,
+    })
+
+    style()
+    expect(document.querySelectorAll(`style[data-dash]`).length).toBe(1)
+    expect(document.querySelectorAll(`style[data-dash]`)).toMatchSnapshot()
+  })
+
+  it('has a default style that is always applied first', () => {
+    const style = styles.create()({
+      block: `display: block;`,
+      default: `display: flex;`,
+    })
+
+    style('block')
+    expect(document.querySelectorAll(`style[data-dash]`).length).toBe(1)
+    expect(document.querySelectorAll(`style[data-dash]`)).toMatchSnapshot()
+  })
+
+  it('only applies default style once', () => {
+    const style = styles.create()({
+      default: `display: flex;`,
+    })
+
+    style('default')
+    expect(document.querySelectorAll(`style[data-dash]`).length).toBe(1)
+    expect(document.querySelectorAll(`style[data-dash]`)).toMatchSnapshot()
+  })
+
   it('allows style functions in arguments', () => {
     const myStyles = styles.create()
     const styleA = myStyles({
@@ -387,6 +419,27 @@ describe(`styles.variables()`, () => {
     }
   })
 
+  it('removes variables when eject is called', () => {
+    const eject = styles.create().variables({
+      colors: {
+        blue: '#09a',
+        red: '#c12',
+        lightRed: '#c1a',
+      },
+      spacing: {
+        xs: '1rem',
+      },
+      system: {
+        p: {md: '1rem', xs: '0.25rem', sm: '0.5rem', lg: '2rem', xl: '4rem'},
+      },
+    })
+
+    expect(document.querySelectorAll(`style[data-dash]`).length).toBe(1)
+    expect(document.querySelectorAll(`style[data-dash]`)).toMatchSnapshot()
+    eject()
+    expect(document.querySelectorAll(`style[data-dash]`).length).toBe(0)
+  })
+
   it('creates variables w/ scales', () => {
     styles.create().variables({
       spacing: ['1rem', '2rem', '4rem'],
@@ -418,6 +471,28 @@ describe(`styles.themes()`, () => {
     for (let element of document.querySelectorAll(`style[data-dash]`)) {
       expect(element).toMatchSnapshot(':root')
     }
+  })
+
+  it('removes variables when eject is called', () => {
+    const eject = styles.create().themes({
+      dark: {
+        colors: {
+          bg: '#000',
+          text: '#fff',
+        },
+      },
+      light: {
+        colors: {
+          bg: '#fff',
+          text: '#000',
+        },
+      },
+    })
+
+    expect(document.querySelectorAll(`style[data-dash]`).length).toBe(1)
+    expect(document.querySelectorAll(`style[data-dash]`)).toMatchSnapshot()
+    eject('dark')
+    expect(document.querySelectorAll(`style[data-dash]`).length).toBe(0)
   })
 })
 

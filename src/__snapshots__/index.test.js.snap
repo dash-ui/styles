@@ -28,6 +28,17 @@ exports[`styles() adds styles by order of definition when called: flex, block, i
 
 exports[`styles() allows comments 1`] = `"-ui-xmqurs"`;
 
+exports[`styles() allows default styles 1`] = `
+NodeList [
+  <style
+    data-dash="-ui"
+  >
+    
+    .-ui-1ut9bc3{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;}
+  </style>,
+]
+`;
+
 exports[`styles() allows multiple arguments 1`] = `
 <style
   data-dash="-ui"
@@ -53,6 +64,28 @@ exports[`styles() allows unitless object values: 200x200 1`] = `
   
   .-ui-haiabg{width:200px;height:200px;}
 </style>
+`;
+
+exports[`styles() has a default style that is always applied first 1`] = `
+NodeList [
+  <style
+    data-dash="-ui"
+  >
+    
+    .-ui-14t38od{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;display:block;}
+  </style>,
+]
+`;
+
+exports[`styles() only applies default style once 1`] = `
+NodeList [
+  <style
+    data-dash="-ui"
+  >
+    
+    .-ui-1ut9bc3{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;}
+  </style>,
+]
 `;
 
 exports[`styles() passes variables to style callbacks 1`] = `
@@ -277,6 +310,17 @@ exports[`styles.themes() creates variables: :root 1`] = `
 </style>
 `;
 
+exports[`styles.themes() removes variables when eject is called 1`] = `
+NodeList [
+  <style
+    data-dash="-ui"
+  >
+    
+    .-ui-dark-theme{--ui-colors-bg:#000;--ui-colors-text:#fff;}
+  </style>,
+]
+`;
+
 exports[`styles.variables() creates variables w/ scales: :root 1`] = `
 <style
   data-dash="-ui"
@@ -293,4 +337,15 @@ exports[`styles.variables() creates variables: :root 1`] = `
   
   :root{--ui-colors-blue:#09a;--ui-colors-red:#c12;--ui-colors-light-red:#c1a;--ui-spacing-xs:1rem;--ui-system-p-md:1rem;--ui-system-p-xs:0.25rem;--ui-system-p-sm:0.5rem;--ui-system-p-lg:2rem;--ui-system-p-xl:4rem;}
 </style>
+`;
+
+exports[`styles.variables() removes variables when eject is called 1`] = `
+NodeList [
+  <style
+    data-dash="-ui"
+  >
+    
+    :root{--ui-colors-blue:#09a;--ui-colors-red:#c12;--ui-colors-light-red:#c1a;--ui-spacing-xs:1rem;--ui-system-p-md:1rem;--ui-system-p-xs:0.25rem;--ui-system-p-sm:0.5rem;--ui-system-p-lg:2rem;--ui-system-p-xl:4rem;}
+  </style>,
+]
 `;
