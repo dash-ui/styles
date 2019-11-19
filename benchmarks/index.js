@@ -5,7 +5,7 @@ import {
   writeStylesFromCache,
   createStyleTagFromString,
   createStyleTagFromCache,
-} from '../server'
+} from '../server-src'
 import doc from './doc'
 
 bench('create styles [object]', () => styles({foo: {display: 'flex'}}))
