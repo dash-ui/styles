@@ -2,14 +2,14 @@ const {main} = require('../package.json')
 const defaultStyles = require(`../${main}`).default
 
 function unique() {
-  const set = {},
+  const seen = {},
     out = []
 
   for (let i = 0; i < arguments.length; i++) {
     for (let j = 0; j < arguments[i].length; j++) {
       const value = arguments[i][j]
-      if (set[value] === 1) continue
-      set[value] = 1
+      if (seen[value] === true) continue
+      seen[value] = true
       out.push(value)
     }
   }
@@ -79,36 +79,28 @@ export const createStylesFromString = (
   const {clearCache = true} = options
   const {dash} = styles
   const styleCache = dash.stylisCache
+
   let css = '',
     names = unique(
       Object.keys(styles.dash.variablesCache),
       Object.keys(styles.dash.globalCache)
-    )
+    ),
+    i = 0,
+    result
 
-  for (let name of names) css += styleCache[name]
+  for (; i < names.length; i++) css += styleCache[names[i]]
 
-  let name = null
+  const replacer = `${styles.dash.key}-`
+  const classRe = new RegExp(`[='"\\s](${styles.dash.key}-[A-Za-z0-9_-]+)[\\s'">]`, 'g')
   const seen = {}
-  const testKey = `${styles.dash.key}-`
-  const keyLength = testKey.length
 
-  for (let i = 0; i < string.length; i++) {
-    if (string.slice(i - keyLength, i) === testKey) name = ''
-
-    if (name !== null) {
-      const char = string[i]
-      name += char
-      const style = styleCache[name]
-
-      if (style !== void 0) {
-        if (seen[name] === void 0) {
-          names.push(name)
-          seen[name] = 1
-          css += style
-        }
-
-        name = null
-      }
+  while ((result = classRe.exec(string)) !== null) {
+    const name = result[1].slice(replacer.length)
+    const style = styleCache[name]
+    if (style && seen[name] === void 0) {
+      css += style
+      names.push(name)
+      seen[name] = true
     }
   }
 
@@ -151,48 +143,4 @@ export const writeStylesFromString = async (
   const filename = path.join(outputPath, name)
   await fs.promises.writeFile(filename, stylesString)
   return {filename, name, path: outputPath, styles: stylesString}
-}
-
-// TODO: perf test this against existing solution for LARGE projects
-const classRe = /class\s*=(["']|)(.+?)\1+[^>]*?>/g
-/* istanbul ignore next */
-// eslint-disable-next-line
-const createStylesFromStringRe = (string, styles, options) => {
-  const {clearCache = true} = options
-  const {dash} = styles
-  const styleCache = dash.stylisCache
-
-  let css = '',
-    names = unique(
-      Object.keys(styles.dash.variablesCache),
-      Object.keys(styles.dash.globalCache)
-    ),
-    i = 0,
-    result
-
-  for (; i < names.length; i++) css += styleCache[names[i]]
-  const replacer = `${styles.dash.key}-`
-  while ((result = classRe.exec(string)) !== null) {
-    const cname = result[2].replace(replacer, '')
-    if (cname.indexOf(' ') !== -1) {
-      const matches = cname.split(' ')
-      for (i = 0; i < matches.length; i++) {
-        const match = matches[i]
-        const style = styleCache[match]
-        if (styleCache[match]) {
-          css += style
-          names.push(match)
-        }
-      }
-    } else {
-      const style = styleCache[cname]
-      if (styleCache[cname]) {
-        css += style
-        names.push(cname)
-      }
-    }
-  }
-
-  if (clearCache) dash.clear()
-  return {names, css}
 }

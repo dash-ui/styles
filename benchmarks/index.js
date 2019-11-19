@@ -16,12 +16,13 @@ bench('object-style', () => style({foo: true, bar: false}, 'bar'))
 
 for (let i = 0; i < 100000; i++) styles.dash.stylisCache[`${i}-foo`] = 1
 console.log(createStyleTagFromString(doc, styles, {clearCache: false}))
-bench('create styles from string A', () => {
+bench('create styles from string', () => {
   createStyleTagFromString(doc, styles, {clearCache: false})
 })
 
+
 console.log(createStyleTagFromCache(styles, {clearCache: false}))
-bench('create styles from cache A', () => {
+bench('create styles from cache', () => {
   createStyleTagFromCache(styles, {clearCache: false})
 })
 
