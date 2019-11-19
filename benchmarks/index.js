@@ -14,6 +14,7 @@ bench('style', () => style('foo'))
 bench('multi-style', () => style('foo', 'bar'))
 bench('object-style', () => style({foo: true, bar: false}, 'bar'))
 
+for (let i = 0; i < 100000; i++) styles.dash.stylisCache[`${i}-foo`] = 1
 console.log(createStyleTagFromString(doc, styles, {clearCache: false}))
 bench('create styles from string A', () => {
   createStyleTagFromString(doc, styles, {clearCache: false})

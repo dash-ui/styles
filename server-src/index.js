@@ -79,20 +79,36 @@ export const createStylesFromString = (
   const {clearCache = true} = options
   const {dash} = styles
   const styleCache = dash.stylisCache
-  const styleIds = Object.keys(styleCache)
-
   let css = '',
     names = unique(
-      Object.keys(styles.dash.variablesCache).concat(Object.keys(styles.dash.globalCache))
+      Object.keys(styles.dash.variablesCache),
+      Object.keys(styles.dash.globalCache)
     )
 
   for (let name of names) css += styleCache[name]
 
-  for (let i = 0; i < styleIds.length; i++) {
-    const styleId = styleIds[i]
-    if (string.indexOf(`${styles.dash.key}-${styleId}`) > -1) {
-      css += styleCache[styleId]
-      names.push(styleId)
+  let name = null
+  const seen = {}
+  const testKey = `${styles.dash.key}-`
+  const keyLength = testKey.length
+
+  for (let i = 0; i < string.length; i++) {
+    if (string.slice(i - keyLength, i) === testKey) name = ''
+
+    if (name !== null) {
+      const char = string[i]
+      name += char
+      const style = styleCache[name]
+
+      if (style !== void 0) {
+        if (seen[name] === void 0) {
+          names.push(name)
+          seen[name] = 1
+          css += style
+        }
+
+        name = null
+      }
     }
   }
 
