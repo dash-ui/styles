@@ -93,6 +93,7 @@ Object {
   "colors": Object {
     "bg": "var(--ui-colors-bg)",
     "blue": "var(--ui-colors-blue)",
+    "lightSpecific": "var(--ui-colors-light-specific)",
     "red": "var(--ui-colors-red)",
     "text": "var(--ui-colors-text)",
   },
@@ -101,30 +102,7 @@ Object {
 
 exports[`styles() passes variables to style callbacks 2`] = `"-ui-dark-theme"`;
 
-exports[`styles() passes variables to style callbacks 3`] = `
-Object {
-  "colors": Object {
-    "bg": "var(--ui-colors-bg)",
-    "blue": "var(--ui-colors-blue)",
-    "red": "var(--ui-colors-red)",
-    "text": "var(--ui-colors-text)",
-  },
-}
-`;
-
-exports[`styles() passes variables to style callbacks 4`] = `"-ui-light-theme"`;
-
-exports[`styles() passes variables to style callbacks 5`] = `
-Object {
-  "colors": Object {
-    "bg": "var(--ui-colors-bg)",
-    "blue": "var(--ui-colors-blue)",
-    "lightSpecific": "var(--ui-colors-light-specific)",
-    "red": "var(--ui-colors-red)",
-    "text": "var(--ui-colors-text)",
-  },
-}
-`;
+exports[`styles() passes variables to style callbacks 3`] = `"-ui-light-theme"`;
 
 exports[`styles() replaces disallowed characters in dev labels: 400x400 1`] = `
 <style
@@ -319,6 +297,15 @@ exports[`styles.themes() creates variables: :root 1`] = `
 </style>
 `;
 
+exports[`styles.themes() creates variables: :root 2`] = `
+<style
+  data-dash="-ui"
+>
+  
+  .-ui-light-theme{--ui-colors-bg:#fff;--ui-colors-text:#000;}
+</style>
+`;
+
 exports[`styles.themes() removes variables when eject is called 1`] = `
 NodeList [
   <style
@@ -326,6 +313,12 @@ NodeList [
   >
     
     .-ui-dark-theme{--ui-colors-bg:#000;--ui-colors-text:#fff;}
+  </style>,
+  <style
+    data-dash="-ui"
+  >
+    
+    .-ui-light-theme{--ui-colors-bg:#fff;--ui-colors-text:#000;}
   </style>,
 ]
 `;

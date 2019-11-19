@@ -189,12 +189,9 @@ export const createDash = (options = {}) => {
     insert,
     insertCache,
     variables: {},
-    variablesCache: [],
-    variablesSheetCache: {},
+    variablesCache: {},
     themes: {},
-    ejectThemes: {},
-    globalCache: [],
-    globalSheetCache: {},
+    globalCache: {},
     clear() {
       this.insertCache = insertCache = {}
     },
@@ -527,35 +524,42 @@ const createStyles = dash => {
   styles.variables = (vars, selector = ':root') => {
     const serialized = serializeVariables(dash.key, vars)
     dash.variables = mergeVariables(dash.variables, serialized.variables)
-    const name = `${dash.hash(serialized.styles)}-variables`
-    const sheet = dash.variablesSheetCache[name] || styleSheet(dash.sheet)
-    dash.variablesCache.push(name)
-    dash.variablesSheetCache[name] = sheet
+    const name = dash.hash(serialized.styles)
+    dash.variablesCache[name] = dash.variablesCache[name] || {
+      count: 0,
+      sheet: styleSheet(dash.sheet),
+    }
+    dash.variablesCache[name].count += 1
+    const sheet = dash.variablesCache[name].sheet
     dash.insert(selector, name, serialized.styles, sheet)
+
     return () => {
-      dash.variablesCache.splice(dash.variablesCache.indexOf(name), 1)
-      if (dash.variablesCache.indexOf(name) === -1) {
+      if (dash.variablesCache[name].count === 1) {
         delete dash.insertCache[name]
-        delete dash.variablesSheetCache[name]
+        delete dash.variablesCache[name]
         sheet.flush()
-      }
+      } else dash.variablesCache[name].count -= 1
     }
   }
 
   styles.themes = vars => {
     Object.assign(dash.themes, vars)
-    styles.theme(dash.themes.default ? 'default' : Object.keys(dash.themes)[0])
-    return name => dash.ejectThemes[name] && dash.ejectThemes[name]()
+    const themes = Object.keys(vars)
+    const ejectors = []
+
+    for (let i = 0; i < themes.length; i++) {
+      const theme = themes[i]
+      ejectors.push(
+        styles.variables(dash.themes[theme], `.${dash.key}-${theme}-theme`)
+      )
+    }
+
+    return () => {
+      for (let i = 0; i < ejectors.length; i++) ejectors[i]()
+    }
   }
 
-  styles.theme = theme => {
-    const className = `${dash.key}-${theme}-theme`
-    dash.ejectThemes[theme] = styles.variables(
-      dash.themes[theme],
-      `.${className}`
-    )
-    return className
-  }
+  styles.theme = theme => `${dash.key}-${theme}-theme`
 
   styles.global = function() {
     let styles =
@@ -564,19 +568,21 @@ const createStyles = dash => {
         : interpolate(arguments)
     styles = normalizeStyles(styles, dash.variables)
     if (!styles) return () => {}
-    const name = `${dash.hash(styles)}-global`
-    const sheet = dash.globalSheetCache[name] || styleSheet(dash.sheet)
-    dash.globalCache.push(name)
-    dash.globalSheetCache[name] = sheet
+    const name = dash.hash(styles)
+    dash.globalCache[name] = dash.globalCache[name] || {
+      count: 0,
+      sheet: styleSheet(dash.sheet),
+    }
+    const sheet = dash.globalCache[name].sheet
+    dash.globalCache[name].count += 1
     dash.insert('', name, styles, sheet)
 
     return () => {
-      dash.globalCache.splice(dash.globalCache.indexOf(name), 1)
-      if (dash.globalCache.indexOf(name) === -1) {
+      if (dash.globalCache[name].count === 1) {
         delete dash.insertCache[name]
-        delete dash.globalSheetCache[name]
+        delete dash.globalCache[name]
         sheet.flush()
-      }
+      } else dash.globalCache[name].count -= 1
     }
   }
 

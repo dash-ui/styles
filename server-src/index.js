@@ -24,21 +24,13 @@ export const createStylesFromCache = (styles = defaultStyles, options = {}) => {
     styleCache = dash.stylisCache
 
   let css = '',
-    seen = new Set(),
     names = unique(
-      dash.variablesCache,
-      dash.globalCache,
+      Object.keys(styles.dash.variablesCache),
+      Object.keys(dash.globalCache),
       Object.keys(dash.insertCache)
     )
 
-  for (let i = 0; i < names.length; i++) {
-    const name = names[i]
-    if (!seen.has(name)) {
-      css += styleCache[name]
-      seen.add(name)
-    }
-  }
-
+  for (let i = 0; i < names.length; i++) css += styleCache[names[i]]
   if (clearCache) dash.clear()
   return {names, css}
 }
@@ -87,19 +79,43 @@ export const createStylesFromString = (
   const {clearCache = true} = options
   const {dash} = styles
   const styleCache = dash.stylisCache
-  const styleIds = Object.keys(styleCache)
 
   let css = '',
-    names = unique(styles.dash.variablesCache, styles.dash.globalCache)
+    names = unique(
+      Object.keys(styles.dash.variablesCache),
+      Object.keys(styles.dash.globalCache)
+    )
+  for (let name of names) css += styleCache[name]
 
-  for (let i = 0; i < names.length; i++) css += styleCache[names[i]]
+  let cache = ''
+  let value = ''
+  const maxCacheLen = styles.dash.key.length + 1
+  const seen = {}
 
-  for (let i = 0; i < styleIds.length; i++) {
-    const styleId = styleIds[i]
-    if (string.indexOf(`${styles.dash.key}-${styleId}`) > -1) {
-      css += styleCache[styleId]
-      names.push(styleId)
+  for (let i = 0; i < string.length; i++) {
+    const char = string.charAt(i)
+    if (char === ' ') continue
+    cache += char
+
+    if (value.length > 0) {
+      value += char
+      const name = value.substring(maxCacheLen)
+      const style = styleCache[name]
+
+      if (style !== void 0) {
+        if (seen[name] === void 0) {
+          names.push(name)
+          seen[name] = 1
+          css += style
+        }
+
+        value = ''
+        cache = ''
+      }
     }
+
+    if (cache.length > maxCacheLen) cache = cache.substring(1)
+    if (cache === styles.dash.key + '-') value = cache
   }
 
   if (clearCache) dash.clear()
@@ -141,45 +157,4 @@ export const writeStylesFromString = async (
   const filename = path.join(outputPath, name)
   await fs.promises.writeFile(filename, stylesString)
   return {filename, name, path: outputPath, styles: stylesString}
-}
-
-// TODO: perf test this against existing solution for LARGE projects
-const classRe = /class\s*=(["']|)(.+?)\1+[^>]*?>/g
-/* istanbul ignore next */
-// eslint-disable-next-line
-const createStylesFromStringRe = (string, styles, options) => {
-  const {clearCache = true} = options
-  const {dash} = styles
-  const styleCache = dash.stylisCache
-
-  let css = '',
-    names = unique(styles.dash.variablesCache, styles.dash.globalCache),
-    i = 0,
-    result
-
-  for (; i < names.length; i++) css += styleCache[names[i]]
-  const replacer = `${styles.dash.key}-`
-  while ((result = classRe.exec(string)) !== null) {
-    const cname = result[2].replace(replacer, '')
-    if (cname.indexOf(' ') !== -1) {
-      const matches = cname.split(' ')
-      for (i = 0; i < matches.length; i++) {
-        const match = matches[i]
-        const style = styleCache[match]
-        if (styleCache[match]) {
-          css += style
-          names.push(match)
-        }
-      }
-    } else {
-      const style = styleCache[cname]
-      if (styleCache[cname]) {
-        css += style
-        names.push(cname)
-      }
-    }
-  }
-
-  if (clearCache) dash.clear()
-  return {names, css}
 }

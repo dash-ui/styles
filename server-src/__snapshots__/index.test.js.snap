@@ -10,23 +10,23 @@ exports[`createStyleTagFromCache adds nonce to style tags 1`] = `"<style data-da
 
 exports[`createStyleTagFromCache caches styles 1`] = `"<style data-dash=\\"1ut9bc3 1i986zm\\" data-cache=\\"-ui\\">.-ui-1ut9bc3{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;}.-ui-1i986zm{border-radius:1000px;background:blue;color:white;}</style>"`;
 
-exports[`createStyleTagFromCache extracts global styles 1`] = `"<style data-dash=\\"1r8lpmu-global\\" data-cache=\\"-ui\\">:root{--hello:\\"world\\";}</style>"`;
+exports[`createStyleTagFromCache extracts global styles 1`] = `"<style data-dash=\\"1r8lpmu\\" data-cache=\\"-ui\\">:root{--hello:\\"world\\";}</style>"`;
 
-exports[`createStyleTagFromCache extracts global variables 1`] = `"<style data-dash=\\"1wmqlz7-variables\\" data-cache=\\"-ui\\">:root{--ui-colors-blue:#09a;}</style>"`;
+exports[`createStyleTagFromCache extracts global variables 1`] = `"<style data-dash=\\"1wmqlz7\\" data-cache=\\"-ui\\">:root{--ui-colors-blue:#09a;}</style>"`;
 
-exports[`createStyleTagFromCache extracts theme variables 1`] = `"<style data-dash=\\"1e9tt6p-variables\\" data-cache=\\"-ui\\">.-ui-dark-theme{--ui-colors-primary:#000;}</style>"`;
+exports[`createStyleTagFromCache extracts theme variables 1`] = `"<style data-dash=\\"1e9tt6p 1gqix33\\" data-cache=\\"-ui\\">.-ui-dark-theme{--ui-colors-primary:#000;}.-ui-light-theme{--ui-colors-primary:#fff;}</style>"`;
 
-exports[`createStyleTagFromCache extracts theme variables 2`] = `"<style data-dash=\\"1e9tt6p-variables\\" data-cache=\\"-ui\\">.-ui-dark-theme{--ui-colors-primary:#000;}</style>"`;
+exports[`createStyleTagFromCache extracts theme variables 2`] = `"<style data-dash=\\"1e9tt6p 1gqix33\\" data-cache=\\"-ui\\">.-ui-dark-theme{--ui-colors-primary:#000;}.-ui-light-theme{--ui-colors-primary:#fff;}</style>"`;
 
-exports[`createStyleTagFromCache extracts theme variables 3`] = `"<style data-dash=\\"1e9tt6p-variables 1gqix33-variables\\" data-cache=\\"-ui\\">.-ui-dark-theme{--ui-colors-primary:#000;}.-ui-light-theme{--ui-colors-primary:#fff;}</style>"`;
+exports[`createStyleTagFromCache extracts theme variables 3`] = `"<style data-dash=\\"1e9tt6p 1gqix33\\" data-cache=\\"-ui\\">.-ui-dark-theme{--ui-colors-primary:#000;}.-ui-light-theme{--ui-colors-primary:#fff;}</style>"`;
 
 exports[`createStyleTagFromString adds nonce to style tags 1`] = `"<style data-dash=\\"1ut9bc3\\" data-cache=\\"-ui\\" nonce=\\"EDNnf03nceIOfn39fn3e9h3sdfa\\">.-ui-1ut9bc3{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;}</style>"`;
 
 exports[`createStyleTagFromString caches styles 1`] = `"<style data-dash=\\"1ut9bc3 1i986zm\\" data-cache=\\"-ui\\">.-ui-1ut9bc3{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;}.-ui-1i986zm{border-radius:1000px;background:blue;color:white;}</style>"`;
 
-exports[`createStyleTagFromString extracts global styles 1`] = `"<style data-dash=\\"1r8lpmu-global\\" data-cache=\\"-ui\\">:root{--hello:\\"world\\";}</style>"`;
+exports[`createStyleTagFromString extracts global styles 1`] = `"<style data-dash=\\"1r8lpmu\\" data-cache=\\"-ui\\">:root{--hello:\\"world\\";}</style>"`;
 
-exports[`createStyleTagFromString extracts global variables 1`] = `"<style data-dash=\\"1wmqlz7-variables\\" data-cache=\\"-ui\\">:root{--ui-colors-blue:#09a;}</style>"`;
+exports[`createStyleTagFromString extracts global variables 1`] = `"<style data-dash=\\"1wmqlz7\\" data-cache=\\"-ui\\">:root{--ui-colors-blue:#09a;}</style>"`;
 
 exports[`writeStylesFromCache writes 1`] = `
 Object {
