@@ -91,11 +91,11 @@ NodeList [
 exports[`styles() passes variables to style callbacks 1`] = `
 Object {
   "colors": Object {
-    "bg": "var(--ui-colors-bg)",
-    "blue": "var(--ui-colors-blue)",
-    "lightSpecific": "var(--ui-colors-light-specific)",
-    "red": "var(--ui-colors-red)",
-    "text": "var(--ui-colors-text)",
+    "bg": "var(--colors-bg)",
+    "blue": "var(--colors-blue)",
+    "lightSpecific": "var(--colors-light-specific)",
+    "red": "var(--colors-red)",
+    "text": "var(--colors-text)",
   },
 }
 `;
@@ -218,10 +218,10 @@ exports[`styles.global() injects global styles 1`] = `
 exports[`styles.global() passes variables to global styles 1`] = `
 Object {
   "colors": Object {
-    "bg": "var(--ui-colors-bg)",
-    "blue": "var(--ui-colors-blue)",
-    "red": "var(--ui-colors-red)",
-    "text": "var(--ui-colors-text)",
+    "bg": "var(--colors-bg)",
+    "blue": "var(--colors-blue)",
+    "red": "var(--colors-red)",
+    "text": "var(--colors-text)",
   },
 }
 `;
@@ -262,7 +262,7 @@ exports[`styles.global() still exists in caches when a global is used more than 
 </style>
 `;
 
-exports[`styles.one() can be called as a function w/ function value 1`] = `"color:var(--ui-color-blue);"`;
+exports[`styles.one() can be called as a function w/ function value 1`] = `"color:var(--color-blue);"`;
 
 exports[`styles.one() can be called as a function w/ string value 1`] = `"-ui-1ut9bc3"`;
 
@@ -293,7 +293,7 @@ exports[`styles.themes() creates variables: :root 1`] = `
   data-dash="-ui"
 >
   
-  .-ui-dark-theme{--ui-colors-bg:#000;--ui-colors-text:#fff;}
+  .-ui-dark-theme{--colors-bg:#000;--colors-text:#fff;}
 </style>
 `;
 
@@ -302,7 +302,7 @@ exports[`styles.themes() creates variables: :root 2`] = `
   data-dash="-ui"
 >
   
-  .-ui-light-theme{--ui-colors-bg:#fff;--ui-colors-text:#000;}
+  .-ui-light-theme{--colors-bg:#fff;--colors-text:#000;}
 </style>
 `;
 
@@ -312,13 +312,13 @@ NodeList [
     data-dash="-ui"
   >
     
-    .-ui-dark-theme{--ui-colors-bg:#000;--ui-colors-text:#fff;}
+    .-ui-dark-theme{--colors-bg:#000;--colors-text:#fff;}
   </style>,
   <style
     data-dash="-ui"
   >
     
-    .-ui-light-theme{--ui-colors-bg:#fff;--ui-colors-text:#000;}
+    .-ui-light-theme{--colors-bg:#fff;--colors-text:#000;}
   </style>,
 ]
 `;
@@ -328,7 +328,7 @@ exports[`styles.variables() creates variables w/ scales: :root 1`] = `
   data-dash="-ui"
 >
   
-  :root{--ui-spacing-0:1rem;--ui-spacing-1:2rem;--ui-spacing-2:4rem;}
+  :root{--spacing-0:1rem;--spacing-1:2rem;--spacing-2:4rem;}
 </style>
 `;
 
@@ -337,7 +337,7 @@ exports[`styles.variables() creates variables: :root 1`] = `
   data-dash="-ui"
 >
   
-  :root{--ui-colors-blue:#09a;--ui-colors-red:#c12;--ui-colors-light-red:#c1a;--ui-spacing-xs:1rem;--ui-system-p-md:1rem;--ui-system-p-xs:0.25rem;--ui-system-p-sm:0.5rem;--ui-system-p-lg:2rem;--ui-system-p-xl:4rem;}
+  :root{--colors-blue:#09a;--colors-red:#c12;--colors-light-red:#c1a;--spacing-xs:1rem;--system-p-md:1rem;--system-p-xs:0.25rem;--system-p-sm:0.5rem;--system-p-lg:2rem;--system-p-xl:4rem;}
 </style>
 `;
 
@@ -347,7 +347,7 @@ NodeList [
     data-dash="-ui"
   >
     
-    :root{--ui-colors-blue:#09a;--ui-colors-red:#c12;--ui-colors-light-red:#c1a;--ui-spacing-xs:1rem;--ui-system-p-md:1rem;--ui-system-p-xs:0.25rem;--ui-system-p-sm:0.5rem;--ui-system-p-lg:2rem;--ui-system-p-xl:4rem;}
+    :root{--colors-blue:#09a;--colors-red:#c12;--colors-light-red:#c1a;--spacing-xs:1rem;--system-p-md:1rem;--system-p-xs:0.25rem;--system-p-sm:0.5rem;--system-p-lg:2rem;--system-p-xl:4rem;}
   </style>,
 ]
 `;
@@ -357,6 +357,6 @@ exports[`styles.variables() still exists in caches when used more than once 1`] 
   data-dash="-ui"
 >
   
-  :root{--ui-colors-blue:#09a;--ui-colors-red:#c12;--ui-colors-light-red:#c1a;--ui-spacing-xs:1rem;--ui-system-p-md:1rem;--ui-system-p-xs:0.25rem;--ui-system-p-sm:0.5rem;--ui-system-p-lg:2rem;--ui-system-p-xl:4rem;}
+  :root{--colors-blue:#09a;--colors-red:#c12;--colors-light-red:#c1a;--spacing-xs:1rem;--system-p-md:1rem;--system-p-xs:0.25rem;--system-p-sm:0.5rem;--system-p-lg:2rem;--system-p-xl:4rem;}
 </style>
 `;

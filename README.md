@@ -43,7 +43,7 @@ styles.variables({
 
 const style = styles({
   red: `
-    color: var(--dash-colors-red);
+    color: var(--colors-red);
   `,
   blue: ({colors}) => `
     color: ${colors.blue};

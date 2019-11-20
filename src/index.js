@@ -336,7 +336,7 @@ const styleObjectToString = object => {
   return string
 }
 
-const serializeVariables_ = (prefix, vars, names) => {
+const serializeVariables_ = (vars, names) => {
   const keys = Object.keys(vars)
   const variables = {}
   let styles = ''
@@ -348,13 +348,12 @@ const serializeVariables_ = (prefix, vars, names) => {
 
     if (typeof value === 'object') {
       names = names || []
-      const result = serializeVariables_(prefix, value, names.concat(cssKey))
+      const result = serializeVariables_(value, names.concat(cssKey))
       variables[key] = result.variables
       styles += result.styles
     } else {
-      let name = `--${prefix.replace(/^-+/, '')}`
-      if (names !== void 0 && names.length > 0)
-        name += name === '--' ? names.join('-') : `-${names.join('-')}`
+      let name = '--'
+      if (names !== void 0 && names.length > 0) name += names.join('-')
       name += name === '--' ? cssKey : `-${cssKey}`
       variables[key] = `var(${name})`
       styles += `${name}:${value};`
@@ -364,7 +363,7 @@ const serializeVariables_ = (prefix, vars, names) => {
   return {variables, styles}
 }
 
-const serializeVariables = memoize([{}, WeakMap], serializeVariables_)
+const serializeVariables = memoize([WeakMap], serializeVariables_)
 
 const mergeVariables_ = (target, source) => {
   target = Object.assign({}, target)
@@ -522,7 +521,7 @@ const createStyles = dash => {
   }
 
   styles.variables = (vars, selector = ':root') => {
-    const serialized = serializeVariables(dash.key, vars)
+    const serialized = serializeVariables(vars)
     dash.variables = mergeVariables(dash.variables, serialized.variables)
     const name = dash.hash(serialized.styles)
     dash.variablesCache[name] = dash.variablesCache[name] || {
