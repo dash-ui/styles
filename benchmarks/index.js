@@ -20,7 +20,6 @@ bench('create styles from string', () => {
   createStyleTagFromString(doc, styles, {clearCache: false})
 })
 
-
 console.log(createStyleTagFromCache(styles, {clearCache: false}))
 bench('create styles from cache', () => {
   createStyleTagFromCache(styles, {clearCache: false})
