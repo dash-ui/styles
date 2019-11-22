@@ -3,9 +3,7 @@
   "exclude": ["server-src/**/*.test.ts", "server-src/**/test.ts"],
   "compilerOptions": {
     "target": "es5",
-    "lib": [
-      "esnext"
-    ],
+    "lib": ["esnext"],
     "moduleResolution": "node",
     "strictNullChecks": true,
     "esModuleInterop": true,

@@ -404,14 +404,17 @@ const isProcessableValue = (value?: any): boolean =>
   value !== null && typeof value !== 'boolean'
 const cssCaseRe = /[A-Z]|^ms/g
 const cssCase = (string: string): string =>
-
   string.replace(cssCaseRe, '-$&').toLowerCase()
-const interpolate = (literals?: TemplateStringsArray|string|null, placeholders?: string[]): string => {
+const interpolate = (
+  literals?: TemplateStringsArray | string | null,
+  placeholders?: string[]
+): string => {
   if (typeof literals === 'string') return literals
   if (!literals) return ''
   let str = ''
   placeholders = placeholders || []
-  for (let i = 0; i < literals.length; i++) str += literals[i] + (placeholders[i] || '')
+  for (let i = 0; i < literals.length; i++)
+    str += literals[i] + (placeholders[i] || '')
   return str
 }
 
@@ -594,12 +597,18 @@ interface EjectGlobal {
 }
 
 interface Styles extends Function {
-  create: (options?: DashOptions) => Styles,
-  one: (literals: TemplateStringsArray|string|StyleGetter, ...placeholders: string[]) => OneCallback,
-  variables: (vars: Variables, selector?: string) => EjectGlobal,
-  themes: (vars: Variables) => EjectGlobal,
-  global: (literals: TemplateStringsArray|string|StyleGetter, ...placeholders: string[]) => EjectGlobal,
-  theme: (name: string) => string,
+  create: (options?: DashOptions) => Styles
+  one: (
+    literals: TemplateStringsArray | string | StyleGetter,
+    ...placeholders: string[]
+  ) => OneCallback
+  variables: (vars: Variables, selector?: string) => EjectGlobal
+  themes: (vars: Variables) => EjectGlobal
+  global: (
+    literals: TemplateStringsArray | string | StyleGetter,
+    ...placeholders: string[]
+  ) => EjectGlobal
+  theme: (name: string) => string
   dash: DashCache
 }
 
@@ -614,14 +623,14 @@ interface Style extends Function {
 }
 
 interface OneCallbackCss extends Function {
-  (): string,
-  toString: () => string,
+  (): string
+  toString: () => string
 }
 
 interface OneCallback extends Function {
-  (createClassName?: boolean | number | string | null): string,
-  toString: () => string,
-  css: OneCallbackCss,
+  (createClassName?: boolean | number | string | null): string
+  toString: () => string
+  css: OneCallbackCss
 }
 
 //
@@ -687,14 +696,18 @@ const createStyles = (dash: DashCache): Styles => {
   styles.create = (options?: DashOptions): Styles =>
     createStyles(createDash(options))
 
-  styles.one = (literals: TemplateStringsArray|string|StyleGetter, ...placeholders: string[]): OneCallback => {
+  styles.one = (
+    literals: TemplateStringsArray | string | StyleGetter,
+    ...placeholders: string[]
+  ): OneCallback => {
     const css =
       typeof literals === 'function'
         ? literals(dash.variables)
         : interpolate(literals, placeholders)
     const style = styles({default: css})
-    const callback = (createClassName?: boolean | number | string | null): string =>
-      createClassName || createClassName === void 0 ? style() : ''
+    const callback = (
+      createClassName?: boolean | number | string | null
+    ): string => (createClassName || createClassName === void 0 ? style() : '')
     callback.toString = (): string => callback()
     callback.css = (): string => style.css('default')
     callback.css.toString = callback.css
@@ -741,7 +754,10 @@ const createStyles = (dash: DashCache): Styles => {
 
   styles.theme = (theme: string): string => `${dash.key}-${theme}-theme`
 
-  styles.global = (literals: TemplateStringsArray|string|StyleGetter, ...placeholders: string[]): EjectGlobal => {
+  styles.global = (
+    literals: TemplateStringsArray | string | StyleGetter,
+    ...placeholders: string[]
+  ): EjectGlobal => {
     const styles =
       typeof literals === 'function'
         ? literals(dash.variables)

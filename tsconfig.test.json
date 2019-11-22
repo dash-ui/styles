@@ -1,5 +1,10 @@
 {
-  "include": ["src/**/*.test.ts", "src/**/test.ts", "server-src/**/*.test.ts", "server-src/**/test.ts"],
+  "include": [
+    "src/**/*.test.ts",
+    "src/**/test.ts",
+    "server-src/**/*.test.ts",
+    "server-src/**/test.ts"
+  ],
   "compilerOptions": {
     "target": "es5",
     "lib": ["esnext", "dom", "dom.iterable"],

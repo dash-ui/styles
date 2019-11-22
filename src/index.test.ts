@@ -11,7 +11,7 @@ const serializeRules = (selector = `style[data-dash]`): any[] => {
   // @ts-ignore
   return els[0].sheet.cssRules
     .map(({selectorText, style: {// eslint-disable-next-line
-      ends, starts, _importants, __starts, parentRule, parentStyleSheet, ...other}}) => [
+        ends, starts, _importants, __starts, parentRule, parentStyleSheet, ...other}}) => [
       selectorText,
       other,
     ])
@@ -30,11 +30,14 @@ describe('styles.create()', () => {
 
     style('flex')
     expect(document.querySelectorAll(`style[data-dash]`).length).toBe(1)
-    expect(document.querySelectorAll(`style[data-dash]`)[0]).toMatchSnapshot('DOM')
+    expect(document.querySelectorAll(`style[data-dash]`)[0]).toMatchSnapshot(
+      'DOM'
+    )
   })
 
   it('configures hash algorithm', () => {
-    const customHash = (string: string): string => crc.crc32(string).toString(16)
+    const customHash = (string: string): string =>
+      crc.crc32(string).toString(16)
     const myStyles = styles.create({hash: customHash})
     const style = myStyles({
       flex: {display: 'flex'},
@@ -57,7 +60,9 @@ describe('styles.create()', () => {
 
     style('flex')
     expect(document.querySelectorAll(`style[data-dash]`).length).toBe(1)
-    expect(document.querySelectorAll(`style[data-dash]`)[0]).toMatchSnapshot('DOM')
+    expect(document.querySelectorAll(`style[data-dash]`)[0]).toMatchSnapshot(
+      'DOM'
+    )
   })
 
   it('changes key to "css"', () => {
@@ -68,7 +73,9 @@ describe('styles.create()', () => {
 
     style('flex')
     expect(document.querySelectorAll(`style[data-dash]`).length).toBe(1)
-    expect(document.querySelectorAll(`style[data-dash]`)[0]).toMatchSnapshot('DOM')
+    expect(document.querySelectorAll(`style[data-dash]`)[0]).toMatchSnapshot(
+      'DOM'
+    )
   })
 
   it('changes container to document.body', () => {
@@ -79,7 +86,9 @@ describe('styles.create()', () => {
 
     style('flex')
     expect(document.querySelectorAll(`body style[data-dash]`).length).toBe(1)
-    expect(document.querySelectorAll(`body style[data-dash]`)[0]).toMatchSnapshot()
+    expect(
+      document.querySelectorAll(`body style[data-dash]`)[0]
+    ).toMatchSnapshot()
   })
 
   it('turns on speedy', () => {
@@ -156,7 +165,9 @@ describe('styles()', () => {
 
     style('box')
     expect(document.querySelectorAll(`style[data-dash]`).length).toBe(1)
-    expect(document.querySelectorAll(`style[data-dash]`)[0]).toMatchSnapshot('200x200')
+    expect(document.querySelectorAll(`style[data-dash]`)[0]).toMatchSnapshot(
+      '200x200'
+    )
   })
 
   it('adds styles by order of definition when called', () => {
@@ -169,14 +180,18 @@ describe('styles()', () => {
     style('flex', 'block', 'inline')
 
     expect(document.querySelectorAll(`style[data-dash]`).length).toBe(1)
-    expect(document.querySelectorAll(`style[data-dash]`)[0]).toMatchSnapshot('flex, block, inline')
+    expect(document.querySelectorAll(`style[data-dash]`)[0]).toMatchSnapshot(
+      'flex, block, inline'
+    )
 
     styles.dash.clear()
     styles.dash.sheet.flush()
     style({flex: true, block: true, inline: true})
 
     expect(document.querySelectorAll(`style[data-dash]`).length).toBe(1)
-    expect(document.querySelectorAll(`style[data-dash]`)[0]).toMatchSnapshot('flex, block, inline')
+    expect(document.querySelectorAll(`style[data-dash]`)[0]).toMatchSnapshot(
+      'flex, block, inline'
+    )
   })
 
   it('allows comments', () => {
@@ -252,7 +267,9 @@ describe('styles()', () => {
 
     style('box=big')
     expect(document.querySelectorAll(`style[data-dash]`).length).toBe(1)
-    expect(document.querySelectorAll(`style[data-dash]`)[0]).toMatchSnapshot('400x400')
+    expect(document.querySelectorAll(`style[data-dash]`)[0]).toMatchSnapshot(
+      '400x400'
+    )
     process.env.NODE_ENV = prevEnv
   })
 
@@ -270,7 +287,6 @@ describe('styles()', () => {
     style('flex', 'block', 'inline')
     expect(document.querySelectorAll(`style[data-dash]`).length).toBe(1)
     expect(document.querySelectorAll(`style[data-dash]`)[0]).toMatchSnapshot()
-
   })
 
   it('allows default styles', () => {
@@ -399,7 +415,9 @@ describe(`styles.variables()`, () => {
     })
 
     expect(document.querySelectorAll(`style[data-dash]`).length).toBe(1)
-    expect(document.querySelectorAll(`style[data-dash]`)[0]).toMatchSnapshot(':root')
+    expect(document.querySelectorAll(`style[data-dash]`)[0]).toMatchSnapshot(
+      ':root'
+    )
   })
 
   it('removes variables when eject is called', () => {
@@ -477,7 +495,9 @@ describe(`styles.variables()`, () => {
     })
 
     expect(document.querySelectorAll(`style[data-dash]`).length).toBe(1)
-    expect(document.querySelectorAll(`style[data-dash]`)[0]).toMatchSnapshot(':root')
+    expect(document.querySelectorAll(`style[data-dash]`)[0]).toMatchSnapshot(
+      ':root'
+    )
   })
 })
 
@@ -499,8 +519,12 @@ describe(`styles.themes()`, () => {
     })
 
     expect(document.querySelectorAll(`style[data-dash]`).length).toBe(2)
-    expect(document.querySelectorAll(`style[data-dash]`)[0]).toMatchSnapshot('dark')
-    expect(document.querySelectorAll(`style[data-dash]`)[0]).toMatchSnapshot('light')
+    expect(document.querySelectorAll(`style[data-dash]`)[0]).toMatchSnapshot(
+      'dark'
+    )
+    expect(document.querySelectorAll(`style[data-dash]`)[0]).toMatchSnapshot(
+      'light'
+    )
   })
 
   it('removes variables when eject is called', () => {
@@ -601,9 +625,15 @@ describe(`styles.global()`, () => {
     `
 
     expect(document.querySelectorAll(`style[data-dash]`).length).toBe(3)
-    expect(document.querySelectorAll(`style[data-dash]`)[0]).toMatchSnapshot(':root')
-    expect(document.querySelectorAll(`style[data-dash]`)[1]).toMatchSnapshot('html')
-    expect(document.querySelectorAll(`style[data-dash]`)[2]).toMatchSnapshot(':root')
+    expect(document.querySelectorAll(`style[data-dash]`)[0]).toMatchSnapshot(
+      ':root'
+    )
+    expect(document.querySelectorAll(`style[data-dash]`)[1]).toMatchSnapshot(
+      'html'
+    )
+    expect(document.querySelectorAll(`style[data-dash]`)[2]).toMatchSnapshot(
+      ':root'
+    )
   })
 
   it('ejects global styles when callback is called', () => {

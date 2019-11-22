@@ -12,22 +12,6 @@
     ]
   ],
   "env": {
-    "cjs": {
-      "presets": [
-        [
-          "@lunde/es",
-          {
-            "env": {
-              "modules": false,
-              "targets": {
-                "browsers": "> 1%"
-              }
-            },
-            "objectAssign": false
-          }
-        ]
-      ]
-    },
     "es": {
       "presets": [
         [
