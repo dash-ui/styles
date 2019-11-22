@@ -586,16 +586,20 @@ describe(`styles.global()`, () => {
     })
   })
 
-  it('injects global styles', () => {
+  it('injects global style object', () => {
     const styles_ = styles.create()
-    styles_.global(`
-      html {
-        font-size: 100%;
-      }
-    `)
+    styles_.global({
+      html: {
+        color: 'blue',
+        '.foo': {
+          color: 'green',
+        },
+      },
+    })
 
-    expect(document.querySelectorAll(`style[data-dash]`).length).toBe(1)
+    expect(document.querySelectorAll(`style[data-dash]`).length).toBe(2)
     expect(document.querySelectorAll(`style[data-dash]`)[0]).toMatchSnapshot()
+    expect(document.querySelectorAll(`style[data-dash]`)[1]).toMatchSnapshot()
   })
 
   it('should inject global styles once', () => {
@@ -716,6 +720,21 @@ describe('styles.one()', () => {
     myCls()
     expect(document.querySelectorAll(`style[data-dash]`).length).toBe(1)
     expect(document.querySelectorAll(`style[data-dash]`)[0]).toMatchSnapshot()
+  })
+
+  it('creates style w/ object', () => {
+    const myStyles = styles.create()
+    const myCls = myStyles.one({
+      display: 'block',
+      span: {
+        display: 'flex',
+      },
+    })
+
+    myCls()
+    expect(document.querySelectorAll(`style[data-dash]`).length).toBe(2)
+    expect(document.querySelectorAll(`style[data-dash]`)[0]).toMatchSnapshot()
+    expect(document.querySelectorAll(`style[data-dash]`)[1]).toMatchSnapshot()
   })
 
   it(`won't create style if function call is provided falsy value`, () => {

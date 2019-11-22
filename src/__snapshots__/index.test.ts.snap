@@ -208,12 +208,21 @@ exports[`styles.global() ejects global styles when callback is called 1`] = `
 </style>
 `;
 
-exports[`styles.global() injects global styles 1`] = `
+exports[`styles.global() injects global style object 1`] = `
 <style
   data-dash="-ui"
 >
   
-  html{font-size:100%;}
+  html{color:blue;}
+</style>
+`;
+
+exports[`styles.global() injects global style object 2`] = `
+<style
+  data-dash="-ui"
+>
+  
+  html .foo{color:green;}
 </style>
 `;
 
@@ -267,6 +276,24 @@ exports[`styles.global() still exists in caches when a global is used more than 
 exports[`styles.one() can be called as a function w/ function value 1`] = `"color:var(--color-blue);"`;
 
 exports[`styles.one() can be called as a function w/ string value 1`] = `"-ui-1ut9bc3"`;
+
+exports[`styles.one() creates style w/ object 1`] = `
+<style
+  data-dash="-ui"
+>
+  
+  .-ui-1006qeb{display:block;}
+</style>
+`;
+
+exports[`styles.one() creates style w/ object 2`] = `
+<style
+  data-dash="-ui"
+>
+  
+  .-ui-1006qeb span{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;}
+</style>
+`;
 
 exports[`styles.one() creates style w/ template literal 1`] = `
 <style
