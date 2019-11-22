@@ -1,7 +1,7 @@
 /**
  * @jest-environment node
  */
-import fs from 'fs'
+import * as fs from 'fs'
 import styles from '../src'
 import {
   createStyleTagFromString,
@@ -23,12 +23,13 @@ describe('Configure', () => {
 
   it('has customized vendor prefixing', () => {
     // adds prefixes to transform, but not flex
-    const prefix = function(key, value, context) {
+    const prefix = function(key, value, context): boolean {
       if (typeof context !== 'number') throw 'fail'
 
       switch (key) {
         case 'transform':
           return true
+        // @ts-ignore
         case 'disable':
           if (value !== 'flex') throw 'fail'
         // eslint-disable-next-line

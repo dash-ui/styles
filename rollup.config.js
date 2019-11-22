@@ -7,7 +7,7 @@ import pkg from './package.json'
 
 process.env.BABEL_ENV = 'umd'
 const config = (filename, env, plugins = []) => ({
-  input: 'src/index.js',
+  input: 'src/index.ts',
   output: {
     file: filename,
     format: 'umd',
@@ -17,7 +17,7 @@ const config = (filename, env, plugins = []) => ({
   plugins: [
     resolve(),
     commonjs(),
-    babel(),
+    babel({extensions: ['.ts']}),
     replace({
       'process.env.NODE_ENV': JSON.stringify(env),
     }),

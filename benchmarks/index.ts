@@ -1,11 +1,11 @@
 import bench from '@essentials/benchmark'
-import styles from '../src'
+import styles from '../dist/es'
 import {
   writeStylesFromString,
   writeStylesFromCache,
   createStyleTagFromString,
   createStyleTagFromCache,
-} from '../server-src'
+} from '../server'
 import doc from './doc'
 
 bench('create styles [object]', () => styles({foo: {display: 'flex'}}))
@@ -14,7 +14,7 @@ bench('style', () => style('foo'))
 bench('multi-style', () => style('foo', 'bar'))
 bench('object-style', () => style({foo: true, bar: false}, 'bar'))
 
-for (let i = 0; i < 100000; i++) styles.dash.stylisCache[`${i}-foo`] = 1
+for (let i = 0; i < 100000; i++) styles.dash.stylisCache[`${i}-foo`] = '1'
 console.log(createStyleTagFromString(doc, styles, {clearCache: false}))
 bench('create styles from string', () => {
   createStyleTagFromString(doc, styles, {clearCache: false})

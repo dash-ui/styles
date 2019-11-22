@@ -7,12 +7,27 @@
           "targets": {
             "node": "8"
           }
-        },
-        "typescript": false
+        }
       }
     ]
   ],
   "env": {
+    "cjs": {
+      "presets": [
+        [
+          "@lunde/es",
+          {
+            "env": {
+              "modules": false,
+              "targets": {
+                "browsers": "> 1%"
+              }
+            },
+            "objectAssign": false
+          }
+        ]
+      ]
+    },
     "es": {
       "presets": [
         [
@@ -21,11 +36,10 @@
             "env": {
               "modules": false,
               "targets": {
-                "browsers": "> 2%"
+                "browsers": "> 1%"
               }
             },
-            "objectAssign": false,
-            "typescript": false
+            "objectAssign": false
           }
         ]
       ]
@@ -37,8 +51,7 @@
           {
             "env": {
               "targets": "> 0.5%, ie >= 10, safari >= 9, firefox >= 43, ios >= 8"
-            },
-            "typescript": false
+            }
           }
         ]
       ]

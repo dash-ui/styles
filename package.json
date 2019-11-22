@@ -1,12 +1,12 @@
 {
   "name": "@-ui/styles",
-  "version": "1.0.44",
+  "version": "1.0.0",
   "homepage": "https://github.com/dash-ui/styles#readme",
   "repository": "github:dash-ui/styles",
   "bugs": "https://github.com/dash-ui/styles/issues",
   "author": "Jared Lunde <jared.lunde@gmail.com> (https://jaredLunde.com)",
   "license": "MIT",
-  "description": "Yet another CSS-in-JS library based on Facebook's internal styling library as seen at React Conf 2019",
+  "description": "Yet another CSS-in-JS library. Based on Facebook's internal styling library as seen at React Conf 2019.",
   "keywords": [
     "styles",
     "css-in-js",
@@ -30,38 +30,41 @@
   ],
   "sideEffects": false,
   "scripts": {
-    "bench": "babel-node ./benchmarks",
-    "build": "npm run build:cjs && npm run build:es && npm run build:server && npm run build:umd",
-    "build:cjs": "babel src -d dist/cjs -x .js --ignore \"**/*.test.js\",\"**/test.js\" --delete-dir-on-start",
-    "build:es": "cross-env BABEL_ENV=es babel src -d dist/es -x .js --ignore \"**/*.test.js\",\"**/test.js\" --delete-dir-on-start",
-    "build:server": "babel server-src -d server -x .js --ignore \"**/*.test.js\",\"**/test.js\" --delete-dir-on-start",
+    "bench": "npm run build && babel-node ./benchmarks -x .ts,.js,.json",
+    "build": "npm run build:cjs && npm run build:es && npm run build:server && npm run build:umd && npm run build:types",
+    "build:cjs": "babel src -d dist/cjs -x .ts --ignore \"**/*.test.ts\",\"**/test.ts\" --delete-dir-on-start",
+    "build:es": "cross-env BABEL_ENV=es babel src -d dist/es -x .ts --ignore \"**/*.test.ts\",\"**/test.ts\" --delete-dir-on-start",
+    "build:server": "babel server-src -d server -x .ts --ignore \"**/*.test.ts\",\"**/test.ts\" --delete-dir-on-start",
     "build:umd": "rollup -c",
-    "format": "prettier --write \"**/*.{js,md,yml,json,babelrc,eslintrc,prettierrc}\"",
-    "lint": "eslint .",
+    "build:types": "tsc -p tsconfig.json -d --outDir dist/es --emitDeclarationOnly && mkdir -p dist/cjs && cp -R dist/es/**.d.ts dist/cjs && tsc -p tsconfig.server.json -d --outDir server --emitDeclarationOnly",
+    "check-types": "tsc --noEmit -p tsconfig.json && tsc --noEmit -p tsconfig.server.json",
+    "format": "prettier --write \"**/*.{ts,js,md,yml,json,babelrc,eslintrc,prettierrc}\"",
+    "lint": "eslint . --ext .ts",
     "prepublishOnly": "npm run lint && npm run test && npm run build && npm run format",
     "test": "jest",
-    "validate": "npm run build && npm run lint && npm run test -- --coverage"
+    "validate": "npm run check-types && npm run build:cjs && npm run lint && npm run test -- --coverage"
   },
   "husky": {
     "hooks": {
-      "pre-commit": "lint-staged"
+      "pre-commit": "lint-staged && npm run build:types"
     }
   },
   "lint-staged": {
-    "**/*.js": [
+    "**/*.{ts,js}": [
       "eslint",
       "prettier --write"
     ],
-    "**/*.{md,yml,json,babelrc,eslintrc,prettierrc}": [
+    "**/*.{md,yml,json}": [
       "prettier --write"
     ]
   },
   "devDependencies": {
-    "@-ui/styles": "^1.0.14",
     "@babel/node": "^7.7.0",
     "@essentials/benchmark": "^1.0.5",
     "@lunde/babel-preset-es": "latest",
-    "babel-eslint": "latest",
+    "@types/jest": "latest",
+    "@typescript-eslint/eslint-plugin": "latest",
+    "@typescript-eslint/parser": "latest",
     "crc": "^3.8.0",
     "cross-env": "latest",
     "eslint": "latest",
@@ -72,12 +75,14 @@
     "lint-staged": "latest",
     "prettier": "latest",
     "rimraf": "^2.6.3",
-    "rollup": "^1.26.3",
+    "rollup": "^1.27.3",
     "rollup-plugin-babel": "^4.3.3",
     "rollup-plugin-commonjs": "^10.1.0",
     "rollup-plugin-node-resolve": "^5.2.0",
     "rollup-plugin-replace": "^2.2.0",
-    "rollup-plugin-terser": "^5.1.2"
+    "rollup-plugin-terser": "^5.1.2",
+    "ts-jest": "latest",
+    "typescript": "latest"
   },
   "dependencies": {
     "@emotion/stylis": "^0.8.4",

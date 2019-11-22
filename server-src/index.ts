@@ -1,13 +1,14 @@
-const {main} = require('../package.json')
+// @ts-ignore
+import {main} from '../package.json'
 const defaultStyles = require(`../${main}`).default
 
-function unique() {
+function unique(...args: any[]): any[] {
   const seen = {},
-    out = []
+    out: any[] = []
 
-  for (let i = 0; i < arguments.length; i++) {
-    for (let j = 0; j < arguments[i].length; j++) {
-      const value = arguments[i][j]
+  for (let i = 0; i < args.length; i++) {
+    for (let j = 0; j < args[i].length; j++) {
+      const value = args[i][j]
       if (seen[value] === true) continue
       seen[value] = true
       out.push(value)
@@ -17,18 +18,30 @@ function unique() {
   return out
 }
 
-export const createStylesFromCache = (styles = defaultStyles, options = {}) => {
+interface StylesResult {
+  css: string
+  names: string[]
+}
+
+interface CreateStylesOptions {
+  clearCache?: boolean
+}
+
+export const createStylesFromCache = (
+  styles = defaultStyles,
+  options: CreateStylesOptions = {}
+): StylesResult => {
   // createStylesFromCache() is unsafe in asynchronous render environments
   const {clearCache = true} = options,
     {dash} = styles,
     styleCache = dash.stylisCache
 
-  let css = '',
-    names = unique(
-      Object.keys(styles.dash.variablesCache),
-      Object.keys(dash.globalCache),
-      Object.keys(dash.insertCache)
-    )
+  let css = ''
+  const names = unique(
+    Object.keys(styles.dash.variablesCache),
+    Object.keys(dash.globalCache),
+    Object.keys(dash.insertCache)
+  )
 
   for (let i = 0; i < names.length; i++) css += styleCache[names[i]]
   if (clearCache) dash.clear()
@@ -37,8 +50,8 @@ export const createStylesFromCache = (styles = defaultStyles, options = {}) => {
 
 export const createStyleTagFromCache = (
   styles = defaultStyles,
-  options = {}
-) => {
+  options: CreateStylesOptions = {}
+): string => {
   // createStyleTagFromCache() is unsafe in asynchronous render environments
   const {css, names} = createStylesFromCache(styles, options)
   const nonceString = styles.dash.sheet.nonce
@@ -54,16 +67,32 @@ export const createStyleTagFromCache = (
   )
 }
 
+interface WriteStylesOptions {
+  name?: string
+  hash?: (string: string) => string
+  clearCache?: boolean
+}
+
+interface WriteStylesResult {
+  filename: string
+  name: string
+  path: string
+  styles: string
+}
+
 export const writeStylesFromCache = async (
   outputPath = '',
   styles = defaultStyles,
-  options = {}
-) => {
+  options?: WriteStylesOptions
+): Promise<WriteStylesResult> => {
   // requiring in here prevents webpack errors in stuff like Next.js apps
+  // eslint-disable-next-line @typescript-eslint/no-var-requires
   const fs = require('fs')
+  // eslint-disable-next-line @typescript-eslint/no-var-requires
   const path = require('path')
   styles = styles || defaultStyles
-  let {name, hash = styles.dash.hash, clearCache = true} = options
+  // eslint-disable-next-line
+  let {name, hash = styles.dash.hash, clearCache = true} = options || {}
   const stylesString = createStylesFromCache(styles, {clearCache}).css
   name = `${name || styles.dash.key + '-' + hash(stylesString) + '.css'}`
   const filename = path.join(outputPath, name)
@@ -72,20 +101,20 @@ export const writeStylesFromCache = async (
 }
 
 export const createStylesFromString = (
-  string,
+  string: string,
   styles = defaultStyles,
-  options = {}
-) => {
+  options: CreateStylesOptions = {}
+): StylesResult => {
   const {clearCache = true} = options
   const {dash} = styles
   const styleCache = dash.stylisCache
 
-  let css = '',
-    names = unique(
-      Object.keys(styles.dash.variablesCache),
-      Object.keys(styles.dash.globalCache)
-    ),
-    i = 0,
+  let css = ''
+  const names = unique(
+    Object.keys(styles.dash.variablesCache),
+    Object.keys(styles.dash.globalCache)
+  )
+  let i = 0,
     result
 
   for (; i < names.length; i++) css += styleCache[names[i]]
@@ -112,10 +141,10 @@ export const createStylesFromString = (
 }
 
 export const createStyleTagFromString = (
-  string,
+  string: string,
   styles = defaultStyles,
-  options
-) => {
+  options: CreateStylesOptions = {}
+): string => {
   const {css, names} = createStylesFromString(string, styles, options)
   const nonceString = styles.dash.sheet.nonce
     ? ` nonce="${styles.dash.sheet.nonce}"`
@@ -131,16 +160,19 @@ export const createStyleTagFromString = (
 }
 
 export const writeStylesFromString = async (
-  string,
+  string: string,
   outputPath = '',
   styles = defaultStyles,
-  options = {}
-) => {
+  options?: WriteStylesOptions
+): Promise<WriteStylesResult> => {
   // requiring in here prevents webpack errors in stuff like Next.js apps
+  // eslint-disable-next-line @typescript-eslint/no-var-requires
   const fs = require('fs')
+  // eslint-disable-next-line @typescript-eslint/no-var-requires
   const path = require('path')
   styles = styles || defaultStyles
-  let {name, hash = styles.dash.hash, clearCache = true} = options
+  // eslint-disable-next-line
+  let {name, hash = styles.dash.hash, clearCache = true} = options || {}
   const stylesString = createStylesFromString(string, styles, {clearCache}).css
   name = `${name || styles.dash.key + '-' + hash(stylesString) + '.css'}`
   const filename = path.join(outputPath, name)

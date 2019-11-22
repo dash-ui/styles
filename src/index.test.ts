@@ -1,11 +1,17 @@
 import crc from 'crc'
 import styles from './index'
 
-const serializeRules = (selector = `style[data-dash]`) => {
+afterEach(() => {
+  styles.dash.sheet.flush()
+  document.getElementsByTagName('html')[0].innerHTML = ''
+})
+
+const serializeRules = (selector = `style[data-dash]`): any[] => {
   const els = document.querySelectorAll(selector)
+  // @ts-ignore
   return els[0].sheet.cssRules
     .map(({selectorText, style: {// eslint-disable-next-line
-        ends, starts, _importants, __starts, parentRule, parentStyleSheet, ...other}}) => [
+      ends, starts, _importants, __starts, parentRule, parentStyleSheet, ...other}}) => [
       selectorText,
       other,
     ])
@@ -15,11 +21,6 @@ const serializeRules = (selector = `style[data-dash]`) => {
     }, {})
 }
 
-afterEach(() => {
-  styles.dash.sheet.flush()
-  document.getElementsByTagName('html')[0].innerHTML = ''
-})
-
 describe('styles.create()', () => {
   it('turns off vendor prefixing', () => {
     const myStyles = styles.create({prefix: false})
@@ -28,14 +29,12 @@ describe('styles.create()', () => {
     })
 
     style('flex')
-
-    for (let element of document.querySelectorAll(`style[data-dash]`)) {
-      expect(element).toMatchSnapshot('DOM')
-    }
+    expect(document.querySelectorAll(`style[data-dash]`).length).toBe(1)
+    expect(document.querySelectorAll(`style[data-dash]`)[0]).toMatchSnapshot('DOM')
   })
 
   it('configures hash algorithm', () => {
-    const customHash = string => crc.crc32(string).toString(16)
+    const customHash = (string: string): string => crc.crc32(string).toString(16)
     const myStyles = styles.create({hash: customHash})
     const style = myStyles({
       flex: {display: 'flex'},
@@ -57,10 +56,8 @@ describe('styles.create()', () => {
     })
 
     style('flex')
-
-    for (let element of document.querySelectorAll(`style[data-dash]`)) {
-      expect(element).toMatchSnapshot('DOM')
-    }
+    expect(document.querySelectorAll(`style[data-dash]`).length).toBe(1)
+    expect(document.querySelectorAll(`style[data-dash]`)[0]).toMatchSnapshot('DOM')
   })
 
   it('changes key to "css"', () => {
@@ -70,10 +67,8 @@ describe('styles.create()', () => {
     })
 
     style('flex')
-
-    for (let element of document.querySelectorAll(`style[data-dash]`)) {
-      expect(element).toMatchSnapshot('DOM')
-    }
+    expect(document.querySelectorAll(`style[data-dash]`).length).toBe(1)
+    expect(document.querySelectorAll(`style[data-dash]`)[0]).toMatchSnapshot('DOM')
   })
 
   it('changes container to document.body', () => {
@@ -83,10 +78,8 @@ describe('styles.create()', () => {
     })
 
     style('flex')
-
-    for (let element of document.querySelectorAll(`body style[data-dash]`)) {
-      expect(element).toMatchSnapshot('')
-    }
+    expect(document.querySelectorAll(`body style[data-dash]`).length).toBe(1)
+    expect(document.querySelectorAll(`body style[data-dash]`)[0]).toMatchSnapshot()
   })
 
   it('turns on speedy', () => {
@@ -156,17 +149,14 @@ describe('styles()', () => {
     expect(typeof name).toBe('string')
     expect(name.length).toBe(0)
   })
-
   it('allows unitless object values', () => {
     const style = styles.create()({
       box: {width: 200, height: '200px'},
     })
 
     style('box')
-
-    for (let element of document.querySelectorAll(`style[data-dash]`)) {
-      expect(element).toMatchSnapshot('200x200')
-    }
+    expect(document.querySelectorAll(`style[data-dash]`).length).toBe(1)
+    expect(document.querySelectorAll(`style[data-dash]`)[0]).toMatchSnapshot('200x200')
   })
 
   it('adds styles by order of definition when called', () => {
@@ -178,17 +168,15 @@ describe('styles()', () => {
 
     style('flex', 'block', 'inline')
 
-    for (let element of document.querySelectorAll(`style[data-dash]`)) {
-      expect(element).toMatchSnapshot('flex, block, inline')
-    }
+    expect(document.querySelectorAll(`style[data-dash]`).length).toBe(1)
+    expect(document.querySelectorAll(`style[data-dash]`)[0]).toMatchSnapshot('flex, block, inline')
 
     styles.dash.clear()
     styles.dash.sheet.flush()
     style({flex: true, block: true, inline: true})
 
-    for (let element of document.querySelectorAll(`style[data-dash]`)) {
-      expect(element).toMatchSnapshot('flex, block, inline')
-    }
+    expect(document.querySelectorAll(`style[data-dash]`).length).toBe(1)
+    expect(document.querySelectorAll(`style[data-dash]`)[0]).toMatchSnapshot('flex, block, inline')
   })
 
   it('allows comments', () => {
@@ -199,7 +187,7 @@ describe('styles()', () => {
       `,
     })
 
-    expect(style('flex')).toMatchSnapshot()
+    expect(style.css('flex')).toMatchSnapshot()
   })
 
   it('passes variables to style callbacks', () => {
@@ -239,7 +227,7 @@ describe('styles()', () => {
   })
 
   it('adds dev labels', () => {
-    let prevEnv = process.env.NODE_ENV
+    const prevEnv = process.env.NODE_ENV
     process.env.NODE_ENV = 'development'
     const style = styles.create()({
       flex: `display: flex;`,
@@ -256,18 +244,15 @@ describe('styles()', () => {
   })
 
   it('replaces disallowed characters in dev labels', () => {
-    let prevEnv = process.env.NODE_ENV
+    const prevEnv = process.env.NODE_ENV
     process.env.NODE_ENV = 'development'
     const style = styles.create()({
       'box=big': {width: 400, height: '400px'},
     })
 
     style('box=big')
-
-    for (let element of document.querySelectorAll(`style[data-dash]`)) {
-      expect(element).toMatchSnapshot('400x400')
-    }
-
+    expect(document.querySelectorAll(`style[data-dash]`).length).toBe(1)
+    expect(document.querySelectorAll(`style[data-dash]`)[0]).toMatchSnapshot('400x400')
     process.env.NODE_ENV = prevEnv
   })
 
@@ -283,10 +268,9 @@ describe('styles()', () => {
     )
 
     style('flex', 'block', 'inline')
+    expect(document.querySelectorAll(`style[data-dash]`).length).toBe(1)
+    expect(document.querySelectorAll(`style[data-dash]`)[0]).toMatchSnapshot()
 
-    for (let element of document.querySelectorAll(`style[data-dash]`)) {
-      expect(element).toMatchSnapshot()
-    }
   })
 
   it('allows default styles', () => {
@@ -336,9 +320,8 @@ describe('styles()', () => {
 
     styleB('flex', 'block', 'inline')
 
-    for (let element of document.querySelectorAll(`style[data-dash]`)) {
-      expect(element).toMatchSnapshot()
-    }
+    expect(document.querySelectorAll(`style[data-dash]`).length).toBe(1)
+    expect(document.querySelectorAll(`style[data-dash]`)).toMatchSnapshot()
   })
 
   it('flushes sheet tags', () => {
@@ -356,7 +339,7 @@ describe('styles()', () => {
   })
 
   it('rehydrates', () => {
-    let tag = document.createElement('style')
+    const tag = document.createElement('style')
     tag.setAttribute(`data-dash`, '1ut9bc3')
     tag.setAttribute('data-cache', '-ui')
     tag.appendChild(
@@ -376,7 +359,7 @@ describe('styles()', () => {
   })
 
   it('rehydrates into custom container', () => {
-    let tag = document.createElement('style')
+    const tag = document.createElement('style')
     tag.setAttribute(`data-dash`, '1ut9bc3')
     tag.setAttribute('data-cache', '-ui')
 
@@ -395,6 +378,7 @@ describe('styles()', () => {
     style('flex')
     expect(document.querySelectorAll(`head style[data-dash]`).length).toBe(0)
     expect(document.querySelectorAll(`body style[data-dash]`).length).toBe(1)
+    expect(document.querySelectorAll(`style[data-dash]`).length).toBe(1)
   })
 })
 
@@ -414,9 +398,8 @@ describe(`styles.variables()`, () => {
       },
     })
 
-    for (let element of document.querySelectorAll(`style[data-dash]`)) {
-      expect(element).toMatchSnapshot(':root')
-    }
+    expect(document.querySelectorAll(`style[data-dash]`).length).toBe(1)
+    expect(document.querySelectorAll(`style[data-dash]`)[0]).toMatchSnapshot(':root')
   })
 
   it('removes variables when eject is called', () => {
@@ -493,9 +476,8 @@ describe(`styles.variables()`, () => {
       spacing: ['1rem', '2rem', '4rem'],
     })
 
-    for (let element of document.querySelectorAll(`style[data-dash]`)) {
-      expect(element).toMatchSnapshot(':root')
-    }
+    expect(document.querySelectorAll(`style[data-dash]`).length).toBe(1)
+    expect(document.querySelectorAll(`style[data-dash]`)[0]).toMatchSnapshot(':root')
   })
 })
 
@@ -516,9 +498,9 @@ describe(`styles.themes()`, () => {
       },
     })
 
-    for (let element of document.querySelectorAll(`style[data-dash]`)) {
-      expect(element).toMatchSnapshot(':root')
-    }
+    expect(document.querySelectorAll(`style[data-dash]`).length).toBe(2)
+    expect(document.querySelectorAll(`style[data-dash]`)[0]).toMatchSnapshot('dark')
+    expect(document.querySelectorAll(`style[data-dash]`)[0]).toMatchSnapshot('light')
   })
 
   it('removes variables when eject is called', () => {
@@ -588,9 +570,8 @@ describe(`styles.global()`, () => {
       }
     `)
 
-    for (let element of document.querySelectorAll(`style[data-dash]`)) {
-      expect(element).toMatchSnapshot()
-    }
+    expect(document.querySelectorAll(`style[data-dash]`).length).toBe(1)
+    expect(document.querySelectorAll(`style[data-dash]`)[0]).toMatchSnapshot()
   })
 
   it('should inject global styles once', () => {
@@ -620,9 +601,9 @@ describe(`styles.global()`, () => {
     `
 
     expect(document.querySelectorAll(`style[data-dash]`).length).toBe(3)
-    for (let element of document.querySelectorAll(`style[data-dash]`)) {
-      expect(element).toMatchSnapshot()
-    }
+    expect(document.querySelectorAll(`style[data-dash]`)[0]).toMatchSnapshot(':root')
+    expect(document.querySelectorAll(`style[data-dash]`)[1]).toMatchSnapshot('html')
+    expect(document.querySelectorAll(`style[data-dash]`)[2]).toMatchSnapshot(':root')
   })
 
   it('ejects global styles when callback is called', () => {

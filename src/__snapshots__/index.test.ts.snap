@@ -26,7 +26,7 @@ exports[`styles() adds styles by order of definition when called: flex, block, i
 </style>
 `;
 
-exports[`styles() allows comments 1`] = `"-ui-xmqurs"`;
+exports[`styles() allows comments 1`] = `"/*this is a flex style*/display:flex;"`;
 
 exports[`styles() allows default styles 1`] = `
 NodeList [
@@ -49,12 +49,14 @@ exports[`styles() allows multiple arguments 1`] = `
 `;
 
 exports[`styles() allows style functions in arguments 1`] = `
-<style
-  data-dash="-ui"
->
-  
-  .-ui-qaw0al{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;display:block;display:inline;}
-</style>
+NodeList [
+  <style
+    data-dash="-ui"
+  >
+    
+    .-ui-qaw0al{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;display:block;display:inline;}
+  </style>,
+]
 `;
 
 exports[`styles() allows unitless object values: 200x200 1`] = `
@@ -226,7 +228,7 @@ Object {
 }
 `;
 
-exports[`styles.global() should inject global styles once 1`] = `
+exports[`styles.global() should inject global styles once: :root 1`] = `
 <style
   data-dash="-ui"
 >
@@ -235,21 +237,21 @@ exports[`styles.global() should inject global styles once 1`] = `
 </style>
 `;
 
-exports[`styles.global() should inject global styles once 2`] = `
-<style
-  data-dash="-ui"
->
-  
-  html{font-size:100%;}
-</style>
-`;
-
-exports[`styles.global() should inject global styles once 3`] = `
+exports[`styles.global() should inject global styles once: :root 2`] = `
 <style
   data-dash="-ui"
 >
   
   :root{--spacing-1:0.5rem;}
+</style>
+`;
+
+exports[`styles.global() should inject global styles once: html 1`] = `
+<style
+  data-dash="-ui"
+>
+  
+  html{font-size:100%;}
 </style>
 `;
 
@@ -288,7 +290,7 @@ exports[`styles.one() returns css when css() is called 1`] = `"display:flex;"`;
 
 exports[`styles.one() returns css when css.toString() is called 1`] = `"display:flex;"`;
 
-exports[`styles.themes() creates variables: :root 1`] = `
+exports[`styles.themes() creates variables: dark 1`] = `
 <style
   data-dash="-ui"
 >
@@ -297,12 +299,12 @@ exports[`styles.themes() creates variables: :root 1`] = `
 </style>
 `;
 
-exports[`styles.themes() creates variables: :root 2`] = `
+exports[`styles.themes() creates variables: light 1`] = `
 <style
   data-dash="-ui"
 >
   
-  .-ui-light-theme{--colors-bg:#fff;--colors-text:#000;}
+  .-ui-dark-theme{--colors-bg:#000;--colors-text:#fff;}
 </style>
 `;
 

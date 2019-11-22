@@ -1,21 +1,22 @@
 // A huge amount of credit for this library goes to the emotion
 // team and to Sebastian McKenzie at Facebook for inspiring the
 // API design
-import Stylis from '@emotion/stylis'
+import Stylis, {Plugable, Plugin} from '@emotion/stylis'
 import unitless from '@emotion/unitless'
 import memoize from 'trie-memoize'
 
 //
 // Constants
+declare const __DEV__: boolean
 const IS_BROWSER = typeof document !== 'undefined'
 
 //
 // Hashing (fnv1a)
 const OFFSET_BASIS_32 = 2166136261
-export const fnvHash = string => {
+export const fnvHash = (string: string): string => {
   let out = OFFSET_BASIS_32,
-    i = 0,
-    len = string.length
+    i = 0
+  const len = string.length
   for (; i < len; ++i) {
     out ^= string.charCodeAt(i)
     out += (out << 1) + (out << 4) + (out << 7) + (out << 8) + (out << 24)
@@ -23,9 +24,9 @@ export const fnvHash = string => {
   return (out >>> 0).toString(36)
 }
 const unsafeClassName = /^[0-9]/
-const safeHash = (key, hash) =>
+const safeHash = (key: string, hash: typeof fnvHash): Function =>
   memoize([{}], string => {
-    let out = hash(string)
+    const out = hash(string)
     // allows class names to start with numbers
     return !key && unsafeClassName.test(out) ? `_${out}` : out
   })
@@ -36,17 +37,28 @@ const safeHash = (key, hash) =>
 const RULE_DELIMITER = '/*|*/'
 const RULE_NEEDLE = RULE_DELIMITER + '}'
 
-const Sheet = {
-  current: null,
+interface CurrentSheet {
+  insert: (rule: string) => void
 }
 
-const toSheet = block => {
-  block && Sheet.current.insert(block + '}')
+interface Sheet {
+  current: CurrentSheet
 }
 
-const ruleSheet = (
+const Sheet: Sheet = {
+  current: {
+    insert: (): void => {},
+  },
+}
+
+const toSheet = (block: string): void => {
+  block && Sheet.current && Sheet.current.insert(block + '}')
+}
+
+// @ts-ignore
+const ruleSheet: Plugin = (
   context,
-  content,
+  content: any,
   selectors,
   parents,
   line,
@@ -83,14 +95,14 @@ const ruleSheet = (
 
 //
 // Configuration
-let getServerStylisCache = IS_BROWSER
-  ? void 0
+const getServerStylisCache: Function = IS_BROWSER
+  ? (): void => {}
   : memoize([{}, WeakMap], () => {
-      let getCache = memoize([WeakMap], () => ({}))
-      let prefixTrueCache = {}
-      let prefixFalseCache = {}
+      const getCache = memoize([WeakMap], () => ({}))
+      const prefixTrueCache = {}
+      const prefixFalseCache = {}
 
-      return prefix => {
+      return (prefix: string | void | boolean): {} => {
         if (prefix === void 0 || prefix === true) return prefixTrueCache
         if (prefix === false) return prefixFalseCache
         return getCache(prefix)
@@ -99,16 +111,79 @@ let getServerStylisCache = IS_BROWSER
 
 const emptyArr = []
 
-export const createDash = (options = {}) => {
+interface DashOptions {
+  key?: string
+  nonce?: string
+  hash?: typeof fnvHash
+  stylisPlugins?: Plugable[]
+  prefix?: boolean | ((key: string, value: any, context: any) => boolean)
+  container?: HTMLElement
+  speedy?: boolean
+}
+
+interface InsertCache {
+  [name: string]: number
+}
+
+interface Variables {
+  [name: string]: any
+}
+
+interface StoredVariables {
+  [name: string]: any
+}
+
+interface GlobalCache {
+  [name: string]: {
+    count: number
+    sheet: DashStyleSheet
+  }
+}
+
+interface StylisCache {
+  [name: string]: string
+}
+
+interface Themes {
+  [name: string]: Variables
+}
+
+interface DashCache {
+  key: string
+  sheet: DashStyleSheet
+  hash: Function
+  stylis: typeof Stylis
+  stylisCache: StylisCache
+  insert: (
+    selector: string,
+    name: string,
+    styles: string,
+    sheet: DashStyleSheet
+  ) => void
+  insertCache: InsertCache
+  variables: StoredVariables
+  variablesCache: GlobalCache
+  themes: Themes
+  globalCache: GlobalCache
+  clear: () => void
+}
+
+export const createDash = (options: DashOptions = {}): DashCache => {
   // Based on
   // https://github.com/emotion-js/emotion/blob/master/packages/cache/src/index.js
   let {
+    // eslint-disable-next-line prefer-const
     key = '-ui',
+    // eslint-disable-next-line prefer-const
     nonce,
+    // eslint-disable-next-line prefer-const
     hash = fnvHash,
+    // eslint-disable-next-line prefer-const
     stylisPlugins,
+    // eslint-disable-next-line prefer-const
     prefix = true,
-    container = IS_BROWSER && document.head,
+    // eslint-disable-next-line prefer-const
+    container = IS_BROWSER ? document.head : void 0,
     speedy,
   } = options
   const stylis = new Stylis({prefix})
@@ -123,14 +198,21 @@ export const createDash = (options = {}) => {
     for (let i = 0; i < nodes.length; i++) {
       const node = nodes[i]
       const attr = node.getAttribute(`data-dash`)
+      if (attr === null) continue
       const ids = attr.split(' ')
       for (let i = 0; i < ids.length; i++) insertCache[ids[i]] = 1
+      // @ts-ignore
       if (node.parentNode !== container) container.appendChild(node)
     }
 
     stylis.use(stylisPlugins)(ruleSheet)
 
-    insert = (selector, name, styles, sheet) => {
+    insert = (
+      selector: string,
+      name: string,
+      styles: string,
+      sheet: DashStyleSheet
+    ): void => {
       if (dash.insertCache[name] === 1) return
       Sheet.current = sheet
       dash.insertCache[name] = 1
@@ -141,7 +223,7 @@ export const createDash = (options = {}) => {
     if (stylisPlugins || prefix !== void 0) stylis.use(stylisPlugins)
     stylisCache = getServerStylisCache(key, stylisPlugins || emptyArr)(prefix)
 
-    insert = (selector, name, styles) => {
+    insert = (selector: string, name: string, styles: string): void => {
       if (dash.insertCache[name]) return
       if (dash.stylisCache[name] === void 0) {
         dash.stylisCache[name] = stylis(selector, styles)
@@ -175,7 +257,7 @@ export const createDash = (options = {}) => {
     })
   }
 
-  let dash = {
+  const dash: DashCache = {
     key,
     sheet: styleSheet({
       key,
@@ -202,11 +284,29 @@ export const createDash = (options = {}) => {
 
 //
 // Style sheets
-export const styleSheet = ({key, container, nonce, speedy}) => {
+interface DashStyleSheet {
+  // include all keys so it the object can be cloned via styleSheet(sheet)
+  key: string
+  nonce?: string
+  container?: HTMLElement
+  speedy: boolean
+  insert: (rule: string) => void
+  flush: () => void
+}
+
+interface DashStyleSheetOptions {
+  key: string
+  container?: HTMLElement
+  nonce?: string
+  speedy: boolean
+}
+
+export const styleSheet = (options: DashStyleSheetOptions): DashStyleSheet => {
   // Based off emotion and glamor's StyleSheet
+  const {key, container, nonce, speedy} = options
   let size = 0,
-    before,
-    tags = []
+    before
+  const tags: HTMLStyleElement[] = []
 
   return {
     // include all keys so it the object can be cloned via styleSheet(sheet)
@@ -214,27 +314,28 @@ export const styleSheet = ({key, container, nonce, speedy}) => {
     nonce,
     container,
     speedy,
-    insert(rule) {
+    insert(rule): void {
       // the max length is how many rules we have per style tag, it's 65000 in
       // speedy mode it's 1 in dev because we insert source maps that map a
       // single rule to a location and you can only have one source map per
       // style tag
       if (size % (speedy ? 65000 : 1) === 0) {
-        let tag = document.createElement('style')
+        const tag = document.createElement('style')
         tag.setAttribute(`data-dash`, key)
         if (nonce !== void 0) tag.setAttribute('nonce', nonce)
         tag.appendChild(document.createTextNode(''))
-        container.insertBefore(
-          tag,
-          tags.length === 0 ? before : tags[tags.length - 1].nextSibling
-        )
+        container &&
+          container.insertBefore(
+            tag,
+            tags.length === 0 ? before : tags[tags.length - 1].nextSibling
+          )
         tags.push(tag)
       }
 
       const tag = tags[tags.length - 1]
       if (!speedy) tag.appendChild(document.createTextNode(rule))
       else {
-        let sheet = tag.sheet
+        let sheet: StyleSheet | CSSStyleSheet | null = tag.sheet
 
         if (!sheet) {
           // this weirdness brought to you by firefox
@@ -252,10 +353,11 @@ export const styleSheet = ({key, container, nonce, speedy}) => {
           // we check the second character first because having "i"
           // as the second character will happen less often than
           // having "@" as the first character
-          let isImportRule =
+          const isImportRule =
             rule.charCodeAt(1) === 105 && rule.charCodeAt(0) === 64
           // this is the ultrafast version, works across browsers
           // the big drawback is that the css won't be editable in devtools
+          // @ts-ignore
           sheet.insertRule(
             rule,
             // we need to insert @import rules before anything else
@@ -268,6 +370,7 @@ export const styleSheet = ({key, container, nonce, speedy}) => {
             // and etc. so while this could be technically correct then it
             // would be slower and larger for a tiny bit of correctness that
             // won't matter in the real world
+            // @ts-ignore
             isImportRule ? 0 : sheet.cssRules.length
           )
         } catch (e) {
@@ -283,8 +386,9 @@ export const styleSheet = ({key, container, nonce, speedy}) => {
 
       size++
     },
-    flush() {
+    flush(): void {
       for (let i = 0; i < tags.length; i++) {
+        // @ts-ignore
         tags[i].parentNode.removeChild(tags[i])
       }
 
@@ -296,24 +400,26 @@ export const styleSheet = ({key, container, nonce, speedy}) => {
 
 //
 // Style serialization
-const isProcessableValue = value => value !== null && typeof value !== 'boolean'
-let cssCaseRe = /[A-Z]|^ms/g
-const cssCase = string => string.replace(cssCaseRe, '-$&').toLowerCase()
-const interpolate = args => {
-  let strings = args[0]
-  if (typeof strings === 'string') return strings
-  if (!strings) return ''
+const isProcessableValue = (value?: any): boolean =>
+  value !== null && typeof value !== 'boolean'
+const cssCaseRe = /[A-Z]|^ms/g
+const cssCase = (string: string): string =>
+
+  string.replace(cssCaseRe, '-$&').toLowerCase()
+const interpolate = (literals?: TemplateStringsArray|string|null, placeholders?: string[]): string => {
+  if (typeof literals === 'string') return literals
+  if (!literals) return ''
   let str = ''
-  // eslint-disable-next-line
-  const [_, ...values] = Array.prototype.slice.call(args)
-  for (let i = 0; i < strings.length; i++) str += strings[i] + (values[i] || '')
+  placeholders = placeholders || []
+  for (let i = 0; i < literals.length; i++) str += literals[i] + (placeholders[i] || '')
   return str
 }
 
-const isCustomProperty = property => property.charCodeAt(1) === 45
-const styleName = styleName =>
+const isCustomProperty = (property: string): boolean =>
+  property.charCodeAt(1) === 45
+const styleName = (styleName: string): string =>
   isCustomProperty(styleName) ? styleName : cssCase(styleName)
-let styleValue = (key, value) =>
+const styleValue = (key: string, value: any): string =>
   unitless[key] !== 1 &&
   !isCustomProperty(key) &&
   typeof value === 'number' &&
@@ -321,9 +427,13 @@ let styleValue = (key, value) =>
     ? `${value}px`
     : value
 
-const styleObjectToString = object => {
-  let keys = Object.keys(object),
-    string = '',
+interface StyleObject {
+  [property: string]: string | number | StyleObject
+}
+
+const styleObjectToString = (object: StyleObject): string => {
+  const keys = Object.keys(object)
+  let string = '',
     i = 0
 
   for (; i < keys.length; i++) {
@@ -336,7 +446,15 @@ const styleObjectToString = object => {
   return string
 }
 
-const serializeVariables_ = (vars, names) => {
+interface SerializedVariables {
+  variables: StoredVariables
+  styles: string
+}
+
+const serializeVariables_ = (
+  vars: string | string[] | number | number[] | Variables,
+  names: string[]
+): SerializedVariables => {
   const keys = Object.keys(vars)
   const variables = {}
   let styles = ''
@@ -365,14 +483,17 @@ const serializeVariables_ = (vars, names) => {
 
 const serializeVariables = memoize([WeakMap], serializeVariables_)
 
-const mergeVariables_ = (target, source) => {
+const mergeVariables_ = (
+  target: StoredVariables | {},
+  source: string | string[] | number | number[] | Variables
+): StoredVariables => {
   target = Object.assign({}, target)
   const keys = Object.keys(source)
 
   for (let i = 0; i < keys.length; i++) {
     const key = keys[i],
       value = source[key]
-    if (typeof value === 'object' && value !== null)
+    if (typeof value === 'object')
       target[key] = mergeVariables_(target[key] || {}, value)
     else target[key] = value
   }
@@ -390,12 +511,16 @@ const minifyRe = [
   /\s+(\*\/)/,
 ]
 
-const normalizeStyles_ = (styles, variables) => {
-  const tof = typeof styles
+type StyleGetter = (variables: StoredVariables) => StyleObject | string
+
+const normalizeStyles_ = (
+  styles: string | StyleObject | StyleGetter,
+  variables: StoredVariables
+): string => {
   styles =
-    tof === 'function'
+    typeof styles === 'function'
       ? normalizeStyles_(styles(variables), variables)
-      : tof === 'object'
+      : typeof styles === 'object'
       ? styleObjectToString(styles)
       : styles
 
@@ -412,7 +537,15 @@ const normalizeStyles_ = (styles, variables) => {
 
 export const normalizeStyles = memoize([Map, WeakMap], normalizeStyles_)
 
-const normalizeStyleObject = (dash, styleDefs, styleName) => {
+interface StyleDefs {
+  [name: string]: string | StyleGetter | Styles | StyleObject
+}
+
+const normalizeStyleObject = (
+  dash: DashCache,
+  styleDefs: StyleDefs,
+  styleName?: string | StyleObjectArgument
+): string => {
   let nextStyles = styleDefs.default
     ? normalizeStyles(styleDefs.default, dash.variables)
     : ''
@@ -420,7 +553,7 @@ const normalizeStyleObject = (dash, styleDefs, styleName) => {
   if (typeof styleName === 'string' && styleName !== 'default') {
     nextStyles += normalizeStyles(styleDefs[styleName], dash.variables)
   } else if (typeof styleName === 'object') {
-    let keys = Object.keys(styleName)
+    const keys = Object.keys(styleName)
 
     for (let i = 0; i < keys.length; i++)
       if (styleName[keys[i]] && keys[i] !== 'default')
@@ -432,7 +565,11 @@ const normalizeStyleObject = (dash, styleDefs, styleName) => {
   return nextStyles
 }
 
-const normalizeArgs = (dash, styleDefs, args) => {
+const normalizeArgs = (
+  dash: DashCache,
+  styleDefs: StyleDefs,
+  args: (string | StyleObjectArgument)[]
+): string => {
   if (args.length > 1) {
     const argDefs = {}
 
@@ -447,13 +584,56 @@ const normalizeArgs = (dash, styleDefs, args) => {
 }
 
 const disallowedClassChars = /[^a-z0-9_-]/gi
+
+interface CSSFunction {
+  (...names: (string | StyleObjectArgument)[]): string
+}
+
+interface EjectGlobal {
+  (): void
+}
+
+interface Styles extends Function {
+  create: (options?: DashOptions) => Styles,
+  one: (literals: TemplateStringsArray|string|StyleGetter, ...placeholders: string[]) => OneCallback,
+  variables: (vars: Variables, selector?: string) => EjectGlobal,
+  themes: (vars: Variables) => EjectGlobal,
+  global: (literals: TemplateStringsArray|string|StyleGetter, ...placeholders: string[]) => EjectGlobal,
+  theme: (name: string) => string,
+  dash: DashCache
+}
+
+interface StyleObjectArgument {
+  [name: string]: boolean | string | number | null | void
+}
+
+interface Style extends Function {
+  css: CSSFunction
+  dash: DashCache
+  styles: StyleDefs
+}
+
+interface OneCallbackCss extends Function {
+  (): string,
+  toString: () => string,
+}
+
+interface OneCallback extends Function {
+  (createClassName?: boolean | number | string | null): string,
+  toString: () => string,
+  css: OneCallbackCss,
+}
+
 //
 // Where the magic happens
-const createStyles = dash => {
+const createStyles = (dash: DashCache): Styles => {
   let addLabels
   // explicit here on purpose so it's not in every test
   if (process.env.NODE_ENV === 'development') {
-    addLabels = (name, args) => {
+    addLabels = (
+      name: string,
+      args: (string | StyleObjectArgument)[]
+    ): string => {
       // add helpful labels to the name in development
       for (let i = 0; i < args.length; i++) {
         const arg = args[i]
@@ -469,34 +649,33 @@ const createStyles = dash => {
     }
   }
 
-  function styles() {
-    let defs = arguments[0]
-    if (arguments.length > 1) {
+  function styles<Styles>(...args: StyleDefs[]): Style {
+    let defs = args[0]
+    if (args.length > 1) {
       defs = Object.assign(
         {},
-        ...Array.prototype.slice
-          .call(arguments)
-          .map(arg => (typeof arg === 'function' ? arg.styles : arg))
+        // @ts-ignore
+        ...args.map(arg => (typeof arg === 'function' ? arg.styles : arg))
       )
     }
 
     //
     // style(text, space, {})
-    function style() {
-      let normalizedStyles = normalizeArgs(dash, defs, arguments)
+    function style<Style>(...args: (string | StyleObjectArgument)[]): string {
+      const normalizedStyles = normalizeArgs(dash, defs, args)
       if (!normalizedStyles) return ''
       let name = dash.hash(normalizedStyles)
       // explicit here on purpose so it's not in every test
       if (process.env.NODE_ENV === 'development') {
-        name = addLabels(name, arguments)
+        name = addLabels(name, args)
       }
       const className = `${dash.key}-${name}`
       dash.insert(`.${className}`, name, normalizedStyles, dash.sheet)
       return className
     }
 
-    style.css = function() {
-      return normalizeArgs(dash, defs, arguments)
+    style.css = function(...names: (string | StyleObjectArgument)[]): string {
+      return normalizeArgs(dash, defs, names)
     }
     style.dash = dash
     style.styles = defs
@@ -505,22 +684,24 @@ const createStyles = dash => {
 
   //
   // Methods
-  styles.create = options => createStyles(createDash(options))
+  styles.create = (options?: DashOptions): Styles =>
+    createStyles(createDash(options))
 
-  styles.one = function() {
-    let css =
-      typeof arguments[0] === 'function'
-        ? arguments[0](dash.variables)
-        : interpolate(arguments)
+  styles.one = (literals: TemplateStringsArray|string|StyleGetter, ...placeholders: string[]): OneCallback => {
+    const css =
+      typeof literals === 'function'
+        ? literals(dash.variables)
+        : interpolate(literals, placeholders)
     const style = styles({default: css})
-    const callback = value => (value || value === void 0 ? style() : '')
-    callback.toString = () => callback()
-    callback.css = () => style.css(name)
+    const callback = (createClassName?: boolean | number | string | null): string =>
+      createClassName || createClassName === void 0 ? style() : ''
+    callback.toString = (): string => callback()
+    callback.css = (): string => style.css('default')
     callback.css.toString = callback.css
     return callback
   }
 
-  styles.variables = (vars, selector = ':root') => {
+  styles.variables = (vars: Variables, selector = ':root'): EjectGlobal => {
     const serialized = serializeVariables(vars)
     dash.variables = mergeVariables(dash.variables, serialized.variables)
     const name = dash.hash(serialized.styles)
@@ -532,7 +713,7 @@ const createStyles = dash => {
     const sheet = dash.variablesCache[name].sheet
     dash.insert(selector, name, serialized.styles, sheet)
 
-    return () => {
+    return (): void => {
       if (dash.variablesCache[name].count === 1) {
         delete dash.insertCache[name]
         delete dash.variablesCache[name]
@@ -541,10 +722,10 @@ const createStyles = dash => {
     }
   }
 
-  styles.themes = vars => {
+  styles.themes = (vars: Themes): EjectGlobal => {
     Object.assign(dash.themes, vars)
     const themes = Object.keys(vars)
-    const ejectors = []
+    const ejectors: Function[] = []
 
     for (let i = 0; i < themes.length; i++) {
       const theme = themes[i]
@@ -553,30 +734,30 @@ const createStyles = dash => {
       )
     }
 
-    return () => {
+    return (): void => {
       for (let i = 0; i < ejectors.length; i++) ejectors[i]()
     }
   }
 
-  styles.theme = theme => `${dash.key}-${theme}-theme`
+  styles.theme = (theme: string): string => `${dash.key}-${theme}-theme`
 
-  styles.global = function() {
-    let styles =
-      typeof arguments[0] === 'function'
-        ? arguments[0](dash.variables)
-        : interpolate(arguments)
-    styles = normalizeStyles(styles, dash.variables)
-    if (!styles) return () => {}
-    const name = dash.hash(styles)
+  styles.global = (literals: TemplateStringsArray|string|StyleGetter, ...placeholders: string[]): EjectGlobal => {
+    const styles =
+      typeof literals === 'function'
+        ? literals(dash.variables)
+        : interpolate(literals, placeholders)
+    const normalizedStyles = normalizeStyles(styles, dash.variables)
+    if (!normalizedStyles) return (): void => {}
+    const name = dash.hash(normalizedStyles)
     dash.globalCache[name] = dash.globalCache[name] || {
       count: 0,
       sheet: styleSheet(dash.sheet),
     }
     const sheet = dash.globalCache[name].sheet
     dash.globalCache[name].count += 1
-    dash.insert('', name, styles, sheet)
+    dash.insert('', name, normalizedStyles, sheet)
 
-    return () => {
+    return (): void => {
       if (dash.globalCache[name].count === 1) {
         delete dash.insertCache[name]
         delete dash.globalCache[name]
