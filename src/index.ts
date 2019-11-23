@@ -7,7 +7,8 @@ import memoize from 'trie-memoize'
 
 //
 // Constants
-declare const __DEV__: boolean
+const __DEV__ =
+  typeof process !== 'undefined' && process.env.NODE_ENV !== 'production'
 const IS_BROWSER = typeof document !== 'undefined'
 
 //
