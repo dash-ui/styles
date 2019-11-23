@@ -18,12 +18,12 @@ function unique(...args: any[]): any[] {
   return out
 }
 
-interface StylesResult {
+export interface StylesResult {
   css: string
   names: string[]
 }
 
-interface CreateStylesOptions {
+export interface CreateStylesOptions {
   clearCache?: boolean
 }
 
@@ -67,13 +67,13 @@ export const createStyleTagFromCache = (
   )
 }
 
-interface WriteStylesOptions {
+export interface WriteStylesOptions {
   name?: string
   hash?: (string: string) => string
   clearCache?: boolean
 }
 
-interface WriteStylesResult {
+export interface WriteStylesResult {
   filename: string
   name: string
   path: string
@@ -114,8 +114,7 @@ export const createStylesFromString = (
     Object.keys(styles.dash.variablesCache),
     Object.keys(styles.dash.globalCache)
   )
-  let i = 0,
-    result
+  let i = 0
 
   for (; i < names.length; i++) css += styleCache[names[i]]
 
@@ -125,6 +124,7 @@ export const createStylesFromString = (
     'g'
   )
   const seen = {}
+  let result: RegExpMatchArray | null
 
   while ((result = classRe.exec(string)) !== null) {
     const name = result[1].slice(replacer.length)
