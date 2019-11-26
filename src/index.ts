@@ -25,7 +25,10 @@ export const fnvHash = (string: string): string => {
   return (out >>> 0).toString(36)
 }
 const unsafeClassName = /^[0-9]/
-const safeHash = (key: string, hash: typeof fnvHash): Function =>
+const safeHash = (
+  key: string,
+  hash: typeof fnvHash
+): ((string: string) => string) =>
   memoize([{}], (string: string) => {
     const out = hash(string)
     // allows class names to start with numbers
@@ -96,8 +99,15 @@ const ruleSheet: Plugin = (
 
 //
 // Configuration
-const getServerStylisCache: Function = IS_BROWSER
-  ? (): void => {}
+const getServerStylisCache:
+  | null
+  | ((
+      string: string,
+      plugins: Plugable[]
+    ) => (
+      prefix: boolean | ((key: string, value: any, context: any) => boolean)
+    ) => void) = IS_BROWSER
+  ? null
   : memoize([{}, WeakMap], () => {
       const getCache = memoize([WeakMap], () => ({}))
       const prefixTrueCache = {}
@@ -152,7 +162,7 @@ export interface Themes {
 export interface DashCache {
   key: string
   sheet: DashStyleSheet
-  hash: Function
+  hash: (string: string) => string
   stylis: typeof Stylis
   stylisCache: StylisCache
   insert: (
@@ -222,7 +232,9 @@ export const createDash = (options: DashOptions = {}): DashCache => {
   } else {
     // server side
     if (stylisPlugins || prefix !== void 0) stylis.use(stylisPlugins)
-    stylisCache = getServerStylisCache(key, stylisPlugins || emptyArr)(prefix)
+    stylisCache =
+      getServerStylisCache &&
+      getServerStylisCache(key, stylisPlugins || emptyArr)(prefix)
 
     insert = (selector: string, name: string, styles: string): void => {
       if (dash.insertCache[name]) return
@@ -744,7 +756,7 @@ const createStyles = (dash: DashCache): Styles => {
   styles.themes = (vars: Themes): EjectGlobal => {
     Object.assign(dash.themes, vars)
     const themes = Object.keys(vars)
-    const ejectors: Function[] = []
+    const ejectors: (() => void)[] = []
 
     for (let i = 0; i < themes.length; i++) {
       const theme = themes[i]
