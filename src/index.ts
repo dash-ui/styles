@@ -212,7 +212,8 @@ export const createDash = (options: DashOptions = {}): DashCache => {
       if (attr === null) continue
       const ids = attr.split(' ')
       for (let i = 0; i < ids.length; i++) insertCache[ids[i]] = 1
-      if (node.parentNode !== container) (container as HTMLElement).appendChild(node)
+      if (node.parentNode !== container)
+        (container as HTMLElement).appendChild(node)
     }
 
     stylis.use(stylisPlugins)(ruleSheet)
@@ -366,10 +367,10 @@ export const styleSheet = (options: DashStyleSheetOptions): DashStyleSheet => {
           // as the second character will happen less often than
           // having "@" as the first character
           const isImportRule =
-            rule.charCodeAt(1) === 105 && rule.charCodeAt(0) === 64;
+            rule.charCodeAt(1) === 105 && rule.charCodeAt(0) === 64
           // this is the ultrafast version, works across browsers
           // the big drawback is that the css won't be editable in devtools
-          (sheet as CSSStyleSheet).insertRule(
+          ;(sheet as CSSStyleSheet).insertRule(
             rule,
             // we need to insert @import rules before anything else
             // otherwise there will be an error
@@ -398,7 +399,8 @@ export const styleSheet = (options: DashStyleSheetOptions): DashStyleSheet => {
     },
     flush(): void {
       for (let i = 0; i < tags.length; i++) {
-        (tags[i].parentNode as HTMLElement).removeChild(tags[i])
+        // eslint-disable-next-line
+        ;(tags[i].parentNode as HTMLElement).removeChild(tags[i])
       }
 
       tags.length = 0
@@ -677,7 +679,9 @@ const createStyles = (dash: DashCache): Styles => {
     if (args.length > 1) {
       defs = Object.assign(
         {},
-        ...args.map((arg: StyleDefs | Style) => (typeof arg === 'function' ? arg.styles : arg))
+        ...args.map((arg: StyleDefs | Style) =>
+          typeof arg === 'function' ? arg.styles : arg
+        )
       )
     }
 
