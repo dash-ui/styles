@@ -1,6 +1,6 @@
 {
   "name": "@-ui/styles",
-  "version": "1.0.50",
+  "version": "1.0.51",
   "homepage": "https://github.com/dash-ui/styles#readme",
   "repository": "github:dash-ui/styles",
   "bugs": "https://github.com/dash-ui/styles/issues",
@@ -22,6 +22,7 @@
   ],
   "main": "dist/cjs/index.js",
   "module": "dist/es/index.js",
+  "types": "dist/cjs/index.d.ts",
   "umd:main": "dist/umd/-ui.min.js",
   "unpkg": "dist/umd/-ui.min.js",
   "files": [
