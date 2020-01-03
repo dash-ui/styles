@@ -367,9 +367,9 @@ export const styleSheet = (options: DashStyleSheetOptions): DashStyleSheet => {
           // as the second character will happen less often than
           // having "@" as the first character
           const isImportRule =
-            rule.charCodeAt(1) === 105 && rule.charCodeAt(0) === 64
-          // this is the ultrafast version, works across browsers
-          // the big drawback is that the css won't be editable in devtools
+              rule.charCodeAt(1) === 105 && rule.charCodeAt(0) === 64
+            // this is the ultrafast version, works across browsers
+            // the big drawback is that the css won't be editable in devtools
           ;(sheet as CSSStyleSheet).insertRule(
             rule,
             // we need to insert @import rules before anything else

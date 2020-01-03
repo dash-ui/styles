@@ -1,6 +1,6 @@
 {
   "name": "@-ui/styles",
-  "version": "1.0.49",
+  "version": "1.0.50",
   "homepage": "https://github.com/dash-ui/styles#readme",
   "repository": "github:dash-ui/styles",
   "bugs": "https://github.com/dash-ui/styles/issues",
@@ -34,7 +34,7 @@
     "build": "npm run build:cjs && npm run build:es && npm run build:server && npm run build:umd && npm run build:types",
     "build:cjs": "babel src -d dist/cjs -x .ts --env-name cjs --ignore \"**/*.test.ts\",\"**/test.ts\",\"**/*.d.ts\" --delete-dir-on-start",
     "build:es": "babel src -d dist/es -x .ts --env-name es --ignore \"**/*.test.ts\",\"**/test.ts\",\"**/*.d.ts\" --delete-dir-on-start",
-    "build:server": "babel server-src -d server -x .ts --env-name cjs --ignore \"**/*.test.ts\",\"**/test.ts\" --delete-dir-on-start",
+    "build:server": "babel server-src -d server -x .ts --env-name cjs --ignore \"**/*.test.ts\",\"**/test.ts\" --delete-dir-on-start && cp server.package.json server/package.json",
     "build:umd": "rollup -c",
     "build:types": "tsc -p tsconfig.json -d --outDir dist/es --emitDeclarationOnly && mkdir -p dist/cjs && cp -R dist/es/**.d.ts dist/cjs && tsc -p tsconfig.server.json -d --outDir server --emitDeclarationOnly && rimraf {dist,server}/**/*.test.d.ts",
     "check-types": "tsc --noEmit -p tsconfig.json && tsc --noEmit -p tsconfig.server.json",
