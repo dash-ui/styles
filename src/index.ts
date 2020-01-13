@@ -398,11 +398,7 @@ export const styleSheet = (options: DashStyleSheetOptions): DashStyleSheet => {
       size++
     },
     flush(): void {
-      for (let i = 0; i < tags.length; i++) {
-        // eslint-disable-next-line
-        ;(tags[i].parentNode as HTMLElement).removeChild(tags[i])
-      }
-
+      tags.forEach(tag => (tag.parentNode as HTMLElement).removeChild(tag))
       tags.length = 0
       size = 0
     },
@@ -554,13 +550,13 @@ const normalizeStyles_ = (
 export const normalizeStyles = memoize([Map, WeakMap], normalizeStyles_)
 
 export interface StyleDefs {
-  [name: string]: string | StyleGetter | Styles | StyleObject
+  [name: string]: string | StyleGetter | StyleObject
 }
 
 const normalizeStyleObject = (
   dash: DashCache,
   styleDefs: StyleDefs,
-  styleName?: string | StyleObjectArgument
+  styleName?: string | StyleObjectArgument | false | null | undefined | 0
 ): string => {
   let nextStyles = styleDefs.default
     ? normalizeStyles(styleDefs.default, dash.variables)
@@ -568,7 +564,7 @@ const normalizeStyleObject = (
 
   if (typeof styleName === 'string' && styleName !== 'default') {
     nextStyles += normalizeStyles(styleDefs[styleName], dash.variables)
-  } else if (typeof styleName === 'object') {
+  } else if (typeof styleName === 'object' && styleName !== null) {
     const keys = Object.keys(styleName)
 
     for (let i = 0; i < keys.length; i++)
@@ -584,7 +580,7 @@ const normalizeStyleObject = (
 const normalizeArgs = (
   dash: DashCache,
   styleDefs: StyleDefs,
-  args: (string | StyleObjectArgument)[]
+  args: (string | StyleObjectArgument | false | null | undefined | 0)[]
 ): string => {
   if (args.length > 1) {
     const argDefs = {}
@@ -609,7 +605,8 @@ export interface EjectGlobal {
   (): void
 }
 
-export interface Styles extends Function {
+export interface Styles {
+  (...args: (StyleDefs | Style)[]): Style
   create: (options?: DashOptions) => Styles
   one: (
     literals: TemplateStringsArray | string | StyleObject | StyleGetter,
@@ -629,18 +626,21 @@ export interface StyleObjectArgument {
   [name: string]: boolean | string | number | null | void
 }
 
-export interface Style extends Function {
+export interface Style {
+  (
+    ...args: (string | StyleObjectArgument | false | null | undefined | 0)[]
+  ): string
   css: CSSFunction
   dash: DashCache
   styles: StyleDefs
 }
 
-export interface OneCallbackCss extends Function {
+export interface OneCallbackCss {
   (): string
   toString: () => string
 }
 
-export interface OneCallback extends Function {
+export interface OneCallback {
   (createClassName?: boolean | number | string | null): string
   toString: () => string
   css: OneCallbackCss
@@ -651,7 +651,7 @@ export interface OneCallback extends Function {
 const createStyles = (dash: DashCache): Styles => {
   let addLabels: (
     name: string,
-    args: (string | StyleObjectArgument)[]
+    args: (string | StyleObjectArgument | false | null | undefined | 0)[]
   ) => string
   // explicit here on purpose so it's not in every test
   if (process.env.NODE_ENV === 'development') {
@@ -687,9 +687,7 @@ const createStyles = (dash: DashCache): Styles => {
 
     //
     // style(text, space, {})
-    const style: Style = (
-      ...args: (string | StyleObjectArgument)[]
-    ): string => {
+    const style: Style = (...args): string => {
       const normalizedStyles = normalizeArgs(dash, defs, args)
       if (!normalizedStyles) return ''
       let name = dash.hash(normalizedStyles)
@@ -755,18 +753,10 @@ const createStyles = (dash: DashCache): Styles => {
   styles.themes = (vars: Themes): EjectGlobal => {
     Object.assign(dash.themes, vars)
     const themes = Object.keys(vars)
-    const ejectors: (() => void)[] = []
-
-    for (let i = 0; i < themes.length; i++) {
-      const theme = themes[i]
-      ejectors.push(
-        styles.variables(dash.themes[theme], `.${dash.key}-${theme}-theme`)
-      )
-    }
-
-    return (): void => {
-      for (let i = 0; i < ejectors.length; i++) ejectors[i]()
-    }
+    const ejectors: (() => void)[] = themes.map(theme =>
+      styles.variables(dash.themes[theme], `.${dash.key}-${theme}-theme`)
+    )
+    return (): void => ejectors.forEach(e => e())
   }
 
   styles.theme = (theme: string): string => `${dash.key}-${theme}-theme`
