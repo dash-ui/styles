@@ -24,7 +24,8 @@ const serializeRules = (selector = `style[data-dash]`): any[] => {
 describe('styles.create()', () => {
   it('turns off vendor prefixing', () => {
     const myStyles = styles.create({prefix: false})
-    const style = myStyles({
+    type MyStyles = 'flex' | 'flexor'
+    const style = myStyles<MyStyles>({
       flex: {display: 'flex'},
     })
 
@@ -149,11 +150,11 @@ describe('styles()', () => {
     const style = styles.create()({
       flex: {display: 'flex'},
     })
-
+    // @ts-ignore
     let name = style('noop')
     expect(typeof name).toBe('string')
     expect(name.length).toBe(0)
-
+    // @ts-ignore
     name = style({noop: true})
     expect(typeof name).toBe('string')
     expect(name.length).toBe(0)
@@ -321,18 +322,16 @@ describe('styles()', () => {
     expect(document.querySelectorAll(`style[data-dash]`)).toMatchSnapshot()
   })
 
-  it('allows style functions in arguments', () => {
+  it('allows style function in arguments', () => {
     const myStyles = styles.create()
     const styleA = myStyles({
       flex: `display: flex;`,
       block: `display: block;`,
     })
-    const styleB = myStyles(
-      {
-        inline: `display: inline;`,
-      },
-      styleA
-    )
+
+    const styleB = myStyles<keyof typeof styleA.styles | 'inline'>(styleA, {
+      inline: `display: inline;`,
+    })
 
     styleB('flex', 'block', 'inline')
 
