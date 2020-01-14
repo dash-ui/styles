@@ -232,7 +232,10 @@ describe('styles()', () => {
     })
 
     const style = myStyles({
-      box: vars => expect(vars).toMatchSnapshot(),
+      box: vars => {
+        expect(vars).toMatchSnapshot()
+        return ''
+      },
     })
 
     style('box')
@@ -787,7 +790,12 @@ describe('styles.one()', () => {
 
   it(`can be called as a function w/ function value`, () => {
     const myStyles = styles.create()
-    myStyles.variables({color: {blue: 'blue'}})
+    type Variables = {
+      color: {
+        blue: string
+      }
+    }
+    myStyles.variables<Variables>({color: {blue: 'blue'}})
     const myCls = myStyles.one(({color}) => `color: ${color.blue};`)
     expect(myCls.css()).toMatchSnapshot()
   })

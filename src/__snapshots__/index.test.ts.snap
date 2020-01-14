@@ -48,7 +48,7 @@ exports[`styles() allows multiple arguments 1`] = `
 </style>
 `;
 
-exports[`styles() allows style functions in arguments 1`] = `
+exports[`styles() allows style function in arguments 1`] = `
 NodeList [
   <style
     data-dash="-ui"
