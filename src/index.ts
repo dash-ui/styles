@@ -102,28 +102,25 @@ const ruleSheet: Plugin = (
 
 //
 // Configuration
-const getServerStylisCache:
-  | null
-  | ((
-      string: string,
-      plugins: Plugable[]
-    ) => (
-      prefix: boolean | ((key: string, value: any, context: any) => boolean)
-    ) => void) = IS_BROWSER
+const getServerStylisCache = IS_BROWSER
   ? null
-  : memoize([{}, WeakMap], () => {
-      const getCache = memoize([WeakMap], () => ({}))
+  : // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    memoize([{}, WeakMap], (key: string, plugins: Plugable[]) => {
+      const getCache = memoize([WeakMap], (
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        prefix: boolean | ((key: string, value: any, context: any) => boolean)
+      ) => ({}))
       const prefixTrueCache = {}
       const prefixFalseCache = {}
 
-      return (prefix: string | void | boolean): {} => {
+      return (
+        prefix: boolean | ((key: string, value: any, context: any) => boolean)
+      ): {} => {
         if (prefix === void 0 || prefix === true) return prefixTrueCache
         if (prefix === false) return prefixFalseCache
         return getCache(prefix)
       }
     })
-
-const emptyArr = []
 
 export interface DashOptions {
   readonly key?: string
@@ -243,7 +240,7 @@ export const createDash = (options: DashOptions = {}): DashCache => {
     if (stylisPlugins || prefix !== void 0) stylis.use(stylisPlugins)
     stylisCache =
       getServerStylisCache &&
-      getServerStylisCache(key, stylisPlugins || emptyArr)(prefix)
+      getServerStylisCache(key, stylisPlugins || [])(prefix)
 
     insert = (selector: string, name: string, styles: string): void => {
       if (dash.insertCache[name]) return
@@ -561,17 +558,24 @@ export type StyleDefs<Names extends string> = {
   default?: string | StyleGetter | StyleObject
 }
 
-const normalizeStyleObject = <Names extends string>(
+function normalizeStyleObject<Names extends string>(
   dash: DashCache,
   styleDefs: StyleDefs<Names>,
   styleName?: string | Names | StyleObjectArgument<Names> | Falsy
-): string => {
+): string
+function normalizeStyleObject<Names extends string>(
+  dash: DashCache,
+  styleDefs: StyleObjectArgument<Names>,
+  styleName?: string | Names | StyleObjectArgument<Names> | Falsy
+): string
+// eslint-disable-next-line @typescript-eslint/explicit-function-return-type
+function normalizeStyleObject(dash, styleDefs, styleName) {
   let nextStyles = styleDefs.default
     ? normalizeStyles(styleDefs.default, dash.variables)
     : ''
 
   if (typeof styleName === 'string' && styleName !== 'default') {
-    nextStyles += normalizeStyles(styleDefs[styleName as Names], dash.variables)
+    nextStyles += normalizeStyles(styleDefs[styleName], dash.variables)
   } else if (typeof styleName === 'object' && styleName !== null) {
     const keys = Object.keys(styleName)
 
@@ -758,7 +762,7 @@ const createStyles = (dash: DashCache): Styles => {
   styles.global = (literals, ...placeholders): EjectGlobal => {
     const styles = Array.isArray(literals)
       ? interpolate(literals, placeholders)
-      : literals
+      : (literals as 'string | StyleGetter | StyleObject')
     const normalizedStyles = normalizeStyles(styles, dash.variables)
     if (!normalizedStyles) return (): void => {}
     const name = dash.hash(normalizedStyles)
