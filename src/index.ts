@@ -91,7 +91,10 @@ const ruleSheet: Plugin = (
     if (ns === 102 || ns === 112) {
       Sheet.current.insert(selectors[0] + content)
       return ''
-    } else return content + (at === 0 ? RULE_DELIMITER : '')
+    } else {
+      /* istanbul ignore next */
+      return content + (at === 0 ? RULE_DELIMITER : '')
+    }
   } else if (context === -2) {
     const contents = content.split(RULE_NEEDLE)
     for (let i = 0; i < contents.length; i++) toSheet(contents[i])
@@ -161,11 +164,11 @@ export type StylisCache = {
   [name: string]: string
 }
 
-export type Themes = {
-  [name: string]: Variables
+export type Themes<ThemeNames extends string = any, Vars = any> = {
+  [Name in ThemeNames]?: Vars
 }
 
-export type DashCache = {
+export type DashCache<Vars = any, ThemeNames extends string = any> = {
   readonly key: string
   readonly sheet: DashStyleSheet
   readonly hash: (string: string) => string
@@ -178,14 +181,16 @@ export type DashCache = {
     sheet: DashStyleSheet
   ) => void
   readonly insertCache: InsertCache
-  variables: StoredVariables
+  variables: Vars
   readonly variablesCache: GlobalCache
-  themes: Themes
+  themes: Themes<ThemeNames, Vars>
   readonly globalCache: GlobalCache
   readonly clear: () => void
 }
 
-export const createDash = (options: DashOptions = {}): DashCache => {
+export const createDash = <Vars>(
+  options: DashOptions = {}
+): DashCache<Vars> => {
   // Based on
   // https://github.com/emotion-js/emotion/blob/master/packages/cache/src/index.js
   let {
@@ -260,6 +265,7 @@ export const createDash = (options: DashOptions = {}): DashCache => {
         while (commentStart.test(content)) {
           commentEnd.lastIndex = commentStart.lastIndex
 
+          /* istanbul ignore next */
           if (commentEnd.test(content)) {
             commentStart.lastIndex = commentEnd.lastIndex
             continue
@@ -465,17 +471,17 @@ const styleObjectToString = (object: StyleObject): string => {
   return string
 }
 
-export type SerializedVariables = {
-  readonly variables: StoredVariables
+export type SerializedVariables<Vars = any> = {
+  readonly variables: Vars
   readonly styles: string
 }
 
-const serializeVariables = (
+const serializeVariables = <Vars = any>(
   vars: string | string[] | number | number[] | Variables,
   names?: string[]
-): SerializedVariables => {
+): SerializedVariables<Vars> => {
   const keys = Object.keys(vars)
-  const variables: StoredVariables = {}
+  const variables: Vars = {} as Vars
   let styles = ''
 
   for (let i = 0; i < keys.length; i++) {
@@ -500,18 +506,15 @@ const serializeVariables = (
   return {variables, styles}
 }
 
-const mergeVariables = (
-  target: StoredVariables,
-  source: StoredVariables
-): StoredVariables => {
-  const next: StoredVariables = Object.assign({}, target)
+const mergeVariables = <Vars>(target: Vars, source: StoredVariables): Vars => {
+  const next: Vars = Object.assign({}, target)
   const keys = Object.keys(source)
 
   for (let i = 0; i < keys.length; i++) {
     const key = keys[i],
       value = source[key]
     if (typeof value === 'object')
-      next[key] = mergeVariables((next[key] || {}) as StoredVariables, value)
+      next[key] = mergeVariables(next[key] || {}, value)
     else next[key] = value
   }
 
@@ -526,15 +529,17 @@ const minifyRe = [
   /\s+(\*\/)/,
 ]
 
-export type StyleGetter = (variables: StoredVariables) => StyleObject | string
+export type StyleGetter<Vars = StoredVariables> = (
+  variables: Vars
+) => StyleObject | string
 
-const normalizeStyles_ = (
-  styles: string | StyleObject | StyleGetter,
-  variables: StoredVariables
+const normalizeStyles_ = <Vars = any>(
+  styles: string | StyleObject | StyleGetter<Vars>,
+  variables: any
 ): string => {
   styles =
     typeof styles === 'function'
-      ? normalizeStyles_(styles(variables), variables)
+      ? normalizeStyles_<Vars>(styles(variables), variables)
       : typeof styles === 'object'
       ? styleObjectToString(styles)
       : styles
@@ -552,46 +557,40 @@ const normalizeStyles_ = (
 
 export const normalizeStyles = memoize([Map, WeakMap], normalizeStyles_)
 
-export type StyleDefs<Names extends string> = {
-  [Name in Names]?: string | StyleGetter | StyleObject
-} & {
-  default?: string | StyleGetter | StyleObject
-}
-
-function normalizeStyleObject<Names extends string>(
+function normalizeStyleObject<Names extends string, Vars = any>(
   dash: DashCache,
-  styleDefs: StyleDefs<Names>,
+  styleDefs: StyleDefs<Names, Vars>,
   styleName?: string | Names | StyleObjectArgument<Names> | Falsy
 ): string
-function normalizeStyleObject<Names extends string>(
+function normalizeStyleObject<Names extends string, Vars = any>(
   dash: DashCache,
   styleDefs: StyleObjectArgument<Names>,
   styleName?: string | Names | StyleObjectArgument<Names> | Falsy
 ): string
 // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
-function normalizeStyleObject(dash, styleDefs, styleName) {
+function normalizeStyleObject<Vars = any>(dash, styleDefs, styleName) {
   let nextStyles = styleDefs.default
-    ? normalizeStyles(styleDefs.default, dash.variables)
+    ? normalizeStyles<Vars>(styleDefs.default, dash.variables)
     : ''
 
   if (typeof styleName === 'string' && styleName !== 'default') {
-    nextStyles += normalizeStyles(styleDefs[styleName], dash.variables)
+    nextStyles += normalizeStyles<Vars>(styleDefs[styleName], dash.variables)
   } else if (typeof styleName === 'object' && styleName !== null) {
     const keys = Object.keys(styleName)
 
     for (let i = 0; i < keys.length; i++)
       if (styleName[keys[i]] && keys[i] !== 'default')
-        nextStyles += normalizeStyles(styleDefs[keys[i]], dash.variables)
+        nextStyles += normalizeStyles<Vars>(styleDefs[keys[i]], dash.variables)
 
-    nextStyles = normalizeStyles(nextStyles, dash.variables)
+    nextStyles = normalizeStyles<Vars>(nextStyles, dash.variables)
   }
 
   return nextStyles
 }
 
-const normalizeArgs = <Names extends string>(
+const normalizeArgs = <Names extends string, Vars = any>(
   dash: DashCache,
-  styleDefs: StyleDefs<Names>,
+  styleDefs: StyleDefs<Names, Vars>,
   args: (string | Names | StyleObjectArgument<Names> | Falsy)[]
 ): string => {
   if (args.length > 1) {
@@ -603,8 +602,8 @@ const normalizeArgs = <Names extends string>(
       else if (typeof arg === 'object') Object.assign(argDefs, arg)
     }
 
-    return normalizeStyleObject<Names>(dash, styleDefs, argDefs)
-  } else return normalizeStyleObject<Names>(dash, styleDefs, args[0])
+    return normalizeStyleObject<Names, Vars>(dash, styleDefs, argDefs)
+  } else return normalizeStyleObject<Names, Vars>(dash, styleDefs, args[0])
 }
 
 const disallowedClassChars = /[^a-z0-9_-]/gi
@@ -617,32 +616,42 @@ export interface EjectGlobal {
   (): void
 }
 
-export interface Styles {
-  <Names extends string>(...args: (StyleDefs<Names> | Style)[]): Style<Names>
-  create: (options?: DashOptions) => Styles
+export type StyleDefs<Names extends string, Vars> = {
+  [Name in Names]?: string | StyleGetter<Vars> | StyleObject
+} & {
+  default?: string | StyleGetter<Vars> | StyleObject
+}
+
+export interface Styles<Vars = any, ThemeNames extends string = any> {
+  <Names extends string>(...args: (StyleDefs<Names, Vars> | Style)[]): Style<
+    Names,
+    Vars
+  >
+  create: <T = Vars, U extends string = ThemeNames>(
+    options?: DashOptions
+  ) => Styles<T, U>
   one: (
-    literals: TemplateStringsArray | string | StyleObject | StyleGetter,
+    literals: TemplateStringsArray | string | StyleObject | StyleGetter<Vars>,
     ...placeholders: string[]
   ) => OneCallback
-  variables: <Vars>(vars: Variables, selector?: string) => EjectGlobal
-  themes: (vars: Themes) => EjectGlobal
+  variables: (vars: Vars, selector?: string) => EjectGlobal
+  themes: (themes: Themes<ThemeNames, Vars>) => EjectGlobal
+  theme: (name: ThemeNames) => string
   global: (
-    literals: TemplateStringsArray | string | StyleGetter | StyleObject,
+    literals: TemplateStringsArray | string | StyleGetter<Vars> | StyleObject,
     ...placeholders: string[]
   ) => EjectGlobal
-  theme: (name: string) => string
-  dash: DashCache
+  dash: DashCache<Vars>
 }
 
 export type StyleObjectArgument<Names extends string> = {
   [Name in Names]?: boolean | null | undefined | string | number
 }
 
-export interface Style<Names extends string = string> {
+export interface Style<Names extends string = string, Vars = any> {
   (...args: (Names | StyleObjectArgument<Names> | Falsy)[]): string
   css: CSSFunction<Names>
-  styles: StyleDefs<Names>
-  dash: DashCache
+  styles: StyleDefs<Names, Vars>
 }
 
 export interface OneCallbackCss {
@@ -658,7 +667,7 @@ export type OneCallback = {
 
 //
 // Where the magic happens
-const createStyles = (dash: DashCache): Styles => {
+const createStyles = <Vars = any>(dash: DashCache<Vars>): Styles<Vars> => {
   let addLabels: (name: string, args: any[]) => string
   // explicit here on purpose so it's not in every test
   if (process.env.NODE_ENV === 'development') {
@@ -678,7 +687,7 @@ const createStyles = (dash: DashCache): Styles => {
     }
   }
 
-  const styles: Styles = <Names extends string>(...args): Style<Names> => {
+  const styles = <Names extends string>(...args): Style<Names, Vars> => {
     const defs =
       args.length === 0
         ? args[0]
@@ -689,8 +698,8 @@ const createStyles = (dash: DashCache): Styles => {
 
     //
     // style(text, space, {})
-    const style: Style = (...args): string => {
-      const normalizedStyles = normalizeArgs<Names>(dash, defs, args)
+    const style: Style<Names, Vars> = (...args): string => {
+      const normalizedStyles = normalizeArgs<Names, Vars>(dash, defs, args)
       if (!normalizedStyles) return ''
       let name = dash.hash(normalizedStyles)
       // explicit here on purpose so it's not in every test
@@ -700,20 +709,21 @@ const createStyles = (dash: DashCache): Styles => {
       return className
     }
 
-    style.css = (...names): string => normalizeArgs<Names>(dash, defs, names)
+    style.css = (...names): string =>
+      normalizeArgs<Names, Vars>(dash, defs, names)
     style.styles = defs
-    style.dash = dash
     return style
   }
 
   //
   // Methods
-  styles.create = (options): Styles => createStyles(createDash(options))
+  styles.create = <T = Vars>(options): Styles =>
+    createStyles<T>(createDash(options))
 
   styles.one = (literals, ...placeholders): OneCallback => {
     const css = Array.isArray(literals)
       ? interpolate(literals, placeholders)
-      : (literals as string | StyleGetter | StyleObject)
+      : (literals as string | StyleGetter<Vars> | StyleObject)
 
     const style = styles<'default'>({default: css})
     const callback: OneCallback = (createClassName): string =>
@@ -724,12 +734,9 @@ const createStyles = (dash: DashCache): Styles => {
     return callback
   }
 
-  styles.variables = <Vars>(vars, selector = ':root'): EjectGlobal => {
-    const serialized = serializeVariables(vars)
-    dash.variables = mergeVariables(
-      dash.variables,
-      serialized.variables
-    ) as Vars
+  styles.variables = (vars, selector = ':root'): EjectGlobal => {
+    const serialized = serializeVariables<Vars>(vars)
+    dash.variables = mergeVariables<Vars>(dash.variables, serialized.variables)
     const name = dash.hash(serialized.styles)
     dash.variablesCache[name] = dash.variablesCache[name] || {
       count: 0,
@@ -748,10 +755,10 @@ const createStyles = (dash: DashCache): Styles => {
     }
   }
 
-  styles.themes = (vars): EjectGlobal => {
-    Object.assign(dash.themes, vars)
-    const themes = Object.keys(vars)
-    const ejectors: (() => void)[] = themes.map(theme =>
+  styles.themes = (themes): EjectGlobal => {
+    Object.assign(dash.themes, themes)
+    const themeNames = Object.keys(themes)
+    const ejectors: (() => void)[] = themeNames.map(theme =>
       styles.variables(dash.themes[theme], `.${dash.key}-${theme}-theme`)
     )
     return (): void => ejectors.forEach(e => e())
@@ -762,8 +769,8 @@ const createStyles = (dash: DashCache): Styles => {
   styles.global = (literals, ...placeholders): EjectGlobal => {
     const styles = Array.isArray(literals)
       ? interpolate(literals, placeholders)
-      : (literals as 'string | StyleGetter | StyleObject')
-    const normalizedStyles = normalizeStyles(styles, dash.variables)
+      : (literals as string | StyleGetter<Vars> | StyleObject)
+    const normalizedStyles = normalizeStyles<Vars>(styles, dash.variables)
     if (!normalizedStyles) return (): void => {}
     const name = dash.hash(normalizedStyles)
     dash.globalCache[name] = dash.globalCache[name] || {

@@ -789,13 +789,13 @@ describe('styles.one()', () => {
   })
 
   it(`can be called as a function w/ function value`, () => {
-    const myStyles = styles.create()
     type Variables = {
       color: {
-        blue: string
+        blue: 'blue'
       }
     }
-    myStyles.variables<Variables>({color: {blue: 'blue'}})
+    const myStyles = styles.create<Variables, 'dark' | 'light'>()
+    myStyles.variables({color: {blue: 'blue'}})
     const myCls = myStyles.one(({color}) => `color: ${color.blue};`)
     expect(myCls.css()).toMatchSnapshot()
   })
