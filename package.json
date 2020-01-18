@@ -1,6 +1,6 @@
 {
   "name": "@-ui/styles",
-  "version": "1.0.53",
+  "version": "1.0.54",
   "homepage": "https://github.com/dash-ui/styles#readme",
   "repository": "github:dash-ui/styles",
   "bugs": "https://github.com/dash-ui/styles/issues",
@@ -89,7 +89,7 @@
   "dependencies": {
     "@emotion/stylis": "^0.8.4",
     "@emotion/unitless": "^0.7.4",
-    "trie-memoize": "^1.0.16"
+    "trie-memoize": "^1.1.0"
   },
   "peerDependencies": {}
 }
