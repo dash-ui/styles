@@ -617,9 +617,7 @@ export interface EjectGlobal {
 }
 
 export type StyleDefs<Names extends string, Vars> = {
-  [Name in Names]?: string | StyleGetter<Vars> | StyleObject
-} & {
-  default?: string | StyleGetter<Vars> | StyleObject
+  [Name in Names | 'default']?: string | StyleGetter<Vars> | StyleObject
 }
 
 export interface Styles<Vars = any, ThemeNames extends string = any> {
@@ -687,7 +685,9 @@ const createStyles = <Vars = any>(dash: DashCache<Vars>): Styles<Vars> => {
     }
   }
 
-  const styles = <Names extends string>(...args): Style<Names, Vars> => {
+  const styles = <Names extends string>(
+    ...args: (StyleDefs<Names, Vars> | Style)[]
+  ): Style<Names, Vars> => {
     const defs =
       args.length === 0
         ? args[0]
