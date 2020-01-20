@@ -24,8 +24,7 @@ const serializeRules = (selector = `style[data-dash]`): any[] => {
 describe('styles.create()', () => {
   it('turns off vendor prefixing', () => {
     const myStyles = styles.create({prefix: false})
-    type MyStyles = 'flex' | 'flexor'
-    const style = myStyles<MyStyles>({
+    const style = myStyles({
       flex: {display: 'flex'},
     })
 
@@ -102,6 +101,42 @@ describe('styles.create()', () => {
     style('flex')
     style('block')
     expect(serializeRules()).toMatchSnapshot()
+  })
+
+  it('should initialize w/ variables', () => {
+    const myStyles = styles.create({variables: {box: {small: 100}}})
+    const style = myStyles({
+      small: ({box}) => ({
+        width: box.small,
+        height: box.small,
+      }),
+    })
+
+    expect(style.css('small')).toMatchSnapshot()
+  })
+
+  it('should initialize w/ themes', () => {
+    const myStyles = styles.create({
+      themes: {
+        light: {
+          color: {
+            primary: 'white',
+          },
+        },
+        dark: {
+          color: {
+            primary: 'black',
+          },
+        },
+      },
+    })
+
+    const style = myStyles({
+      primary: ({color}) => ({color: color.primary}),
+    })
+
+    expect(style.css('primary')).toEqual('color:var(--color-primary);')
+    expect(myStyles.theme('light')).toEqual('-ui-light-theme')
   })
 })
 

@@ -157,6 +157,8 @@ exports[`styles.create() changes key to "css": DOM 1`] = `
 
 exports[`styles.create() configures hash algorithm 1`] = `"-ui-e038ab58"`;
 
+exports[`styles.create() should initialize w/ variables 1`] = `"width:var(--box-small);height:var(--box-small);"`;
+
 exports[`styles.create() turns off vendor prefixing: DOM 1`] = `
 <style
   data-dash="-ui"

@@ -125,7 +125,7 @@ const getServerStylisCache = IS_BROWSER
       }
     })
 
-export interface DashOptions {
+export interface DashOptions<Vars, ThemeNames extends string> {
   readonly key?: string
   readonly nonce?: string
   readonly hash?: typeof fnvHash
@@ -135,6 +135,8 @@ export interface DashOptions {
     | ((key: string, value: any, context: any) => boolean)
   readonly container?: HTMLElement
   readonly speedy?: boolean
+  readonly variables?: Vars
+  readonly themes?: Themes<ThemeNames, Vars>
 }
 
 export type InsertCache = {
@@ -188,9 +190,9 @@ export type DashCache<Vars = any, ThemeNames extends string = any> = {
   readonly clear: () => void
 }
 
-export const createDash = <Vars>(
-  options: DashOptions = {}
-): DashCache<Vars> => {
+export const createDash = <Vars, ThemeNames extends string>(
+  options: DashOptions<Vars, ThemeNames> = {}
+): DashCache<Vars, ThemeNames> => {
   // Based on
   // https://github.com/emotion-js/emotion/blob/master/packages/cache/src/index.js
   let {
@@ -207,6 +209,10 @@ export const createDash = <Vars>(
     // eslint-disable-next-line prefer-const
     container = IS_BROWSER ? document.head : void 0,
     speedy,
+    // eslint-disable-next-line prefer-const
+    variables = {},
+    // eslint-disable-next-line prefer-const
+    themes = {},
   } = options
   const stylis = new Stylis({prefix})
   speedy = speedy === void 0 || speedy === null ? !__DEV__ : speedy
@@ -295,9 +301,9 @@ export const createDash = <Vars>(
     stylisCache,
     insert,
     insertCache,
-    variables: {},
+    variables,
     variablesCache: {},
-    themes: {},
+    themes,
     globalCache: {},
     clear() {
       this.insertCache = insertCache = {}
@@ -626,7 +632,7 @@ export interface Styles<Vars = any, ThemeNames extends string = any> {
     Vars
   >
   create: <T = Vars, U extends string = ThemeNames>(
-    options?: DashOptions
+    options?: DashOptions<T, U>
   ) => Styles<T, U>
   one: (
     literals: TemplateStringsArray | string | StyleObject | StyleGetter<Vars>,
@@ -665,7 +671,9 @@ export type OneCallback = {
 
 //
 // Where the magic happens
-const createStyles = <Vars = any>(dash: DashCache<Vars>): Styles<Vars> => {
+const createStyles = <Vars = any, ThemeNames extends string = string>(
+  dash: DashCache<Vars, ThemeNames>
+): Styles<Vars, ThemeNames> => {
   let addLabels: (name: string, args: any[]) => string
   // explicit here on purpose so it's not in every test
   if (process.env.NODE_ENV === 'development') {
@@ -717,8 +725,8 @@ const createStyles = <Vars = any>(dash: DashCache<Vars>): Styles<Vars> => {
 
   //
   // Methods
-  styles.create = <T = Vars>(options): Styles =>
-    createStyles<T>(createDash(options))
+  styles.create = <T = Vars, U extends string = ThemeNames>(options): Styles =>
+    createStyles<T, U>(createDash<T, U>(options))
 
   styles.one = (literals, ...placeholders): OneCallback => {
     const css = Array.isArray(literals)
@@ -790,6 +798,8 @@ const createStyles = <Vars = any>(dash: DashCache<Vars>): Styles<Vars> => {
     }
   }
 
+  if (Object.values(dash.variables).length) styles.variables(dash.variables)
+  if (Object.values(dash.themes).length) styles.themes(dash.themes)
   styles.dash = dash
   return styles
 }
