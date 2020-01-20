@@ -39,24 +39,22 @@ NodeList [
 ]
 `;
 
-exports[`styles() allows multiple arguments 1`] = `
+exports[`styles() allows full capabilities w/ style objects 1`] = `
 <style
   data-dash="-ui"
 >
   
-  .-ui-qaw0al{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;display:block;display:inline;}
+  .-ui-7a9ovz{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;}
 </style>
 `;
 
-exports[`styles() allows style function in arguments 1`] = `
-NodeList [
-  <style
-    data-dash="-ui"
-  >
-    
-    .-ui-qaw0al{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;display:block;display:inline;}
-  </style>,
-]
+exports[`styles() allows full capabilities w/ style objects 2`] = `
+<style
+  data-dash="-ui"
+>
+  
+  .-ui-7a9ovz.foo{display:block;}
+</style>
 `;
 
 exports[`styles() allows unitless object values: 200x200 1`] = `
@@ -126,6 +124,8 @@ exports[`styles() returns single class name 1`] = `"-ui-1ut9bc3"`;
 exports[`styles() returns single class name 2`] = `"-ui-qaw0al"`;
 
 exports[`styles() returns single class name 3`] = `"-ui-broszf"`;
+
+exports[`styles() shouldn't do anything with unprocessable object values 1`] = `"display:flex;"`;
 
 exports[`styles.create() adds nonce to style tags: DOM 1`] = `
 <style
@@ -198,6 +198,15 @@ exports[`styles.global() allows @import 1`] = `
 >
   
   @import url("navigation.css");
+</style>
+`;
+
+exports[`styles.global() allows style object 1`] = `
+<style
+  data-dash="-ui"
+>
+  
+  :root{--foo:bar;}
 </style>
 `;
 
@@ -319,6 +328,15 @@ exports[`styles.one() returns css when css() is called 1`] = `"display:flex;"`;
 
 exports[`styles.one() returns css when css.toString() is called 1`] = `"display:flex;"`;
 
+exports[`styles.one() won't create style def if falsy 1`] = `
+<style
+  data-dash="-ui"
+>
+  
+  .-ui-1ut9bc3{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;}
+</style>
+`;
+
 exports[`styles.themes() creates variables: dark 1`] = `
 <style
   data-dash="-ui"
@@ -368,7 +386,7 @@ exports[`styles.variables() creates variables: :root 1`] = `
   data-dash="-ui"
 >
   
-  :root{--colors-blue:#09a;--colors-red:#c12;--colors-light-red:#c1a;--spacing-xs:1rem;--system-p-md:1rem;--system-p-xs:0.25rem;--system-p-sm:0.5rem;--system-p-lg:2rem;--system-p-xl:4rem;}
+  :root{--columns:12;--colors-blue:#09a;--colors-red:#c12;--colors-light-red:#c1a;--spacing-xs:1rem;--system-p-md:1rem;--system-p-xs:0.25rem;--system-p-sm:0.5rem;--system-p-lg:2rem;--system-p-xl:4rem;}
 </style>
 `;
 

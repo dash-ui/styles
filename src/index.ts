@@ -166,8 +166,8 @@ export type StylisCache = {
   [name: string]: string
 }
 
-export type Themes<ThemeNames extends string = any, Vars = any> = {
-  [Name in ThemeNames]?: Vars
+export type Themes<ThemeNames extends string = string, Vars = any> = {
+  [Name in ThemeNames]: Vars
 }
 
 export type DashCache<Vars = any, ThemeNames extends string = any> = {
@@ -190,7 +190,7 @@ export type DashCache<Vars = any, ThemeNames extends string = any> = {
   readonly clear: () => void
 }
 
-export const createDash = <Vars, ThemeNames extends string>(
+export const createDash = <Vars = any, ThemeNames extends string = string>(
   options: DashOptions<Vars, ThemeNames> = {}
 ): DashCache<Vars, ThemeNames> => {
   // Based on
@@ -210,9 +210,9 @@ export const createDash = <Vars, ThemeNames extends string>(
     container = IS_BROWSER ? document.head : void 0,
     speedy,
     // eslint-disable-next-line prefer-const
-    variables = {},
+    variables = {} as Vars,
     // eslint-disable-next-line prefer-const
-    themes = {},
+    themes = {} as Themes<ThemeNames, Vars>,
   } = options
   const stylis = new Stylis({prefix})
   speedy = speedy === void 0 || speedy === null ? !__DEV__ : speedy
@@ -288,7 +288,7 @@ export const createDash = <Vars, ThemeNames extends string>(
     })
   }
 
-  const dash: DashCache = {
+  const dash = {
     key,
     sheet: styleSheet({
       key,
@@ -305,7 +305,7 @@ export const createDash = <Vars, ThemeNames extends string>(
     variablesCache: {},
     themes,
     globalCache: {},
-    clear() {
+    clear(): void {
       this.insertCache = insertCache = {}
     },
   }
@@ -368,9 +368,9 @@ export const styleSheet = (options: DashStyleSheetOptions): DashStyleSheet => {
       else {
         let sheet: StyleSheet | CSSStyleSheet | null = tag.sheet
 
+        /* istanbul ignore next */
         if (!sheet) {
           // this weirdness brought to you by firefox
-          /* istanbul ignore next */
           for (let i = 0; i < document.styleSheets.length; i++) {
             if (document.styleSheets[i].ownerNode === tag) {
               sheet = document.styleSheets[i]
@@ -379,6 +379,7 @@ export const styleSheet = (options: DashStyleSheetOptions): DashStyleSheet => {
           }
         }
 
+        /* istanbul ignore next */
         try {
           // this is a really hot path
           // we check the second character first because having "i"
@@ -403,7 +404,6 @@ export const styleSheet = (options: DashStyleSheetOptions): DashStyleSheet => {
             isImportRule ? 0 : (sheet as CSSStyleSheet).cssRules.length
           )
         } catch (e) {
-          /* istanbul ignore next */
           if (__DEV__) {
             console.warn(
               `There was a problem inserting the following rule: "${rule}"`,
@@ -432,13 +432,10 @@ const cssCaseRe = /[A-Z]|^ms/g
 const cssCase = (string: string): string =>
   string.replace(cssCaseRe, '-$&').toLowerCase()
 const interpolate = (
-  literals?: TemplateStringsArray | string[] | string | null,
-  placeholders?: string[]
+  literals: TemplateStringsArray | string[],
+  placeholders: string[]
 ): string => {
-  if (typeof literals === 'string') return literals
-  if (!literals) return ''
   let str = ''
-  placeholders = placeholders || []
   for (let i = 0; i < literals.length; i++)
     str += literals[i] + (placeholders[i] || '')
   return str
@@ -468,7 +465,7 @@ const styleObjectToString = (object: StyleObject): string => {
   for (; i < keys.length; i++) {
     const key = keys[i]
     const value = object[key]
-    if (typeof value === 'object')
+    if (typeof value === 'object' && value !== null)
       string += `${key}{${styleObjectToString(value)}}`
     else if (isProcessableValue(value))
       string += `${styleName(key)}:${styleValue(key, value)};`
@@ -626,11 +623,8 @@ export type StyleDefs<Names extends string, Vars> = {
   [Name in Names | 'default']?: string | StyleGetter<Vars> | StyleObject
 }
 
-export interface Styles<Vars = any, ThemeNames extends string = any> {
-  <Names extends string>(...args: (StyleDefs<Names, Vars> | Style)[]): Style<
-    Names,
-    Vars
-  >
+export interface Styles<Vars = any, ThemeNames extends string = string> {
+  <Names extends string>(defs: StyleDefs<Names, Vars>): Style<Names, Vars>
   create: <T = Vars, U extends string = ThemeNames>(
     options?: DashOptions<T, U>
   ) => Styles<T, U>
@@ -676,6 +670,7 @@ const createStyles = <Vars = any, ThemeNames extends string = string>(
 ): Styles<Vars, ThemeNames> => {
   let addLabels: (name: string, args: any[]) => string
   // explicit here on purpose so it's not in every test
+  /* istanbul ignore next */
   if (process.env.NODE_ENV === 'development') {
     addLabels = (name, args): string => {
       // add helpful labels to the name in development
@@ -694,16 +689,8 @@ const createStyles = <Vars = any, ThemeNames extends string = string>(
   }
 
   const styles = <Names extends string>(
-    ...args: (StyleDefs<Names, Vars> | Style)[]
+    defs: StyleDefs<Names, Vars>
   ): Style<Names, Vars> => {
-    const defs =
-      args.length === 0
-        ? args[0]
-        : Object.assign(
-            {},
-            ...args.map(arg => (typeof arg === 'function' ? arg.styles : arg))
-          )
-
     //
     // style(text, space, {})
     const style: Style<Names, Vars> = (...args): string => {
@@ -764,11 +751,18 @@ const createStyles = <Vars = any, ThemeNames extends string = string>(
   }
 
   styles.themes = (themes): EjectGlobal => {
-    Object.assign(dash.themes, themes)
-    const themeNames = Object.keys(themes)
-    const ejectors: (() => void)[] = themeNames.map(theme =>
-      styles.variables(dash.themes[theme], `.${dash.key}-${theme}-theme`)
-    )
+    const ejectors: (() => void)[] = []
+
+    for (const name in themes) {
+      dash.themes[name] =
+        dash.themes[name] === void 0
+          ? themes[name]
+          : mergeVariables<Vars>(dash.themes[name], themes[name])
+      ejectors.push(
+        styles.variables(dash.themes[name], `.${dash.key}-${name}-theme`)
+      )
+    }
+
     return (): void => ejectors.forEach(e => e())
   }
 

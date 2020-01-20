@@ -181,6 +181,16 @@ describe('styles()', () => {
     expect(name.length).toBe(0)
   })
 
+  it(`shouldn't do anything with unprocessable object values`, () => {
+    const style = styles.create()({
+      // @ts-ignore
+      flex: {display: 'flex', meaningless: null},
+    })
+
+    style('flex')
+    expect(style.css('flex')).toMatchSnapshot()
+  })
+
   it('ignores unknown keys', () => {
     const style = styles.create()({
       flex: {display: 'flex'},
@@ -239,6 +249,22 @@ describe('styles()', () => {
     })
 
     expect(style.css('flex')).toMatchSnapshot()
+  })
+
+  it('allows full capabilities w/ style objects', () => {
+    const style = styles.create()({
+      flex: {
+        display: 'flex',
+        '&.foo': {
+          display: 'block',
+        },
+      },
+    })
+
+    style('flex')
+    expect(document.querySelectorAll(`style[data-dash]`).length).toBe(2)
+    expect(document.querySelectorAll(`style[data-dash]`)[0]).toMatchSnapshot()
+    expect(document.querySelectorAll(`style[data-dash]`)[1]).toMatchSnapshot()
   })
 
   it('passes variables to style callbacks', () => {
@@ -312,22 +338,6 @@ describe('styles()', () => {
     process.env.NODE_ENV = prevEnv
   })
 
-  it('allows multiple arguments', () => {
-    const style = styles.create()(
-      {
-        flex: `display: flex;`,
-        block: `display: block;`,
-      },
-      {
-        inline: `display: inline;`,
-      }
-    )
-
-    style('flex', 'block', 'inline')
-    expect(document.querySelectorAll(`style[data-dash]`).length).toBe(1)
-    expect(document.querySelectorAll(`style[data-dash]`)[0]).toMatchSnapshot()
-  })
-
   it('allows default styles', () => {
     const style = styles.create()({
       default: `display: flex;`,
@@ -356,23 +366,6 @@ describe('styles()', () => {
     })
 
     style('default')
-    expect(document.querySelectorAll(`style[data-dash]`).length).toBe(1)
-    expect(document.querySelectorAll(`style[data-dash]`)).toMatchSnapshot()
-  })
-
-  it('allows style function in arguments', () => {
-    const myStyles = styles.create()
-    const styleA = myStyles({
-      flex: `display: flex;`,
-      block: `display: block;`,
-    })
-
-    const styleB = myStyles<keyof typeof styleA.styles | 'inline'>(styleA, {
-      inline: `display: inline;`,
-    })
-
-    styleB('flex', 'block', 'inline')
-
     expect(document.querySelectorAll(`style[data-dash]`).length).toBe(1)
     expect(document.querySelectorAll(`style[data-dash]`)).toMatchSnapshot()
   })
@@ -438,6 +431,7 @@ describe('styles()', () => {
 describe(`styles.variables()`, () => {
   it('creates variables', () => {
     styles.create().variables({
+      columns: 12,
       colors: {
         blue: '#09a',
         red: '#c12',
@@ -745,6 +739,18 @@ describe(`styles.global()`, () => {
     expect(document.querySelectorAll(`style[data-dash]`).length).toBe(1)
     expect(document.querySelectorAll(`style[data-dash]`)[0]).toMatchSnapshot()
   })
+
+  it('allows style object', () => {
+    const {global} = styles.create()
+    global({
+      ':root': {
+        '--foo': 'bar',
+      },
+    })
+
+    expect(document.querySelectorAll(`style[data-dash]`).length).toBe(1)
+    expect(document.querySelectorAll(`style[data-dash]`)[0]).toMatchSnapshot()
+  })
 })
 
 describe('styles.one()', () => {
@@ -772,6 +778,17 @@ describe('styles.one()', () => {
     expect(document.querySelectorAll(`style[data-dash]`).length).toBe(2)
     expect(document.querySelectorAll(`style[data-dash]`)[0]).toMatchSnapshot()
     expect(document.querySelectorAll(`style[data-dash]`)[1]).toMatchSnapshot()
+  })
+
+  it(`won't create style def if falsy`, () => {
+    const myStyles = styles.create()
+    const myCls = myStyles.one`
+      display: flex;
+    `
+
+    myCls()
+    expect(document.querySelectorAll(`style[data-dash]`).length).toBe(1)
+    expect(document.querySelectorAll(`style[data-dash]`)[0]).toMatchSnapshot()
   })
 
   it(`won't create style if function call is provided falsy value`, () => {
