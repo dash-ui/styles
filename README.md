@@ -15,8 +15,8 @@
   <a aria-label="Code coverage report" href="https://codecov.io/gh/dash-ui/styles">
     <img alt="Code coverage" src="https://img.shields.io/codecov/c/gh/dash-ui/styles?style=for-the-badge&labelColor=24292e">
   </a>
-  <a aria-label="Build status" href="https://travis-ci.org/dash-ui/styles">
-    <img alt="Build status" src="https://img.shields.io/travis/dash-ui/styles?style=for-the-badge&labelColor=24292e">
+  <a aria-label="Build status" href="https://travis-ci.com/dash-ui/styles">
+    <img alt="Build status" src="https://img.shields.io/travis/com/dash-ui/styles?style=for-the-badge&labelColor=24292e">
   </a>
   <a aria-label="NPM version" href="https://www.npmjs.com/package/@-ui/styles">
     <img alt="NPM Version" src="https://img.shields.io/npm/v/@-ui/styles?style=for-the-badge&labelColor=24292e">
