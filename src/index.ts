@@ -639,7 +639,7 @@ export interface Styles<Vars = any, ThemeNames extends string = string> {
     literals: TemplateStringsArray | string | StyleGetter<Vars> | StyleObject,
     ...placeholders: string[]
   ) => EjectGlobal
-  dash: DashCache<Vars>
+  dash: DashCache<Vars, ThemeNames>
 }
 
 export type StyleObjectArgument<Names extends string> = {
