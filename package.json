@@ -20,34 +20,51 @@
     "stylesheets",
     "ssr"
   ],
-  "main": "dist/cjs/index.js",
-  "module": "dist/es/index.js",
-  "types": "dist/cjs/index.d.ts",
+  "main": "dist/main/index.js",
+  "module": "dist/module/index.js",
   "umd:main": "dist/umd/-ui.min.js",
   "unpkg": "dist/umd/-ui.min.js",
+  "source": "src/index.ts",
+  "types": "src/index.d.ts",
+  "exports": {
+    ".": {
+      "browser": "./dist/module/index.js",
+      "import": "./dist/module/index.js",
+      "require": "./dist/main/index.js"
+    },
+    "./server": {
+      "browser": "./server/dist/module/index.js",
+      "import": "./server/dist/module/index.js",
+      "require": "./server/dist/main/index.js"
+    },
+    "./package.json": "./package.json",
+    "./": "./"
+  },
   "files": [
+    "/src",
     "/dist",
     "/server"
   ],
   "sideEffects": false,
   "scripts": {
     "bench": "npm run build && babel-node ./benchmarks -x .ts,.js,.json",
-    "build": "npm run build:cjs && npm run build:es && npm run build:server && npm run build:umd && npm run build:types",
-    "build:cjs": "babel src -d dist/cjs -x .ts --env-name cjs --ignore \"**/*.test.ts\",\"**/test.ts\",\"**/*.d.ts\" --delete-dir-on-start",
-    "build:es": "babel src -d dist/es -x .ts --env-name es --ignore \"**/*.test.ts\",\"**/test.ts\",\"**/*.d.ts\" --delete-dir-on-start",
-    "build:server": "babel server-src -d server -x .ts --env-name cjs --ignore \"**/*.test.ts\",\"**/test.ts\" --delete-dir-on-start && cp server.package.json server/package.json",
-    "build:umd": "rollup -c",
-    "build:types": "tsc -p tsconfig.json -d --outDir dist/es --emitDeclarationOnly && mkdir -p dist/cjs && cp -R dist/es/**.d.ts dist/cjs && tsc -p tsconfig.server.json -d --outDir server --emitDeclarationOnly && rimraf {dist,server}/**/*.test.d.ts",
-    "check-types": "tsc --noEmit -p tsconfig.json && tsc --noEmit -p tsconfig.server.json",
-    "format": "prettier --write \"**/*.{ts,js,md,yml,json,babelrc,eslintrc,prettierrc}\"",
+    "build": "npm run build-main && npm run build-module && npm run build-umd && npm run build-types",
+    "build-main": "npm run compile -- -d dist/main --env-name main && npm run compile-server -- -d server/dist/main --env-name main",
+    "build-module": "npm run compile -- -d dist/module --env-name module && npm run compile-server -- -d server/dist/module --env-name module",
+    "build-umd": "rollup -c",
+    "build-types": "find src -name '*.d.ts' -exec rm {} \\; && find server/src -name '*.d.ts' -exec rm {} \\; && tsc -p tsconfig.json -d --emitDeclarationOnly",
+    "compile": "babel src -x .ts --ignore \"**/*.d.ts\",\"**/*.test.ts\",\"**/test.ts\" --delete-dir-on-start",
+    "compile-server": "babel server/src -x .ts --ignore \"**/*.d.ts\",\"**/*.test.ts\",\"**/test.ts\" --delete-dir-on-start",
+    "check-types": "tsc --noEmit -p tsconfig.json",
+    "format": "prettier --write \"**/*.{ts,js,jsx,md,yml,json,eslintrc,prettierrc}\"",
     "lint": "eslint . --ext .ts",
     "prepublishOnly": "npm run lint && npm run test && npm run build && npm run format",
     "test": "jest",
-    "validate": "npm run check-types && npm run build:cjs && npm run lint && npm run test -- --coverage"
+    "validate": "npm run check-types && npm run lint && npm run test -- --coverage"
   },
   "husky": {
     "hooks": {
-      "pre-commit": "lint-staged && npm run build:types"
+      "pre-commit": "npm run build-types && git add src/index.d.ts server/src/index.d.ts && lint-staged"
     }
   },
   "lint-staged": {
@@ -55,7 +72,7 @@
       "eslint",
       "prettier --write"
     ],
-    "**/*.{md,yml,json}": [
+    "**/*.{md,yml,json,eslintrc,prettierrc}": [
       "prettier --write"
     ]
   },

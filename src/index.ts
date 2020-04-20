@@ -374,9 +374,9 @@ export const styleSheet = (options: DashStyleSheetOptions): DashStyleSheet => {
           // as the second character will happen less often than
           // having "@" as the first character
           const isImportRule =
-              rule.charCodeAt(1) === 105 && rule.charCodeAt(0) === 64
-            // this is the ultrafast version, works across browsers
-            // the big drawback is that the css won't be editable in devtools
+            rule.charCodeAt(1) === 105 && rule.charCodeAt(0) === 64
+          // this is the ultrafast version, works across browsers
+          // the big drawback is that the css won't be editable in devtools
           ;(sheet as CSSStyleSheet).insertRule(
             rule,
             // we need to insert @import rules before anything else
@@ -404,7 +404,7 @@ export const styleSheet = (options: DashStyleSheetOptions): DashStyleSheet => {
       size++
     },
     flush() {
-      tags.forEach(tag => (tag.parentNode as HTMLElement).removeChild(tag))
+      tags.forEach((tag) => (tag.parentNode as HTMLElement).removeChild(tag))
       tags.length = 0
       size = 0
     },
@@ -553,13 +553,18 @@ function normalizeStyleObject<Names extends string, Vars = any>(
   styleDefs: StyleDefs<Names, Vars>,
   styleName?: string | Names | StyleObjectArgument<Names> | Falsy
 ): string
+
 function normalizeStyleObject<Names extends string, Vars = any>(
   dash: DashCache,
   styleDefs: StyleObjectArgument<Names>,
   styleName?: string | Names | StyleObjectArgument<Names> | Falsy
 ): string
-// eslint-disable-next-line @typescript-eslint/explicit-function-return-type
-function normalizeStyleObject<Vars = any>(dash, styleDefs, styleName) {
+
+function normalizeStyleObject<Names extends string, Vars = any>(
+  dash,
+  styleDefs,
+  styleName
+) {
   let nextStyles = styleDefs.default
     ? normalizeStyles<Vars>(styleDefs.default, dash.variables)
     : ''
@@ -667,7 +672,7 @@ const createStyles = <Vars = any, ThemeNames extends string = string>(
 
         if (typeof arg === 'string') name += `-${arg}`
         else if (typeof arg === 'object') {
-          const keys = Object.keys(arg).filter(k => arg[k])
+          const keys = Object.keys(arg).filter((k) => arg[k])
           if (keys.length) name += `-${keys.join('-')}`
         }
       }
@@ -700,7 +705,7 @@ const createStyles = <Vars = any, ThemeNames extends string = string>(
 
   //
   // Methods
-  styles.create = options => createStyles(createDash(options))
+  styles.create = (options) => createStyles(createDash(options))
 
   styles.one = (literals, ...placeholders): OneCallback => {
     const css = Array.isArray(literals)
@@ -740,7 +745,7 @@ const createStyles = <Vars = any, ThemeNames extends string = string>(
     }
   }
 
-  styles.themes = themes => {
+  styles.themes = (themes) => {
     const ejectors: (() => void)[] = []
 
     for (const name in themes) {
@@ -753,10 +758,10 @@ const createStyles = <Vars = any, ThemeNames extends string = string>(
       )
     }
 
-    return () => ejectors.forEach(e => e())
+    return () => ejectors.forEach((e) => e())
   }
 
-  styles.theme = theme => `${dash.key}-${theme}-theme`
+  styles.theme = (theme) => `${dash.key}-${theme}-theme`
 
   styles.global = (literals, ...placeholders) => {
     const styles = Array.isArray(literals)

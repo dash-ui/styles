@@ -1,12 +1,14 @@
 {
-  "include": ["src"],
+  "include": ["src", "server/src"],
+  "exclude": [
+    "src/**/*.test.ts",
+    "src/**/test.ts",
+    "server/src/**/*.test.ts",
+    "server/src/**/test.ts"
+  ],
   "compilerOptions": {
     "target": "es5",
-    "lib": [
-      "esnext",
-      "dom"
-      // "dom.iterable"
-    ],
+    "lib": ["esnext", "dom"],
     "moduleResolution": "node",
     "strictNullChecks": true,
     "esModuleInterop": true,
@@ -15,6 +17,11 @@
     "noImplicitReturns": true,
     "noUnusedLocals": true,
     "noFallthroughCasesInSwitch": true,
-    "noEmitOnError": true
+    "noEmitOnError": true,
+    "baseUrl": ".",
+    "paths": {
+      "@-ui/styles": ["."],
+      "@-ui/styles/server": ["./server"]
+    }
   }
 }

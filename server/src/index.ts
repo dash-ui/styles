@@ -1,6 +1,4 @@
-// @ts-ignore
-import {main} from '../package.json'
-const defaultStyles = require(`../${main}`).default
+import defaultStyles from '@-ui/styles'
 
 function unique(...args: any[]): any[] {
   const seen = {},

@@ -1,0 +1,17 @@
+{
+  "name": "@-ui/styles-server",
+  "version": "1.0.0",
+  "homepage": "https://github.com/dash-ui/styles/tree/master/server#readme",
+  "repository": "github:dash-ui/styles",
+  "bugs": "https://github.com/dash-ui/styles/issues",
+  "license": "MIT",
+  "main": "dist/main/index.js",
+  "module": "dist/module/index.js",
+  "source": "src/index.ts",
+  "types": "src/index.d.ts",
+  "files": [
+    "/src",
+    "/dist"
+  ],
+  "sideEffects": false
+}

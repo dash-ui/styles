@@ -2,7 +2,7 @@
  * @jest-environment node
  */
 import * as fs from 'fs'
-import styles from '../src'
+import styles from '../../src'
 import {
   createStyleTagFromString,
   createStyleTagFromCache,
@@ -23,7 +23,7 @@ describe('Configure', () => {
 
   it('has customized vendor prefixing', () => {
     // adds prefixes to transform, but not flex
-    const prefix = function(key, value, context): boolean {
+    const prefix = function (key, value, context): boolean {
       if (typeof context !== 'number') throw 'fail'
 
       switch (key) {
