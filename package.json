@@ -43,7 +43,8 @@
   "files": [
     "/src",
     "/dist",
-    "/server"
+    "/server/src",
+    "/server/dist"
   ],
   "sideEffects": false,
   "scripts": {
@@ -53,8 +54,8 @@
     "build-module": "npm run compile -- -d dist/module --env-name module && npm run compile-server -- -d server/dist/module --env-name module",
     "build-umd": "rollup -c",
     "build-types": "find src -name '*.d.ts' -exec rm {} \\; && find server/src -name '*.d.ts' -exec rm {} \\; && tsc -p tsconfig.json -d --emitDeclarationOnly",
-    "compile": "babel src -x .ts --ignore \"**/*.d.ts\",\"**/*.test.ts\",\"**/test.ts\" --delete-dir-on-start",
-    "compile-server": "babel server/src -x .ts --ignore \"**/*.d.ts\",\"**/*.test.ts\",\"**/test.ts\" --delete-dir-on-start",
+    "compile": "babel src -x .ts --ignore \"**/*.d.ts\",\"**/*.test.ts\" --delete-dir-on-start",
+    "compile-server": "babel server/src -x .ts --ignore \"**/*.d.ts\",\"**/*.test.ts\" --delete-dir-on-start",
     "check-types": "tsc --noEmit -p tsconfig.json",
     "format": "prettier --write \"**/*.{ts,js,jsx,md,yml,json,eslintrc,prettierrc}\"",
     "lint": "eslint . --ext .ts",

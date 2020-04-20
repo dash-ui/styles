@@ -7,18 +7,13 @@ module.exports = {
     path.join(__dirname, 'server/src'),
     path.join(__dirname, 'test'),
   ],
-  // moduleNameMapper: {},
+  moduleNameMapper: {
+    '@-ui/styles': '<rootDir>/src/index.ts',
+  },
+  testMatch: ['**/src/**/?(*.)test.ts'],
   setupFilesAfterEnv: [require.resolve('./test/setup.js')],
   snapshotResolver: require.resolve('./test/resolve-snapshot.js'),
-  collectCoverageFrom: ['**/src/**/*.ts'],
-  // coverageThreshold: {
-  //   global: {
-  //     statements:17,
-  //     branches: 4,
-  //     lines: 17,
-  //     functions: 20
-  //   }
-  // },
+  collectCoverageFrom: ['**/src/**/*.ts', '!**/src/**/*.d.ts'],
   globals: {
     __DEV__: true,
   },

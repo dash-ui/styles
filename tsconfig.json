@@ -1,11 +1,6 @@
 {
   "include": ["src", "server/src"],
-  "exclude": [
-    "src/**/*.test.ts",
-    "src/**/test.ts",
-    "server/src/**/*.test.ts",
-    "server/src/**/test.ts"
-  ],
+  "exclude": ["src/**/*.test.ts", "server/src/**/*.test.ts"],
   "compilerOptions": {
     "target": "es5",
     "lib": ["esnext", "dom"],
@@ -14,7 +9,7 @@
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
     "allowSyntheticDefaultImports": true,
-    "noImplicitReturns": true,
+    "noImplicitReturns": false,
     "noUnusedLocals": true,
     "noFallthroughCasesInSwitch": true,
     "noEmitOnError": true,
