@@ -52,11 +52,11 @@ interface Sheet {
 
 const Sheet: Sheet = {
   current: {
-    insert: (): void => {},
+    insert: () => {},
   },
 }
 
-const toSheet = (block: string): void => {
+const toSheet = (block: string) => {
   block && Sheet.current && Sheet.current.insert(block + '}')
 }
 
@@ -196,29 +196,21 @@ export const createDash = <Vars = any, ThemeNames extends string = string>(
   // Based on
   // https://github.com/emotion-js/emotion/blob/master/packages/cache/src/index.js
   let {
-    // eslint-disable-next-line prefer-const
     key = '-ui',
-    // eslint-disable-next-line prefer-const
     nonce,
-    // eslint-disable-next-line prefer-const
     hash = fnvHash,
-    // eslint-disable-next-line prefer-const
     stylisPlugins,
-    // eslint-disable-next-line prefer-const
     prefix = true,
-    // eslint-disable-next-line prefer-const
     container = IS_BROWSER ? document.head : void 0,
     speedy,
-    // eslint-disable-next-line prefer-const
     variables = {} as Vars,
-    // eslint-disable-next-line prefer-const
     themes = {} as Themes<ThemeNames, Vars>,
   } = options
   const stylis = new Stylis({prefix})
   speedy = speedy === void 0 || speedy === null ? !__DEV__ : speedy
-  let insert,
+  let insert: DashCache<Vars, ThemeNames>['insert'],
     insertCache = {},
-    stylisCache
+    stylisCache: StylisCache = {}
 
   if (IS_BROWSER) {
     const nodes = document.querySelectorAll(`style[data-cache="${key}"]`)
@@ -235,30 +227,27 @@ export const createDash = <Vars = any, ThemeNames extends string = string>(
 
     stylis.use(stylisPlugins)(ruleSheet)
 
-    insert = (
-      selector: string,
-      name: string,
-      styles: string,
-      sheet: DashStyleSheet
-    ): void => {
-      if (dash.insertCache[name] === 1) return
+    insert = (selector, name, styles, sheet) => {
+      if (insertCache[name] === 1) return
       Sheet.current = sheet
-      dash.insertCache[name] = 1
+      insertCache[name] = 1
       stylis(selector, styles)
     }
   } else {
     // server side
     if (stylisPlugins || prefix !== void 0) stylis.use(stylisPlugins)
-    stylisCache =
-      getServerStylisCache &&
-      getServerStylisCache(key, stylisPlugins || [])(prefix)
+    stylisCache = (getServerStylisCache as any)(
+      key,
+      stylisPlugins || []
+    )(prefix)
 
-    insert = (selector: string, name: string, styles: string): void => {
-      if (dash.insertCache[name]) return
-      if (dash.stylisCache[name] === void 0) {
-        dash.stylisCache[name] = stylis(selector, styles)
+    insert = (selector, name, styles) => {
+      if (insertCache[name]) return
+      if (stylisCache[name] === void 0) {
+        stylisCache[name] = stylis(selector, styles)
       }
-      dash.insertCache[name] = 1
+
+      insertCache[name] = 1
     }
   }
 
@@ -305,7 +294,7 @@ export const createDash = <Vars = any, ThemeNames extends string = string>(
     variablesCache: {},
     themes,
     globalCache: {},
-    clear(): void {
+    clear() {
       this.insertCache = insertCache = {}
     },
   }
@@ -335,9 +324,8 @@ export interface DashStyleSheetOptions {
 export const styleSheet = (options: DashStyleSheetOptions): DashStyleSheet => {
   // Based off emotion and glamor's StyleSheet
   const {key, container, nonce, speedy} = options
-  let size = 0,
-    before
   const tags: HTMLStyleElement[] = []
+  let size = 0
 
   return {
     // include all keys so it the object can be cloned via styleSheet(sheet)
@@ -345,7 +333,7 @@ export const styleSheet = (options: DashStyleSheetOptions): DashStyleSheet => {
     nonce,
     container,
     speedy,
-    insert(rule): void {
+    insert(rule) {
       // the max length is how many rules we have per style tag, it's 65000 in
       // speedy mode it's 1 in dev because we insert source maps that map a
       // single rule to a location and you can only have one source map per
@@ -358,7 +346,7 @@ export const styleSheet = (options: DashStyleSheetOptions): DashStyleSheet => {
         container &&
           container.insertBefore(
             tag,
-            tags.length === 0 ? before : tags[tags.length - 1].nextSibling
+            tags.length === 0 ? null : tags[tags.length - 1].nextSibling
           )
         tags.push(tag)
       }
@@ -415,7 +403,7 @@ export const styleSheet = (options: DashStyleSheetOptions): DashStyleSheet => {
 
       size++
     },
-    flush(): void {
+    flush() {
       tags.forEach(tag => (tag.parentNode as HTMLElement).removeChild(tag))
       tags.length = 0
       size = 0
@@ -480,7 +468,7 @@ export type SerializedVariables<Vars = any> = {
 }
 
 const serializeVariables = <Vars = any>(
-  vars: string | string[] | number | number[] | Variables,
+  vars: string | string[] | number | number[] | Vars,
   names?: string[]
 ): SerializedVariables<Vars> => {
   const keys = Object.keys(vars)
@@ -672,7 +660,7 @@ const createStyles = <Vars = any, ThemeNames extends string = string>(
   // explicit here on purpose so it's not in every test
   /* istanbul ignore next */
   if (process.env.NODE_ENV === 'development') {
-    addLabels = (name, args): string => {
+    addLabels = (name, args) => {
       // add helpful labels to the name in development
       for (let i = 0; i < args.length; i++) {
         const arg = args[i]
@@ -688,12 +676,12 @@ const createStyles = <Vars = any, ThemeNames extends string = string>(
     }
   }
 
-  const styles = <Names extends string>(
+  const styles: Styles<Vars, ThemeNames> = <Names extends string>(
     defs: StyleDefs<Names, Vars>
   ): Style<Names, Vars> => {
     //
     // style(text, space, {})
-    const style: Style<Names, Vars> = (...args): string => {
+    const style: Style<Names, Vars> = (...args) => {
       const normalizedStyles = normalizeArgs<Names, Vars>(dash, defs, args)
       if (!normalizedStyles) return ''
       let name = dash.hash(normalizedStyles)
@@ -704,44 +692,46 @@ const createStyles = <Vars = any, ThemeNames extends string = string>(
       return className
     }
 
-    style.css = (...names): string =>
-      normalizeArgs<Names, Vars>(dash, defs, names)
     style.styles = defs
+    style.css = (...names) => normalizeArgs<Names, Vars>(dash, defs, names)
+
     return style
   }
 
   //
   // Methods
-  styles.create = <T = Vars, U extends string = ThemeNames>(options): Styles =>
-    createStyles<T, U>(createDash<T, U>(options))
+  styles.create = options => createStyles(createDash(options))
 
   styles.one = (literals, ...placeholders): OneCallback => {
     const css = Array.isArray(literals)
       ? interpolate(literals, placeholders)
       : (literals as string | StyleGetter<Vars> | StyleObject)
-
     const style = styles<'default'>({default: css})
     const callback: OneCallback = (createClassName): string =>
       createClassName || createClassName === void 0 ? style() : ''
+
     callback.toString = (): string => callback()
     callback.css = (): string => style.css('default')
     callback.css.toString = callback.css
+
     return callback
   }
 
-  styles.variables = (vars, selector = ':root'): EjectGlobal => {
+  styles.variables = (vars, selector = ':root') => {
     const serialized = serializeVariables<Vars>(vars)
-    dash.variables = mergeVariables<Vars>(dash.variables, serialized.variables)
     const name = dash.hash(serialized.styles)
+    dash.variables = mergeVariables<Vars>(dash.variables, serialized.variables)
+
     dash.variablesCache[name] = dash.variablesCache[name] || {
       count: 0,
       sheet: styleSheet(dash.sheet),
     }
+
     dash.variablesCache[name].count += 1
     const sheet = dash.variablesCache[name].sheet
     dash.insert(selector, name, serialized.styles, sheet)
 
-    return (): void => {
+    return () => {
       if (dash.variablesCache[name].count === 1) {
         delete dash.insertCache[name]
         delete dash.variablesCache[name]
@@ -750,7 +740,7 @@ const createStyles = <Vars = any, ThemeNames extends string = string>(
     }
   }
 
-  styles.themes = (themes): EjectGlobal => {
+  styles.themes = themes => {
     const ejectors: (() => void)[] = []
 
     for (const name in themes) {
@@ -763,17 +753,17 @@ const createStyles = <Vars = any, ThemeNames extends string = string>(
       )
     }
 
-    return (): void => ejectors.forEach(e => e())
+    return () => ejectors.forEach(e => e())
   }
 
-  styles.theme = (theme): string => `${dash.key}-${theme}-theme`
+  styles.theme = theme => `${dash.key}-${theme}-theme`
 
-  styles.global = (literals, ...placeholders): EjectGlobal => {
+  styles.global = (literals, ...placeholders) => {
     const styles = Array.isArray(literals)
       ? interpolate(literals, placeholders)
       : (literals as string | StyleGetter<Vars> | StyleObject)
     const normalizedStyles = normalizeStyles<Vars>(styles, dash.variables)
-    if (!normalizedStyles) return (): void => {}
+    if (!normalizedStyles) return () => {}
     const name = dash.hash(normalizedStyles)
     dash.globalCache[name] = dash.globalCache[name] || {
       count: 0,
@@ -783,7 +773,7 @@ const createStyles = <Vars = any, ThemeNames extends string = string>(
     dash.globalCache[name].count += 1
     dash.insert('', name, normalizedStyles, sheet)
 
-    return (): void => {
+    return () => {
       if (dash.globalCache[name].count === 1) {
         delete dash.insertCache[name]
         delete dash.globalCache[name]

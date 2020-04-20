@@ -848,15 +848,15 @@
     exec-sh "^0.3.2"
     minimist "^1.2.0"
 
-"@emotion/stylis@^0.8.4":
-  version "0.8.4"
-  resolved "https://registry.yarnpkg.com/@emotion/stylis/-/stylis-0.8.4.tgz#6c51afdf1dd0d73666ba09d2eb6c25c220d6fe4c"
-  integrity sha512-TLmkCVm8f8gH0oLv+HWKiu7e8xmBIaokhxcEKPh1m8pXiV/akCiq50FvYgOwY42rjejck8nsdQxZlXZ7pmyBUQ==
+"@emotion/stylis@^0.8.5":
+  version "0.8.5"
+  resolved "https://registry.yarnpkg.com/@emotion/stylis/-/stylis-0.8.5.tgz#deacb389bd6ee77d1e7fcaccce9e16c5c7e78e04"
+  integrity sha512-h6KtPihKFn3T9fuIrwvXXUOwlx3rfUvfZIcP5a6rh8Y7zjE3O06hT5Ss4S/YI1AYhuZ1kjaE/5EaOOI2NqSylQ==
 
-"@emotion/unitless@^0.7.4":
-  version "0.7.4"
-  resolved "https://registry.yarnpkg.com/@emotion/unitless/-/unitless-0.7.4.tgz#a87b4b04e5ae14a88d48ebef15015f6b7d1f5677"
-  integrity sha512-kBa+cDHOR9jpRJ+kcGMsysrls0leukrm68DmFQoMIWQcXdr2cZvyvypWuGYT7U+9kAExUE7+T7r6G3C3A6L8MQ==
+"@emotion/unitless@^0.7.5":
+  version "0.7.5"
+  resolved "https://registry.yarnpkg.com/@emotion/unitless/-/unitless-0.7.5.tgz#77211291c1900a700b8a78cfafda3160d76949ed"
+  integrity sha512-OWORNpfjMsSSUBVrRBVGECkhWcULOAJz9ZW8uK9qgxD+87M7jHRcvh/A96XXNhXTLmKcoYSQtBEX7lHMO7YRwg==
 
 "@essentials/benchmark@^1.0.5":
   version "1.0.5"
@@ -5757,10 +5757,10 @@ tr46@^1.0.1:
   dependencies:
     punycode "^2.1.0"
 
-trie-memoize@^1.1.0:
-  version "1.1.0"
-  resolved "https://registry.yarnpkg.com/trie-memoize/-/trie-memoize-1.1.0.tgz#2244ac75701b93585fc8c4a1a2f85ca132d4b5f3"
-  integrity sha512-7HPe38HUMaKzn+iFfnOO7E3fUcFo02P+QHvN0dcit3RjMxYFmk/poN9xHRptgPRk9MR/7bqPqcAyns8BCf0Yhg==
+trie-memoize@^1.1.2:
+  version "1.1.2"
+  resolved "https://registry.yarnpkg.com/trie-memoize/-/trie-memoize-1.1.2.tgz#94ad8ff5b288819b62fd6f29eade2c84af435721"
+  integrity sha512-I9tAnQCriR/qd9ab4h+fUBOAa9qy2FlDOvKbPsbsj4n9+GdszyHVOSg/slUQFhAp80G7y+ze1sln37x7E/7GHA==
 
 tslib@^1.8.1, tslib@^1.9.0:
   version "1.10.0"

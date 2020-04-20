@@ -87,9 +87,9 @@
     "typescript": "latest"
   },
   "dependencies": {
-    "@emotion/stylis": "^0.8.4",
-    "@emotion/unitless": "^0.7.4",
-    "trie-memoize": "^1.1.0"
+    "@emotion/stylis": "^0.8.5",
+    "@emotion/unitless": "^0.7.5",
+    "trie-memoize": "^1.1.2"
   },
   "peerDependencies": {}
 }
