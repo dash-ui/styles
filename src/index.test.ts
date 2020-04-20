@@ -293,7 +293,7 @@ describe('styles()', () => {
     })
 
     const style = myStyles({
-      box: vars => {
+      box: (vars) => {
         expect(vars).toMatchSnapshot()
         return ''
       },
@@ -611,7 +611,7 @@ describe(`styles.global()`, () => {
       },
     })
 
-    myStyles.global(vars => {
+    myStyles.global((vars) => {
       expect(vars).toMatchSnapshot()
       return ''
     })

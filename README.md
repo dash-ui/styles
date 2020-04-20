@@ -57,7 +57,7 @@ const style = styles({
   `,
 })
 
-const Component = props => (
+const Component = (props) => (
   <div className={style({blue: props.blue, red: props.red})}>
     Hello world
     <span className={style(props.blue && 'blue', props.red && 'red')}>
