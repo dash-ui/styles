@@ -685,7 +685,7 @@ const createStyles = <Vars = any, ThemeNames extends string = string>(
     defs: StyleDefs<Names, Vars>
   ): Style<Names, Vars> => {
     //
-    // style(text, space, {})
+    // style('text', 'space', {})
     const style: Style<Names, Vars> = (...args) => {
       const normalizedStyles = normalizeArgs<Names, Vars>(dash, defs, args)
       if (!normalizedStyles) return ''
