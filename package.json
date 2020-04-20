@@ -61,7 +61,7 @@
     "lint": "eslint . --ext .ts",
     "prepublishOnly": "npm run lint && npm run test && npm run build && npm run format",
     "test": "jest",
-    "validate": "npm run check-types && npm run lint && npm run test -- --coverage"
+    "validate": "npm run build && npm run check-types && npm run lint && npm run test -- --coverage"
   },
   "husky": {
     "hooks": {
