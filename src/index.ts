@@ -170,11 +170,14 @@ export type StylisCache = {
   [name: string]: string
 }
 
-export type Themes<ThemeNames extends string = string, Vars = any> = {
+export type Themes<
+  ThemeNames extends string = DefaultThemeNames,
+  Vars = DefaultVars
+> = {
   [Name in ThemeNames]: Vars
 }
 
-export type DashCache<Vars = any, ThemeNames extends string = any> = {
+export type DashCache<Vars = DefaultVars, ThemeNames extends string = any> = {
   readonly key: string
   readonly sheet: DashStyleSheet
   readonly hash: (string: string) => string
@@ -194,7 +197,10 @@ export type DashCache<Vars = any, ThemeNames extends string = any> = {
   readonly clear: () => void
 }
 
-export const createDash = <Vars = any, ThemeNames extends string = string>(
+export const createDash = <
+  Vars = DefaultVars,
+  ThemeNames extends string = DefaultThemeNames
+>(
   options: DashOptions<Vars, ThemeNames> = {}
 ): DashCache<Vars, ThemeNames> => {
   // Based on
@@ -471,12 +477,12 @@ const styleObjectToString = (object: StyleObject) => {
   return string
 }
 
-export type SerializedVariables<Vars = any> = {
+export type SerializedVariables<Vars = DefaultVars> = {
   readonly variables: Vars
   readonly styles: string
 }
 
-const serializeVariables = <Vars = any>(
+const serializeVariables = <Vars = DefaultVars>(
   vars: string | string[] | number | number[] | Vars,
   names?: string[]
 ): SerializedVariables<Vars> => {
@@ -539,7 +545,7 @@ export type StyleGetter<Vars = StoredVariables> = (
   variables: Vars
 ) => StyleObject | string
 
-const normalizeStyles_ = <Vars = any>(
+const normalizeStyles_ = <Vars = DefaultVars>(
   styles: string | StyleObject | StyleGetter<Vars>,
   variables: any
 ): string => {
@@ -563,19 +569,19 @@ const normalizeStyles_ = <Vars = any>(
 
 export const normalizeStyles = memoize([Map, WeakMap], normalizeStyles_)
 
-function normalizeStyleObject<Names extends string, Vars = any>(
+function normalizeStyleObject<Names extends string, Vars = DefaultVars>(
   dash: DashCache,
   styleDefs: StyleDefs<Names, Vars>,
   styleName?: string | Names | StyleObjectArgument<Names> | Falsy
 ): string
 
-function normalizeStyleObject<Names extends string, Vars = any>(
+function normalizeStyleObject<Names extends string, Vars = DefaultVars>(
   dash: DashCache,
   styleDefs: StyleObjectArgument<Names>,
   styleName?: string | Names | StyleObjectArgument<Names> | Falsy
 ): string
 
-function normalizeStyleObject<Names extends string, Vars = any>(
+function normalizeStyleObject<Names extends string, Vars = DefaultVars>(
   dash,
   styleDefs,
   styleName
@@ -597,7 +603,7 @@ function normalizeStyleObject<Names extends string, Vars = any>(
   return nextStyles
 }
 
-const normalizeArgs = <Names extends string, Vars = any>(
+const normalizeArgs = <Names extends string, Vars = DefaultVars>(
   dash: DashCache,
   styleDefs: StyleDefs<Names, Vars>,
   args: (string | Names | StyleObjectArgument<Names> | Falsy)[]
@@ -636,7 +642,13 @@ export type StyleDefs<Names extends string, Vars> = {
   [Name in Names | 'default']?: string | StyleGetter<Vars> | StyleObject
 }
 
-export interface Styles<Vars = any, ThemeNames extends string = string> {
+export interface DefaultVars {}
+export type DefaultThemeNames = string
+
+export interface Styles<
+  Vars = DefaultVars,
+  ThemeNames extends string = DefaultThemeNames
+> {
   <Names extends string>(defs: StyleDefs<Names, Vars>): Style<Names, Vars>
   create: <T = Vars, U extends string = ThemeNames>(
     options?: DashOptions<T, U>
@@ -659,7 +671,7 @@ export type StyleObjectArgument<Names extends string> = {
   [Name in Names]?: boolean | null | undefined | string | number
 }
 
-export interface Style<Names extends string = string, Vars = any> {
+export interface Style<Names extends string = string, Vars = DefaultVars> {
   (...args: (Names | StyleObjectArgument<Names> | Falsy)[]): string
   css: CSSFunction<Names>
   styles: StyleDefs<Names, Vars>
@@ -678,7 +690,10 @@ export type OneCallback = {
 
 //
 // Where the magic happens
-const createStyles = <Vars = any, ThemeNames extends string = string>(
+const createStyles = <
+  Vars = DefaultVars,
+  ThemeNames extends string = DefaultThemeNames
+>(
   dash: DashCache<Vars, ThemeNames>
 ): Styles<Vars, ThemeNames> => {
   const {
