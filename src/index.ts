@@ -130,8 +130,11 @@ const getServerStylisCache = IS_BROWSER
     })
 
 export interface DashOptions<
-  Vars extends Variables = DefaultVars,
-  ThemeNames extends DefaultThemeNames = DefaultThemeNames
+  Vars extends DefaultVars = DefaultVars,
+  ThemeNames extends keyof DefaultThemes<Vars> = Extract<
+    keyof DefaultThemes<Vars>,
+    string
+  >
 > {
   readonly key?: string
   readonly nonce?: string
@@ -143,7 +146,7 @@ export interface DashOptions<
   readonly container?: HTMLElement
   readonly speedy?: boolean
   readonly variables?: Vars
-  readonly themes?: Themes<ThemeNames, Vars>
+  readonly themes?: Themes<Vars, ThemeNames>
 }
 
 export type InsertCache = {
@@ -178,15 +181,21 @@ export type StylisCache = {
 }
 
 export type Themes<
-  ThemeNames extends DefaultThemeNames = DefaultThemeNames,
-  Vars extends Variables = DefaultVars
+  Vars extends DefaultVars = DefaultVars,
+  ThemeNames extends keyof DefaultThemes<Vars> = Extract<
+    keyof DefaultThemes<Vars>,
+    string
+  >
 > = {
   [Name in ThemeNames]: Vars
 }
 
 export type DashCache<
-  Vars extends Variables = DefaultVars,
-  ThemeNames extends DefaultThemeNames = any
+  Vars extends DefaultVars = DefaultVars,
+  ThemeNames extends keyof DefaultThemes<Vars> = Extract<
+    keyof DefaultThemes<Vars>,
+    string
+  >
 > = {
   readonly key: string
   readonly sheet: DashStyleSheet
@@ -202,14 +211,17 @@ export type DashCache<
   readonly insertCache: InsertCache
   variables: Vars
   readonly variablesCache: GlobalCache
-  themes: Themes<ThemeNames, Vars>
+  themes: Themes<Vars, ThemeNames>
   readonly globalCache: GlobalCache
   readonly clear: () => void
 }
 
 export const createDash = <
-  Vars extends Variables = DefaultVars,
-  ThemeNames extends DefaultThemeNames = DefaultThemeNames
+  Vars extends DefaultVars = DefaultVars,
+  ThemeNames extends keyof DefaultThemes<Vars> = Extract<
+    keyof DefaultThemes<Vars>,
+    string
+  >
 >(
   options: DashOptions<Vars, ThemeNames> = {}
 ): DashCache<Vars, ThemeNames> => {
@@ -224,7 +236,7 @@ export const createDash = <
     container = IS_BROWSER ? document.head : void 0,
     speedy,
     variables = {} as Vars,
-    themes = {} as Themes<ThemeNames, Vars>,
+    themes = {} as Themes<Vars, ThemeNames>,
   } = options
   const stylis = new Stylis({prefix})
   speedy = speedy === void 0 || speedy === null ? !__DEV__ : speedy
@@ -487,7 +499,7 @@ const styleObjectToString = (object: StyleObject) => {
   return string
 }
 
-export type SerializedVariables<Vars extends Variables = DefaultVars> = {
+export type SerializedVariables<Vars extends DefaultVars = DefaultVars> = {
   readonly variables: Vars
   readonly styles: string
 }
@@ -555,7 +567,7 @@ export type StyleGetter<Vars = StoredVariables> = (
   variables: Vars
 ) => StyleObject | string
 
-const normalizeStyles_ = <Vars extends Variables = DefaultVars>(
+const normalizeStyles_ = <Vars extends DefaultVars = DefaultVars>(
   styles: string | StyleObject | StyleGetter<Vars>,
   variables: any
 ): string => {
@@ -581,7 +593,7 @@ export const normalizeStyles = memoize([Map, WeakMap], normalizeStyles_)
 
 function normalizeStyleObject<
   Names extends string,
-  Vars extends Variables = DefaultVars
+  Vars extends DefaultVars = DefaultVars
 >(
   dash: DashCache,
   styleDefs: StyleDefs<Names, Vars>,
@@ -590,7 +602,7 @@ function normalizeStyleObject<
 
 function normalizeStyleObject<
   Names extends string,
-  Vars extends Variables = DefaultVars
+  Vars extends DefaultVars = DefaultVars
 >(
   dash: DashCache,
   styleDefs: StyleObjectArgument<Names>,
@@ -599,7 +611,7 @@ function normalizeStyleObject<
 
 function normalizeStyleObject<
   Names extends string,
-  Vars extends Variables = DefaultVars
+  Vars extends DefaultVars = DefaultVars
 >(dash, styleDefs, styleName) {
   let nextStyles = styleDefs.default
     ? normalizeStyles<Vars>(styleDefs.default, dash.variables)
@@ -620,7 +632,7 @@ function normalizeStyleObject<
 
 const normalizeArgs = <
   Names extends string,
-  Vars extends Variables = DefaultVars
+  Vars extends DefaultVars = DefaultVars
 >(
   dash: DashCache,
   styleDefs: StyleDefs<Names, Vars>,
@@ -656,21 +668,29 @@ export interface EjectGlobal {
   (): void
 }
 
-export type StyleDefs<Names extends string, Vars extends Variables> = {
+export type StyleDefs<Names extends string, Vars extends DefaultVars> = {
   [Name in Names | 'default']?: string | StyleGetter<Vars> | StyleObject
 }
 
-export interface DefaultVars extends Variables {}
-export type DefaultThemeNames = string
+export interface DefaultVars extends Variables {
+  [key: string]: any
+}
+
+export interface DefaultThemes<Vars extends DefaultVars = DefaultVars> {
+  [key: string]: Vars
+}
 
 export interface Styles<
-  Vars extends Variables = DefaultVars,
-  ThemeNames extends DefaultThemeNames = DefaultThemeNames
+  Vars extends DefaultVars = DefaultVars,
+  ThemeNames extends keyof DefaultThemes<Vars> = Extract<
+    keyof DefaultThemes<Vars>,
+    string
+  >
 > {
   <Names extends string>(defs: StyleDefs<Names, Vars>): Style<Names, Vars>
   create: <
     T extends DefaultVars = Vars,
-    U extends DefaultThemeNames = ThemeNames
+    U extends string = Extract<keyof DefaultThemes, string>
   >(
     options?: DashOptions<T, U>
   ) => Styles<T, U>
@@ -679,7 +699,7 @@ export interface Styles<
     ...placeholders: string[]
   ) => OneCallback
   variables: (vars: Vars, selector?: string) => EjectGlobal
-  themes: (themes: Themes<ThemeNames, Vars>) => EjectGlobal
+  themes: (themes: Themes<Vars, ThemeNames>) => EjectGlobal
   theme: (name: ThemeNames) => string
   global: (
     literals: TemplateStringsArray | string | StyleGetter<Vars> | StyleObject,
@@ -694,7 +714,7 @@ export type StyleObjectArgument<Names extends string> = {
 
 export interface Style<
   Names extends string = string,
-  Vars extends Variables = DefaultVars
+  Vars extends DefaultVars = DefaultVars
 > {
   (...args: (Names | StyleObjectArgument<Names> | Falsy)[]): string
   css: CSSFunction<Names>
@@ -715,8 +735,8 @@ export type OneCallback = {
 //
 // Where the magic happens
 const createStyles = <
-  Vars extends Variables = DefaultVars,
-  ThemeNames extends DefaultThemeNames = DefaultThemeNames
+  Vars extends DefaultVars = DefaultVars,
+  ThemeNames extends string = Extract<keyof DefaultThemes<Vars>, string>
 >(
   dash: DashCache<Vars, ThemeNames>
 ): Styles<Vars, ThemeNames> => {
@@ -881,7 +901,5 @@ const createStyles = <
 
 //
 // Creates default dash styles function
-export const styles: Styles<DefaultVars, DefaultThemeNames> = createStyles(
-  createDash()
-)
+export const styles: Styles<DefaultVars> = createStyles(createDash())
 export default styles

@@ -121,6 +121,7 @@ describe('styles.create()', () => {
         light: {
           color: {
             primary: 'white',
+            secondary: 'foo',
           },
         },
         dark: {
@@ -846,7 +847,7 @@ describe('styles.one()', () => {
         blue: 'blue'
       }
     }
-    const myStyles = styles.create<Variables, 'dark' | 'light'>()
+    const myStyles = styles.create<Variables>()
     myStyles.variables({color: {blue: 'blue'}})
     const myCls = myStyles.one(({color}) => `color: ${color.blue};`)
     expect(myCls.css()).toMatchSnapshot()
