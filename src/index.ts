@@ -17,14 +17,17 @@ type Falsy = false | 0 | null | undefined
 const OFFSET_BASIS_32 = 2166136261
 export const fnvHash = (string: string): string => {
   let out = OFFSET_BASIS_32,
-    i = 0
-  const len = string.length
+    i = 0,
+    len = string.length
+
   for (; i < len; ++i) {
     out ^= string.charCodeAt(i)
     out += (out << 1) + (out << 4) + (out << 7) + (out << 8) + (out << 24)
   }
+
   return (out >>> 0).toString(36)
 }
+
 const unsafeClassName = /^[0-9]/
 const safeHash = (
   key: string,
@@ -50,9 +53,10 @@ interface Sheet {
   current: CurrentSheet
 }
 
+const noop = () => {}
 const Sheet: Sheet = {
   current: {
-    insert: () => {},
+    insert: noop,
   },
 }
 
@@ -96,8 +100,7 @@ const ruleSheet: Plugin = (
       return content + (at === 0 ? RULE_DELIMITER : '')
     }
   } else if (context === -2) {
-    const contents = content.split(RULE_NEEDLE)
-    for (let i = 0; i < contents.length; i++) toSheet(contents[i])
+    content.split(RULE_NEEDLE).forEach((c: string) => toSheet(c))
   }
 
   return
@@ -213,14 +216,20 @@ export const createDash = <Vars = any, ThemeNames extends string = string>(
     stylisCache: StylisCache = {}
 
   if (IS_BROWSER) {
-    const nodes = document.querySelectorAll(`style[data-cache="${key}"]`)
+    let nodes = document.querySelectorAll(`style[data-cache="${key}"]`),
+      i = 0,
+      j = 0
 
-    for (let i = 0; i < nodes.length; i++) {
+    for (; i < nodes.length; i++) {
       const node = nodes[i]
       const attr = node.getAttribute(`data-dash`)
       if (attr === null) continue
       const ids = attr.split(' ')
-      for (let i = 0; i < ids.length; i++) insertCache[ids[i]] = 1
+
+      for (j = 0; j < ids.length; j++) {
+        insertCache[ids[j]] = 1
+      }
+
       if (node.parentNode !== container)
         (container as HTMLElement).appendChild(node)
     }
@@ -277,7 +286,7 @@ export const createDash = <Vars = any, ThemeNames extends string = string>(
     })
   }
 
-  const dash = {
+  return {
     key,
     sheet: styleSheet({
       key,
@@ -298,8 +307,6 @@ export const createDash = <Vars = any, ThemeNames extends string = string>(
       this.insertCache = insertCache = {}
     },
   }
-
-  return dash
 }
 
 //
@@ -352,14 +359,16 @@ export const styleSheet = (options: DashStyleSheetOptions): DashStyleSheet => {
       }
 
       const tag = tags[tags.length - 1]
-      if (!speedy) tag.appendChild(document.createTextNode(rule))
-      else {
-        let sheet: StyleSheet | CSSStyleSheet | null = tag.sheet
 
+      if (!speedy) {
+        tag.appendChild(document.createTextNode(rule))
+      } else {
+        let sheet: StyleSheet | CSSStyleSheet | null = tag.sheet,
+          i = 0
         /* istanbul ignore next */
         if (!sheet) {
           // this weirdness brought to you by firefox
-          for (let i = 0; i < document.styleSheets.length; i++) {
+          for (; i < document.styleSheets.length; i++) {
             if (document.styleSheets[i].ownerNode === tag) {
               sheet = document.styleSheets[i]
               break
@@ -413,26 +422,28 @@ export const styleSheet = (options: DashStyleSheetOptions): DashStyleSheet => {
 
 //
 // Style serialization
-const isProcessableValue = (
-  value?: boolean | null | string | number
-): boolean => value !== null && typeof value !== 'boolean'
+const isProcessableValue = (value?: boolean | null | string | number) =>
+  value !== null && typeof value !== 'boolean'
+
 const cssCaseRe = /[A-Z]|^ms/g
-const cssCase = (string: string): string =>
+
+const cssCase = (string: string) =>
   string.replace(cssCaseRe, '-$&').toLowerCase()
+
 const interpolate = (
   literals: TemplateStringsArray | string[],
   placeholders: string[]
-): string => {
-  let str = ''
-  for (let i = 0; i < literals.length; i++)
-    str += literals[i] + (placeholders[i] || '')
-  return str
-}
+) =>
+  literals.reduce(
+    (curr, next, i) => `${curr}${next}${placeholders[i] || ''}`,
+    ''
+  )
 
-const isCustomProperty = (property: string): boolean =>
-  property.charCodeAt(1) === 45
+const isCustomProperty = (property: string) => property.charCodeAt(1) === 45
+
 const styleName = (styleName: string): string =>
   isCustomProperty(styleName) ? styleName : cssCase(styleName)
+
 const styleValue = (key: string, value: any): string =>
   unitless[key] !== 1 &&
   !isCustomProperty(key) &&
@@ -445,13 +456,10 @@ export type StyleObject = {
   [property: string]: StyleObject | string | number
 }
 
-const styleObjectToString = (object: StyleObject): string => {
-  const keys = Object.keys(object)
-  let string = '',
-    i = 0
+const styleObjectToString = (object: StyleObject) => {
+  let string = ''
 
-  for (; i < keys.length; i++) {
-    const key = keys[i]
+  for (const key in object) {
     const value = object[key]
     if (typeof value === 'object' && value !== null)
       string += `${key}{${styleObjectToString(value)}}`
@@ -473,9 +481,10 @@ const serializeVariables = <Vars = any>(
 ): SerializedVariables<Vars> => {
   const keys = Object.keys(vars)
   const variables: Vars = {} as Vars
-  let styles = ''
+  let styles = '',
+    i = 0
 
-  for (let i = 0; i < keys.length; i++) {
+  for (; i < keys.length; i++) {
     const key = keys[i]
     const cssKey = cssCase(key)
     const value = vars[key]
@@ -487,8 +496,12 @@ const serializeVariables = <Vars = any>(
       styles += result.styles
     } else {
       let name = '--'
-      if (names !== void 0 && names.length > 0) name += names.join('-')
-      name += name === '--' ? cssKey : `-${cssKey}`
+
+      if (names !== void 0 && names.length > 0) {
+        name += names.join('-')
+      }
+
+      name += name === '--' ? cssKey : '-' + cssKey
       variables[key] = `var(${name})`
       styles += `${name}:${value};`
     }
@@ -499,14 +512,15 @@ const serializeVariables = <Vars = any>(
 
 const mergeVariables = <Vars>(target: Vars, source: StoredVariables): Vars => {
   const next: Vars = Object.assign({}, target)
-  const keys = Object.keys(source)
 
-  for (let i = 0; i < keys.length; i++) {
-    const key = keys[i],
-      value = source[key]
-    if (typeof value === 'object')
+  for (const key in source) {
+    const value = source[key]
+
+    if (typeof value === 'object') {
       next[key] = mergeVariables(next[key] || {}, value)
-    else next[key] = value
+    } else {
+      next[key] = value
+    }
   }
 
   return next
@@ -516,8 +530,8 @@ const minifyRe = [
   /\s{2,}|\n|\t/g,
   /([:;,([{}>~/])\s+/g,
   /\s+([;,)\]{}>~/!])/g,
-  /(\/\*)\s+/,
-  /\s+(\*\/)/,
+  /(\/\*)\s+/g,
+  /\s+(\*\/)/g,
 ]
 
 export type StyleGetter<Vars = StoredVariables> = (
@@ -572,11 +586,9 @@ function normalizeStyleObject<Names extends string, Vars = any>(
   if (typeof styleName === 'string' && styleName !== 'default') {
     nextStyles += normalizeStyles<Vars>(styleDefs[styleName], dash.variables)
   } else if (typeof styleName === 'object' && styleName !== null) {
-    const keys = Object.keys(styleName)
-
-    for (let i = 0; i < keys.length; i++)
-      if (styleName[keys[i]] && keys[i] !== 'default')
-        nextStyles += normalizeStyles<Vars>(styleDefs[keys[i]], dash.variables)
+    for (const key in styleName)
+      if (styleName[key] && key !== 'default')
+        nextStyles += normalizeStyles<Vars>(styleDefs[key], dash.variables)
 
     nextStyles = normalizeStyles<Vars>(nextStyles, dash.variables)
   }
@@ -590,16 +602,23 @@ const normalizeArgs = <Names extends string, Vars = any>(
   args: (string | Names | StyleObjectArgument<Names> | Falsy)[]
 ): string => {
   if (args.length > 1) {
-    const argDefs: StyleObjectArgument<Names> = {}
+    let argDefs: StyleObjectArgument<Names> = {},
+      i = 0
 
-    for (let i = 0; i < args.length; i++) {
+    for (; i < args.length; i++) {
       const arg = args[i]
-      if (typeof arg === 'string') argDefs[arg as Names] = true
-      else if (typeof arg === 'object') Object.assign(argDefs, arg)
+
+      if (typeof arg === 'string') {
+        argDefs[arg as Names] = true
+      } else if (typeof arg === 'object') {
+        Object.assign(argDefs, arg)
+      }
     }
 
     return normalizeStyleObject<Names, Vars>(dash, styleDefs, argDefs)
-  } else return normalizeStyleObject<Names, Vars>(dash, styleDefs, args[0])
+  }
+
+  return normalizeStyleObject<Names, Vars>(dash, styleDefs, args[0])
 }
 
 const disallowedClassChars = /[^a-z0-9_-]/gi
@@ -661,6 +680,17 @@ export type OneCallback = {
 const createStyles = <Vars = any, ThemeNames extends string = string>(
   dash: DashCache<Vars, ThemeNames>
 ): Styles<Vars, ThemeNames> => {
+  const {
+    key,
+    sheet,
+    insert,
+    hash,
+    themes,
+    insertCache,
+    variablesCache,
+    globalCache,
+  } = dash
+
   let addLabels: (name: string, args: any[]) => string
   // explicit here on purpose so it's not in every test
   /* istanbul ignore next */
@@ -670,10 +700,14 @@ const createStyles = <Vars = any, ThemeNames extends string = string>(
       for (let i = 0; i < args.length; i++) {
         const arg = args[i]
 
-        if (typeof arg === 'string') name += `-${arg}`
-        else if (typeof arg === 'object') {
+        if (typeof arg === 'string') {
+          name += `-${arg}`
+        } else if (typeof arg === 'object') {
           const keys = Object.keys(arg).filter((k) => arg[k])
-          if (keys.length) name += `-${keys.join('-')}`
+
+          if (keys.length) {
+            name += `-${keys.join('-')}`
+          }
         }
       }
 
@@ -689,11 +723,16 @@ const createStyles = <Vars = any, ThemeNames extends string = string>(
     const style: Style<Names, Vars> = (...args) => {
       const normalizedStyles = normalizeArgs<Names, Vars>(dash, defs, args)
       if (!normalizedStyles) return ''
-      let name = dash.hash(normalizedStyles)
+      let name = hash(normalizedStyles)
+
       // explicit here on purpose so it's not in every test
-      if (process.env.NODE_ENV === 'development') name = addLabels(name, args)
-      const className = `${dash.key}-${name}`
-      dash.insert(`.${className}`, name, normalizedStyles, dash.sheet)
+      if (process.env.NODE_ENV === 'development') {
+        name = addLabels(name, args)
+      }
+
+      const className = `${key}-${name}`
+      insert(`.${className}`, name, normalizedStyles, sheet)
+
       return className
     }
 
@@ -715,8 +754,8 @@ const createStyles = <Vars = any, ThemeNames extends string = string>(
     const callback: OneCallback = (createClassName): string =>
       createClassName || createClassName === void 0 ? style() : ''
 
-    callback.toString = (): string => callback()
-    callback.css = (): string => style.css('default')
+    callback.toString = callback
+    callback.css = () => style.css('default')
     callback.css.toString = callback.css
 
     return callback
@@ -724,72 +763,79 @@ const createStyles = <Vars = any, ThemeNames extends string = string>(
 
   styles.variables = (vars, selector = ':root') => {
     const serialized = serializeVariables<Vars>(vars)
-    const name = dash.hash(serialized.styles)
+    const name = hash(serialized.styles)
     dash.variables = mergeVariables<Vars>(dash.variables, serialized.variables)
-
-    dash.variablesCache[name] = dash.variablesCache[name] || {
+    variablesCache[name] = variablesCache[name] || {
       count: 0,
-      sheet: styleSheet(dash.sheet),
+      sheet: styleSheet(sheet),
     }
 
-    dash.variablesCache[name].count += 1
-    const sheet = dash.variablesCache[name].sheet
-    dash.insert(selector, name, serialized.styles, sheet)
+    variablesCache[name].count += 1
+    const variablesSheet = variablesCache[name].sheet
+    insert(selector, name, serialized.styles, variablesSheet)
 
     return () => {
-      if (dash.variablesCache[name].count === 1) {
-        delete dash.insertCache[name]
-        delete dash.variablesCache[name]
-        sheet.flush()
-      } else dash.variablesCache[name].count -= 1
+      if (variablesCache[name].count === 1) {
+        delete insertCache[name]
+        delete variablesCache[name]
+        variablesSheet.flush()
+      } else {
+        variablesCache[name].count -= 1
+      }
     }
   }
 
-  styles.themes = (themes) => {
+  styles.themes = (nextThemes) => {
     const ejectors: (() => void)[] = []
 
-    for (const name in themes) {
-      dash.themes[name] =
-        dash.themes[name] === void 0
-          ? themes[name]
-          : mergeVariables<Vars>(dash.themes[name], themes[name])
-      ejectors.push(
-        styles.variables(dash.themes[name], `.${dash.key}-${name}-theme`)
-      )
+    for (const name in nextThemes) {
+      themes[name] =
+        themes[name] === void 0
+          ? nextThemes[name]
+          : mergeVariables<Vars>(themes[name], nextThemes[name])
+      ejectors.push(styles.variables(themes[name], `.${key}-${name}-theme`))
     }
 
     return () => ejectors.forEach((e) => e())
   }
 
-  styles.theme = (theme) => `${dash.key}-${theme}-theme`
+  styles.theme = (theme) => `${key}-${theme}-theme`
 
   styles.global = (literals, ...placeholders) => {
     const styles = Array.isArray(literals)
       ? interpolate(literals, placeholders)
       : (literals as string | StyleGetter<Vars> | StyleObject)
     const normalizedStyles = normalizeStyles<Vars>(styles, dash.variables)
-    if (!normalizedStyles) return () => {}
-    const name = dash.hash(normalizedStyles)
-    dash.globalCache[name] = dash.globalCache[name] || {
-      count: 0,
-      sheet: styleSheet(dash.sheet),
+
+    if (!normalizedStyles) {
+      return noop
     }
-    const sheet = dash.globalCache[name].sheet
-    dash.globalCache[name].count += 1
-    dash.insert('', name, normalizedStyles, sheet)
+
+    const name = hash(normalizedStyles)
+    globalCache[name] = globalCache[name] || {
+      count: 0,
+      sheet: styleSheet(sheet),
+    }
+    const globalSheet = globalCache[name].sheet
+
+    globalCache[name].count += 1
+    insert('', name, normalizedStyles, globalSheet)
 
     return () => {
-      if (dash.globalCache[name].count === 1) {
-        delete dash.insertCache[name]
-        delete dash.globalCache[name]
-        sheet.flush()
-      } else dash.globalCache[name].count -= 1
+      if (globalCache[name].count === 1) {
+        delete insertCache[name]
+        delete globalCache[name]
+        globalSheet.flush()
+      } else {
+        globalCache[name].count -= 1
+      }
     }
   }
 
   if (Object.values(dash.variables).length) styles.variables(dash.variables)
-  if (Object.values(dash.themes).length) styles.themes(dash.themes)
+  if (Object.values(themes).length) styles.themes(themes)
   styles.dash = dash
+
   return styles
 }
 
