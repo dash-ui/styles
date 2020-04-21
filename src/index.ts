@@ -162,7 +162,7 @@ export interface Variables {
   [name: string]: VariableDefs | string | number
 }
 
-export type StoredVariables = {
+type StoredVariables = {
   [name: string]: any
 }
 
@@ -551,7 +551,7 @@ const minifyRe = [
   /\s+(\*\/)/g,
 ]
 
-export type StyleGetter<Vars = StoredVariables> = (
+export type StyleGetter<Vars extends DefaultVars = DefaultVars> = (
   variables: Vars
 ) => StyleObject | string
 
