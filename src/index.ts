@@ -11,7 +11,7 @@ import memoize from 'trie-memoize'
 const __DEV__ =
   typeof process !== 'undefined' && process.env.NODE_ENV !== 'production'
 const IS_BROWSER = typeof document !== 'undefined'
-type Falsy = false | 0 | null | undefined
+export type Falsy = false | 0 | null | undefined
 
 //
 // Hashing (fnv1a)
