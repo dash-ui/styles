@@ -881,5 +881,7 @@ const createStyles = <
 
 //
 // Creates default dash styles function
-export const styles = createStyles(createDash())
+export const styles: Styles<DefaultVars, DefaultThemeNames> = createStyles(
+  createDash()
+)
 export default styles
