@@ -1,5 +1,5 @@
 node_modules
 dist
 coverage
-src/**/*.d.ts
+src/index.d.ts
 server/src/**/*.d.ts

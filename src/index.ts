@@ -1,7 +1,8 @@
 // A huge amount of credit for this library goes to the emotion
 // team and to Sebastian McKenzie at Facebook for inspiring the
 // API design
-import Stylis, {Plugable, Plugin, Context} from '@emotion/stylis'
+import Stylis from '@emotion/stylis'
+import type {Plugable, Plugin, Context} from '@emotion/stylis'
 import unitless from '@emotion/unitless'
 import memoize from 'trie-memoize'
 
