@@ -131,7 +131,7 @@ const getServerStylisCache = IS_BROWSER
 
 export interface DashOptions<
   Vars extends Variables = DefaultVars,
-  ThemeNames extends string = DefaultThemeNames
+  ThemeNames extends DefaultThemeNames = DefaultThemeNames
 > {
   readonly key?: string
   readonly nonce?: string
@@ -178,7 +178,7 @@ export type StylisCache = {
 }
 
 export type Themes<
-  ThemeNames extends string = DefaultThemeNames,
+  ThemeNames extends DefaultThemeNames = DefaultThemeNames,
   Vars extends Variables = DefaultVars
 > = {
   [Name in ThemeNames]: Vars
@@ -186,7 +186,7 @@ export type Themes<
 
 export type DashCache<
   Vars extends Variables = DefaultVars,
-  ThemeNames extends string = any
+  ThemeNames extends DefaultThemeNames = any
 > = {
   readonly key: string
   readonly sheet: DashStyleSheet
@@ -209,7 +209,7 @@ export type DashCache<
 
 export const createDash = <
   Vars extends Variables = DefaultVars,
-  ThemeNames extends string = DefaultThemeNames
+  ThemeNames extends DefaultThemeNames = DefaultThemeNames
 >(
   options: DashOptions<Vars, ThemeNames> = {}
 ): DashCache<Vars, ThemeNames> => {
@@ -665,7 +665,7 @@ export type DefaultThemeNames = string
 
 export interface Styles<
   Vars extends Variables = DefaultVars,
-  ThemeNames extends string = DefaultThemeNames
+  ThemeNames extends DefaultThemeNames = DefaultThemeNames
 > {
   <Names extends string>(defs: StyleDefs<Names, Vars>): Style<Names, Vars>
   create: <
@@ -716,7 +716,7 @@ export type OneCallback = {
 // Where the magic happens
 const createStyles = <
   Vars extends Variables = DefaultVars,
-  ThemeNames extends string = DefaultThemeNames
+  ThemeNames extends DefaultThemeNames = DefaultThemeNames
 >(
   dash: DashCache<Vars, ThemeNames>
 ): Styles<Vars, ThemeNames> => {
