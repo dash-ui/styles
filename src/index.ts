@@ -129,7 +129,10 @@ const getServerStylisCache = IS_BROWSER
       }
     })
 
-export interface DashOptions<Vars, ThemeNames extends string> {
+export interface DashOptions<
+  Vars extends Variables = DefaultVars,
+  ThemeNames extends string = DefaultThemeNames
+> {
   readonly key?: string
   readonly nonce?: string
   readonly hash?: typeof fnvHash
@@ -147,13 +150,17 @@ export type InsertCache = {
   [name: string]: number
 }
 
-export type Variables =
+export type VariableDefs =
   | {
-      [name: string]: Variables | string | number
+      [name: string]: VariableDefs | string | number
     }
   | {
-      [index: number]: Variables | string | number
+      [name: number]: VariableDefs | string | number
     }
+
+export interface Variables {
+  [name: string]: VariableDefs | string | number
+}
 
 export type StoredVariables = {
   [name: string]: any
@@ -172,12 +179,15 @@ export type StylisCache = {
 
 export type Themes<
   ThemeNames extends string = DefaultThemeNames,
-  Vars = DefaultVars
+  Vars extends Variables = DefaultVars
 > = {
   [Name in ThemeNames]: Vars
 }
 
-export type DashCache<Vars = DefaultVars, ThemeNames extends string = any> = {
+export type DashCache<
+  Vars extends Variables = DefaultVars,
+  ThemeNames extends string = any
+> = {
   readonly key: string
   readonly sheet: DashStyleSheet
   readonly hash: (string: string) => string
@@ -198,7 +208,7 @@ export type DashCache<Vars = DefaultVars, ThemeNames extends string = any> = {
 }
 
 export const createDash = <
-  Vars = DefaultVars,
+  Vars extends Variables = DefaultVars,
   ThemeNames extends string = DefaultThemeNames
 >(
   options: DashOptions<Vars, ThemeNames> = {}
@@ -477,12 +487,12 @@ const styleObjectToString = (object: StyleObject) => {
   return string
 }
 
-export type SerializedVariables<Vars = DefaultVars> = {
+export type SerializedVariables<Vars extends Variables = DefaultVars> = {
   readonly variables: Vars
   readonly styles: string
 }
 
-const serializeVariables = <Vars = DefaultVars>(
+const serializeVariables = <Vars extends VariableDefs = DefaultVars>(
   vars: string | string[] | number | number[] | Vars,
   names?: string[]
 ): SerializedVariables<Vars> => {
@@ -545,7 +555,7 @@ export type StyleGetter<Vars = StoredVariables> = (
   variables: Vars
 ) => StyleObject | string
 
-const normalizeStyles_ = <Vars = DefaultVars>(
+const normalizeStyles_ = <Vars extends Variables = DefaultVars>(
   styles: string | StyleObject | StyleGetter<Vars>,
   variables: any
 ): string => {
@@ -569,23 +579,28 @@ const normalizeStyles_ = <Vars = DefaultVars>(
 
 export const normalizeStyles = memoize([Map, WeakMap], normalizeStyles_)
 
-function normalizeStyleObject<Names extends string, Vars = DefaultVars>(
+function normalizeStyleObject<
+  Names extends string,
+  Vars extends Variables = DefaultVars
+>(
   dash: DashCache,
   styleDefs: StyleDefs<Names, Vars>,
   styleName?: string | Names | StyleObjectArgument<Names> | Falsy
 ): string
 
-function normalizeStyleObject<Names extends string, Vars = DefaultVars>(
+function normalizeStyleObject<
+  Names extends string,
+  Vars extends Variables = DefaultVars
+>(
   dash: DashCache,
   styleDefs: StyleObjectArgument<Names>,
   styleName?: string | Names | StyleObjectArgument<Names> | Falsy
 ): string
 
-function normalizeStyleObject<Names extends string, Vars = DefaultVars>(
-  dash,
-  styleDefs,
-  styleName
-) {
+function normalizeStyleObject<
+  Names extends string,
+  Vars extends Variables = DefaultVars
+>(dash, styleDefs, styleName) {
   let nextStyles = styleDefs.default
     ? normalizeStyles<Vars>(styleDefs.default, dash.variables)
     : ''
@@ -603,7 +618,10 @@ function normalizeStyleObject<Names extends string, Vars = DefaultVars>(
   return nextStyles
 }
 
-const normalizeArgs = <Names extends string, Vars = DefaultVars>(
+const normalizeArgs = <
+  Names extends string,
+  Vars extends Variables = DefaultVars
+>(
   dash: DashCache,
   styleDefs: StyleDefs<Names, Vars>,
   args: (string | Names | StyleObjectArgument<Names> | Falsy)[]
@@ -638,19 +656,22 @@ export interface EjectGlobal {
   (): void
 }
 
-export type StyleDefs<Names extends string, Vars> = {
+export type StyleDefs<Names extends string, Vars extends Variables> = {
   [Name in Names | 'default']?: string | StyleGetter<Vars> | StyleObject
 }
 
-export interface DefaultVars {}
+export interface DefaultVars extends Variables {}
 export type DefaultThemeNames = string
 
 export interface Styles<
-  Vars = DefaultVars,
+  Vars extends Variables = DefaultVars,
   ThemeNames extends string = DefaultThemeNames
 > {
   <Names extends string>(defs: StyleDefs<Names, Vars>): Style<Names, Vars>
-  create: <T = Vars, U extends string = ThemeNames>(
+  create: <
+    T extends DefaultVars = Vars,
+    U extends DefaultThemeNames = ThemeNames
+  >(
     options?: DashOptions<T, U>
   ) => Styles<T, U>
   one: (
@@ -671,7 +692,10 @@ export type StyleObjectArgument<Names extends string> = {
   [Name in Names]?: boolean | null | undefined | string | number
 }
 
-export interface Style<Names extends string = string, Vars = DefaultVars> {
+export interface Style<
+  Names extends string = string,
+  Vars extends Variables = DefaultVars
+> {
   (...args: (Names | StyleObjectArgument<Names> | Falsy)[]): string
   css: CSSFunction<Names>
   styles: StyleDefs<Names, Vars>
@@ -691,7 +715,7 @@ export type OneCallback = {
 //
 // Where the magic happens
 const createStyles = <
-  Vars = DefaultVars,
+  Vars extends Variables = DefaultVars,
   ThemeNames extends string = DefaultThemeNames
 >(
   dash: DashCache<Vars, ThemeNames>
