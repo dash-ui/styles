@@ -131,7 +131,7 @@ const getServerStylisCache = IS_BROWSER
 
 export interface DashOptions<
   Vars extends DefaultVars = DefaultVars,
-  ThemeNames extends keyof DefaultThemes = Extract<keyof DefaultThemes, string>
+  ThemeNames extends string = Extract<keyof DefaultThemes, string>
 > {
   readonly key?: string
   readonly nonce?: string
@@ -179,14 +179,14 @@ export type StylisCache = {
 
 export type Themes<
   Vars extends DefaultVars = DefaultVars,
-  ThemeNames extends keyof DefaultThemes = Extract<keyof DefaultThemes, string>
+  ThemeNames extends string = Extract<keyof DefaultThemes, string>
 > = {
   [Name in ThemeNames]: Vars
 }
 
 export type DashCache<
   Vars extends DefaultVars = DefaultVars,
-  ThemeNames extends keyof DefaultThemes = Extract<keyof DefaultThemes, string>
+  ThemeNames extends string = Extract<keyof DefaultThemes, string>
 > = {
   readonly key: string
   readonly sheet: DashStyleSheet
@@ -209,7 +209,7 @@ export type DashCache<
 
 export const createDash = <
   Vars extends DefaultVars = DefaultVars,
-  ThemeNames extends keyof DefaultThemes = Extract<keyof DefaultThemes, string>
+  ThemeNames extends string = Extract<keyof DefaultThemes, string>
 >(
   options: DashOptions<Vars, ThemeNames> = {}
 ): DashCache<Vars, ThemeNames> => {
@@ -492,7 +492,7 @@ export type SerializedVariables<Vars extends DefaultVars = DefaultVars> = {
   readonly styles: string
 }
 
-const serializeVariables = <Vars extends VariableDefs = DefaultVars>(
+const serializeVariables = <Vars = DefaultVars>(
   vars: string | string[] | number | number[] | Vars,
   names?: string[]
 ): SerializedVariables<Vars> => {
@@ -656,21 +656,19 @@ export interface EjectGlobal {
   (): void
 }
 
-export type StyleDefs<Names extends string, Vars extends DefaultVars> = {
+export type StyleDefs<
+  Names extends string,
+  Vars extends DefaultVars = DefaultVars
+> = {
   [Name in Names | 'default']?: string | StyleGetter<Vars> | StyleObject
 }
 
-export interface DefaultVars extends Variables {
-  [key: string]: any
-}
-
-export interface DefaultThemes {
-  [key: string]: DefaultVars
-}
+export interface DefaultVars {}
+export interface DefaultThemes {}
 
 export interface Styles<
   Vars extends DefaultVars = DefaultVars,
-  ThemeNames extends keyof DefaultThemes = Extract<keyof DefaultThemes, string>
+  ThemeNames extends string = Extract<keyof DefaultThemes, string>
 > {
   <Names extends string>(defs: StyleDefs<Names, Vars>): Style<Names, Vars>
   create: <
@@ -886,5 +884,8 @@ const createStyles = <
 
 //
 // Creates default dash styles function
-export const styles: Styles<DefaultVars> = createStyles(createDash())
+export const styles: Styles<
+  DefaultVars,
+  Extract<keyof DefaultThemes, string>
+> = createStyles(createDash())
 export default styles

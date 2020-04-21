@@ -269,26 +269,26 @@ describe('styles()', () => {
   })
 
   it('passes variables to style callbacks', () => {
-    const myStyles = styles.create()
-    myStyles.variables({
-      colors: {
-        blue: '#09a',
-        red: '#c12',
-      },
-    })
-
-    myStyles.themes({
-      dark: {
+    const myStyles = styles.create({
+      variables: {
         colors: {
-          bg: '#000',
-          text: '#fff',
+          blue: '#09a',
+          red: '#c12',
         },
       },
-      light: {
-        colors: {
-          bg: '#fff',
-          text: '#000',
-          lightSpecific: '#ccc',
+      themes: {
+        dark: {
+          colors: {
+            bg: '#000',
+            text: '#fff',
+          },
+        },
+        light: {
+          colors: {
+            bg: '#fff',
+            text: '#000',
+            lightSpecific: '#ccc',
+          },
         },
       },
     })
