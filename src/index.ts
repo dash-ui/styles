@@ -8,16 +8,13 @@ import memoize from 'trie-memoize'
 
 //
 // Constants
-const __DEV__ =
-  typeof process !== 'undefined' && process.env.NODE_ENV !== 'production'
 const IS_BROWSER = typeof document !== 'undefined'
 export type Falsy = false | 0 | null | undefined
 
 //
 // Hashing (fnv1a)
-const OFFSET_BASIS_32 = 2166136261
-export const fnvHash = (string: string): string => {
-  let out = OFFSET_BASIS_32,
+export const hash = (string: string): string => {
+  let out = 2166136261, // 32-bit offset basis
     i = 0,
     len = string.length
 
@@ -32,10 +29,10 @@ export const fnvHash = (string: string): string => {
 const unsafeClassName = /^[0-9]/
 const safeHash = (
   key: string,
-  hash: typeof fnvHash
+  hashFn: typeof hash
 ): ((string: string) => string) =>
   memoize([{}], (string: string) => {
-    const out = hash(string)
+    const out = hashFn(string)
     // allows class names to start with numbers
     return !key && unsafeClassName.test(out) ? `_${out}` : out
   })
@@ -129,13 +126,137 @@ const getServerStylisCache = IS_BROWSER
       }
     })
 
+export const createDash = <
+  Vars extends DefaultVars = DefaultVars,
+  ThemeNames extends string = Extract<keyof DefaultThemes, string>
+>(
+  options: DashOptions<Vars, ThemeNames> = {}
+): DashCache<Vars, ThemeNames> => {
+  // Based on
+  // https://github.com/emotion-js/emotion/blob/master/packages/cache/src/index.js
+  let {
+    key = '-ui',
+    nonce,
+    speedy,
+    hash: dashHash = hash,
+    stylisPlugins,
+    prefix = true,
+    container = IS_BROWSER ? document.head : void 0,
+    variables = {} as Vars,
+    themes = {} as Themes<Vars, ThemeNames>,
+  } = options
+  const stylis = new Stylis({prefix})
+  speedy =
+    speedy === void 0 || speedy === null
+      ? !(
+          typeof process !== 'undefined' &&
+          process.env.NODE_ENV !== 'production'
+        )
+      : speedy
+  let insert: DashCache<Vars, ThemeNames>['insert'],
+    insertCache = {},
+    stylisCache: StylisCache = {}
+
+  if (IS_BROWSER) {
+    let nodes = document.querySelectorAll(`style[data-cache="${key}"]`),
+      i = 0,
+      j = 0
+
+    for (; i < nodes.length; i++) {
+      const node = nodes[i]
+      const attr = node.getAttribute(`data-dash`)
+      if (attr === null) continue
+      const ids = attr.split(' ')
+
+      for (j = 0; j < ids.length; j++) {
+        insertCache[ids[j]] = 1
+      }
+
+      if (node.parentNode !== container)
+        (container as HTMLElement).appendChild(node)
+    }
+
+    stylis.use(stylisPlugins)(ruleSheet)
+
+    insert = (selector, name, styles, sheet) => {
+      if (insertCache[name] === 1) return
+      insertCache[name] = 1
+      Sheet.current = sheet
+      stylis(selector, styles)
+    }
+  } else {
+    // server side
+    if (stylisPlugins || prefix !== void 0) stylis.use(stylisPlugins)
+    stylisCache = (getServerStylisCache as any)(
+      key,
+      stylisPlugins || []
+    )(prefix)
+
+    insert = (selector, name, styles) => {
+      if (insertCache[name]) return
+      insertCache[name] = 1
+      if (stylisCache[name] === void 0) {
+        stylisCache[name] = stylis(selector, styles)
+      }
+    }
+  }
+
+  if (typeof process !== 'undefined' && process.env.NODE_ENV !== 'production') {
+    const commentStart = /\/\*/g
+    const commentEnd = /\*\//g
+
+    stylis.use((context, content) => {
+      if (context === -1) {
+        while (commentStart.test(content)) {
+          commentEnd.lastIndex = commentStart.lastIndex
+
+          /* istanbul ignore next */
+          if (commentEnd.test(content)) {
+            commentStart.lastIndex = commentEnd.lastIndex
+            continue
+          }
+
+          throw new Error(
+            'Your styles have an unterminated comment ("/*" without ' +
+              'corresponding "*/").'
+          )
+        }
+
+        commentStart.lastIndex = 0
+      }
+    })
+  }
+
+  return {
+    key,
+    sheet: styleSheet({
+      key,
+      container,
+      nonce,
+      speedy,
+    }),
+    stylis,
+    hash: safeHash(key, dashHash),
+    insert,
+    variables,
+    themes,
+    stylisCache,
+    insertCache,
+    variablesCache: {},
+    globalCache: {},
+    clear() {
+      this.insertCache = insertCache = {}
+    },
+  }
+}
+
 export interface DashOptions<
   Vars extends DefaultVars = DefaultVars,
   ThemeNames extends string = Extract<keyof DefaultThemes, string>
 > {
   readonly key?: string
   readonly nonce?: string
-  readonly hash?: typeof fnvHash
+  readonly hash?: typeof hash
   readonly stylisPlugins?: Plugable[]
   readonly prefix?:
     | boolean
@@ -207,125 +328,6 @@ export type DashCache<
   readonly clear: () => void
 }
 
-export const createDash = <
-  Vars extends DefaultVars = DefaultVars,
-  ThemeNames extends string = Extract<keyof DefaultThemes, string>
->(
-  options: DashOptions<Vars, ThemeNames> = {}
-): DashCache<Vars, ThemeNames> => {
-  // Based on
-  // https://github.com/emotion-js/emotion/blob/master/packages/cache/src/index.js
-  let {
-    key = '-ui',
-    nonce,
-    hash = fnvHash,
-    stylisPlugins,
-    prefix = true,
-    container = IS_BROWSER ? document.head : void 0,
-    speedy,
-    variables = {} as Vars,
-    themes = {} as Themes<Vars, ThemeNames>,
-  } = options
-  const stylis = new Stylis({prefix})
-  speedy = speedy === void 0 || speedy === null ? !__DEV__ : speedy
-  let insert: DashCache<Vars, ThemeNames>['insert'],
-    insertCache = {},
-    stylisCache: StylisCache = {}
-
-  if (IS_BROWSER) {
-    let nodes = document.querySelectorAll(`style[data-cache="${key}"]`),
-      i = 0,
-      j = 0
-
-    for (; i < nodes.length; i++) {
-      const node = nodes[i]
-      const attr = node.getAttribute(`data-dash`)
-      if (attr === null) continue
-      const ids = attr.split(' ')
-
-      for (j = 0; j < ids.length; j++) {
-        insertCache[ids[j]] = 1
-      }
-
-      if (node.parentNode !== container)
-        (container as HTMLElement).appendChild(node)
-    }
-
-    stylis.use(stylisPlugins)(ruleSheet)
-
-    insert = (selector, name, styles, sheet) => {
-      if (insertCache[name] === 1) return
-      Sheet.current = sheet
-      insertCache[name] = 1
-      stylis(selector, styles)
-    }
-  } else {
-    // server side
-    if (stylisPlugins || prefix !== void 0) stylis.use(stylisPlugins)
-    stylisCache = (getServerStylisCache as any)(
-      key,
-      stylisPlugins || []
-    )(prefix)
-
-    insert = (selector, name, styles) => {
-      if (insertCache[name]) return
-      if (stylisCache[name] === void 0) {
-        stylisCache[name] = stylis(selector, styles)
-      }
-
-      insertCache[name] = 1
-    }
-  }
-
-  if (__DEV__) {
-    const commentStart = /\/\*/g
-    const commentEnd = /\*\//g
-
-    stylis.use((context, content) => {
-      if (context === -1) {
-        while (commentStart.test(content)) {
-          commentEnd.lastIndex = commentStart.lastIndex
-
-          /* istanbul ignore next */
-          if (commentEnd.test(content)) {
-            commentStart.lastIndex = commentEnd.lastIndex
-            continue
-          }
-
-          throw new Error(
-            'Your styles have an unterminated comment ("/*" without ' +
-              'corresponding "*/").'
-          )
-        }
-
-        commentStart.lastIndex = 0
-      }
-    })
-  }
-
-  return {
-    key,
-    sheet: styleSheet({
-      key,
-      container,
-      nonce,
-      speedy,
-    }),
-    hash: safeHash(key, hash),
-    stylis,
-    stylisCache,
-    insert,
-    insertCache,
-    variables,
-    variablesCache: {},
-    themes,
-    globalCache: {},
-    clear() {
-      this.insertCache = insertCache = {}
-    },
-  }
-}
-
 //
 // Style sheets
 export interface DashStyleSheet {
@@ -385,12 +387,12 @@ export const styleSheet = (options: DashStyleSheetOptions): DashStyleSheet => {
         /* istanbul ignore next */
         if (!sheet) {
           // this weirdness brought to you by firefox
-          for (; i < document.styleSheets.length; i++) {
-            if (document.styleSheets[i].ownerNode === tag) {
-              sheet = document.styleSheets[i]
+          const {styleSheets} = document
+          for (; i < styleSheets.length; i++)
+            if (styleSheets[i].ownerNode === tag) {
+              sheet = styleSheets[i]
               break
             }
-          }
         }
 
         /* istanbul ignore next */
@@ -418,7 +420,10 @@ export const styleSheet = (options: DashStyleSheetOptions): DashStyleSheet => {
             isImportRule ? 0 : (sheet as CSSStyleSheet).cssRules.length
           )
         } catch (e) {
-          if (__DEV__) {
+          if (
+            typeof process !== 'undefined' &&
+            process.env.NODE_ENV !== 'production'
+          ) {
             console.warn(
               `There was a problem inserting the following rule: "${rule}"`,
               e
@@ -451,10 +456,7 @@ const interpolate = (
   literals: TemplateStringsArray | string[],
   placeholders: string[]
 ) =>
-  literals.reduce(
-    (curr, next, i) => `${curr}${next}${placeholders[i] || ''}`,
-    ''
-  )
+  literals.reduce((curr, next, i) => curr + next + (placeholders[i] || ''), '')
 
 const isCustomProperty = (property: string) => property.charCodeAt(1) === 45
 
@@ -469,10 +471,6 @@ const styleValue = (key: string, value: any): string =>
     ? `${value}px`
     : value
 
-export type StyleObject = {
-  [property: string]: StyleObject | string | number
-}
-
 const styleObjectToString = (object: StyleObject) => {
   let string = ''
 
@@ -485,6 +483,10 @@ const styleObjectToString = (object: StyleObject) => {
   }
 
   return string
+}
+
+export type StyleObject = {
+  [property: string]: StyleObject | string | number
 }
 
 export type SerializedVariables<Vars extends DefaultVars = DefaultVars> = {
@@ -507,19 +509,16 @@ const serializeVariables = <Vars = DefaultVars>(
     const value = vars[key]
 
     if (typeof value === 'object') {
-      names = names || []
-      const result = serializeVariables(value, names.concat(cssKey))
+      const result = serializeVariables(
+        value,
+        (names = names || []).concat(cssKey)
+      )
       variables[key] = result.variables
       styles += result.styles
     } else {
-      let name = '--'
-
-      if (names !== void 0 && names.length > 0) {
-        name += names.join('-')
-      }
-
-      name += name === '--' ? cssKey : '-' + cssKey
-      variables[key] = `var(${name})`
+      let name =
+        names !== void 0 && names.length > 0 ? '--' + names.join('-') : '-'
+      variables[key] = `var(${(name += '-' + cssKey)})`
       styles += `${name}:${value};`
     }
   }
@@ -532,19 +531,15 @@ const mergeVariables = <Vars>(target: Vars, source: StoredVariables): Vars => {
 
   for (const key in source) {
     const value = source[key]
-
-    if (typeof value === 'object') {
-      next[key] = mergeVariables(next[key] || {}, value)
-    } else {
-      next[key] = value
-    }
+    next[key] =
+      typeof value === 'object' ? mergeVariables(next[key] || {}, value) : value
   }
 
   return next
 }
 
 const minifyRe = [
-  /\s{2,}|\n|\t/g,
+  /\s|\n|\t/g,
   /([:;,([{}>~/])\s+/g,
   /\s+([;,)\]{}>~/!])/g,
   /(\/\*)\s+/g,
@@ -554,28 +549,24 @@ const minifyRe = [
 export type StyleGetter<Vars extends DefaultVars = DefaultVars> = (
   variables: Vars
 ) => StyleObject | string
-
+const firstRe = '$1'
 const normalizeStyles_ = <Vars extends DefaultVars = DefaultVars>(
   styles: string | StyleObject | StyleGetter<Vars>,
   variables: any
-): string => {
-  styles =
-    typeof styles === 'function'
+): string =>
+  (
+    (typeof styles === 'function'
       ? normalizeStyles_<Vars>(styles(variables), variables)
       : typeof styles === 'object'
       ? styleObjectToString(styles)
-      : styles
-
-  return !styles
-    ? ''
-    : styles
-        .replace(minifyRe[0], ' ')
-        .replace(minifyRe[1], '$1')
-        .replace(minifyRe[2], '$1')
-        .replace(minifyRe[3], '$1')
-        .replace(minifyRe[4], '$1')
-        .trim()
-}
+      : styles) || ''
+  )
+    .trim()
+    .replace(minifyRe[0], ' ')
+    .replace(minifyRe[1], firstRe)
+    .replace(minifyRe[2], firstRe)
+    .replace(minifyRe[3], firstRe)
+    .replace(minifyRe[4], firstRe)
 
 export const normalizeStyles = memoize([Map, WeakMap], normalizeStyles_)
 
@@ -604,10 +595,10 @@ function normalizeStyleObject<
   let nextStyles = styleDefs.default
     ? normalizeStyles<Vars>(styleDefs.default, dash.variables)
     : ''
-
-  if (typeof styleName === 'string' && styleName !== 'default') {
+  const styleType = typeof styleName
+  if (styleType === 'string' && styleName !== 'default') {
     nextStyles += normalizeStyles<Vars>(styleDefs[styleName], dash.variables)
-  } else if (typeof styleName === 'object' && styleName !== null) {
+  } else if (styleType === 'object' && styleName !== null) {
     for (const key in styleName)
       if (styleName[key] && key !== 'default')
         nextStyles += normalizeStyles<Vars>(styleDefs[key], dash.variables)
@@ -626,24 +617,27 @@ const normalizeArgs = <
   styleDefs: StyleDefs<Names, Vars>,
   args: (string | Names | StyleObjectArgument<Names> | Falsy)[]
 ): string => {
+  let defs = args[0]
+
   if (args.length > 1) {
     let argDefs: StyleObjectArgument<Names> = {},
       i = 0
 
     for (; i < args.length; i++) {
-      const arg = args[i]
+      const arg = args[i],
+        argType = typeof arg
 
-      if (typeof arg === 'string') {
+      if (argType === 'string') {
         argDefs[arg as Names] = true
-      } else if (typeof arg === 'object') {
+      } else if (argType === 'object') {
         Object.assign(argDefs, arg)
       }
     }
 
-    return normalizeStyleObject<Names, Vars>(dash, styleDefs, argDefs)
+    defs = argDefs
   }
 
-  return normalizeStyleObject<Names, Vars>(dash, styleDefs, args[0])
+  return normalizeStyleObject<Names, Vars>(dash, styleDefs, defs)
 }
 
 const disallowedClassChars = /[^a-z0-9_-]/gi
@@ -768,14 +762,12 @@ const createStyles = <
       if (!normalizedStyles) return ''
       let name = hash(normalizedStyles)
 
-      // explicit here on purpose so it's not in every test
       if (process.env.NODE_ENV === 'development') {
         name = addLabels(name, args)
       }
 
       const className = `${key}-${name}`
       insert(`.${className}`, name, normalizedStyles, sheet)
-
       return className
     }
 
@@ -796,26 +788,22 @@ const createStyles = <
     const style = styles<'default'>({default: css})
     const callback: OneCallback = (createClassName): string =>
       createClassName || createClassName === void 0 ? style() : ''
-
     callback.toString = callback
-    callback.css = () => style.css('default')
-    callback.css.toString = callback.css
+    ;(callback.css = () => style.css('default')).toString = callback.css
 
     return callback
   }
 
   styles.variables = (vars, selector = ':root') => {
-    const serialized = serializeVariables<Vars>(vars)
-    const name = hash(serialized.styles)
-    dash.variables = mergeVariables<Vars>(dash.variables, serialized.variables)
-    variablesCache[name] = variablesCache[name] || {
+    const {styles, variables} = serializeVariables<Vars>(vars)
+    const name = hash(styles)
+    dash.variables = mergeVariables<Vars>(dash.variables, variables)
+    const variablesSheet = (variablesCache[name] = variablesCache[name] || {
       count: 0,
       sheet: styleSheet(sheet),
-    }
-
+    }).sheet
     variablesCache[name].count += 1
-    const variablesSheet = variablesCache[name].sheet
-    insert(selector, name, serialized.styles, variablesSheet)
+    insert(selector, name, styles, variablesSheet)
 
     return () => {
       if (variablesCache[name].count === 1) {
@@ -849,18 +837,12 @@ const createStyles = <
       ? interpolate(literals, placeholders)
       : (literals as string | StyleGetter<Vars> | StyleObject)
     const normalizedStyles = normalizeStyles<Vars>(styles, dash.variables)
-
-    if (!normalizedStyles) {
-      return noop
-    }
-
+    if (!normalizedStyles) return noop
     const name = hash(normalizedStyles)
-    globalCache[name] = globalCache[name] || {
+    const globalSheet = (globalCache[name] = globalCache[name] || {
       count: 0,
       sheet: styleSheet(sheet),
-    }
-    const globalSheet = globalCache[name].sheet
-
+    }).sheet
     globalCache[name].count += 1
     insert('', name, normalizedStyles, globalSheet)
 

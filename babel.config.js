@@ -1,5 +1,6 @@
 module.exports = (api) => {
   const module = api.env('module')
+  const esm = api.env('esm')
   const umd = api.env('umd')
 
   return {
@@ -8,7 +9,7 @@ module.exports = (api) => {
         '@lunde/es',
         {
           env: {
-            modules: module || umd ? false : 'commonjs',
+            modules: esm || module || umd ? false : 'commonjs',
             targets: module
               ? {
                   browsers: '> 2%',
@@ -17,6 +18,10 @@ module.exports = (api) => {
               ? {
                   browsers:
                     '> 0.5%, ie >= 10, safari >= 9, firefox >= 43, ios >= 8',
+                }
+              : esm
+              ? {
+                  node: '12',
                 }
               : {
                   node: '10',
@@ -27,5 +32,6 @@ module.exports = (api) => {
         },
       ],
     ],
+    plugins: ['annotate-pure-calls'],
   }
 }
