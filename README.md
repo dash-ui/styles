@@ -2,7 +2,7 @@
 <div align="center">
   <br/>
   <br/>
-  <img src='assets/logo.png'/>
+  <img src='https://github.com/dash-ui/styles/raw/master/assets/logo.png'/>
   <br/>
   <br/>
 </div>
