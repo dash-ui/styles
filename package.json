@@ -1,6 +1,6 @@
 {
   "name": "@dash-ui/styles",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "homepage": "https://github.com/dash-ui/styles#readme",
   "repository": "github:dash-ui/styles",
   "bugs": "https://github.com/dash-ui/styles/issues",
@@ -11,6 +11,7 @@
     "styles",
     "css-in-js",
     "css",
+    "css variables",
     "themes",
     "theming",
     "react",
