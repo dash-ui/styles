@@ -1,6 +1,6 @@
 {
   "name": "@dash-ui/styles",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "homepage": "https://github.com/dash-ui/styles#readme",
   "repository": "github:dash-ui/styles",
   "bugs": "https://github.com/dash-ui/styles/issues",
@@ -62,7 +62,7 @@
     "build-main": "npm run compile -- -d dist/main --env-name main && npm run compile-server -- -d server/dist/main --env-name main",
     "build-module": "npm run compile -- -d dist/module --env-name module && npm run compile-server -- -d server/dist/module --env-name module",
     "build-umd": "rollup -c",
-    "build-types": "rimraf src/index.d.ts && find server/src -name '*.d.ts' -exec rm {} \\; && tsc -p tsconfig.json -d --emitDeclarationOnly",
+    "build-types": "rimraf src/index.d.ts && rimraf server/src/index.d.ts && tsc -p tsconfig.json -d --emitDeclarationOnly",
     "compile": "babel src -x .ts --ignore \"**/*.d.ts\",\"**/*.test.ts\" --delete-dir-on-start",
     "compile-server": "babel server/src -x .ts --ignore \"**/*.d.ts\",\"**/*.test.ts\" --delete-dir-on-start",
     "check-types": "tsc --noEmit -p tsconfig.json",

@@ -154,7 +154,7 @@ export const createDash = <
         )
       : speedy
   let insert: DashCache<Vars, ThemeNames>['insert'],
-    insertCache = {},
+    insertCache: InsertCache = {},
     stylisCache: StylisCache = {}
 
   if (IS_BROWSER) {
@@ -320,7 +320,7 @@ export type DashCache<
     styles: string,
     sheet: DashStyleSheet
   ) => void
-  readonly insertCache: InsertCache
+  insertCache: InsertCache
   variables: Vars
   readonly variablesCache: GlobalCache
   themes: Themes<Vars, ThemeNames>
@@ -489,17 +489,17 @@ export type StyleObject = {
   [property: string]: StyleObject | string | number
 }
 
-export type SerializedVariables<Vars extends DefaultVars = DefaultVars> = {
-  readonly variables: Vars
+export type SerializedVariables = {
+  readonly variables: Record<
+    string,
+    Record<string, string | number> | string | number
+  >
   readonly styles: string
 }
 
-const serializeVariables = <Vars = DefaultVars>(
-  vars: string | string[] | number | number[] | Vars,
-  names?: string[]
-): SerializedVariables<Vars> => {
+function serializeVariables(vars: any, names?: string[]): SerializedVariables {
   const keys = Object.keys(vars)
-  const variables: Vars = {} as Vars
+  const variables: Record<string, any> = {}
   let styles = '',
     i = 0
 
@@ -526,8 +526,11 @@ const serializeVariables = <Vars = DefaultVars>(
   return {variables, styles}
 }
 
-const mergeVariables = <Vars>(target: Vars, source: StoredVariables): Vars => {
-  const next: Vars = Object.assign({}, target)
+const mergeVariables = <Vars extends DefaultVars = DefaultVars>(
+  target: Vars,
+  source: StoredVariables
+): Vars => {
+  const next: any = Object.assign({}, target)
 
   for (const key in source) {
     const value = source[key]
@@ -549,14 +552,16 @@ const minifyRe = [
 export type StyleGetter<Vars extends DefaultVars = DefaultVars> = (
   variables: Vars
 ) => StyleObject | string
+
 const firstRe = '$1'
+
 const compileStyles_ = <Vars extends DefaultVars = DefaultVars>(
-  styles: string | StyleObject | StyleGetter<Vars>,
-  variables: any
+  styles: any,
+  variables: Vars
 ): string =>
   (
     (typeof styles === 'function'
-      ? compileStyles_<Vars>(styles(variables), variables)
+      ? compileStyles_(styles(variables), variables)
       : typeof styles === 'object'
       ? styleObjectToString(styles)
       : styles) || ''
@@ -574,31 +579,18 @@ function compileStylesObject<
   Names extends string,
   Vars extends DefaultVars = DefaultVars
 >(
-  dash: DashCache,
-  styleDefs: StyleDefs<Names, Vars>,
-  styleName?: string | Names | StyleObjectArgument<Names> | Falsy
-): string
+  dash: DashCache<Vars>,
+  styleDefs: StyleObjectArgument<Names> | StyleDefs<Names, DefaultVars>,
+  styleName?: Names | StyleObjectArgument<Names> | Falsy
+): string {
+  let nextStyles =
+    'default' in styleDefs && styleDefs.default
+      ? compileStyles<Vars>(styleDefs.default, dash.variables)
+      : ''
 
-function compileStylesObject<
-  Names extends string,
-  Vars extends DefaultVars = DefaultVars
->(
-  dash: DashCache,
-  styleDefs: StyleObjectArgument<Names>,
-  styleName?: string | Names | StyleObjectArgument<Names> | Falsy
-): string
-
-function compileStylesObject<
-  Names extends string,
-  Vars extends DefaultVars = DefaultVars
->(dash, styleDefs, styleName) {
-  let nextStyles = styleDefs.default
-    ? compileStyles<Vars>(styleDefs.default, dash.variables)
-    : ''
-  const styleType = typeof styleName
-  if (styleType === 'string' && styleName !== 'default') {
+  if (typeof styleName === 'string' && styleName !== 'default') {
     nextStyles += compileStyles<Vars>(styleDefs[styleName], dash.variables)
-  } else if (styleType === 'object' && styleName !== null) {
+  } else if (typeof styleName === 'object' && styleName !== null) {
     for (const key in styleName)
       if (styleName[key] && key !== 'default')
         nextStyles += compileStyles<Vars>(styleDefs[key], dash.variables)
@@ -613,9 +605,9 @@ const normalizeArgs = <
   Names extends string,
   Vars extends DefaultVars = DefaultVars
 >(
-  dash: DashCache,
+  dash: DashCache<Vars>,
   styleDefs: StyleDefs<Names, Vars>,
-  args: (string | Names | StyleObjectArgument<Names> | Falsy)[]
+  args: (Names | StyleObjectArgument<Names> | Falsy)[]
 ): string => {
   let defs = args[0]
 
@@ -637,7 +629,7 @@ const normalizeArgs = <
     defs = argDefs
   }
 
-  return compileStylesObject<Names, Vars>(dash, styleDefs, defs)
+  return compileStylesObject<Names, Vars>(dash, styleDefs as any, defs)
 }
 
 const disallowedClassChars = /[^a-z0-9_-]/gi
@@ -795,7 +787,7 @@ const createStyles = <
   }
 
   styles.variables = (vars, selector = ':root') => {
-    const {styles, variables} = serializeVariables<Vars>(vars)
+    const {styles, variables} = serializeVariables(vars)
     const name = hash(styles)
     dash.variables = mergeVariables<Vars>(dash.variables, variables)
     const variablesSheet = (variablesCache[name] = variablesCache[name] || {

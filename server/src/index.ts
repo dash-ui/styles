@@ -1,7 +1,7 @@
 import defaultStyles from '@dash-ui/styles'
 
 function unique(...args: any[]): any[] {
-  const seen = {},
+  const seen: Record<string, any> = {},
     out: any[] = []
 
   for (let i = 0; i < args.length; i++) {
@@ -121,7 +121,7 @@ export const createStylesFromString = (
     `[='"\\s](${styles.dash.key}-[A-Za-z0-9_-]+)[\\s'">]`,
     'g'
   )
-  const seen = {}
+  const seen: Record<string, any> = {}
   let result: RegExpMatchArray | null
 
   while ((result = classRe.exec(string)) !== null) {
