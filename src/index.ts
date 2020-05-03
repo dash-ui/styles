@@ -550,13 +550,13 @@ export type StyleGetter<Vars extends DefaultVars = DefaultVars> = (
   variables: Vars
 ) => StyleObject | string
 const firstRe = '$1'
-const normalizeStyles_ = <Vars extends DefaultVars = DefaultVars>(
+const compileStyles_ = <Vars extends DefaultVars = DefaultVars>(
   styles: string | StyleObject | StyleGetter<Vars>,
   variables: any
 ): string =>
   (
     (typeof styles === 'function'
-      ? normalizeStyles_<Vars>(styles(variables), variables)
+      ? compileStyles_<Vars>(styles(variables), variables)
       : typeof styles === 'object'
       ? styleObjectToString(styles)
       : styles) || ''
@@ -568,9 +568,9 @@ const normalizeStyles_ = <Vars extends DefaultVars = DefaultVars>(
     .replace(minifyRe[3], firstRe)
     .replace(minifyRe[4], firstRe)
 
-const normalizeStyles = memoize([Map, WeakMap], normalizeStyles_)
+export const compileStyles = memoize([Map, WeakMap], compileStyles_)
 
-function normalizeStyleObject<
+function compileStylesObject<
   Names extends string,
   Vars extends DefaultVars = DefaultVars
 >(
@@ -579,7 +579,7 @@ function normalizeStyleObject<
   styleName?: string | Names | StyleObjectArgument<Names> | Falsy
 ): string
 
-function normalizeStyleObject<
+function compileStylesObject<
   Names extends string,
   Vars extends DefaultVars = DefaultVars
 >(
@@ -588,22 +588,22 @@ function normalizeStyleObject<
   styleName?: string | Names | StyleObjectArgument<Names> | Falsy
 ): string
 
-function normalizeStyleObject<
+function compileStylesObject<
   Names extends string,
   Vars extends DefaultVars = DefaultVars
 >(dash, styleDefs, styleName) {
   let nextStyles = styleDefs.default
-    ? normalizeStyles<Vars>(styleDefs.default, dash.variables)
+    ? compileStyles<Vars>(styleDefs.default, dash.variables)
     : ''
   const styleType = typeof styleName
   if (styleType === 'string' && styleName !== 'default') {
-    nextStyles += normalizeStyles<Vars>(styleDefs[styleName], dash.variables)
+    nextStyles += compileStyles<Vars>(styleDefs[styleName], dash.variables)
   } else if (styleType === 'object' && styleName !== null) {
     for (const key in styleName)
       if (styleName[key] && key !== 'default')
-        nextStyles += normalizeStyles<Vars>(styleDefs[key], dash.variables)
+        nextStyles += compileStyles<Vars>(styleDefs[key], dash.variables)
 
-    nextStyles = normalizeStyles<Vars>(nextStyles, dash.variables)
+    nextStyles = compileStyles<Vars>(nextStyles, dash.variables)
   }
 
   return nextStyles
@@ -637,7 +637,7 @@ const normalizeArgs = <
     defs = argDefs
   }
 
-  return normalizeStyleObject<Names, Vars>(dash, styleDefs, defs)
+  return compileStylesObject<Names, Vars>(dash, styleDefs, defs)
 }
 
 const disallowedClassChars = /[^a-z0-9_-]/gi
@@ -836,7 +836,7 @@ const createStyles = <
     const styles = Array.isArray(literals)
       ? interpolate(literals, placeholders)
       : (literals as string | StyleGetter<Vars> | StyleObject)
-    const normalizedStyles = normalizeStyles<Vars>(styles, dash.variables)
+    const normalizedStyles = compileStyles<Vars>(styles, dash.variables)
     if (!normalizedStyles) return noop
     const name = hash(normalizedStyles)
     const globalSheet = (globalCache[name] = globalCache[name] || {
