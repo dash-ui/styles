@@ -1,6 +1,6 @@
 {
-  "name": "@-ui/styles",
-  "version": "1.2.4",
+  "name": "@dash-ui/styles",
+  "version": "0.1.0",
   "homepage": "https://github.com/dash-ui/styles#readme",
   "repository": "github:dash-ui/styles",
   "bugs": "https://github.com/dash-ui/styles/issues",
@@ -18,18 +18,23 @@
     "vue",
     "stylesheet",
     "stylesheets",
-    "ssr"
+    "ssr",
+    "dash ui",
+    "dash",
+    "css-in-react",
+    "css-in-vue",
+    "css-in-svelte"
   ],
   "main": "dist/main/index.js",
   "module": "dist/module/index.mjs",
-  "umd:main": "dist/umd/-ui.min.js",
-  "unpkg": "dist/umd/-ui.min.js",
+  "umd:main": "dist/umd/dash-ui.min.js",
+  "unpkg": "dist/umd/dash-ui.min.js",
   "source": "src/index.ts",
   "types": "src/index.d.ts",
   "exports": {
     ".": {
       "browser": "./dist/module/index.js",
-      "umd": "./dist/umd/-ui.min.js",
+      "umd": "./dist/umd/dash-ui.min.js",
       "import": "./dist/esm/index.mjs",
       "require": "./dist/main/index.js"
     },

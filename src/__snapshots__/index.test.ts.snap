@@ -2,27 +2,27 @@
 
 exports[`Exceptions throws for unterminated comments 1`] = `"Your styles have an unterminated comment (\\"/*\\" without corresponding \\"*/\\")."`;
 
-exports[`styles() adds dev labels: -flex 1`] = `"-ui-1ut9bc3-flex"`;
+exports[`styles() adds dev labels: -flex 1`] = `"ui-1ut9bc3-flex"`;
 
-exports[`styles() adds dev labels: -flex-block 1`] = `"-ui-14t38od-flex-block"`;
+exports[`styles() adds dev labels: -flex-block 1`] = `"ui-14t38od-flex-block"`;
 
-exports[`styles() adds dev labels: -flex-inline 1`] = `"-ui-broszf-flex-inline"`;
+exports[`styles() adds dev labels: -flex-inline 1`] = `"ui-broszf-flex-inline"`;
 
 exports[`styles() adds styles by order of definition when called: flex, block, inline 1`] = `
 <style
-  data-dash="-ui"
+  data-dash="ui"
 >
   
-  .-ui-qaw0al{display:flex;display:block;display:inline;}
+  .ui-qaw0al{display:flex;display:block;display:inline;}
 </style>
 `;
 
 exports[`styles() adds styles by order of definition when called: flex, block, inline 2`] = `
 <style
-  data-dash="-ui"
+  data-dash="ui"
 >
   
-  .-ui-qaw0al{display:flex;display:block;display:inline;}
+  .ui-qaw0al{display:flex;display:block;display:inline;}
 </style>
 `;
 
@@ -31,48 +31,48 @@ exports[`styles() allows comments 1`] = `"/*this is a flex style*/display:flex;"
 exports[`styles() allows default styles 1`] = `
 NodeList [
   <style
-    data-dash="-ui"
+    data-dash="ui"
   >
     
-    .-ui-1ut9bc3{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;}
+    .ui-1ut9bc3{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;}
   </style>,
 ]
 `;
 
 exports[`styles() allows full capabilities w/ style objects 1`] = `
 <style
-  data-dash="-ui"
+  data-dash="ui"
 >
   
-  .-ui-7a9ovz{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;}
+  .ui-7a9ovz{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;}
 </style>
 `;
 
 exports[`styles() allows full capabilities w/ style objects 2`] = `
 <style
-  data-dash="-ui"
+  data-dash="ui"
 >
   
-  .-ui-7a9ovz.foo{display:block;}
+  .ui-7a9ovz.foo{display:block;}
 </style>
 `;
 
 exports[`styles() allows unitless object values: 200x200 1`] = `
 <style
-  data-dash="-ui"
+  data-dash="ui"
 >
   
-  .-ui-haiabg{width:200px;height:200px;}
+  .ui-haiabg{width:200px;height:200px;}
 </style>
 `;
 
 exports[`styles() has a default style that is always applied first 1`] = `
 NodeList [
   <style
-    data-dash="-ui"
+    data-dash="ui"
   >
     
-    .-ui-14t38od{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;display:block;}
+    .ui-14t38od{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;display:block;}
   </style>,
 ]
 `;
@@ -80,10 +80,10 @@ NodeList [
 exports[`styles() only applies default style once 1`] = `
 NodeList [
   <style
-    data-dash="-ui"
+    data-dash="ui"
   >
     
-    .-ui-1ut9bc3{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;}
+    .ui-1ut9bc3{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;}
   </style>,
 ]
 `;
@@ -100,16 +100,16 @@ Object {
 }
 `;
 
-exports[`styles() passes variables to style callbacks 2`] = `"-ui-dark-theme"`;
+exports[`styles() passes variables to style callbacks 2`] = `"ui-dark-theme"`;
 
-exports[`styles() passes variables to style callbacks 3`] = `"-ui-light-theme"`;
+exports[`styles() passes variables to style callbacks 3`] = `"ui-light-theme"`;
 
 exports[`styles() replaces disallowed characters in dev labels: 400x400 1`] = `
 <style
-  data-dash="-ui"
+  data-dash="ui"
 >
   
-  .-ui-49mne8-box-big{width:400px;height:400px;}
+  .ui-49mne8-box-big{width:400px;height:400px;}
 </style>
 `;
 
@@ -119,30 +119,30 @@ exports[`styles() returns css styles 2`] = `"display:flex;display:block;display:
 
 exports[`styles() returns css styles 3`] = `"display:flex;display:inline;"`;
 
-exports[`styles() returns single class name 1`] = `"-ui-1ut9bc3"`;
+exports[`styles() returns single class name 1`] = `"ui-1ut9bc3"`;
 
-exports[`styles() returns single class name 2`] = `"-ui-qaw0al"`;
+exports[`styles() returns single class name 2`] = `"ui-qaw0al"`;
 
-exports[`styles() returns single class name 3`] = `"-ui-broszf"`;
+exports[`styles() returns single class name 3`] = `"ui-broszf"`;
 
 exports[`styles() shouldn't do anything with unprocessable object values 1`] = `"display:flex;"`;
 
 exports[`styles.create() adds nonce to style tags: DOM 1`] = `
 <style
-  data-dash="-ui"
+  data-dash="ui"
   nonce="EDNnf03nceIOfn39fn3e9h3sdfa"
 >
   
-  .-ui-1ut9bc3{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;}
+  .ui-1ut9bc3{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;}
 </style>
 `;
 
 exports[`styles.create() changes container to document.body 1`] = `
 <style
-  data-dash="-ui"
+  data-dash="ui"
 >
   
-  .-ui-1ut9bc3{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;}
+  .ui-1ut9bc3{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;}
 </style>
 `;
 
@@ -155,27 +155,27 @@ exports[`styles.create() changes key to "css": DOM 1`] = `
 </style>
 `;
 
-exports[`styles.create() configures hash algorithm 1`] = `"-ui-e038ab58"`;
+exports[`styles.create() configures hash algorithm 1`] = `"ui-e038ab58"`;
 
 exports[`styles.create() should initialize w/ variables 1`] = `"width:var(--box-small);height:var(--box-small);"`;
 
 exports[`styles.create() turns off vendor prefixing: DOM 1`] = `
 <style
-  data-dash="-ui"
+  data-dash="ui"
 >
   
-  .-ui-1ut9bc3{display:flex;}
+  .ui-1ut9bc3{display:flex;}
 </style>
 `;
 
 exports[`styles.create() turns on speedy 1`] = `
 Object {
-  ".-ui-1abu38z": Object {
+  ".ui-1abu38z": Object {
     "0": "display",
     "display": "block",
     "length": 1,
   },
-  ".-ui-1ut9bc3": Object {
+  ".ui-1ut9bc3": Object {
     "0": "display",
     "display": "flex",
     "length": 1,
@@ -185,7 +185,7 @@ Object {
 
 exports[`styles.global() allows @font-face 1`] = `
 <style
-  data-dash="-ui"
+  data-dash="ui"
 >
   
   @font-face{font-family:"Open Sans";src:url("/fonts/OpenSans-Regular-webfont.woff2") format("woff2"),url("/fonts/OpenSans-Regular-webfont.woff") format("woff");}
@@ -194,7 +194,7 @@ exports[`styles.global() allows @font-face 1`] = `
 
 exports[`styles.global() allows @import 1`] = `
 <style
-  data-dash="-ui"
+  data-dash="ui"
 >
   
   @import url("navigation.css");
@@ -203,7 +203,7 @@ exports[`styles.global() allows @import 1`] = `
 
 exports[`styles.global() allows style object 1`] = `
 <style
-  data-dash="-ui"
+  data-dash="ui"
 >
   
   :root{--foo:bar;}
@@ -212,7 +212,7 @@ exports[`styles.global() allows style object 1`] = `
 
 exports[`styles.global() ejects global styles when callback is called 1`] = `
 <style
-  data-dash="-ui"
+  data-dash="ui"
 >
   
   html{font-size:100%;}
@@ -221,7 +221,7 @@ exports[`styles.global() ejects global styles when callback is called 1`] = `
 
 exports[`styles.global() injects global style object 1`] = `
 <style
-  data-dash="-ui"
+  data-dash="ui"
 >
   
   html{color:blue;}
@@ -230,7 +230,7 @@ exports[`styles.global() injects global style object 1`] = `
 
 exports[`styles.global() injects global style object 2`] = `
 <style
-  data-dash="-ui"
+  data-dash="ui"
 >
   
   html .foo{color:green;}
@@ -250,7 +250,7 @@ Object {
 
 exports[`styles.global() should inject global styles once: :root 1`] = `
 <style
-  data-dash="-ui"
+  data-dash="ui"
 >
   
   :root{--spacing-0:0;}
@@ -259,7 +259,7 @@ exports[`styles.global() should inject global styles once: :root 1`] = `
 
 exports[`styles.global() should inject global styles once: :root 2`] = `
 <style
-  data-dash="-ui"
+  data-dash="ui"
 >
   
   :root{--spacing-1:0.5rem;}
@@ -268,7 +268,7 @@ exports[`styles.global() should inject global styles once: :root 2`] = `
 
 exports[`styles.global() should inject global styles once: html 1`] = `
 <style
-  data-dash="-ui"
+  data-dash="ui"
 >
   
   html{font-size:100%;}
@@ -277,7 +277,7 @@ exports[`styles.global() should inject global styles once: html 1`] = `
 
 exports[`styles.global() still exists in caches when a global is used more than once but ejected once 1`] = `
 <style
-  data-dash="-ui"
+  data-dash="ui"
 >
   
   html{font-size:100%;}
@@ -286,41 +286,41 @@ exports[`styles.global() still exists in caches when a global is used more than 
 
 exports[`styles.one() can be called as a function w/ function value 1`] = `"color:var(--color-blue);"`;
 
-exports[`styles.one() can be called as a function w/ string value 1`] = `"-ui-1ut9bc3"`;
+exports[`styles.one() can be called as a function w/ string value 1`] = `"ui-1ut9bc3"`;
 
 exports[`styles.one() creates style w/ object 1`] = `
 <style
-  data-dash="-ui"
+  data-dash="ui"
 >
   
-  .-ui-1006qeb{display:block;}
+  .ui-1006qeb{display:block;}
 </style>
 `;
 
 exports[`styles.one() creates style w/ object 2`] = `
 <style
-  data-dash="-ui"
+  data-dash="ui"
 >
   
-  .-ui-1006qeb span{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;}
+  .ui-1006qeb span{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;}
 </style>
 `;
 
 exports[`styles.one() creates style w/ template literal 1`] = `
 <style
-  data-dash="-ui"
+  data-dash="ui"
 >
   
-  .-ui-1ut9bc3{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;}
+  .ui-1ut9bc3{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;}
 </style>
 `;
 
 exports[`styles.one() returns a class name when toString() is called 1`] = `
 <style
-  data-dash="-ui"
+  data-dash="ui"
 >
   
-  .-ui-1ut9bc3{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;}
+  .ui-1ut9bc3{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;}
 </style>
 `;
 
@@ -330,51 +330,51 @@ exports[`styles.one() returns css when css.toString() is called 1`] = `"display:
 
 exports[`styles.one() won't create style def if falsy 1`] = `
 <style
-  data-dash="-ui"
+  data-dash="ui"
 >
   
-  .-ui-1ut9bc3{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;}
+  .ui-1ut9bc3{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;}
 </style>
 `;
 
 exports[`styles.themes() creates variables: dark 1`] = `
 <style
-  data-dash="-ui"
+  data-dash="ui"
 >
   
-  .-ui-dark-theme{--colors-bg:#000;--colors-text:#fff;}
+  .ui-dark-theme{--colors-bg:#000;--colors-text:#fff;}
 </style>
 `;
 
 exports[`styles.themes() creates variables: light 1`] = `
 <style
-  data-dash="-ui"
+  data-dash="ui"
 >
   
-  .-ui-dark-theme{--colors-bg:#000;--colors-text:#fff;}
+  .ui-dark-theme{--colors-bg:#000;--colors-text:#fff;}
 </style>
 `;
 
 exports[`styles.themes() removes variables when eject is called 1`] = `
 NodeList [
   <style
-    data-dash="-ui"
+    data-dash="ui"
   >
     
-    .-ui-dark-theme{--colors-bg:#000;--colors-text:#fff;}
+    .ui-dark-theme{--colors-bg:#000;--colors-text:#fff;}
   </style>,
   <style
-    data-dash="-ui"
+    data-dash="ui"
   >
     
-    .-ui-light-theme{--colors-bg:#fff;--colors-text:#000;}
+    .ui-light-theme{--colors-bg:#fff;--colors-text:#000;}
   </style>,
 ]
 `;
 
 exports[`styles.variables() creates variables w/ scales: :root 1`] = `
 <style
-  data-dash="-ui"
+  data-dash="ui"
 >
   
   :root{--spacing-0:1rem;--spacing-1:2rem;--spacing-2:4rem;}
@@ -383,7 +383,7 @@ exports[`styles.variables() creates variables w/ scales: :root 1`] = `
 
 exports[`styles.variables() creates variables: :root 1`] = `
 <style
-  data-dash="-ui"
+  data-dash="ui"
 >
   
   :root{--columns:12;--colors-blue:#09a;--colors-red:#c12;--colors-light-red:#c1a;--spacing-xs:1rem;--system-p-md:1rem;--system-p-xs:0.25rem;--system-p-sm:0.5rem;--system-p-lg:2rem;--system-p-xl:4rem;}
@@ -393,7 +393,7 @@ exports[`styles.variables() creates variables: :root 1`] = `
 exports[`styles.variables() removes variables when eject is called 1`] = `
 NodeList [
   <style
-    data-dash="-ui"
+    data-dash="ui"
   >
     
     :root{--colors-blue:#09a;--colors-red:#c12;--colors-light-red:#c1a;--spacing-xs:1rem;--system-p-md:1rem;--system-p-xs:0.25rem;--system-p-sm:0.5rem;--system-p-lg:2rem;--system-p-xl:4rem;}
@@ -403,7 +403,7 @@ NodeList [
 
 exports[`styles.variables() still exists in caches when used more than once 1`] = `
 <style
-  data-dash="-ui"
+  data-dash="ui"
 >
   
   :root{--colors-blue:#09a;--colors-red:#c12;--colors-light-red:#c1a;--spacing-xs:1rem;--system-p-md:1rem;--system-p-xs:0.25rem;--system-p-sm:0.5rem;--system-p-lg:2rem;--system-p-xl:4rem;}

@@ -2,47 +2,47 @@
 
 exports[`Configure changes key to "css" 1`] = `"<style data-dash=\\"1ut9bc3\\" data-cache=\\"css\\">.css-1ut9bc3{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;}</style>"`;
 
-exports[`Configure has customized vendor prefixing 1`] = `"<style data-dash=\\"1vlpa1m\\" data-cache=\\"-ui\\">.-ui-1vlpa1m{display:flex;-webkit-transform:translateX(30px);-ms-transform:translateX(30px);transform:translateX(30px);}</style>"`;
+exports[`Configure has customized vendor prefixing 1`] = `"<style data-dash=\\"1vlpa1m\\" data-cache=\\"ui\\">.ui-1vlpa1m{display:flex;-webkit-transform:translateX(30px);-ms-transform:translateX(30px);transform:translateX(30px);}</style>"`;
 
-exports[`Configure removes vendor prefixing 1`] = `"<style data-dash=\\"1ut9bc3\\" data-cache=\\"-ui\\">.-ui-1ut9bc3{display:flex;}</style>"`;
+exports[`Configure removes vendor prefixing 1`] = `"<style data-dash=\\"1ut9bc3\\" data-cache=\\"ui\\">.ui-1ut9bc3{display:flex;}</style>"`;
 
-exports[`createStyleTagFromCache adds nonce to style tags 1`] = `"<style data-dash=\\"1ut9bc3\\" data-cache=\\"-ui\\" nonce=\\"EDNnf03nceIOfn39fn3e9h3sdfa\\">.-ui-1ut9bc3{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;}</style>"`;
+exports[`createStyleTagFromCache adds nonce to style tags 1`] = `"<style data-dash=\\"1ut9bc3\\" data-cache=\\"ui\\" nonce=\\"EDNnf03nceIOfn39fn3e9h3sdfa\\">.ui-1ut9bc3{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;}</style>"`;
 
-exports[`createStyleTagFromCache caches styles 1`] = `"<style data-dash=\\"1ut9bc3 1i986zm\\" data-cache=\\"-ui\\">.-ui-1ut9bc3{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;}.-ui-1i986zm{border-radius:1000px;background:blue;color:white;}</style>"`;
+exports[`createStyleTagFromCache caches styles 1`] = `"<style data-dash=\\"1ut9bc3 1i986zm\\" data-cache=\\"ui\\">.ui-1ut9bc3{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;}.ui-1i986zm{border-radius:1000px;background:blue;color:white;}</style>"`;
 
-exports[`createStyleTagFromCache extracts global styles 1`] = `"<style data-dash=\\"1r8lpmu\\" data-cache=\\"-ui\\">:root{--hello:\\"world\\";}</style>"`;
+exports[`createStyleTagFromCache extracts global styles 1`] = `"<style data-dash=\\"1r8lpmu\\" data-cache=\\"ui\\">:root{--hello:\\"world\\";}</style>"`;
 
-exports[`createStyleTagFromCache extracts global variables 1`] = `"<style data-dash=\\"15ti8sm\\" data-cache=\\"-ui\\">:root{--colors-blue:#09a;}</style>"`;
+exports[`createStyleTagFromCache extracts global variables 1`] = `"<style data-dash=\\"15ti8sm\\" data-cache=\\"ui\\">:root{--colors-blue:#09a;}</style>"`;
 
-exports[`createStyleTagFromCache extracts theme variables 1`] = `"<style data-dash=\\"dty81u f5pfmo\\" data-cache=\\"-ui\\">.-ui-dark-theme{--colors-primary:#000;}.-ui-light-theme{--colors-primary:#fff;}</style>"`;
+exports[`createStyleTagFromCache extracts theme variables 1`] = `"<style data-dash=\\"dty81u f5pfmo\\" data-cache=\\"ui\\">.ui-dark-theme{--colors-primary:#000;}.ui-light-theme{--colors-primary:#fff;}</style>"`;
 
-exports[`createStyleTagFromCache extracts theme variables 2`] = `"<style data-dash=\\"dty81u f5pfmo\\" data-cache=\\"-ui\\">.-ui-dark-theme{--colors-primary:#000;}.-ui-light-theme{--colors-primary:#fff;}</style>"`;
+exports[`createStyleTagFromCache extracts theme variables 2`] = `"<style data-dash=\\"dty81u f5pfmo\\" data-cache=\\"ui\\">.ui-dark-theme{--colors-primary:#000;}.ui-light-theme{--colors-primary:#fff;}</style>"`;
 
-exports[`createStyleTagFromCache extracts theme variables 3`] = `"<style data-dash=\\"dty81u f5pfmo\\" data-cache=\\"-ui\\">.-ui-dark-theme{--colors-primary:#000;}.-ui-light-theme{--colors-primary:#fff;}</style>"`;
+exports[`createStyleTagFromCache extracts theme variables 3`] = `"<style data-dash=\\"dty81u f5pfmo\\" data-cache=\\"ui\\">.ui-dark-theme{--colors-primary:#000;}.ui-light-theme{--colors-primary:#fff;}</style>"`;
 
-exports[`createStyleTagFromString adds nonce to style tags 1`] = `"<style data-dash=\\"1ut9bc3\\" data-cache=\\"-ui\\" nonce=\\"EDNnf03nceIOfn39fn3e9h3sdfa\\">.-ui-1ut9bc3{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;}</style>"`;
+exports[`createStyleTagFromString adds nonce to style tags 1`] = `"<style data-dash=\\"1ut9bc3\\" data-cache=\\"ui\\" nonce=\\"EDNnf03nceIOfn39fn3e9h3sdfa\\">.ui-1ut9bc3{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;}</style>"`;
 
-exports[`createStyleTagFromString caches styles 1`] = `"<style data-dash=\\"1ut9bc3 1i986zm\\" data-cache=\\"-ui\\">.-ui-1ut9bc3{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;}.-ui-1i986zm{border-radius:1000px;background:blue;color:white;}</style>"`;
+exports[`createStyleTagFromString caches styles 1`] = `"<style data-dash=\\"1ut9bc3 1i986zm\\" data-cache=\\"ui\\">.ui-1ut9bc3{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;}.ui-1i986zm{border-radius:1000px;background:blue;color:white;}</style>"`;
 
-exports[`createStyleTagFromString extracts global styles 1`] = `"<style data-dash=\\"1r8lpmu\\" data-cache=\\"-ui\\">:root{--hello:\\"world\\";}</style>"`;
+exports[`createStyleTagFromString extracts global styles 1`] = `"<style data-dash=\\"1r8lpmu\\" data-cache=\\"ui\\">:root{--hello:\\"world\\";}</style>"`;
 
-exports[`createStyleTagFromString extracts global variables 1`] = `"<style data-dash=\\"15ti8sm\\" data-cache=\\"-ui\\">:root{--colors-blue:#09a;}</style>"`;
+exports[`createStyleTagFromString extracts global variables 1`] = `"<style data-dash=\\"15ti8sm\\" data-cache=\\"ui\\">:root{--colors-blue:#09a;}</style>"`;
 
 exports[`writeStylesFromCache writes 1`] = `
 Object {
-  "filename": "-ui-8xbyu.css",
-  "name": "-ui-8xbyu.css",
+  "filename": "ui-9drnu4.css",
+  "name": "ui-9drnu4.css",
   "path": "./",
-  "styles": ".-ui-1ut9bc3{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;}.-ui-1i986zm{border-radius:1000px;background:blue;color:white;}",
+  "styles": ".ui-1ut9bc3{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;}.ui-1i986zm{border-radius:1000px;background:blue;color:white;}",
 }
 `;
 
 exports[`writeStylesFromCache writes custom hash 1`] = `
 Object {
-  "filename": "-ui-f8bCooDawg.css",
-  "name": "-ui-f8bCooDawg.css",
+  "filename": "ui-f8bCooDawg.css",
+  "name": "ui-f8bCooDawg.css",
   "path": "./",
-  "styles": ".-ui-f8bCooDawg{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;}",
+  "styles": ".ui-f8bCooDawg{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;}",
 }
 `;
 
@@ -60,25 +60,25 @@ Object {
   "filename": "foo.css",
   "name": "foo.css",
   "path": "./",
-  "styles": ".-ui-1ut9bc3{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;}.-ui-1i986zm{border-radius:1000px;background:blue;color:white;}",
+  "styles": ".ui-1ut9bc3{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;}.ui-1i986zm{border-radius:1000px;background:blue;color:white;}",
 }
 `;
 
 exports[`writeStylesFromString writes 1`] = `
 Object {
-  "filename": "-ui-8xbyu.css",
-  "name": "-ui-8xbyu.css",
+  "filename": "ui-9drnu4.css",
+  "name": "ui-9drnu4.css",
   "path": "./",
-  "styles": ".-ui-1ut9bc3{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;}.-ui-1i986zm{border-radius:1000px;background:blue;color:white;}",
+  "styles": ".ui-1ut9bc3{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;}.ui-1i986zm{border-radius:1000px;background:blue;color:white;}",
 }
 `;
 
 exports[`writeStylesFromString writes custom hash 1`] = `
 Object {
-  "filename": "-ui-f8bCooDawg.css",
-  "name": "-ui-f8bCooDawg.css",
+  "filename": "ui-f8bCooDawg.css",
+  "name": "ui-f8bCooDawg.css",
   "path": "./",
-  "styles": ".-ui-f8bCooDawg{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;}",
+  "styles": ".ui-f8bCooDawg{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;}",
 }
 `;
 
@@ -96,6 +96,6 @@ Object {
   "filename": "foo.css",
   "name": "foo.css",
   "path": "./",
-  "styles": ".-ui-1ut9bc3{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;}.-ui-1i986zm{border-radius:1000px;background:blue;color:white;}",
+  "styles": ".ui-1ut9bc3{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;}.ui-1i986zm{border-radius:1000px;background:blue;color:white;}",
 }
 `;

@@ -19,12 +19,8 @@ module.exports = (api) => {
                   browsers:
                     '> 0.5%, ie >= 10, safari >= 9, firefox >= 43, ios >= 8',
                 }
-              : esm
-              ? {
-                  node: '12',
-                }
               : {
-                  node: '10',
+                  node: esm ? '12' : '10',
                 },
           },
           devExpression: false,

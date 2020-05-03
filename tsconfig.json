@@ -15,8 +15,8 @@
     "noEmitOnError": true,
     "baseUrl": ".",
     "paths": {
-      "@-ui/styles": ["."],
-      "@-ui/styles/server": ["./server"]
+      "@dash-ui/styles": ["."],
+      "@dash-ui/styles/server": ["./server"]
     }
   }
 }

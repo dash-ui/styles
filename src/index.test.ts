@@ -137,7 +137,7 @@ describe('styles.create()', () => {
     })
 
     expect(style.css('primary')).toEqual('color:var(--color-primary);')
-    expect(myStyles.theme('light')).toEqual('-ui-light-theme')
+    expect(myStyles.theme('light')).toEqual('ui-light-theme')
   })
 })
 
@@ -388,7 +388,7 @@ describe('styles()', () => {
   it('rehydrates', () => {
     const tag = document.createElement('style')
     tag.setAttribute(`data-dash`, '1ut9bc3')
-    tag.setAttribute('data-cache', '-ui')
+    tag.setAttribute('data-cache', 'ui')
     tag.appendChild(
       document.createTextNode(
         `.-ui-_1ut9bc3{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;}`
@@ -408,11 +408,11 @@ describe('styles()', () => {
   it('rehydrates into custom container', () => {
     const tag = document.createElement('style')
     tag.setAttribute(`data-dash`, '1ut9bc3')
-    tag.setAttribute('data-cache', '-ui')
+    tag.setAttribute('data-cache', 'ui')
 
     tag.appendChild(
       document.createTextNode(
-        `.-ui-_1ut9bc3{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;}`
+        `.ui-_1ut9bc3{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;}`
       )
     )
     document.head.appendChild(tag)

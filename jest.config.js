@@ -8,7 +8,7 @@ module.exports = {
     path.join(__dirname, 'test'),
   ],
   moduleNameMapper: {
-    '@-ui/styles': '<rootDir>/src/index.ts',
+    '@dash-ui/styles': '<rootDir>/src/index.ts',
   },
   testMatch: ['**/src/**/?(*.)test.ts'],
   setupFilesAfterEnv: [require.resolve('./test/setup.js')],

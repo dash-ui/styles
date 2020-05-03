@@ -1,4 +1,4 @@
-import defaultStyles from '@-ui/styles'
+import defaultStyles from '@dash-ui/styles'
 
 function unique(...args: any[]): any[] {
   const seen = {},

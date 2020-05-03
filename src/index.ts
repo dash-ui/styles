@@ -135,7 +135,7 @@ export const createDash = <
   // Based on
   // https://github.com/emotion-js/emotion/blob/master/packages/cache/src/index.js
   let {
-    key = '-ui',
+    key = 'ui',
     nonce,
     speedy,
     hash: dashHash = hash,
@@ -347,7 +347,7 @@ export interface DashStyleSheetOptions {
   readonly speedy: boolean
 }
 
-export const styleSheet = (options: DashStyleSheetOptions): DashStyleSheet => {
+const styleSheet = (options: DashStyleSheetOptions): DashStyleSheet => {
   // Based off emotion and glamor's StyleSheet
   const {key, container, nonce, speedy} = options
   const tags: HTMLStyleElement[] = []
@@ -568,7 +568,7 @@ const normalizeStyles_ = <Vars extends DefaultVars = DefaultVars>(
     .replace(minifyRe[3], firstRe)
     .replace(minifyRe[4], firstRe)
 
-export const normalizeStyles = memoize([Map, WeakMap], normalizeStyles_)
+const normalizeStyles = memoize([Map, WeakMap], normalizeStyles_)
 
 function normalizeStyleObject<
   Names extends string,
@@ -866,8 +866,9 @@ const createStyles = <
 
 //
 // Creates default dash styles function
-export const styles: Styles<
+const styles: Styles<
   DefaultVars,
   Extract<keyof DefaultThemes, string>
 > = createStyles(createDash())
+
 export default styles
