@@ -3,8 +3,8 @@
 // API design
 import Stylis from '@emotion/stylis'
 import type {Plugable, Plugin, Context} from '@emotion/stylis'
-import unitless from '@emotion/unitless'
 import memoize from 'trie-memoize'
+import unitless from '@dash-ui/unitless'
 
 //
 // Constants

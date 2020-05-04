@@ -924,15 +924,15 @@
     exec-sh "^0.3.2"
     minimist "^1.2.0"
 
+"@dash-ui/unitless@^1.0.0":
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/@dash-ui/unitless/-/unitless-1.0.0.tgz#2c6a0e83d342dbe4b51464a67dbae2168ad00de9"
+  integrity sha512-lIJYRRzCCxVcL3hnNgpfScJhRq+hXXVlIweVUrZNGNqJSCAP0+asLLLoEQNYOlsFtwqwS9v59qHh60Vlb50/eA==
+
 "@emotion/stylis@^0.8.5":
   version "0.8.5"
   resolved "https://registry.yarnpkg.com/@emotion/stylis/-/stylis-0.8.5.tgz#deacb389bd6ee77d1e7fcaccce9e16c5c7e78e04"
   integrity sha512-h6KtPihKFn3T9fuIrwvXXUOwlx3rfUvfZIcP5a6rh8Y7zjE3O06hT5Ss4S/YI1AYhuZ1kjaE/5EaOOI2NqSylQ==
-
-"@emotion/unitless@^0.7.5":
-  version "0.7.5"
-  resolved "https://registry.yarnpkg.com/@emotion/unitless/-/unitless-0.7.5.tgz#77211291c1900a700b8a78cfafda3160d76949ed"
-  integrity sha512-OWORNpfjMsSSUBVrRBVGECkhWcULOAJz9ZW8uK9qgxD+87M7jHRcvh/A96XXNhXTLmKcoYSQtBEX7lHMO7YRwg==
 
 "@essentials/benchmark@^1.0.5":
   version "1.0.5"
