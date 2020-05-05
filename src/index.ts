@@ -55,6 +55,7 @@ const createStyles = <
     // they'll be eventually anyway.
     const defs: StyleValues<N, V> = {}
     let defKey: keyof typeof defs
+    /* istanbul ignore next */
     for (defKey in definitions)
       defs[defKey] =
         typeof defs[defKey] !== 'function'
@@ -302,7 +303,7 @@ export const createDash = <
     insert = (selector, name, styles) => {
       if (insertCache[name]) return
       insertCache[name] = 1
-      if (stylisCache[name] === void 0) {
+      if (!stylisCache[name]) {
         stylisCache[name] = stylis(selector, styles)
       }
     }
