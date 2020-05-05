@@ -92,9 +92,7 @@ exports[`styles() passes variables to style callbacks 1`] = `
 Object {
   "colors": Object {
     "bg": "var(--colors-bg)",
-    "blue": "var(--colors-blue)",
     "lightSpecific": "var(--colors-light-specific)",
-    "red": "var(--colors-red)",
     "text": "var(--colors-text)",
   },
 }

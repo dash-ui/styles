@@ -757,9 +757,9 @@ const stringifyStyleObject = (object: StyleObject) => {
     else {
       const isCustom = key.charCodeAt(1) === 45
       string += `${isCustom ? key : cssCase(key)}:${
-        unitless[key] !== 1 && !isCustom && toV === 'number'
-          ? value + 'px'
-          : value
+        toV !== 'number' || unitless[key] === 1 || value === 0 || isCustom
+          ? value
+          : value + 'px'
       };`
     }
   }
