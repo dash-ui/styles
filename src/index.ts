@@ -745,7 +745,7 @@ const createStyles = <
       }
 
       const className = `${key}-${name}`
-      insert(`.${className}`, name, normalizedStyles, sheet)
+      insert('.' + className, name, normalizedStyles, sheet)
       return className
     }
 
