@@ -744,7 +744,7 @@ const createStyles = <
         name = addLabels(name, args)
       }
 
-      const className = `${key}-${name}`
+      const className = key + '-' + name
       insert('.' + className, name, normalizedStyles, sheet)
       return className
     }
