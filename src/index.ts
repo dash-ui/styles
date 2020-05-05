@@ -53,7 +53,7 @@ const createStyles = <
   ): Style<N, V> => {
     // Compiles style objects down to strings right away since that's what
     // they'll be eventually anyway.
-    const defs: StyleValues<N, V> = {}
+    const defs = {} as StyleValues<N, V>
     let defKey: keyof typeof defs
     /* istanbul ignore next */
     for (defKey in definitions)
@@ -174,9 +174,9 @@ export interface Styles<
   T extends string = ThemeNames
 > {
   <N extends string>(defs: StyleValues<N, V>): Style<N, V>
-  create: <T extends DashVariables = V, U extends string = ThemeNames>(
-    options?: DashOptions<T, U>
-  ) => Styles<T, U>
+  create: <V2 extends DashVariables = V, T2 extends string = ThemeNames>(
+    options?: DashOptions<V2, T2>
+  ) => Styles<V2, T2>
   one: (
     literals: TemplateStringsArray | string | StyleObject | StyleCallback<V>,
     ...placeholders: string[]
@@ -206,7 +206,7 @@ export type StyleValues<
   N extends string,
   V extends DashVariables = DashVariables
 > = {
-  [Name in N | 'default']?: StyleValue
+  [Name in N | 'default']?: StyleValue<V>
 }
 
 export type StyleValue<V extends DashVariables = DashVariables> =
@@ -716,12 +716,14 @@ const minifyRe = [
 ]
 
 export const compileStyles = <V extends DashVariables = DashVariables>(
-  styles: any,
+  styles: StyleValue<V> | Falsy,
   variables: V
 ): string => {
   const value = typeof styles === 'function' ? styles(variables) : styles
   return (
-    (typeof value === 'object' ? stringifyStyleObject(value) : value) || ''
+    (typeof value === 'object' && value !== null
+      ? stringifyStyleObject(value)
+      : value) || ''
   )
     .trim()
     .replace(minifyRe[0], ' ')

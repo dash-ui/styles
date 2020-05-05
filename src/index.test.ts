@@ -272,8 +272,8 @@ describe('styles()', () => {
     const myStyles = styles.create({
       variables: {
         colors: {
-          blue: '#09a',
-          red: '#c12',
+          bg: '#09a',
+          text: '#c12',
         },
       },
       themes: {
