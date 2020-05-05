@@ -17,7 +17,7 @@ const config = (filename, env, plugins = []) => ({
     name: 'Dash',
   },
   plugins: [
-    resolve(),
+    resolve({mainFields: ['source', 'browser', 'module', 'main']}),
     commonjs(),
     babel({extensions: ['.ts']}),
     replace({
