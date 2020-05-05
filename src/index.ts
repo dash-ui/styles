@@ -26,15 +26,11 @@ export const hash = (string: string): string => {
   return (out >>> 0).toString(36)
 }
 
-const unsafeClassName = /^[0-9]/
-const safeHash = (
-  key: string,
-  hashFn: typeof hash
-): ((string: string) => string) =>
+const safeHash = (key: string, hashFn: typeof hash) =>
   memoize([{}], (string: string) => {
     const out = hashFn(string)
     // allows class names to start with numbers
-    return !key && unsafeClassName.test(out) ? `_${out}` : out
+    return !key && !isNaN(out[0] as any) ? '_' + out : out
   })
 
 //
@@ -444,50 +440,9 @@ const styleSheet = (options: DashStyleSheetOptions): DashStyleSheet => {
 
 //
 // Style serialization
-const isProcessableValue = (value?: boolean | null | string | number) =>
-  value !== null && typeof value !== 'boolean'
-
 const cssCaseRe = /[A-Z]|^ms/g
-
 const cssCase = (string: string) =>
   string.replace(cssCaseRe, '-$&').toLowerCase()
-
-const interpolate = (
-  literals: TemplateStringsArray | string[],
-  placeholders: string[]
-) =>
-  literals.reduce((curr, next, i) => curr + next + (placeholders[i] || ''), '')
-
-const isCustomProperty = (property: string) => property.charCodeAt(1) === 45
-
-const styleName = (styleName: string): string =>
-  isCustomProperty(styleName) ? styleName : cssCase(styleName)
-
-const styleValue = (key: string, value: any): string =>
-  unitless[key] !== 1 &&
-  !isCustomProperty(key) &&
-  typeof value === 'number' &&
-  value !== 0
-    ? `${value}px`
-    : value
-
-const styleObjectToString = (object: StyleObject) => {
-  let string = ''
-
-  for (const key in object) {
-    const value = object[key]
-    if (typeof value === 'object' && value !== null)
-      string += `${key}{${styleObjectToString(value)}}`
-    else if (isProcessableValue(value))
-      string += `${styleName(key)}:${styleValue(key, value)};`
-  }
-
-  return string
-}
-
-export type StyleObject = {
-  [property: string]: StyleObject | string | number
-}
 
 export type SerializedVariables = {
   readonly variables: Record<
@@ -541,67 +496,68 @@ const mergeVariables = <Vars extends DefaultVars = DefaultVars>(
   return next
 }
 
+export const stringifyStyles = (object: StyleObject) => {
+  let string = ''
+
+  for (const key in object) {
+    const value = object[key]
+    const toV = typeof value
+    if (value === null || toV === 'boolean') continue
+    if (toV === 'object')
+      string += `${key}{${stringifyStyles(value as StyleObject)}}`
+    else {
+      const isCustom = key.charCodeAt(1) === 45
+      string += `${isCustom ? key : cssCase(key)}:${
+        unitless[key] !== 1 && !isCustom && toV === 'number'
+          ? value + 'px'
+          : value
+      };`
+    }
+  }
+
+  return string
+}
+
+export type StyleObject = {
+  [property: string]: StyleObject | string | number
+}
+
 const minifyRe = [
-  /\s|\n|\t/g,
-  /([:;,([{}>~/])\s+/g,
-  /\s+([;,)\]{}>~/!])/g,
-  /(\/\*)\s+/g,
-  /\s+(\*\/)/g,
+  /[\s\n\t]{2,}/g,
+  /([:;,([{}>~/]|\/\*)\s+/g,
+  /\s+([;,)\]{}>~/!]|\*\/)/g,
 ]
 
 export type StyleGetter<Vars extends DefaultVars = DefaultVars> = (
   variables: Vars
 ) => StyleObject | string
 
-const firstRe = '$1'
-
-const compileStyles_ = <Vars extends DefaultVars = DefaultVars>(
+const compileStyles = <Vars extends DefaultVars = DefaultVars>(
   styles: any,
   variables: Vars
 ): string =>
   (
     (typeof styles === 'function'
-      ? compileStyles_(styles(variables), variables)
+      ? compileStyles(styles(variables), variables)
       : typeof styles === 'object'
-      ? styleObjectToString(styles)
+      ? stringifyStyles(styles)
       : styles) || ''
   )
     .trim()
     .replace(minifyRe[0], ' ')
-    .replace(minifyRe[1], firstRe)
-    .replace(minifyRe[2], firstRe)
-    .replace(minifyRe[3], firstRe)
-    .replace(minifyRe[4], firstRe)
+    .replace(minifyRe[1], '$1')
+    .replace(minifyRe[2], '$1')
 
-export const compileStyles = memoize([Map, WeakMap], compileStyles_)
+const compileStylesCallbacks = memoize([WeakMap, WeakMap], compileStyles)
+const compileStylesMemo = <Vars extends DefaultVars = DefaultVars>(
+  styles: any,
+  variables: Vars
+) =>
+  typeof styles === 'function'
+    ? compileStylesCallbacks<Vars>(styles, variables)
+    : styles || ''
 
-function compileStylesObject<
-  Names extends string,
-  Vars extends DefaultVars = DefaultVars
->(
-  dash: DashCache<Vars>,
-  styleDefs: StyleObjectArgument<Names> | StyleDefs<Names, DefaultVars>,
-  styleName?: Names | StyleObjectArgument<Names> | Falsy
-): string {
-  let nextStyles =
-    'default' in styleDefs && styleDefs.default
-      ? compileStyles<Vars>(styleDefs.default, dash.variables)
-      : ''
-
-  if (typeof styleName === 'string' && styleName !== 'default') {
-    nextStyles += compileStyles<Vars>(styleDefs[styleName], dash.variables)
-  } else if (typeof styleName === 'object' && styleName !== null) {
-    for (const key in styleName)
-      if (styleName[key] && key !== 'default')
-        nextStyles += compileStyles<Vars>(styleDefs[key], dash.variables)
-
-    nextStyles = compileStyles<Vars>(nextStyles, dash.variables)
-  }
-
-  return nextStyles
-}
-
-const normalizeArgs = <
+const compileArguments = <
   Names extends string,
   Vars extends DefaultVars = DefaultVars
 >(
@@ -629,10 +585,20 @@ const normalizeArgs = <
     defs = argDefs
   }
 
-  return compileStylesObject<Names, Vars>(dash, styleDefs as any, defs)
-}
+  let nextStyles = styleDefs.default
+    ? compileStylesMemo<Vars>(styleDefs.default, dash.variables)
+    : ''
 
-const disallowedClassChars = /[^a-z0-9_-]/gi
+  if (typeof defs === 'string' && defs !== 'default') {
+    nextStyles += compileStylesMemo<Vars>(styleDefs[defs], dash.variables)
+  } else if (typeof defs === 'object' && defs !== null) {
+    for (const key in defs)
+      if (defs[key] && key !== 'default')
+        nextStyles += compileStylesMemo<Vars>(styleDefs[key], dash.variables)
+  }
+
+  return nextStyles
+}
 
 export interface CSSFunction<Names extends string> {
   (...names: (Names | StyleObjectArgument<Names> | Falsy)[]): string
@@ -701,6 +667,17 @@ export type OneCallback = {
   css: OneCallbackCss
 }
 
+const compileLiterals = <Vars extends DefaultVars = DefaultVars>(
+  literals: TemplateStringsArray | string | StyleObject | StyleGetter<Vars>,
+  placeholders: string[]
+) =>
+  Array.isArray(literals)
+    ? literals.reduce(
+        (curr, next, i) => curr + next + (placeholders[i] || ''),
+        ''
+      )
+    : (literals as string | StyleGetter<Vars> | StyleObject)
+
 //
 // Where the magic happens
 const createStyles = <
@@ -740,17 +717,26 @@ const createStyles = <
         }
       }
 
-      return name.replace(disallowedClassChars, '-')
+      return name.replace(/[^\w-]/g, '-')
     }
   }
 
   const styles: Styles<Vars, ThemeNames> = <Names extends string>(
-    defs: StyleDefs<Names, Vars>
+    definitions: StyleDefs<Names, Vars>
   ): Style<Names, Vars> => {
+    // Compiles style objects down to strings right away since that's what
+    // they'll be eventually anyway.
+    const defs: StyleDefs<Names, Vars> = {}
+    let defKey: keyof typeof defs
+    for (defKey in definitions)
+      defs[defKey] =
+        typeof defs[defKey] !== 'function'
+          ? compileStyles(definitions[defKey], dash.variables)
+          : definitions[defKey]
     //
     // style('text', 'space', {})
     const style: Style<Names, Vars> = (...args) => {
-      const normalizedStyles = normalizeArgs<Names, Vars>(dash, defs, args)
+      const normalizedStyles = compileArguments<Names, Vars>(dash, defs, args)
       if (!normalizedStyles) return ''
       let name = hash(normalizedStyles)
 
@@ -764,7 +750,7 @@ const createStyles = <
     }
 
     style.styles = defs
-    style.css = (...names) => normalizeArgs<Names, Vars>(dash, defs, names)
+    style.css = (...names) => compileArguments<Names, Vars>(dash, defs, names)
 
     return style
   }
@@ -774,10 +760,9 @@ const createStyles = <
   styles.create = (options) => createStyles(createDash(options))
 
   styles.one = (literals, ...placeholders): OneCallback => {
-    const css = Array.isArray(literals)
-      ? interpolate(literals, placeholders)
-      : (literals as string | StyleGetter<Vars> | StyleObject)
-    const style = styles<'default'>({default: css})
+    const style = styles<'default'>({
+      default: compileLiterals<Vars>(literals, placeholders),
+    })
     const callback: OneCallback = (createClassName): string =>
       createClassName || createClassName === void 0 ? style() : ''
     callback.toString = callback
@@ -825,10 +810,10 @@ const createStyles = <
   styles.theme = (theme) => `${key}-${theme}-theme`
 
   styles.global = (literals, ...placeholders) => {
-    const styles = Array.isArray(literals)
-      ? interpolate(literals, placeholders)
-      : (literals as string | StyleGetter<Vars> | StyleObject)
-    const normalizedStyles = compileStyles<Vars>(styles, dash.variables)
+    const normalizedStyles = compileStyles<Vars>(
+      compileLiterals<Vars>(literals, placeholders),
+      dash.variables
+    )
     if (!normalizedStyles) return noop
     const name = hash(normalizedStyles)
     const globalSheet = (globalCache[name] = globalCache[name] || {

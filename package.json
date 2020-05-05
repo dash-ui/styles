@@ -1,6 +1,6 @@
 {
   "name": "@dash-ui/styles",
-  "version": "0.1.5",
+  "version": "0.2.0",
   "homepage": "https://github.com/dash-ui/styles#readme",
   "repository": "github:dash-ui/styles",
   "bugs": "https://github.com/dash-ui/styles/issues",
@@ -56,7 +56,7 @@
   ],
   "sideEffects": false,
   "scripts": {
-    "bench": "npm run build && babel-node ./benchmarks -x .ts,.js,.json",
+    "bench": "npm run build-module && babel-node ./benchmarks -x .ts,.js,.json",
     "build": "npm run build-esm && npm run build-main && npm run build-module && npm run build-umd && npm run build-types",
     "build-esm": "npm run compile -- -d dist/esm --env-name esm --out-file-extension .mjs && npm run compile-server -- -d server/dist/esm --env-name esm --out-file-extension .mjs",
     "build-main": "npm run compile -- -d dist/main --env-name main && npm run compile-server -- -d server/dist/main --env-name main",
