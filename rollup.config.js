@@ -6,6 +6,8 @@ import {terser} from 'rollup-plugin-terser'
 import pkg from './package.json'
 
 process.env.BABEL_ENV = 'umd'
+global.document = {}
+
 const config = (filename, env, plugins = []) => ({
   input: 'src/index.ts',
   output: {
