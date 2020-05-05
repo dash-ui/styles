@@ -2,9 +2,8 @@
 // team and to Sebastian McKenzie at Facebook for inspiring the
 // API design
 import Stylis from '@emotion/stylis'
-import type {Plugable, Plugin, Context} from '@emotion/stylis'
-import memoize from 'trie-memoize'
 import unitless from '@dash-ui/unitless'
+import type {Plugable, Plugin, Context} from '@emotion/stylis'
 
 //
 // Constants
@@ -12,7 +11,19 @@ const IS_BROWSER = typeof document !== 'undefined'
 export type Falsy = false | 0 | null | undefined
 
 //
-// Hashing (fnv1a)
+// Utils
+const weakMemo = <A extends object, T = any>(fn: (arg: A) => T) => {
+  const cache = new WeakMap()
+  return (arg: A) => {
+    let cached = cache.get(arg)
+    if (cached) return cached
+    cached = fn(arg)
+    cache.set(arg, cached)
+    return cached
+  }
+}
+
+// fnv1a hash
 export const hash = (string: string): string => {
   let out = 2166136261, // 32-bit offset basis
     i = 0,
@@ -26,12 +37,18 @@ export const hash = (string: string): string => {
   return (out >>> 0).toString(36)
 }
 
-const safeHash = (key: string, hashFn: typeof hash) =>
-  memoize([{}], (string: string) => {
-    const out = hashFn(string)
-    // allows class names to start with numbers
-    return !key && !isNaN(out[0] as any) ? '_' + out : out
-  })
+const defaultHashCache: Record<string, string> = {}
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const fnCache = weakMemo((fn: typeof hash): Record<string, string> => ({}))
+const safeHash = (key: string, hashFn: typeof hash) => (string: string) => {
+  const hashCache = hashFn === hash ? defaultHashCache : fnCache(hashFn)
+  let value: string | undefined = hashCache[string]
+  if (value) return value
+  value = hashFn(string)
+  // allows class names to start with numbers
+  return (hashCache[string] =
+    !key && !isNaN(value[0] as any) ? '_' + value : value)
+}
 
 //
 // Stylis plugins
@@ -105,10 +122,10 @@ const ruleSheet: Plugin = (
 const getServerStylisCache = IS_BROWSER
   ? null
   : // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    memoize([{}, WeakMap], (key: string, plugins: Plugable[]) => {
-      const getCache = memoize([WeakMap], (
+    weakMemo((plugins: Plugable[]) => {
+      const getCache = weakMemo((
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        prefix: boolean | ((key: string, value: any, context: any) => boolean)
+        prefix: (key: string, value: any, context: any) => boolean
       ) => ({}))
       const prefixTrueCache = {}
       const prefixFalseCache = {}
@@ -183,10 +200,7 @@ export const createDash = <
   } else {
     // server side
     if (stylisPlugins || prefix !== void 0) stylis.use(stylisPlugins)
-    stylisCache = (getServerStylisCache as any)(
-      key,
-      stylisPlugins || []
-    )(prefix)
+    stylisCache = (getServerStylisCache as any)(stylisPlugins || [])(prefix)
 
     insert = (selector, name, styles) => {
       if (insertCache[name]) return
@@ -548,14 +562,19 @@ export const compileStyles = <Vars extends DefaultVars = DefaultVars>(
     .replace(minifyRe[1], '$1')
     .replace(minifyRe[2], '$1')
 
-const compileStylesCallbacks = memoize([WeakMap, WeakMap], compileStyles)
-const compileStylesMemo = <Vars extends DefaultVars = DefaultVars>(
-  styles: any,
+const compileStylesMemo = <
+  Names extends string,
+  Vars extends DefaultVars = DefaultVars
+>(
+  styleDefs: StyleDefs<Names, Vars>,
+  key: Names | 'default',
   variables: Vars
-) =>
-  typeof styles === 'function'
-    ? compileStylesCallbacks<Vars>(styles, variables)
-    : styles || ''
+): string => {
+  const styles = styleDefs[key]
+  return typeof styles === 'function'
+    ? (styleDefs[key] = compileStyles<Vars>(styles, variables))
+    : (styles as string | Falsy) || ''
+}
 
 const compileArguments = <
   Names extends string,
@@ -586,15 +605,23 @@ const compileArguments = <
   }
 
   let nextStyles = styleDefs.default
-    ? compileStylesMemo<Vars>(styleDefs.default, dash.variables)
+    ? compileStylesMemo<Names, Vars>(styleDefs, 'default', dash.variables)
     : ''
 
   if (typeof defs === 'string' && defs !== 'default') {
-    nextStyles += compileStylesMemo<Vars>(styleDefs[defs], dash.variables)
+    nextStyles += compileStylesMemo<Names, Vars>(
+      styleDefs,
+      defs,
+      dash.variables
+    )
   } else if (typeof defs === 'object' && defs !== null) {
     for (const key in defs)
       if (defs[key] && key !== 'default')
-        nextStyles += compileStylesMemo<Vars>(styleDefs[key], dash.variables)
+        nextStyles += compileStylesMemo<Names, Vars>(
+          styleDefs,
+          key,
+          dash.variables
+        )
   }
 
   return nextStyles
@@ -773,6 +800,7 @@ const createStyles = <
 
   styles.variables = (vars, selector = ':root') => {
     const {styles, variables} = serializeVariables(vars)
+    if (!styles) return noop
     const name = hash(styles)
     dash.variables = mergeVariables<Vars>(dash.variables, variables)
     const variablesSheet = (variablesCache[name] = variablesCache[name] || {
@@ -834,10 +862,9 @@ const createStyles = <
     }
   }
 
-  if (Object.values(dash.variables).length) styles.variables(dash.variables)
-  if (Object.values(themes).length) styles.themes(themes)
+  styles.variables(dash.variables)
+  styles.themes(themes)
   styles.dash = dash
-
   return styles
 }
 

@@ -924,10 +924,10 @@
     exec-sh "^0.3.2"
     minimist "^1.2.0"
 
-"@dash-ui/unitless@^1.0.0":
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/@dash-ui/unitless/-/unitless-1.0.0.tgz#2c6a0e83d342dbe4b51464a67dbae2168ad00de9"
-  integrity sha512-lIJYRRzCCxVcL3hnNgpfScJhRq+hXXVlIweVUrZNGNqJSCAP0+asLLLoEQNYOlsFtwqwS9v59qHh60Vlb50/eA==
+"@dash-ui/unitless@^1.0.1":
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/@dash-ui/unitless/-/unitless-1.0.1.tgz#3ea70c21895c804e1bcd247e65f08fcdba8368b1"
+  integrity sha512-VJcxxBJffcEQUVr5tAsMS2SorVCcoFMkzo4uZrHMjUVlLwwBZuZuKYL4djbVyqUctL6lg6rQSf2d647EeuJNWw==
 
 "@emotion/stylis@^0.8.5":
   version "0.8.5"
@@ -5667,11 +5667,6 @@ tr46@^1.0.1:
   integrity sha1-qLE/1r/SSJUZZ0zN5VujaTtwbQk=
   dependencies:
     punycode "^2.1.0"
-
-trie-memoize@^1.1.4:
-  version "1.1.4"
-  resolved "https://registry.yarnpkg.com/trie-memoize/-/trie-memoize-1.1.4.tgz#aea92c6741215825db17f5e7979a7cf33df532f6"
-  integrity sha512-UzfqhBxTOpNhRl/0HWVvajT2HqYUvU/KhoNRhgvVWW9LkLXIan5txd9O2rirAxghm+bY5PLz7lkP3cqFdraehQ==
 
 tslib@^1.8.1, tslib@^1.9.0:
   version "1.11.1"
