@@ -496,7 +496,7 @@ const mergeVariables = <Vars extends DefaultVars = DefaultVars>(
   return next
 }
 
-export const stringifyStyles = (object: StyleObject) => {
+const stringifyStyleObject = (object: StyleObject) => {
   let string = ''
 
   for (const key in object) {
@@ -504,7 +504,7 @@ export const stringifyStyles = (object: StyleObject) => {
     const toV = typeof value
     if (value === null || toV === 'boolean') continue
     if (toV === 'object')
-      string += `${key}{${stringifyStyles(value as StyleObject)}}`
+      string += `${key}{${stringifyStyleObject(value as StyleObject)}}`
     else {
       const isCustom = key.charCodeAt(1) === 45
       string += `${isCustom ? key : cssCase(key)}:${
@@ -532,7 +532,7 @@ export type StyleGetter<Vars extends DefaultVars = DefaultVars> = (
   variables: Vars
 ) => StyleObject | string
 
-const compileStyles = <Vars extends DefaultVars = DefaultVars>(
+export const compileStyles = <Vars extends DefaultVars = DefaultVars>(
   styles: any,
   variables: Vars
 ): string =>
@@ -540,7 +540,7 @@ const compileStyles = <Vars extends DefaultVars = DefaultVars>(
     (typeof styles === 'function'
       ? compileStyles(styles(variables), variables)
       : typeof styles === 'object'
-      ? stringifyStyles(styles)
+      ? stringifyStyleObject(styles)
       : styles) || ''
   )
     .trim()
