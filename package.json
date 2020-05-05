@@ -1,6 +1,6 @@
 {
   "name": "@dash-ui/styles",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "homepage": "https://github.com/dash-ui/styles#readme",
   "repository": "github:dash-ui/styles",
   "bugs": "https://github.com/dash-ui/styles/issues",
@@ -37,12 +37,18 @@
       "browser": "./dist/module/index.js",
       "umd": "./dist/umd/dash-ui.min.js",
       "import": "./dist/esm/index.mjs",
-      "require": "./dist/main/index.js"
+      "require": "./dist/main/index.js",
+      "default": "./dist/main/index.js",
+      "source": "./src/index.ts",
+      "types": "./dist/src/index.d.ts"
     },
     "./server": {
       "browser": "./server/dist/module/index.js",
       "import": "./server/dist/esm/index.mjs",
-      "require": "./server/dist/main/index.js"
+      "require": "./server/dist/main/index.js",
+      "default": "./server/dist/main/index.js",
+      "source": "./server/src/index.ts",
+      "types": "./server/src/index.d.ts"
     },
     "./package.json": "./package.json",
     "./": "./"
