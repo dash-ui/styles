@@ -94,15 +94,31 @@ const createStyles = <
   styles.create = (options) => createStyles(createDash(options))
 
   styles.one = (literals, ...placeholders) => {
-    const style = styles<'default'>({
-      default: compileLiterals<V>(literals, placeholders),
-    })
-    const callback: StylesOne = (createClassName): string =>
-      createClassName || createClassName === void 0 ? style() : ''
-    callback.toString = callback
-    ;(callback.css = () => style.css('default')).toString = callback.css
+    let styleValue =
+      typeof literals === 'function'
+        ? literals
+        : compileStyles<V>(
+            compileLiterals<V>(literals, placeholders),
+            dash.variables
+          )
 
-    return callback
+    const createStyle = () =>
+      (styleValue =
+        typeof styleValue === 'string'
+          ? styleValue
+          : compileStyles<V>(styleValue, dash.variables))
+    let className: string
+
+    const callback: StylesOne = (createClassName): string => {
+      const style = createStyle()
+      if (!style || (!createClassName && createClassName !== void 0)) return ''
+      className = className || key + '-' + hash(style)
+      insert('.' + className, className, style, sheet)
+      return className
+    }
+
+    ;(callback.css = createStyle).toString = callback.css
+    return (callback.toString = callback)
   }
 
   styles.variables = (vars, selector = ':root') => {
@@ -773,7 +789,7 @@ const compileLiterals = <V extends DashVariables = DashVariables>(
         (curr, next, i) => curr + next + (placeholders[i] || ''),
         ''
       )
-    : (literals as string | StyleCallback<V> | StyleObject)
+    : literals
 
 //
 // Variable and theme serialization
