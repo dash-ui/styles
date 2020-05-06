@@ -1,8 +1,8 @@
 import defaultStyles from '@dash-ui/styles'
 
 function unique(...args: any[]): any[] {
-  const seen: Record<string, any> = {},
-    out: any[] = []
+  const seen: Record<string, any> = {}
+  const out: any[] = []
 
   for (let i = 0; i < args.length; i++) {
     for (let j = 0; j < args[i].length; j++) {
@@ -30,18 +30,18 @@ export const createStylesFromCache = (
   options: CreateStylesOptions = {}
 ): StylesResult => {
   // createStylesFromCache() is unsafe in asynchronous render environments
-  const {clearCache = true} = options,
-    {dash} = styles,
-    styleCache = dash.stylisCache
-
+  const {clearCache = true} = options
+  const {dash} = styles
+  const styleCache = dash.stylisCache
   let css = ''
   const names = unique(
     Object.keys(styles.dash.variablesCache),
     Object.keys(dash.globalCache),
     Object.keys(dash.insertCache)
   )
-
-  for (let i = 0; i < names.length; i++) css += styleCache[names[i]]
+  let i = 0
+  let len = names.length
+  for (; i < len; i++) css += styleCache[names[i]]
   if (clearCache) dash.clear()
   return {names, css}
 }
@@ -56,13 +56,9 @@ export const createStyleTagFromCache = (
     ? ` nonce="${styles.dash.sheet.nonce}"`
     : ''
 
-  return (
-    `<style data-dash="${names.join(' ')}" data-cache="${
-      styles.dash.key
-    }"${nonceString}>` +
-    css +
-    `</style>`
-  )
+  return `<style data-dash="${names.join(' ')}" data-cache="${
+    styles.dash.key
+  }"${nonceString}>${css}</style>`
 }
 
 export interface WriteStylesOptions {
@@ -106,17 +102,16 @@ export const createStylesFromString = (
   const {clearCache = true} = options
   const {dash} = styles
   const styleCache = dash.stylisCache
-
   let css = ''
   const names = unique(
     Object.keys(styles.dash.variablesCache),
     Object.keys(styles.dash.globalCache)
   )
   let i = 0
-
-  for (; i < names.length; i++) css += styleCache[names[i]]
-
+  let len = names.length
+  for (; i < len; i++) css += styleCache[names[i]]
   const replacer = `${styles.dash.key}-`
+  const replacerLen = replacer.length
   const classRe = new RegExp(
     `[='"\\s](${styles.dash.key}-[A-Za-z0-9_-]+)[\\s'">]`,
     'g'
@@ -125,7 +120,7 @@ export const createStylesFromString = (
   let result: RegExpMatchArray | null
 
   while ((result = classRe.exec(string)) !== null) {
-    const name = result[1].slice(replacer.length)
+    const name = result[1].slice(replacerLen)
     const style = styleCache[name]
     if (style && seen[name] === void 0) {
       css += style
@@ -148,13 +143,9 @@ export const createStyleTagFromString = (
     ? ` nonce="${styles.dash.sheet.nonce}"`
     : ''
 
-  return (
-    `<style data-dash="${names.join(' ')}" data-cache="${
-      styles.dash.key
-    }"${nonceString}>` +
-    css +
-    `</style>`
-  )
+  return `<style data-dash="${names.join(' ')}" data-cache="${
+    styles.dash.key
+  }"${nonceString}>${css}</style>`
 }
 
 export const writeStylesFromString = async (

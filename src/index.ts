@@ -4,6 +4,7 @@
 import Stylis from '@emotion/stylis'
 import unitless from '@dash-ui/unitless'
 import type {Plugable, Plugin, Context} from '@emotion/stylis'
+const IS_BROWSER = typeof document !== 'undefined'
 
 //
 // Where the magic happens
@@ -11,7 +12,7 @@ const createStyles = <
   V extends DashVariables = DashVariables,
   T extends string = ThemeNames
 >(
-  dash: DashCache<V, T>
+  dash: Dash<V, T>
 ): Styles<V, T> => {
   const {
     key,
@@ -30,41 +31,45 @@ const createStyles = <
   if (process.env.NODE_ENV === 'development') {
     addLabels = (name, args) => {
       // add helpful labels to the name in development
-      for (let i = 0; i < args.length; i++) {
-        const arg = args[i]
+      return args
+        .reduce((curr, arg) => {
+          if (typeof arg === 'string') {
+            curr += `-${arg}`
+          } else if (typeof arg === 'object') {
+            const keys = Object.keys(arg).filter((k) => arg[k])
 
-        if (typeof arg === 'string') {
-          name += `-${arg}`
-        } else if (typeof arg === 'object') {
-          const keys = Object.keys(arg).filter((k) => arg[k])
-
-          if (keys.length) {
-            name += `-${keys.join('-')}`
+            if (keys.length) {
+              curr += `-${keys.join('-')}`
+            }
           }
-        }
-      }
 
-      return name.replace(/[^\w-]/g, '-')
+          return curr
+        }, name)
+        .replace(/[^\w-]/g, '-')
     }
   }
 
   const styles: Styles<V, T> = <N extends string>(
-    definitions: StyleValues<N, V>
+    styleMap: StyleMap<N, V>
   ): Style<N, V> => {
     // Compiles style objects down to strings right away since that's what
     // they'll be eventually anyway.
-    const defs = {} as StyleValues<N, V>
-    let defKey: keyof typeof defs
+    const compiledStyleMap: StyleMap<N, V> = {}
+    let styleName: keyof typeof styleMap
     /* istanbul ignore next */
-    for (defKey in definitions)
-      defs[defKey] =
-        typeof defs[defKey] !== 'function'
-          ? compileStyles(definitions[defKey], dash.variables)
-          : definitions[defKey]
-    //
+    for (styleName in styleMap)
+      compiledStyleMap[styleName] =
+        typeof compiledStyleMap[styleName] !== 'function'
+          ? compileStyles(styleMap[styleName], dash.variables)
+          : styleMap[styleName]
+
     // style('text', 'space', {})
     const style: Style<N, V> = (...args) => {
-      const normalizedStyles = compileArguments<N, V>(dash, defs, args)
+      const normalizedStyles = compileArguments<N, V>(
+        dash,
+        compiledStyleMap,
+        args
+      )
       if (!normalizedStyles) return ''
       let name = hash(normalizedStyles)
 
@@ -77,8 +82,9 @@ const createStyles = <
       return className
     }
 
-    style.styles = defs
-    style.css = (...names) => compileArguments<N, V>(dash, defs, names)
+    style.styles = compiledStyleMap
+    style.css = (...names) =>
+      compileArguments<N, V>(dash, compiledStyleMap, names)
 
     return style
   }
@@ -87,11 +93,11 @@ const createStyles = <
   // Methods
   styles.create = (options) => createStyles(createDash(options))
 
-  styles.one = (literals, ...placeholders): OneCallback => {
+  styles.one = (literals, ...placeholders) => {
     const style = styles<'default'>({
       default: compileLiterals<V>(literals, placeholders),
     })
-    const callback: OneCallback = (createClassName): string =>
+    const callback: StylesOne = (createClassName): string =>
       createClassName || createClassName === void 0 ? style() : ''
     callback.toString = callback
     ;(callback.css = () => style.css('default')).toString = callback.css
@@ -173,50 +179,54 @@ export interface Styles<
   V extends DashVariables = DashVariables,
   T extends string = ThemeNames
 > {
-  <N extends string>(defs: StyleValues<N, V>): Style<N, V>
-  create: <V2 extends DashVariables = V, T2 extends string = ThemeNames>(
-    options?: DashOptions<V2, T2>
-  ) => Styles<V2, T2>
+  <N extends string>(styleMap: StyleMap<N, V>): Style<N, V>
+  create: <W extends DashVariables = V, U extends string = ThemeNames>(
+    options?: CreateDashOptions<W, U>
+  ) => Styles<W, U>
   one: (
     literals: TemplateStringsArray | string | StyleObject | StyleCallback<V>,
     ...placeholders: string[]
-  ) => OneCallback
+  ) => StylesOne
   variables: (vars: V, selector?: string) => () => void
-  themes: (themes: DashCache<V, T>['themes']) => () => void
+  themes: (themes: Dash<V, T>['themes']) => () => void
   theme: (name: T) => string
   global: (
     literals: TemplateStringsArray | string | StyleCallback<V> | StyleObject,
     ...placeholders: string[]
   ) => () => void
-  dash: DashCache<V, T>
+  dash: Dash<V, T>
 }
 
-export interface Style<
-  N extends string = string,
-  V extends DashVariables = DashVariables
-> {
-  (...args: (N | StyleObjectArgument<N> | Falsy)[]): string
-  css: {
-    (...names: (N | StyleObjectArgument<N> | Falsy)[]): string
-  }
-  styles: StyleValues<N, V>
-}
-
-export type StyleValues<
+export type StyleMap<
   N extends string,
   V extends DashVariables = DashVariables
 > = {
   [Name in N | 'default']?: StyleValue<V>
 }
 
+export interface Style<
+  N extends string = string,
+  V extends DashVariables = DashVariables
+> {
+  (...args: StyleArguments<N>): string
+  css: {
+    (...names: StyleArguments<N>): string
+  }
+  styles: StyleMap<N, V>
+}
+
+export type StyleArguments<N extends string = string> = (
+  | N
+  | {
+      [Name in N]?: boolean | null | undefined | string | number
+    }
+  | Falsy
+)[]
+
 export type StyleValue<V extends DashVariables = DashVariables> =
   | string
   | StyleCallback<V>
   | StyleObject
-
-export type StyleObjectArgument<N extends string> = {
-  [Name in N]?: boolean | null | undefined | string | number
-}
 
 export type StyleObject = {
   [property: string]: StyleObject | string | number
@@ -226,7 +236,7 @@ export type StyleCallback<V extends DashVariables = DashVariables> = (
   variables: V
 ) => StyleObject | string
 
-export type OneCallback = {
+export type StylesOne = {
   (createClassName?: boolean | number | string | null): string
   toString: () => string
   css: {
@@ -241,8 +251,8 @@ export const createDash = <
   V extends DashVariables = DashVariables,
   T extends string = ThemeNames
 >(
-  options: DashOptions<V, T> = {}
-): DashCache<V, T> => {
+  options: CreateDashOptions<V, T> = {}
+): Dash<V, T> => {
   // Based on
   // https://github.com/emotion-js/emotion/blob/master/packages/cache/src/index.js
   let {
@@ -254,7 +264,7 @@ export const createDash = <
     prefix = true,
     container = IS_BROWSER ? document.head : void 0,
     variables = {} as V,
-    themes = {} as DashCache<V, T>['themes'],
+    themes = {} as Dash<V, T>['themes'],
   } = options
   const stylis = new Stylis({prefix})
   speedy =
@@ -264,14 +274,14 @@ export const createDash = <
           process.env.NODE_ENV !== 'production'
         )
       : speedy
-  let insert: DashCache<V, T>['insert'],
-    insertCache: DashCache<V, T>['insertCache'] = {},
-    stylisCache: DashCache<V, T>['stylisCache'] = {}
+  let insert: Dash<V, T>['insert'],
+    insertCache: Dash<V, T>['insertCache'] = {},
+    stylisCache: Dash<V, T>['stylisCache'] = {}
 
   if (IS_BROWSER) {
-    let nodes = document.querySelectorAll(`style[data-cache="${key}"]`),
-      i = 0,
-      j = 0
+    let nodes = document.querySelectorAll(`style[data-cache="${key}"]`)
+    let i = 0
+    let j = 0
 
     for (; i < nodes.length; i++) {
       const node = nodes[i]
@@ -358,7 +368,7 @@ export const createDash = <
   }
 }
 
-export interface DashOptions<
+export interface CreateDashOptions<
   V extends DashVariables = DashVariables,
   T extends string = ThemeNames
 > {
@@ -372,10 +382,10 @@ export interface DashOptions<
   readonly container?: HTMLElement
   readonly speedy?: boolean
   readonly variables?: V
-  readonly themes?: DashCache<V, T>['themes']
+  readonly themes?: Dash<V, T>['themes']
 }
 
-export type DashCache<
+export type Dash<
   V extends DashVariables = DashVariables,
   T extends string = ThemeNames
 > = {
@@ -414,14 +424,6 @@ export type DashCache<
   readonly clear: () => void
 }
 
-export type VariableDefs =
-  | {
-      [name: string]: VariableDefs | string | number
-    }
-  | {
-      [name: number]: VariableDefs | string | number
-    }
-
 //
 // Stylesheet
 const styleSheet = (options: DashStyleSheetOptions): DashStyleSheet => {
@@ -459,8 +461,8 @@ const styleSheet = (options: DashStyleSheetOptions): DashStyleSheet => {
       if (!speedy) {
         tag.appendChild(document.createTextNode(rule))
       } else {
-        let sheet: StyleSheet | CSSStyleSheet | null = tag.sheet,
-          i = 0
+        let sheet: StyleSheet | CSSStyleSheet | null = tag.sheet
+        let i = 0
         /* istanbul ignore next */
         if (!sheet) {
           // this weirdness brought to you by firefox
@@ -538,8 +540,7 @@ export interface DashStyleSheet {
 
 //
 // Utils
-const IS_BROWSER = typeof document !== 'undefined'
-const noop = () => {}
+function noop() {}
 export type Falsy = false | 0 | null | undefined
 
 const weakMemo = <A extends object, T = any>(fn: (arg: A) => T) => {
@@ -555,9 +556,9 @@ const weakMemo = <A extends object, T = any>(fn: (arg: A) => T) => {
 
 export const hash = (string: string): string => {
   // fnv1a hash
-  let out = 2166136261, // 32-bit offset basis
-    i = 0,
-    len = string.length
+  let out = 2166136261 // 32-bit offset basis
+  let i = 0
+  let len = string.length
 
   for (; i < len; ++i) {
     out ^= string.charCodeAt(i)
@@ -648,16 +649,14 @@ const ruleSheet: Plugin = (
   return
 }
 
-const Sheet: Sheet = {
-  current: {
-    insert: noop,
-  },
-}
-
-interface Sheet {
+const Sheet: {
   current: {
     readonly insert: (rule: string) => void
   }
+} = {
+  current: {
+    insert: noop,
+  },
 }
 
 const toSheet = (block: string) => {
@@ -670,40 +669,38 @@ const compileArguments = <
   N extends string,
   V extends DashVariables = DashVariables
 >(
-  dash: DashCache<V>,
-  styleDefs: StyleValues<N, V>,
-  args: (N | StyleObjectArgument<N> | Falsy)[]
+  dash: Dash<V>,
+  styleMap: StyleMap<N, V>,
+  args: StyleArguments<N>
 ): string => {
-  let defs = args[0]
+  let styles = args[0]
 
   if (args.length > 1) {
-    let argDefs: StyleObjectArgument<N> = {},
-      i = 0
+    let i = 0
+    styles = {}
 
     for (; i < args.length; i++) {
       const arg = args[i],
-        argType = typeof arg
+        toArg = typeof arg
 
-      if (argType === 'string') {
-        argDefs[arg as N] = true
-      } else if (argType === 'object') {
-        Object.assign(argDefs, arg)
+      if (toArg === 'string') {
+        styles[arg as N] = true
+      } else if (toArg === 'object') {
+        Object.assign(styles, arg)
       }
     }
-
-    defs = argDefs
   }
 
-  let nextStyles = styleDefs.default
-    ? compileStylesMemo<N, V>(styleDefs, 'default', dash.variables)
+  let nextStyles = styleMap.default
+    ? compileStylesMemo<N, V>(styleMap, 'default', dash.variables)
     : ''
 
-  if (typeof defs === 'string' && defs !== 'default') {
-    nextStyles += compileStylesMemo<N, V>(styleDefs, defs, dash.variables)
-  } else if (typeof defs === 'object' && defs !== null) {
-    for (const key in defs)
-      if (defs[key] && key !== 'default')
-        nextStyles += compileStylesMemo<N, V>(styleDefs, key, dash.variables)
+  if (typeof styles === 'string' && styles !== 'default') {
+    nextStyles += compileStylesMemo<N, V>(styleMap, styles, dash.variables)
+  } else if (typeof styles === 'object' && styles !== null) {
+    for (const key in styles)
+      if (styles[key] && key !== 'default')
+        nextStyles += compileStylesMemo<N, V>(styleMap, key, dash.variables)
   }
 
   return nextStyles
@@ -735,13 +732,13 @@ const compileStylesMemo = <
   N extends string,
   V extends DashVariables = DashVariables
 >(
-  styleDefs: StyleValues<N, V>,
+  styleMap: StyleMap<N, V>,
   key: N | 'default',
   variables: V
 ): string => {
-  const styles = styleDefs[key]
+  const styles = styleMap[key]
   return typeof styles === 'function'
-    ? (styleDefs[key] = compileStyles<V>(styles, variables))
+    ? (styleMap[key] = compileStyles<V>(styles, variables))
     : (styles as string | Falsy) || ''
 }
 
@@ -785,13 +782,13 @@ const cssCase = (string: string) =>
   string.replace(cssCaseRe, '-$&').toLowerCase()
 
 const serializeVariables = (
-  vars: any,
+  vars: Record<string, any>,
   names?: string[]
 ): SerializedVariables => {
   const keys = Object.keys(vars)
   const variables: Record<string, any> = {}
-  let styles = '',
-    i = 0
+  let styles = ''
+  let i = 0
 
   for (; i < keys.length; i++) {
     const key = keys[i]
@@ -816,11 +813,8 @@ const serializeVariables = (
   return {variables, styles}
 }
 
-export type SerializedVariables = {
-  readonly variables: Record<
-    string,
-    Record<string, string | number> | string | number
-  >
+type SerializedVariables = {
+  readonly variables: Record<string, Record<string, any> | string | number>
   readonly styles: string
 }
 
