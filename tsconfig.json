@@ -4,10 +4,9 @@
   "compilerOptions": {
     "target": "es5",
     "lib": ["esnext", "dom"],
+    "strict": true,
     "moduleResolution": "node",
     "esModuleInterop": true,
-    "noImplicitReturns": false,
-    "strict": true,
     "baseUrl": ".",
     "paths": {
       "@dash-ui/styles": ["./src"],

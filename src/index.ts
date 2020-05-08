@@ -733,10 +733,10 @@ export const compileStyles = <V extends DashVariables = DashVariables>(
   variables: V
 ): string => {
   const value = typeof styles === 'function' ? styles(variables) : styles
-  return (
-    (typeof value === 'object' && value !== null
-      ? stringifyStyleObject(value)
-      : value) || ''
+  return (typeof value === 'object' && value !== null
+    ? stringifyStyleObject(value)
+    : // Fucking TypeScript w/o "strict": true throws here
+      ((value || '') as string)
   )
     .trim()
     .replace(minifyRe[0], ' ')
