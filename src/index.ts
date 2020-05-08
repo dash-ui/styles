@@ -108,12 +108,13 @@ const createStyles = <
           ? styleValue
           : compileStyles<V>(styleValue, dash.variables))
     let className: string
+    let name: string
 
     const callback: StylesOne = (createClassName): string => {
       const style = createStyle()
       if (!style || (!createClassName && createClassName !== void 0)) return ''
-      className = className || key + '-' + hash(style)
-      insert('.' + className, className, style, sheet)
+      className = className || key + '-' + (name = hash(style))
+      insert('.' + className, name, style, sheet)
       return className
     }
 
