@@ -112,10 +112,7 @@ export const createStylesFromString = (
   for (; i < len; i++) css += styleCache[names[i]]
   const replacer = `${styles.dash.key}-`
   const replacerLen = replacer.length
-  const classRe = new RegExp(
-    `[='"\\s](${styles.dash.key}-[A-Za-z0-9_-]+)[\\s'">]`,
-    'g'
-  )
+  const classRe = new RegExp(`(${styles.dash.key}-[A-Za-z0-9_-]+)`, 'g')
   const seen: Record<string, any> = {}
   let result: RegExpMatchArray | null
 
