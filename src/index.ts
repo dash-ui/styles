@@ -794,8 +794,9 @@ const compileLiterals = <V extends DashVariables = DashVariables>(
 //
 // Variable and theme serialization
 const cssCaseRe = /[A-Z]|^ms/g
+const cssDisallowedRe = /[^\w-]/g
 const cssCase = (string: string) =>
-  string.replace(cssCaseRe, '-$&').toLowerCase()
+  string.replace(cssCaseRe, '-$&').replace(cssDisallowedRe, '-').toLowerCase()
 
 const serializeVariables = (
   vars: Record<string, any>,
