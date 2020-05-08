@@ -329,9 +329,7 @@ export const createDash = <
     insert = (selector, name, styles) => {
       if (insertCache[name]) return
       insertCache[name] = 1
-      if (!stylisCache[name]) {
-        stylisCache[name] = stylis(selector, styles)
-      }
+      stylisCache[name] = stylis(selector, styles)
     }
   }
 
