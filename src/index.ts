@@ -796,7 +796,7 @@ const compileLiterals = <V extends DashVariables = DashVariables>(
 const cssCaseRe = /[A-Z]|^ms/g
 const cssDisallowedRe = /[^\w-]/g
 const cssCase = (string: string) =>
-  string.replace(cssCaseRe, '-$&').replace(cssDisallowedRe, '-').toLowerCase()
+  string.replace(cssCaseRe, '-$&').toLowerCase()
 
 const serializeVariables = (
   vars: Record<string, any>,
@@ -809,7 +809,7 @@ const serializeVariables = (
 
   for (; i < keys.length; i++) {
     const key = keys[i]
-    const cssKey = cssCase(key)
+    const cssKey = cssCase(key).replace(cssDisallowedRe, '-')
     const value = vars[key]
 
     if (typeof value === 'object') {
