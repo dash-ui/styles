@@ -116,8 +116,8 @@ export const createStylesFromString = (
 
   while ((result = classRe.exec(string)) !== null) {
     const name = result[1]
-    const style = styleCache[name]
-    if (style && seen[name] === void 0) {
+    if (seen[name] === void 0) {
+      const style = styleCache[name] || ''
       css += style
       names.push(name)
       seen[name] = true
