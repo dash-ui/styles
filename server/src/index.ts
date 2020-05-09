@@ -1,20 +1,10 @@
 import defaultStyles from '@dash-ui/styles'
 
-function unique(...args: any[]): any[] {
-  const seen: Record<string, any> = {}
-  const out: any[] = []
-
-  for (let i = 0; i < args.length; i++) {
-    for (let j = 0; j < args[i].length; j++) {
-      const value = args[i][j]
-      if (seen[value] === true) continue
-      seen[value] = true
-      out.push(value)
-    }
-  }
-
-  return out
-}
+type ElementType<T extends ReadonlyArray<unknown>> = T extends ReadonlyArray<
+  infer ElementType
+>
+  ? ElementType
+  : never
 
 export interface StylesResult {
   css: string
@@ -33,17 +23,17 @@ export const createStylesFromCache = (
   const {clearCache = true} = options
   const {dash} = styles
   const styleCache = dash.stylisCache
+  const names = new Set([
+    ...Object.keys(styles.dash.variablesCache),
+    ...Object.keys(dash.globalCache),
+    ...Object.keys(dash.insertCache),
+  ])
   let css = ''
-  const names = unique(
-    Object.keys(styles.dash.variablesCache),
-    Object.keys(dash.globalCache),
-    Object.keys(dash.insertCache)
-  )
-  let i = 0
-  let len = names.length
-  for (; i < len; i++) css += styleCache[names[i]]
+
+  for (const name of names) css += styleCache[name]
+
   if (clearCache) dash.clear()
-  return {names, css}
+  return {names: [...names], css}
 }
 
 export const createStyleTagFromCache = (
@@ -102,30 +92,25 @@ export const createStylesFromString = (
   const {clearCache = true} = options
   const {dash} = styles
   const styleCache = dash.stylisCache
+  const names = new Set([
+    ...Object.keys(styles.dash.variablesCache),
+    ...Object.keys(styles.dash.globalCache),
+  ])
   let css = ''
-  const names = unique(
-    Object.keys(styles.dash.variablesCache),
-    Object.keys(styles.dash.globalCache)
-  )
-  let i = 0
-  let len = names.length
-  for (; i < len; i++) css += styleCache[names[i]]
-  const classRe = new RegExp(`${styles.dash.key}-([A-Za-z0-9_-]+)`, 'g')
-  const seen: Record<string, any> = {}
-  let result: RegExpMatchArray | null
 
-  while ((result = classRe.exec(string)) !== null) {
-    const name = result[1]
-    if (seen[name] === void 0) {
-      const style = styleCache[name] || ''
-      css += style
-      names.push(name)
-      seen[name] = true
+  for (let name of names) css += styleCache[name]
+
+  for (const [, name] of string.matchAll(
+    new RegExp(`["\\s'=]${dash.key}-([A-Za-z0-9]+)`, 'g')
+  )) {
+    if (!names.has(name)) {
+      css += styleCache[name] || ''
+      names.add(name)
     }
   }
 
   if (clearCache) dash.clear()
-  return {names, css}
+  return {names: [...names], css}
 }
 
 export const createStyleTagFromString = (
@@ -155,7 +140,6 @@ export const writeStylesFromString = async (
   // eslint-disable-next-line @typescript-eslint/no-var-requires
   const path = require('path')
   styles = styles || defaultStyles
-  // eslint-disable-next-line
   let {name, hash = styles.dash.hash, clearCache = true} = options || {}
   const stylesString = createStylesFromString(string, styles, {clearCache}).css
   name = `${name || styles.dash.key + '-' + hash(stylesString) + '.css'}`

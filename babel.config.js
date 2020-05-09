@@ -20,7 +20,7 @@ module.exports = (api) => {
                     '> 0.5%, ie >= 10, safari >= 9, firefox >= 43, ios >= 8',
                 }
               : {
-                  node: esm ? '12' : '10',
+                  node: '12',
                 },
           },
           devExpression: false,
