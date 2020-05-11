@@ -151,8 +151,9 @@ const createStyles = <
     for (const name in nextThemes) {
       themes[name] =
         themes[name] === void 0
-          ? nextThemes[name]
-          : mergeVariables<V>(themes[name], nextThemes[name])
+          ? (nextThemes[name] as V)
+          : mergeVariables<V>(themes[name], nextThemes[name] as V)
+
       ejectors.push(styles.variables(themes[name], `.${key}-${name}-theme`))
     }
 
@@ -204,8 +205,8 @@ export interface Styles<
     literals: TemplateStringsArray | string | StyleObject | StyleCallback<V>,
     ...placeholders: string[]
   ) => StylesOne
-  variables: (vars: V, selector?: string) => () => void
-  themes: (themes: Dash<V, T>['themes']) => () => void
+  variables: (vars: Partial<V>, selector?: string) => () => void
+  themes: (themes: Partial<Dash<V, T>['themes']>) => () => void
   theme: (name: T) => string
   global: (
     literals: TemplateStringsArray | string | StyleCallback<V> | StyleObject,
