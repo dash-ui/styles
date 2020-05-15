@@ -494,6 +494,50 @@ describe(`styles.variables()`, () => {
     expect(Object.keys(myStyles.dash.sheets).length).toBe(0)
   })
 
+  it('mangles variables', () => {
+    createStyles({mangleVariables: true}).variables({
+      columns: 12,
+      colors: {
+        blue: '#09a',
+        red: '#c12',
+        lightRed: '#c1a',
+      },
+      spacing: {
+        xs: '1rem',
+      },
+      system: {
+        p: {md: '1rem', xs: '0.25rem', sm: '0.5rem', lg: '2rem', xl: '4rem'},
+      },
+    })
+
+    expect(document.querySelectorAll(`style[data-dash]`).length).toBe(1)
+    expect(document.querySelectorAll(`style[data-dash]`)[0]).toMatchSnapshot(
+      ':root'
+    )
+  })
+
+  it('mangles variables w/ reserved keys', () => {
+    createStyles({mangleVariables: {'colors-blue': true}}).variables({
+      columns: 12,
+      colors: {
+        blue: '#09a',
+        red: '#c12',
+        lightRed: '#c1a',
+      },
+      spacing: {
+        xs: '1rem',
+      },
+      system: {
+        p: {md: '1rem', xs: '0.25rem', sm: '0.5rem', lg: '2rem', xl: '4rem'},
+      },
+    })
+
+    expect(document.querySelectorAll(`style[data-dash]`).length).toBe(1)
+    expect(document.querySelectorAll(`style[data-dash]`)[0]).toMatchSnapshot(
+      ':root'
+    )
+  })
+
   it('still exists in caches when used more than once', () => {
     const myStyles = createStyles()
     const ejectA = myStyles.variables({

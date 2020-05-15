@@ -11,8 +11,9 @@ export const createStyles = <
   V extends DashVariables = DashVariables,
   T extends string = ThemeNames
 >(
-  options: CreateDashOptions<V, T> = {}
+  options: CreateStylesOptions<V, T> = {}
 ): Styles<V, T> => {
+  const {mangleVariables} = options
   const dash = createDash(options)
   const {key, sheet, insert, hash, themes, inserted, sheets} = dash
 
@@ -118,7 +119,7 @@ export const createStyles = <
   }
 
   styles.variables = (vars, selector = ':root') => {
-    const {styles, variables} = serializeVariables(vars)
+    const {styles, variables} = serializeVariables(vars, mangleVariables)
     if (!styles) return noop
     const name = hash(styles)
     dash.variables = mergeVariables<V>(dash.variables, variables)
@@ -188,6 +189,13 @@ export const createStyles = <
   styles.themes(themes)
   styles.dash = dash
   return styles
+}
+
+export interface CreateStylesOptions<
+  V extends DashVariables = DashVariables,
+  T extends string = ThemeNames
+> extends CreateDashOptions<V, T> {
+  mangleVariables?: boolean | Record<string, boolean>
 }
 
 export interface Styles<
@@ -786,7 +794,8 @@ const cssCase = (string: string) =>
 
 const serializeVariables = (
   vars: Record<string, any>,
-  names?: string[]
+  mangle?: CreateStylesOptions['mangleVariables'],
+  names: string[] = []
 ): SerializedVariables => {
   const keys = Object.keys(vars)
   const variables: Record<string, any> = {}
@@ -795,26 +804,28 @@ const serializeVariables = (
 
   for (; i < keys.length; i++) {
     const key = keys[i]
-    const cssKey = cssCase(key).replace(cssDisallowedRe, '-')
     const value = vars[key]
 
     if (typeof value === 'object') {
-      const result = serializeVariables(
-        value,
-        (names = names || []).concat(cssKey)
-      )
+      const result = serializeVariables(value, mangle, names.concat(key))
       variables[key] = result.variables
       styles += result.styles
     } else {
-      let name =
-        names !== void 0 && names.length > 0 ? '--' + names.join('-') : '-'
-      variables[key] = `var(${(name += '-' + cssKey)})`
+      let name = names.length > 0 ? names.join('-') + '-' + key : key
+      name = cssCase(name).replace(cssDisallowedRe, '-')
+      variables[key] = `var(${(name =
+        '--' +
+        (mangle === true || (mangle && !mangle[name])
+          ? mangled(name)
+          : name))})`
       styles += `${name}:${value};`
     }
   }
 
   return {variables, styles}
 }
+
+const mangled = safeHash('', hash)
 
 type SerializedVariables = {
   readonly variables: Record<string, Record<string, any> | string | number>

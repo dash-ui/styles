@@ -399,6 +399,24 @@ exports[`styles.variables() creates variables: :root 1`] = `
 </style>
 `;
 
+exports[`styles.variables() mangles variables w/ reserved keys: :root 1`] = `
+<style
+  data-dash="ui"
+>
+  
+  :root{--_12hfjng:12;--colors-blue:#09a;--_89k0f7:#c12;--_1mhhw7a:#c1a;--_1qcm7yo:1rem;--_16er4c5:1rem;--_16ql9bx:0.25rem;--yg0a80:0.5rem;--wp1vk5:2rem;--_170kv0w:4rem;}
+</style>
+`;
+
+exports[`styles.variables() mangles variables: :root 1`] = `
+<style
+  data-dash="ui"
+>
+  
+  :root{--_12hfjng:12;--qqs9ko:#09a;--_89k0f7:#c12;--_1mhhw7a:#c1a;--_1qcm7yo:1rem;--_16er4c5:1rem;--_16ql9bx:0.25rem;--yg0a80:0.5rem;--wp1vk5:2rem;--_170kv0w:4rem;}
+</style>
+`;
+
 exports[`styles.variables() removes variables when eject is called 1`] = `
 NodeList [
   <style
