@@ -2,6 +2,62 @@
 
 exports[`Exceptions throws for unterminated comments 1`] = `"Your styles have an unterminated comment (\\"/*\\" without corresponding \\"*/\\")."`;
 
+exports[`createStyles() adds nonce to style tags: DOM 1`] = `
+<style
+  data-dash="ui"
+  nonce="EDNnf03nceIOfn39fn3e9h3sdfa"
+>
+  
+  .ui-1ut9bc3{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;}
+</style>
+`;
+
+exports[`createStyles() changes container to document.body 1`] = `
+<style
+  data-dash="ui"
+>
+  
+  .ui-1ut9bc3{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;}
+</style>
+`;
+
+exports[`createStyles() changes key to "css": DOM 1`] = `
+<style
+  data-dash="css"
+>
+  
+  .css-1ut9bc3{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;}
+</style>
+`;
+
+exports[`createStyles() configures hash algorithm 1`] = `"ui-e038ab58"`;
+
+exports[`createStyles() should initialize w/ variables 1`] = `"width:var(--box-small);height:var(--box-small);"`;
+
+exports[`createStyles() turns off vendor prefixing: DOM 1`] = `
+<style
+  data-dash="ui"
+>
+  
+  .ui-1ut9bc3{display:flex;}
+</style>
+`;
+
+exports[`createStyles() turns on speedy 1`] = `
+Object {
+  ".ui-1abu38z": Object {
+    "0": "display",
+    "display": "block",
+    "length": 1,
+  },
+  ".ui-1ut9bc3": Object {
+    "0": "display",
+    "display": "flex",
+    "length": 1,
+  },
+}
+`;
+
 exports[`styles() adds dev labels: -flex 1`] = `"ui-1ut9bc3-flex"`;
 
 exports[`styles() adds dev labels: -flex-block 1`] = `"ui-14t38od-flex-block"`;
@@ -77,6 +133,17 @@ NodeList [
 ]
 `;
 
+exports[`styles() joins css styles and returns class name 1`] = `"ui-14t38od"`;
+
+exports[`styles() joins css styles and returns class name: display:flex;display:block; 1`] = `
+<style
+  data-dash="ui"
+>
+  
+  .ui-14t38od{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;display:block;}
+</style>
+`;
+
 exports[`styles() only applies default style once 1`] = `
 NodeList [
   <style
@@ -124,62 +191,6 @@ exports[`styles() returns single class name 2`] = `"ui-qaw0al"`;
 exports[`styles() returns single class name 3`] = `"ui-broszf"`;
 
 exports[`styles() shouldn't do anything with unprocessable object values 1`] = `"display:flex;"`;
-
-exports[`styles.create() adds nonce to style tags: DOM 1`] = `
-<style
-  data-dash="ui"
-  nonce="EDNnf03nceIOfn39fn3e9h3sdfa"
->
-  
-  .ui-1ut9bc3{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;}
-</style>
-`;
-
-exports[`styles.create() changes container to document.body 1`] = `
-<style
-  data-dash="ui"
->
-  
-  .ui-1ut9bc3{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;}
-</style>
-`;
-
-exports[`styles.create() changes key to "css": DOM 1`] = `
-<style
-  data-dash="css"
->
-  
-  .css-1ut9bc3{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;}
-</style>
-`;
-
-exports[`styles.create() configures hash algorithm 1`] = `"ui-e038ab58"`;
-
-exports[`styles.create() should initialize w/ variables 1`] = `"width:var(--box-small);height:var(--box-small);"`;
-
-exports[`styles.create() turns off vendor prefixing: DOM 1`] = `
-<style
-  data-dash="ui"
->
-  
-  .ui-1ut9bc3{display:flex;}
-</style>
-`;
-
-exports[`styles.create() turns on speedy 1`] = `
-Object {
-  ".ui-1abu38z": Object {
-    "0": "display",
-    "display": "block",
-    "length": 1,
-  },
-  ".ui-1ut9bc3": Object {
-    "0": "display",
-    "display": "flex",
-    "length": 1,
-  },
-}
-`;
 
 exports[`styles.global() allows @font-face 1`] = `
 <style

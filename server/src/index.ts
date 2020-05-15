@@ -22,11 +22,10 @@ export const createStylesFromCache = (
   // createStylesFromCache() is unsafe in asynchronous render environments
   const {clearCache = true} = options
   const {dash} = styles
-  const styleCache = dash.stylisCache
+  const styleCache = dash.cache
   const names = new Set([
-    ...Object.keys(styles.dash.variablesCache),
-    ...Object.keys(dash.globalCache),
-    ...Object.keys(dash.insertCache),
+    ...Object.keys(dash.sheets),
+    ...Object.keys(dash.inserted),
   ])
   let css = ''
 
@@ -91,11 +90,8 @@ export const createStylesFromString = (
 ): StylesResult => {
   const {clearCache = true} = options
   const {dash} = styles
-  const styleCache = dash.stylisCache
-  const names = new Set([
-    ...Object.keys(styles.dash.variablesCache),
-    ...Object.keys(styles.dash.globalCache),
-  ])
+  const styleCache = dash.cache
+  const names = new Set(Object.keys(styles.dash.sheets))
   let css = ''
 
   for (let name of names) css += styleCache[name]

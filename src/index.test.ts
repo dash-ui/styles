@@ -1,5 +1,5 @@
 import crc from 'crc'
-import styles from './index'
+import styles, {createStyles} from './index'
 
 afterEach(() => {
   styles.dash.sheet.flush()
@@ -21,9 +21,9 @@ const serializeRules = (selector = `style[data-dash]`): any[] => {
     }, {})
 }
 
-describe('styles.create()', () => {
+describe('createStyles()', () => {
   it('turns off vendor prefixing', () => {
-    const myStyles = styles.create({prefix: false})
+    const myStyles = createStyles({prefix: false})
     const style = myStyles({
       flex: {display: 'flex'},
     })
@@ -38,14 +38,14 @@ describe('styles.create()', () => {
   it('configures hash algorithm', () => {
     const customHash = (string: string): string =>
       crc.crc32(string).toString(16)
-    const myStyles = styles.create({hash: customHash})
+    const myStyles = createStyles({hash: customHash})
     const style = myStyles({
       flex: {display: 'flex'},
     })
 
     expect(style('flex')).toMatchSnapshot()
 
-    const style2 = styles.create()({
+    const style2 = createStyles()({
       flex: {display: 'flex'},
     })
 
@@ -53,7 +53,7 @@ describe('styles.create()', () => {
   })
 
   it('adds nonce to style tags', () => {
-    const myStyles = styles.create({nonce: 'EDNnf03nceIOfn39fn3e9h3sdfa'})
+    const myStyles = createStyles({nonce: 'EDNnf03nceIOfn39fn3e9h3sdfa'})
     const style = myStyles({
       flex: {display: 'flex'},
     })
@@ -66,7 +66,7 @@ describe('styles.create()', () => {
   })
 
   it('changes key to "css"', () => {
-    const myStyles = styles.create({key: 'css'})
+    const myStyles = createStyles({key: 'css'})
     const style = myStyles({
       flex: {display: 'flex'},
     })
@@ -79,7 +79,7 @@ describe('styles.create()', () => {
   })
 
   it('changes container to document.body', () => {
-    const myStyles = styles.create({container: document.body})
+    const myStyles = createStyles({container: document.body})
     const style = myStyles({
       flex: {display: 'flex'},
     })
@@ -92,7 +92,7 @@ describe('styles.create()', () => {
   })
 
   it('turns on speedy', () => {
-    const myStyles = styles.create({speedy: true})
+    const myStyles = createStyles({speedy: true})
     const style = myStyles({
       flex: {display: 'flex'},
       block: {display: 'block'},
@@ -104,7 +104,7 @@ describe('styles.create()', () => {
   })
 
   it('should initialize w/ variables', () => {
-    const myStyles = styles.create({variables: {box: {small: 100}}})
+    const myStyles = createStyles({variables: {box: {small: 100}}})
     const style = myStyles({
       small: ({box}) => ({
         width: box.small,
@@ -116,7 +116,7 @@ describe('styles.create()', () => {
   })
 
   it('should initialize w/ themes', () => {
-    const myStyles = styles.create({
+    const myStyles = createStyles({
       themes: {
         light: {
           color: {
@@ -143,7 +143,7 @@ describe('styles.create()', () => {
 
 describe('styles()', () => {
   it('returns single class name', () => {
-    const style = styles.create()({
+    const style = createStyles()({
       flex: {display: 'flex'},
       block: {display: 'block'},
       inline: 'display: inline;',
@@ -155,7 +155,7 @@ describe('styles()', () => {
   })
 
   it('returns css styles', () => {
-    const style = styles.create()({
+    const style = createStyles()({
       flex: {display: 'flex'},
       block: {display: 'block'},
       inline: 'display: inline;',
@@ -168,8 +168,24 @@ describe('styles()', () => {
     ).toMatchSnapshot()
   })
 
+  it('joins css styles and returns class name', () => {
+    const style = createStyles()
+    const flex = style({
+      flex: {display: 'flex'},
+    })
+    const block = style({
+      block: {display: 'block'},
+    })
+
+    expect(style.join(flex.css('flex'), block.css('block'))).toMatchSnapshot()
+    expect(document.querySelectorAll(`style[data-dash]`).length).toBe(1)
+    expect(document.querySelectorAll(`style[data-dash]`)[0]).toMatchSnapshot(
+      'display:flex;display:block;'
+    )
+  })
+
   it('returns empty string when falsy', () => {
-    const style = styles.create()({
+    const style = createStyles()({
       flex: {display: 'flex'},
     })
 
@@ -183,7 +199,7 @@ describe('styles()', () => {
   })
 
   it(`shouldn't do anything with unprocessable object values`, () => {
-    const style = styles.create()({
+    const style = createStyles()({
       // @ts-ignore
       flex: {display: 'flex', meaningless: null},
     })
@@ -193,7 +209,7 @@ describe('styles()', () => {
   })
 
   it('ignores unknown keys', () => {
-    const style = styles.create()({
+    const style = createStyles()({
       flex: {display: 'flex'},
     })
     // @ts-ignore
@@ -206,7 +222,7 @@ describe('styles()', () => {
     expect(name.length).toBe(0)
   })
   it('allows unitless object values', () => {
-    const style = styles.create()({
+    const style = createStyles()({
       box: {width: 200, height: '200px'},
     })
 
@@ -218,7 +234,7 @@ describe('styles()', () => {
   })
 
   it('adds styles by order of definition when called', () => {
-    const style = styles.create({prefix: false})({
+    const style = createStyles({prefix: false})({
       inline: 'display: inline;',
       flex: {display: 'flex'},
       block: {display: 'block'},
@@ -242,7 +258,7 @@ describe('styles()', () => {
   })
 
   it('allows comments', () => {
-    const style = styles.create()({
+    const style = createStyles()({
       flex: `
         /* this is a flex style */
         display: flex;
@@ -253,7 +269,7 @@ describe('styles()', () => {
   })
 
   it('allows full capabilities w/ style objects', () => {
-    const style = styles.create()({
+    const style = createStyles()({
       flex: {
         display: 'flex',
         '&.foo': {
@@ -269,7 +285,7 @@ describe('styles()', () => {
   })
 
   it('passes variables to style callbacks', () => {
-    const myStyles = styles.create({
+    const myStyles = createStyles({
       variables: {
         colors: {
           bg: '#09a',
@@ -310,7 +326,7 @@ describe('styles()', () => {
   it('adds dev labels', () => {
     const prevEnv = process.env.NODE_ENV
     process.env.NODE_ENV = 'development'
-    const style = styles.create()({
+    const style = createStyles()({
       flex: `display: flex;`,
       block: `display: block;`,
       inline: `display: inline;`,
@@ -327,7 +343,7 @@ describe('styles()', () => {
   it('replaces disallowed characters in dev labels', () => {
     const prevEnv = process.env.NODE_ENV
     process.env.NODE_ENV = 'development'
-    const style = styles.create()({
+    const style = createStyles()({
       'box=big': {width: 400, height: '400px'},
     })
 
@@ -340,7 +356,7 @@ describe('styles()', () => {
   })
 
   it('allows default styles', () => {
-    const style = styles.create()({
+    const style = createStyles()({
       default: `display: flex;`,
       block: `display: block;`,
     })
@@ -351,7 +367,7 @@ describe('styles()', () => {
   })
 
   it('has a default style that is always applied first', () => {
-    const style = styles.create()({
+    const style = createStyles()({
       block: `display: block;`,
       default: `display: flex;`,
     })
@@ -362,7 +378,7 @@ describe('styles()', () => {
   })
 
   it('only applies default style once', () => {
-    const style = styles.create()({
+    const style = createStyles()({
       default: `display: flex;`,
     })
 
@@ -372,7 +388,7 @@ describe('styles()', () => {
   })
 
   it('flushes sheet tags', () => {
-    const myStyles = styles.create({})
+    const myStyles = createStyles({})
     const style = myStyles({
       flex: {display: 'flex'},
       block: {display: 'block'},
@@ -396,7 +412,7 @@ describe('styles()', () => {
     )
     document.head.appendChild(tag)
 
-    const myStyles = styles.create({})
+    const myStyles = createStyles({})
     const style = myStyles({
       flex: {display: 'flex'},
     })
@@ -417,7 +433,7 @@ describe('styles()', () => {
     )
     document.head.appendChild(tag)
 
-    const myStyles = styles.create({container: document.body})
+    const myStyles = createStyles({container: document.body})
     const style = myStyles({
       flex: {display: 'flex'},
     })
@@ -431,7 +447,7 @@ describe('styles()', () => {
 
 describe(`styles.variables()`, () => {
   it('creates variables', () => {
-    styles.create().variables({
+    createStyles().variables({
       columns: 12,
       colors: {
         blue: '#09a',
@@ -453,7 +469,7 @@ describe(`styles.variables()`, () => {
   })
 
   it('removes variables when eject is called', () => {
-    const myStyles = styles.create()
+    const myStyles = createStyles()
     const eject = myStyles.variables({
       colors: {
         blue: '#09a',
@@ -470,16 +486,16 @@ describe(`styles.variables()`, () => {
 
     expect(document.querySelectorAll(`style[data-dash]`).length).toBe(1)
     expect(document.querySelectorAll(`style[data-dash]`)).toMatchSnapshot()
-    expect(Object.keys(myStyles.dash.insertCache).length).toBe(1)
-    expect(Object.keys(myStyles.dash.variablesCache).length).toBe(1)
+    expect(Object.keys(myStyles.dash.inserted).length).toBe(1)
+    expect(Object.keys(myStyles.dash.sheets).length).toBe(1)
     eject()
     expect(document.querySelectorAll(`style[data-dash]`).length).toBe(0)
-    expect(Object.keys(myStyles.dash.insertCache).length).toBe(0)
-    expect(Object.keys(myStyles.dash.variablesCache).length).toBe(0)
+    expect(Object.keys(myStyles.dash.inserted).length).toBe(0)
+    expect(Object.keys(myStyles.dash.sheets).length).toBe(0)
   })
 
   it('still exists in caches when used more than once', () => {
-    const myStyles = styles.create()
+    const myStyles = createStyles()
     const ejectA = myStyles.variables({
       colors: {
         blue: '#09a',
@@ -509,20 +525,20 @@ describe(`styles.variables()`, () => {
 
     expect(document.querySelectorAll(`style[data-dash]`).length).toBe(1)
     expect(document.querySelectorAll(`style[data-dash]`)[0]).toMatchSnapshot()
-    expect(Object.keys(myStyles.dash.insertCache).length).toBe(1)
-    expect(Object.keys(myStyles.dash.variablesCache).length).toBe(1)
+    expect(Object.keys(myStyles.dash.inserted).length).toBe(1)
+    expect(Object.keys(myStyles.dash.sheets).length).toBe(1)
     ejectA()
     expect(document.querySelectorAll(`style[data-dash]`).length).toBe(1)
-    expect(Object.keys(myStyles.dash.insertCache).length).toBe(1)
-    expect(Object.keys(myStyles.dash.variablesCache).length).toBe(1)
+    expect(Object.keys(myStyles.dash.inserted).length).toBe(1)
+    expect(Object.keys(myStyles.dash.sheets).length).toBe(1)
     ejectB()
     expect(document.querySelectorAll(`style[data-dash]`).length).toBe(0)
-    expect(Object.keys(myStyles.dash.insertCache).length).toBe(0)
-    expect(Object.keys(myStyles.dash.variablesCache).length).toBe(0)
+    expect(Object.keys(myStyles.dash.inserted).length).toBe(0)
+    expect(Object.keys(myStyles.dash.sheets).length).toBe(0)
   })
 
   it('creates variables w/ scales', () => {
-    styles.create().variables({
+    createStyles().variables({
       spacing: ['1rem', '2rem', '4rem'],
     })
 
@@ -535,7 +551,7 @@ describe(`styles.variables()`, () => {
 
 describe(`styles.themes()`, () => {
   it('creates variables', () => {
-    styles.create().themes({
+    createStyles().themes({
       dark: {
         colors: {
           bg: '#000',
@@ -560,7 +576,7 @@ describe(`styles.themes()`, () => {
   })
 
   it('removes variables when eject is called', () => {
-    const myStyles = styles.create()
+    const myStyles = createStyles()
     const eject = myStyles.themes({
       dark: {
         colors: {
@@ -578,18 +594,18 @@ describe(`styles.themes()`, () => {
 
     expect(document.querySelectorAll(`style[data-dash]`).length).toBe(2)
     expect(document.querySelectorAll(`style[data-dash]`)).toMatchSnapshot()
-    expect(Object.keys(myStyles.dash.insertCache).length).toBe(2)
-    expect(Object.keys(myStyles.dash.variablesCache).length).toBe(2)
+    expect(Object.keys(myStyles.dash.inserted).length).toBe(2)
+    expect(Object.keys(myStyles.dash.sheets).length).toBe(2)
     eject()
     expect(document.querySelectorAll(`style[data-dash]`).length).toBe(0)
-    expect(Object.keys(myStyles.dash.insertCache).length).toBe(0)
-    expect(Object.keys(myStyles.dash.variablesCache).length).toBe(0)
+    expect(Object.keys(myStyles.dash.inserted).length).toBe(0)
+    expect(Object.keys(myStyles.dash.sheets).length).toBe(0)
   })
 })
 
 describe(`styles.global()`, () => {
   it('passes variables to global styles', () => {
-    const myStyles = styles.create()
+    const myStyles = createStyles()
     myStyles.variables({
       colors: {
         blue: '#09a',
@@ -619,7 +635,7 @@ describe(`styles.global()`, () => {
   })
 
   it('injects global style object', () => {
-    const styles_ = styles.create()
+    const styles_ = createStyles()
     styles_.global({
       html: {
         color: 'blue',
@@ -635,7 +651,7 @@ describe(`styles.global()`, () => {
   })
 
   it('should inject global styles once', () => {
-    const {global} = styles.create()
+    const {global} = createStyles()
     global(`
       :root {
         --spacing-0: 0;
@@ -673,7 +689,7 @@ describe(`styles.global()`, () => {
   })
 
   it('ejects global styles when callback is called', () => {
-    const myStyles = styles.create()
+    const myStyles = createStyles()
     const eject = myStyles.global(`
       html {
         font-size: 100%;
@@ -682,16 +698,16 @@ describe(`styles.global()`, () => {
 
     expect(document.querySelectorAll(`style[data-dash]`).length).toBe(1)
     expect(document.querySelectorAll(`style[data-dash]`)[0]).toMatchSnapshot()
-    expect(Object.keys(myStyles.dash.insertCache).length).toBe(1)
-    expect(Object.keys(myStyles.dash.globalCache).length).toBe(1)
+    expect(Object.keys(myStyles.dash.inserted).length).toBe(1)
+    expect(Object.keys(myStyles.dash.sheets).length).toBe(1)
     eject()
     expect(document.querySelectorAll(`style[data-dash]`).length).toBe(0)
-    expect(Object.keys(myStyles.dash.insertCache).length).toBe(0)
-    expect(Object.keys(myStyles.dash.globalCache).length).toBe(0)
+    expect(Object.keys(myStyles.dash.inserted).length).toBe(0)
+    expect(Object.keys(myStyles.dash.sheets).length).toBe(0)
   })
 
   it('still exists in caches when a global is used more than once but ejected once', () => {
-    const myStyles = styles.create()
+    const myStyles = createStyles()
     const ejectA = myStyles.global(`
       html {
         font-size: 100%;
@@ -705,20 +721,20 @@ describe(`styles.global()`, () => {
 
     expect(document.querySelectorAll(`style[data-dash]`).length).toBe(1)
     expect(document.querySelectorAll(`style[data-dash]`)[0]).toMatchSnapshot()
-    expect(Object.keys(myStyles.dash.insertCache).length).toBe(1)
-    expect(Object.keys(myStyles.dash.globalCache).length).toBe(1)
+    expect(Object.keys(myStyles.dash.inserted).length).toBe(1)
+    expect(Object.keys(myStyles.dash.sheets).length).toBe(1)
     ejectA()
     expect(document.querySelectorAll(`style[data-dash]`).length).toBe(1)
-    expect(Object.keys(myStyles.dash.insertCache).length).toBe(1)
-    expect(Object.keys(myStyles.dash.globalCache).length).toBe(1)
+    expect(Object.keys(myStyles.dash.inserted).length).toBe(1)
+    expect(Object.keys(myStyles.dash.sheets).length).toBe(1)
     ejectB()
     expect(document.querySelectorAll(`style[data-dash]`).length).toBe(0)
-    expect(Object.keys(myStyles.dash.insertCache).length).toBe(0)
-    expect(Object.keys(myStyles.dash.globalCache).length).toBe(0)
+    expect(Object.keys(myStyles.dash.inserted).length).toBe(0)
+    expect(Object.keys(myStyles.dash.sheets).length).toBe(0)
   })
 
   it('allows @font-face', () => {
-    const {global} = styles.create()
+    const {global} = createStyles()
     global`
       @font-face {
         font-family: "Open Sans";
@@ -732,7 +748,7 @@ describe(`styles.global()`, () => {
   })
 
   it('allows @import', () => {
-    const {global} = styles.create()
+    const {global} = createStyles()
     global`
       @import url("navigation.css");
     `
@@ -742,7 +758,7 @@ describe(`styles.global()`, () => {
   })
 
   it('allows style object', () => {
-    const {global} = styles.create()
+    const {global} = createStyles()
     global({
       ':root': {
         '--foo': 'bar',
@@ -756,7 +772,7 @@ describe(`styles.global()`, () => {
 
 describe('styles.one()', () => {
   it('creates style w/ template literal', () => {
-    const myStyles = styles.create()
+    const myStyles = createStyles()
     const myCls = myStyles.one`
       display: flex;
     `
@@ -767,7 +783,7 @@ describe('styles.one()', () => {
   })
 
   it('creates style w/ object', () => {
-    const myStyles = styles.create()
+    const myStyles = createStyles()
     const myCls = myStyles.one({
       display: 'block',
       span: {
@@ -782,7 +798,7 @@ describe('styles.one()', () => {
   })
 
   it(`won't create style def if falsy`, () => {
-    const myStyles = styles.create()
+    const myStyles = createStyles()
     const myCls = myStyles.one`
       display: flex;
     `
@@ -793,7 +809,7 @@ describe('styles.one()', () => {
   })
 
   it(`won't create style if function call is provided falsy value`, () => {
-    const myStyles = styles.create()
+    const myStyles = createStyles()
     const myCls = myStyles.one`
       display: flex;
     `
@@ -807,7 +823,7 @@ describe('styles.one()', () => {
   })
 
   it(`returns a class name when toString() is called`, () => {
-    const myStyles = styles.create()
+    const myStyles = createStyles()
     const myCls = myStyles.one`
       display: flex;
     `
@@ -818,7 +834,7 @@ describe('styles.one()', () => {
   })
 
   it(`returns css when css() is called`, () => {
-    const myStyles = styles.create()
+    const myStyles = createStyles()
     const myCls = myStyles.one`
       display: flex;
     `
@@ -827,7 +843,7 @@ describe('styles.one()', () => {
   })
 
   it(`returns css when css.toString() is called`, () => {
-    const myStyles = styles.create()
+    const myStyles = createStyles()
     const myCls = myStyles.one`
       display: flex;
     `
@@ -836,7 +852,7 @@ describe('styles.one()', () => {
   })
 
   it(`can be called as a function w/ string value`, () => {
-    const myStyles = styles.create()
+    const myStyles = createStyles()
     const myCls = myStyles.one('display: flex;')
     expect(myCls()).toMatchSnapshot()
   })
@@ -847,7 +863,7 @@ describe('styles.one()', () => {
         blue: 'blue'
       }
     }
-    const myStyles = styles.create<Variables>()
+    const myStyles = createStyles<Variables>()
     myStyles.variables({color: {blue: 'blue'}})
     const myCls = myStyles.one(({color}) => `color: ${color.blue};`)
     expect(myCls.css()).toMatchSnapshot()
@@ -856,7 +872,7 @@ describe('styles.one()', () => {
 
 describe('Exceptions', () => {
   it('throws for unterminated comments', () => {
-    const style = styles.create()({
+    const style = createStyles()({
       flex: `
         /* this is a flex style with an unterminated comment ;)
         display: flex;

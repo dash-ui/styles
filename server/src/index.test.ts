@@ -2,7 +2,7 @@
  * @jest-environment node
  */
 import * as fs from 'fs'
-import styles from '../../src'
+import {createStyles} from '../../src'
 import {
   createStyleTagFromString,
   createStyleTagFromCache,
@@ -12,7 +12,7 @@ import {
 
 describe('Configure', () => {
   it('removes vendor prefixing', () => {
-    const myStyles = styles.create({prefix: false})
+    const myStyles = createStyles({prefix: false})
     const style = myStyles({
       flex: {display: 'flex'},
     })
@@ -38,7 +38,7 @@ describe('Configure', () => {
       }
     }
 
-    const myStyles = styles.create({prefix})
+    const myStyles = createStyles({prefix})
     const style = myStyles({
       flex: {display: 'flex', transform: 'translateX(30px)'},
     })
@@ -48,7 +48,7 @@ describe('Configure', () => {
   })
 
   it('changes key to "css"', () => {
-    const myStyles = styles.create({key: 'css'})
+    const myStyles = createStyles({key: 'css'})
     const style = myStyles({
       flex: {display: 'flex'},
     })
@@ -60,7 +60,7 @@ describe('Configure', () => {
 
 describe('createStyleTagFromCache', () => {
   it('adds nonce to style tags', () => {
-    const myStyles = styles.create({nonce: 'EDNnf03nceIOfn39fn3e9h3sdfa'})
+    const myStyles = createStyles({nonce: 'EDNnf03nceIOfn39fn3e9h3sdfa'})
     const style = myStyles({
       flex: {display: 'flex'},
     })
@@ -70,7 +70,7 @@ describe('createStyleTagFromCache', () => {
   })
 
   it('extracts global styles', () => {
-    const myStyles = styles.create({})
+    const myStyles = createStyles({})
     myStyles.global`
       :root {
         --hello: "world";
@@ -81,7 +81,7 @@ describe('createStyleTagFromCache', () => {
   })
 
   it('extracts global variables', () => {
-    const myStyles = styles.create({})
+    const myStyles = createStyles({})
     myStyles.variables({
       colors: {
         blue: '#09a',
@@ -92,7 +92,7 @@ describe('createStyleTagFromCache', () => {
   })
 
   it('extracts theme variables', () => {
-    const myStyles = styles.create({})
+    const myStyles = createStyles({})
     myStyles.themes({
       dark: {
         colors: {
@@ -114,7 +114,7 @@ describe('createStyleTagFromCache', () => {
   })
 
   it('caches styles', () => {
-    const myStyles = styles.create({})
+    const myStyles = createStyles({})
     const style = myStyles({
       flex: {display: 'flex'},
       btn: `
@@ -134,7 +134,7 @@ describe('createStyleTagFromCache', () => {
 
 describe('createStyleTagFromString', () => {
   it('adds nonce to style tags', () => {
-    const myStyles = styles.create({nonce: 'EDNnf03nceIOfn39fn3e9h3sdfa'})
+    const myStyles = createStyles({nonce: 'EDNnf03nceIOfn39fn3e9h3sdfa'})
     const style = myStyles({
       flex: {display: 'flex'},
     })
@@ -146,7 +146,7 @@ describe('createStyleTagFromString', () => {
   })
 
   it('extracts global styles', () => {
-    const myStyles = styles.create({})
+    const myStyles = createStyles({})
     myStyles.global`
       :root {
         --hello: "world";
@@ -157,7 +157,7 @@ describe('createStyleTagFromString', () => {
   })
 
   it('extracts global variables', () => {
-    const myStyles = styles.create({})
+    const myStyles = createStyles({})
     myStyles.variables({
       colors: {
         blue: '#09a',
@@ -168,7 +168,7 @@ describe('createStyleTagFromString', () => {
   })
 
   it('caches styles', () => {
-    const myStyles = styles.create({})
+    const myStyles = createStyles({})
     const style = myStyles({
       flex: {display: 'flex'},
       btn: `
@@ -199,7 +199,7 @@ describe('createStyleTagFromString', () => {
 
 describe('writeStylesFromString', () => {
   it('writes', async () => {
-    const myStyles = styles.create({})
+    const myStyles = createStyles({})
     const style = myStyles({
       flex: {display: 'flex'},
       btn: `
@@ -226,7 +226,7 @@ describe('writeStylesFromString', () => {
   })
 
   it('writes custom name', async () => {
-    const myStyles = styles.create({})
+    const myStyles = createStyles({})
     const style = myStyles({
       flex: {display: 'flex'},
       btn: `
@@ -256,7 +256,7 @@ describe('writeStylesFromString', () => {
   })
 
   it('writes custom key', async () => {
-    const myStyles = styles.create({key: 'css'})
+    const myStyles = createStyles({key: 'css'})
     const style = myStyles({
       flex: {display: 'flex'},
       btn: `
@@ -285,7 +285,7 @@ describe('writeStylesFromString', () => {
   })
 
   it('writes custom hash', async () => {
-    const myStyles = styles.create({hash: () => 'f8bCooDawg'})
+    const myStyles = createStyles({hash: () => 'f8bCooDawg'})
     const style = myStyles({
       flex: {display: 'flex'},
       btn: `
@@ -316,7 +316,7 @@ describe('writeStylesFromString', () => {
 
 describe('writeStylesFromCache', () => {
   it('writes', async () => {
-    const myStyles = styles.create({})
+    const myStyles = createStyles({})
     const style = myStyles({
       flex: {display: 'flex'},
       btn: `
@@ -335,7 +335,7 @@ describe('writeStylesFromCache', () => {
   })
 
   it('writes custom name', async () => {
-    const myStyles = styles.create({})
+    const myStyles = createStyles({})
     const style = myStyles({
       flex: {display: 'flex'},
       btn: `
@@ -354,7 +354,7 @@ describe('writeStylesFromCache', () => {
   })
 
   it('writes custom key', async () => {
-    const myStyles = styles.create({key: 'css'})
+    const myStyles = createStyles({key: 'css'})
     const style = myStyles({
       flex: {display: 'flex'},
       btn: `
@@ -373,7 +373,7 @@ describe('writeStylesFromCache', () => {
   })
 
   it('writes custom hash', async () => {
-    const myStyles = styles.create({hash: () => 'f8bCooDawg'})
+    const myStyles = createStyles({hash: () => 'f8bCooDawg'})
     const style = myStyles({
       flex: {display: 'flex'},
       btn: `
