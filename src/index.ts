@@ -13,9 +13,9 @@ export const createStyles = <
 >(
   options: CreateStylesOptions<V, T> = {}
 ): Styles<V, T> => {
-  const {mangleVariables} = options
   const dash = createDash(options)
-  const {key, sheet, insert, hash, themes, inserted, sheets} = dash
+  const {key, sheet, insert, hash, inserted, sheets} = dash
+  const themes = Object.assign({}, options.themes)
   let label: (args: any[]) => string
   // explicit here on purpose so it's not in every test
   /* istanbul ignore next */
@@ -47,13 +47,12 @@ export const createStyles = <
     if (!css) return ''
     let name = hash(css)
 
+    /* istanbul ignore next */
     if (
       typeof process !== 'undefined' &&
       process.env.NODE_ENV === 'development'
     ) {
-      if (devName) {
-        name += devName
-      }
+      if (devName) name += devName
     }
 
     const className = key + '-' + name
@@ -108,6 +107,7 @@ export const createStyles = <
       className ||
       (className = insertCssClass(
         (createClassName || createClassName === void 0) && css,
+        /* istanbul ignore next */
         typeof process !== 'undefined' && process.env.NODE_ENV === 'development'
           ? '-one'
           : ''
@@ -119,8 +119,18 @@ export const createStyles = <
 
   styles.join = (...style) => insertCssClass(style.join(''))
 
+  styles.keyframes = (literals, ...placeholders) => {
+    let css = compileStyles<V>(
+      compileLiterals<V>(literals, placeholders),
+      dash.variables
+    )
+    let name = hash(css)
+    insert('', name, `@keyframes ${name}{${css}}`, sheet)
+    return name
+  }
+
   styles.variables = (vars, selector = ':root') => {
-    const {css, variables} = serializeVariables(vars, mangleVariables)
+    const {css, variables} = serializeVariables(vars, options.mangleVariables)
     if (!css) return noop
     dash.variables = mergeVariables<V>(dash.variables, variables)
     return styles.global(`${selector}{${css}}`)
@@ -132,11 +142,15 @@ export const createStyles = <
     for (const name in nextThemes) {
       ejectors.push(
         styles.variables(
-          (themes[name] =
-            themes[name] === void 0
+          // God the types here are f'ing stupid. Someone should feel free to fix this.
+          (themes[name as Extract<T, string>] =
+            themes[name as Extract<T, string>] === void 0
               ? (nextThemes[name] as V)
-              : mergeVariables<V>(themes[name], nextThemes[name] as V)),
-          '.' + styles.theme(name)
+              : mergeVariables<V>(
+                  themes[name as Extract<T, string>],
+                  nextThemes[name] as V
+                )) as any,
+          '.' + styles.theme(name as any)
         )
       )
     }
@@ -171,8 +185,8 @@ export const createStyles = <
     }
   }
 
-  styles.variables(dash.variables)
-  styles.themes(themes)
+  styles.variables(dash.variables as any)
+  styles.themes(themes as any)
   styles.dash = dash
   return styles
 }
@@ -180,7 +194,10 @@ export const createStyles = <
 export interface CreateStylesOptions<
   V extends DashVariables = DashVariables,
   T extends string = ThemeNames
-> extends CreateDashOptions<V, T> {
+> extends CreateDashOptions<V> {
+  themes?: {
+    [Name in T]: V
+  }
   mangleVariables?: boolean | Record<string, boolean>
 }
 
@@ -194,14 +211,24 @@ export interface Styles<
     ...placeholders: string[]
   ) => StylesOne
   join: (...styleCss: string[]) => string
-  variables: (vars: Partial<V>, selector?: string) => () => void
-  themes: (themes: Partial<Dash<V, T>['themes']>) => () => void
+  keyframes: (
+    literals: TemplateStringsArray | string | StyleCallback<V> | StyleObject,
+    ...placeholders: string[]
+  ) => string
+  variables: (vars: DeepPartial<V>, selector?: string) => () => void
+  themes: (
+    themes: DeepPartial<
+      {
+        [Name in T]: V
+      }
+    >
+  ) => () => void
   theme: (name: T) => string
   global: (
     literals: TemplateStringsArray | string | StyleCallback<V> | StyleObject,
     ...placeholders: string[]
   ) => () => void
-  dash: Dash<V, T>
+  dash: Dash<V>
 }
 
 export type StyleMap<
@@ -252,14 +279,17 @@ export type StylesOne = {
   }
 }
 
+type DeepPartial<T> = T extends Function
+  ? T
+  : T extends object
+  ? {[P in keyof T]?: DeepPartial<T[P]>}
+  : T
+
 //
 // Dash cache
-export const createDash = <
-  V extends DashVariables = DashVariables,
-  T extends string = ThemeNames
->(
-  options: CreateDashOptions<V, T> = {}
-): Dash<V, T> => {
+export const createDash = <V extends DashVariables = DashVariables>(
+  options: CreateDashOptions<V> = {}
+): Dash<V> => {
   // Based on
   // https://github.com/emotion-js/emotion/blob/master/packages/cache/src/index.js
   let {
@@ -271,7 +301,6 @@ export const createDash = <
     prefix = true,
     container = IS_BROWSER ? document.head : void 0,
     variables = {} as V,
-    themes = {} as Dash<V, T>['themes'],
   } = options
   const stylis = new Stylis({prefix})
   speedy =
@@ -281,9 +310,9 @@ export const createDash = <
           process.env.NODE_ENV !== 'production'
         )
       : speedy
-  let insert: Dash<V, T>['insert'],
-    inserted: Dash<V, T>['inserted'] = {},
-    cache: Dash<V, T>['cache'] = {}
+  let insert: Dash<V>['insert'],
+    inserted: Dash<V>['inserted'] = {},
+    cache: Dash<V>['cache'] = {}
 
   if (IS_BROWSER) {
     let nodes = document.querySelectorAll(`style[data-cache="${key}"]`)
@@ -292,6 +321,7 @@ export const createDash = <
     let node
 
     for (; i < nodes.length; i++) {
+      /* istanbul ignore next */
       if ((attr = (node = nodes[i]).getAttribute(`data-dash`)) === null)
         continue
       attr.split(' ').map((id) => (inserted[id] = 1))
@@ -320,6 +350,7 @@ export const createDash = <
     }
   }
 
+  /* istanbul ignore next */
   if (typeof process !== 'undefined' && process.env.NODE_ENV !== 'production') {
     const commentStart = /\/\*/g
     const commentEnd = /\*\//g
@@ -358,7 +389,6 @@ export const createDash = <
     hash: safeHash(key, dashHash),
     insert,
     variables,
-    themes,
     cache,
     inserted,
     sheets: {},
@@ -368,10 +398,7 @@ export const createDash = <
   }
 }
 
-export interface CreateDashOptions<
-  V extends DashVariables = DashVariables,
-  T extends string = ThemeNames
-> {
+export interface CreateDashOptions<V extends DashVariables = DashVariables> {
   readonly key?: string
   readonly nonce?: string
   readonly hash?: typeof hash
@@ -382,13 +409,9 @@ export interface CreateDashOptions<
   readonly container?: HTMLElement
   readonly speedy?: boolean
   readonly variables?: V
-  readonly themes?: Dash<V, T>['themes']
 }
 
-export type Dash<
-  V extends DashVariables = DashVariables,
-  T extends string = ThemeNames
-> = {
+export type Dash<V extends DashVariables = DashVariables> = {
   readonly key: string
   readonly sheet: DashStyleSheet
   readonly hash: (string: string) => string
@@ -406,9 +429,6 @@ export type Dash<
     [name: string]: number
   }
   variables: V
-  themes: {
-    [Name in T]: V
-  }
   readonly sheets: {
     [name: string]: {
       n: number

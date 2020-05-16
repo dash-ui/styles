@@ -445,6 +445,67 @@ describe('styles()', () => {
   })
 })
 
+describe('styles.keyframes()', () => {
+  it('returns keyframes name', () => {
+    const name = createStyles().keyframes`
+      0% {
+        opacity: 0;
+      }
+      100% {
+        opacity: 1;
+      }
+    `
+
+    expect(name).toMatchSnapshot()
+  })
+
+  it('adds keyframes to dom', () => {
+    const name = createStyles().keyframes(`
+      0% {
+        opacity: 0;
+      }
+      100% {
+        opacity: 1;
+      }
+    `)
+
+    expect(document.querySelectorAll(`style[data-dash]`).length).toBe(2)
+    expect(document.querySelectorAll(`style[data-dash]`)[0]).toMatchSnapshot(
+      `@-webkit-keyframes ${name}`
+    )
+    expect(document.querySelectorAll(`style[data-dash]`)[1]).toMatchSnapshot(
+      `@keyframes ${name}`
+    )
+  })
+
+  it('works with variables callback', () => {
+    const myStyles = createStyles({
+      variables: {
+        color: {
+          blue: 'blue',
+          red: 'red',
+        },
+      },
+    })
+
+    myStyles.keyframes(
+      ({color}) => `
+      0% {
+        background-color: ${color.blue};
+      }
+      100% {
+        background-color: ${color.red};
+      }
+    `
+    )
+
+    expect(document.querySelectorAll(`style[data-dash]`).length).toBe(3) // variables + kf
+    expect(document.querySelectorAll(`style[data-dash]`)[2]).toMatchSnapshot(
+      `0% blue; 100% red;`
+    )
+  })
+})
+
 describe(`styles.variables()`, () => {
   it('creates variables', () => {
     createStyles().variables({
