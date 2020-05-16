@@ -20,6 +20,17 @@ bench('create styles.one [string]', ({duration}) => {
   return () => styles.one(`display: flex;`)()
 })
 
+const one = styles.one(`display: flex;`)
+bench('use styles.one [object]', ({duration}) => {
+  duration(3000)
+  return () => one()
+})
+
+bench('use styles.one [string]', ({duration}) => {
+  duration(3000)
+  return () => one()
+})
+
 const style = styles({foo: {display: 'flex'}})
 bench('style', () => style('foo'))
 bench('multi-style', () => style('foo', 'bar'))

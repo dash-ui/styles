@@ -16,12 +16,14 @@ export const createStyles = <
   const {mangleVariables} = options
   const dash = createDash(options)
   const {key, sheet, insert, hash, themes, inserted, sheets} = dash
-
-  let addLabels: (name: string, args: any[]) => string
+  let label: (args: any[]) => string
   // explicit here on purpose so it's not in every test
   /* istanbul ignore next */
-  if (process.env.NODE_ENV === 'development') {
-    addLabels = (name, args) => {
+  if (
+    typeof process !== 'undefined' &&
+    process.env.NODE_ENV === 'development'
+  ) {
+    label = (args) => {
       // add helpful labels to the name in development
       return args
         .reduce((curr, arg) => {
@@ -36,9 +38,27 @@ export const createStyles = <
           }
 
           return curr
-        }, name)
+        }, '')
         .replace(/[^\w-]/g, '-')
     }
+  }
+
+  const insertCssClass = (css: string | Falsy, devName = '') => {
+    if (!css) return ''
+    let name = hash(css)
+
+    if (
+      typeof process !== 'undefined' &&
+      process.env.NODE_ENV === 'development'
+    ) {
+      if (devName) {
+        name += devName
+      }
+    }
+
+    const className = key + '-' + name
+    insert('.' + className, name, css, sheet)
+    return className
   }
 
   const styles: Styles<V, T> = <N extends string>(
@@ -56,23 +76,13 @@ export const createStyles = <
           : styleMap[styleName]
 
     // style('text', 'space', {})
-    const style: Style<N, V> = (...args) => {
-      const normalizedStyles = compileArguments<N, V>(
-        dash,
-        compiledStyleMap,
-        args
+    const style: Style<N, V> = (...args) =>
+      insertCssClass(
+        compileArguments<N, V>(dash, compiledStyleMap, args),
+        typeof process !== 'undefined' && process.env.NODE_ENV === 'development'
+          ? label(args)
+          : ''
       )
-      if (!normalizedStyles) return ''
-      let name = hash(normalizedStyles)
-
-      if (process.env.NODE_ENV === 'development') {
-        name = addLabels(name, args)
-      }
-
-      const className = key + '-' + name
-      insert('.' + className, name, normalizedStyles, sheet)
-      return className
-    }
 
     style.styles = compiledStyleMap
     style.css = (...names) =>
@@ -82,7 +92,7 @@ export const createStyles = <
   }
 
   styles.one = (literals, ...placeholders) => {
-    let styleValue =
+    let one =
       typeof literals === 'function'
         ? literals
         : compileStyles<V>(
@@ -90,68 +100,45 @@ export const createStyles = <
             dash.variables
           )
 
-    const createStyle = () =>
-      (styleValue =
-        typeof styleValue === 'string'
-          ? styleValue
-          : compileStyles<V>(styleValue, dash.variables))
+    const css =
+      typeof one === 'string' ? one : compileStyles<V>(one, dash.variables)
     let className: string
-    let name: string
 
-    const callback: StylesOne = (createClassName): string => {
-      const style = createStyle()
-      if (!style || (!createClassName && createClassName !== void 0)) return ''
-      className = className || key + '-' + (name = hash(style))
-      insert('.' + className, name, style, sheet)
-      return className
-    }
+    const callback: StylesOne = (createClassName): string =>
+      className ||
+      (className = insertCssClass(
+        (createClassName || createClassName === void 0) && css,
+        typeof process !== 'undefined' && process.env.NODE_ENV === 'development'
+          ? '-one'
+          : ''
+      ))
 
-    ;(callback.css = createStyle).toString = callback.css
+    ;(callback.css = () => css).toString = callback.css
     return (callback.toString = callback)
   }
 
-  styles.join = (...style) => {
-    const styleString = style.join('')
-    const name = hash(styleString)
-    const className = key + '-' + name
-    insert('.' + className, name, styleString, sheet)
-    return className
-  }
+  styles.join = (...style) => insertCssClass(style.join(''))
 
   styles.variables = (vars, selector = ':root') => {
-    const {styles, variables} = serializeVariables(vars, mangleVariables)
-    if (!styles) return noop
-    const name = hash(styles)
+    const {css, variables} = serializeVariables(vars, mangleVariables)
+    if (!css) return noop
     dash.variables = mergeVariables<V>(dash.variables, variables)
-    const variablesSheet = (sheets[name] = sheets[name] || {
-      n: 0,
-      sheet: styleSheet(sheet),
-    }).sheet
-    const cache = sheets[name]
-    cache.n += 1
-    insert(selector, name, styles, variablesSheet)
-
-    return () => {
-      if (cache.n === 1) {
-        delete inserted[name]
-        delete sheets[name]
-        variablesSheet.flush()
-      } else {
-        cache.n -= 1
-      }
-    }
+    return styles.global(`${selector}{${css}}`)
   }
 
   styles.themes = (nextThemes) => {
     const ejectors: (() => void)[] = []
 
     for (const name in nextThemes) {
-      themes[name] =
-        themes[name] === void 0
-          ? (nextThemes[name] as V)
-          : mergeVariables<V>(themes[name], nextThemes[name] as V)
-
-      ejectors.push(styles.variables(themes[name], `.${key}-${name}-theme`))
+      ejectors.push(
+        styles.variables(
+          (themes[name] =
+            themes[name] === void 0
+              ? (nextThemes[name] as V)
+              : mergeVariables<V>(themes[name], nextThemes[name] as V)),
+          '.' + styles.theme(name)
+        )
+      )
     }
 
     return () => ejectors.forEach((e) => e())
@@ -160,25 +147,24 @@ export const createStyles = <
   styles.theme = (theme) => `${key}-${theme}-theme`
 
   styles.global = (literals, ...placeholders) => {
-    const normalizedStyles = compileStyles<V>(
+    const css = compileStyles<V>(
       compileLiterals<V>(literals, placeholders),
       dash.variables
     )
-    if (!normalizedStyles) return noop
-    const name = hash(normalizedStyles)
-    const globalSheet = (sheets[name] = sheets[name] || {
+    if (!css) return noop
+    const name = hash(css)
+    const cache = (sheets[name] = sheets[name] || {
       n: 0,
       sheet: styleSheet(sheet),
-    }).sheet
-    const cache = sheets[name]
+    })
     cache.n += 1
-    insert('', name, normalizedStyles, globalSheet)
+    insert('', name, css, cache.sheet)
 
     return () => {
       if (cache.n === 1) {
         delete inserted[name]
         delete sheets[name]
-        globalSheet.flush()
+        cache.sheet.flush()
       } else {
         cache.n -= 1
       }
@@ -302,17 +288,13 @@ export const createDash = <
   if (IS_BROWSER) {
     let nodes = document.querySelectorAll(`style[data-cache="${key}"]`)
     let i = 0
-    let j = 0
+    let attr
+    let node
 
     for (; i < nodes.length; i++) {
-      const node = nodes[i]
-      const attr = node.getAttribute(`data-dash`)
-      if (attr === null) continue
-      const ids = attr.split(' ')
-
-      for (j = 0; j < ids.length; j++) {
-        inserted[ids[j]] = 1
-      }
+      if ((attr = (node = nodes[i]).getAttribute(`data-dash`)) === null)
+        continue
+      attr.split(' ').map((id) => (inserted[id] = 1))
 
       if (node.parentNode !== container)
         (container as HTMLElement).appendChild(node)
@@ -460,11 +442,10 @@ const styleSheet = (options: DashStyleSheetOptions): DashStyleSheet => {
         tag.setAttribute(`data-dash`, key)
         if (nonce !== void 0) tag.setAttribute('nonce', nonce)
         tag.appendChild(document.createTextNode(''))
-        container &&
-          container.insertBefore(
-            tag,
-            tags.length === 0 ? null : tags[tags.length - 1].nextSibling
-          )
+        container?.insertBefore(
+          tag,
+          tags.length === 0 ? null : tags[tags.length - 1].nextSibling
+        )
         tags.push(tag)
       }
 
@@ -687,11 +668,11 @@ const compileArguments = <
 
   if (args.length > 1) {
     let i = 0
+    let arg
     styles = {}
 
     for (; i < args.length; i++) {
-      const arg = args[i],
-        toArg = typeof arg
+      const toArg = typeof (arg = args[i])
 
       if (toArg === 'string') {
         styles[arg as N] = true
@@ -799,7 +780,7 @@ const serializeVariables = (
 ): SerializedVariables => {
   const keys = Object.keys(vars)
   const variables: Record<string, any> = {}
-  let styles = ''
+  let css = ''
   let i = 0
 
   for (; i < keys.length; i++) {
@@ -809,27 +790,28 @@ const serializeVariables = (
     if (typeof value === 'object') {
       const result = serializeVariables(value, mangle, names.concat(key))
       variables[key] = result.variables
-      styles += result.styles
+      css += result.css
     } else {
-      let name = names.length > 0 ? names.join('-') + '-' + key : key
-      name = cssCase(name).replace(cssDisallowedRe, '-')
+      let name = cssCase(
+        names.length > 0 ? names.join('-') + '-' + key : key
+      ).replace(cssDisallowedRe, '-')
       variables[key] = `var(${(name =
         '--' +
         (mangle === true || (mangle && !mangle[name])
           ? mangled(name)
           : name))})`
-      styles += `${name}:${value};`
+      css += `${name}:${value};`
     }
   }
 
-  return {variables, styles}
+  return {variables, css}
 }
 
 const mangled = safeHash('', hash)
 
 type SerializedVariables = {
   readonly variables: Record<string, Record<string, any> | string | number>
-  readonly styles: string
+  readonly css: string
 }
 
 const mergeVariables = <V extends DashVariables = DashVariables>(
