@@ -99,21 +99,22 @@ export const createStyles = <
             dash.variables
           )
 
-    const css =
-      typeof one === 'string' ? one : compileStyles<V>(one, dash.variables)
+    const css = () =>
+      typeof one === 'string'
+        ? one
+        : (one = compileStyles<V>(one, dash.variables))
+    let name: string
     let className: string
 
-    const callback: StylesOne = (createClassName): string =>
-      className ||
-      (className = insertCssClass(
-        (createClassName || createClassName === void 0) && css,
-        /* istanbul ignore next */
-        typeof process !== 'undefined' && process.env.NODE_ENV === 'development'
-          ? '-one'
-          : ''
-      ))
+    const callback: StylesOne = (createClassName): string => {
+      if (!createClassName && createClassName !== void 0) return ''
+      const one = css()
+      className = className || key + '-' + (name = name || hash(one))
+      insert('.' + className, name, one, sheet)
+      return className
+    }
 
-    ;(callback.css = () => css).toString = callback.css
+    ;(callback.css = css).toString = callback.css
     return (callback.toString = callback)
   }
 
@@ -581,17 +582,17 @@ export const hash = (string: string): string => {
   return (out >>> 0).toString(36)
 }
 
-const defaultHashCache: Record<string, string> = {}
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-const fnCache = weakMemo((fn: typeof hash): Record<string, string> => ({}))
-const safeHash = (key: string, hashFn: typeof hash) => (string: string) => {
-  const hashCache = hashFn === hash ? defaultHashCache : fnCache(hashFn)
-  let value: string | undefined = hashCache[string]
-  if (value) return value
-  value = hashFn(string)
-  // allows class names to start with numbers
-  return (hashCache[string] =
-    !key && !isNaN(value[0] as any) ? '_' + value : value)
+const safeHash = (key: string, hashFn: typeof hash) => {
+  const hashCache: Record<string, string> = {}
+  return (string: string) => {
+    let value: string | undefined = hashCache[string]
+    if (value) return value
+    value = hashFn(string)
+    // allows class names to start with numbers
+    return (hashCache[string] =
+      !key && !isNaN(value[0] as any) ? '_' + value : value)
+  }
 }
 
 //
