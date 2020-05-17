@@ -125,9 +125,10 @@ export const createStyles = <
       compileLiterals<V>(literals, placeholders),
       dash.variables
     )
-    let name = hash(css)
-    insert('', name, `@keyframes ${name}{${css}}`, sheet)
-    return name
+    const name = hash(css)
+    const safeName = 'k-' + name
+    insert('', name, `@keyframes ${safeName}{${css}}`, sheet)
+    return safeName
   }
 
   styles.variables = (vars, selector = ':root') => {
