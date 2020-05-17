@@ -25,7 +25,7 @@ export const createStyles = <
   ) {
     label = (args) => {
       // add helpful labels to the name in development
-      return args
+      return [...args]
         .reduce((curr, arg) => {
           if (typeof arg === 'string') {
             curr += `-${arg}`
@@ -75,27 +75,28 @@ export const createStyles = <
           : styleMap[styleName]
 
     // style('text', 'space', {})
-    const style: Style<N, V> = (...args) =>
-      insertCssClass(
-        compileArguments<N, V>(dash, compiledStyleMap, args),
+    const style: Style<N, V> = function () {
+      return insertCssClass(
+        compileArguments<N, V>(dash, compiledStyleMap, arguments as any),
         typeof process !== 'undefined' && process.env.NODE_ENV === 'development'
-          ? label(args)
+          ? label(arguments as any)
           : ''
       )
+    }
 
     style.styles = compiledStyleMap
-    style.css = (...names) =>
-      compileArguments<N, V>(dash, compiledStyleMap, names)
-
+    style.css = function () {
+      return compileArguments<N, V>(dash, compiledStyleMap, arguments as any)
+    }
     return style
   }
 
-  styles.one = (literals, ...placeholders) => {
+  styles.one = function () {
     let one =
-      typeof literals === 'function'
-        ? literals
+      typeof arguments[0] === 'function'
+        ? arguments[0]
         : compileStyles<V>(
-            compileLiterals<V>(literals, placeholders),
+            compileLiterals.call(null, arguments),
             dash.variables
           )
 
@@ -120,9 +121,9 @@ export const createStyles = <
 
   styles.join = (...style) => insertCssClass(style.join(''))
 
-  styles.keyframes = (literals, ...placeholders) => {
+  styles.keyframes = function () {
     let css = compileStyles<V>(
-      compileLiterals<V>(literals, placeholders),
+      compileLiterals.call(null, arguments),
       dash.variables
     )
     const name = hash(css)
@@ -162,9 +163,9 @@ export const createStyles = <
 
   styles.theme = (theme) => `${key}-${theme}-theme`
 
-  styles.global = (literals, ...placeholders) => {
+  styles.global = function () {
     const css = compileStyles<V>(
-      compileLiterals<V>(literals, placeholders),
+      compileLiterals.call(null, arguments),
       dash.variables
     )
     if (!css) return noop
@@ -777,16 +778,12 @@ const stringifyStyleObject = (object: StyleObject) => {
   return string
 }
 
-const compileLiterals = <V extends DashVariables = DashVariables>(
-  literals: TemplateStringsArray | string | StyleObject | StyleCallback<V>,
-  placeholders: string[]
-) =>
-  Array.isArray(literals)
-    ? literals.reduce(
-        (curr, next, i) => curr + next + (placeholders[i] || ''),
-        ''
-      )
+function compileLiterals(args: IArguments) {
+  const literals = args[0]
+  return Array.isArray(literals)
+    ? literals.reduce((curr, next, i) => curr + next + (args[i + 1] || ''), '')
     : literals
+}
 
 //
 // Variable and theme serialization

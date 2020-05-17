@@ -1,6 +1,6 @@
 {
   "name": "@dash-ui/styles",
-  "version": "0.4.7",
+  "version": "0.4.8",
   "homepage": "https://github.com/dash-ui/styles#readme",
   "repository": "github:dash-ui/styles",
   "bugs": "https://github.com/dash-ui/styles/issues",
@@ -116,6 +116,7 @@
     "prettier": "^2.0.4",
     "rimraf": "^3.0.2",
     "rollup": "^1.27.3",
+    "rollup-plugin-filesize": "^9.0.0",
     "rollup-plugin-terser": "^5.1.2",
     "typescript": "^3.8.3"
   },

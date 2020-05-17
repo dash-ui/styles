@@ -20,7 +20,7 @@ export const createStylesFromCache = (
   options: CreateStylesOptions = {}
 ): StylesResult => {
   // createStylesFromCache() is unsafe in asynchronous render environments
-  const {clearCache = true} = options
+  const {clearCache = false} = options
   const {dash} = styles
   const styleCache = dash.cache
   const names = new Set([
@@ -75,7 +75,7 @@ export const writeStylesFromCache = async (
   const path = require('path')
   styles = styles || defaultStyles
   // eslint-disable-next-line
-  let {name, hash = styles.dash.hash, clearCache = true} = options || {}
+  let {name, hash = styles.dash.hash, clearCache = false} = options || {}
   const stylesString = createStylesFromCache(styles, {clearCache}).css
   name = `${name || styles.dash.key + '-' + hash(stylesString) + '.css'}`
   const filename = path.join(outputPath, name)
@@ -88,7 +88,7 @@ export const createStylesFromString = (
   styles = defaultStyles,
   options: CreateStylesOptions = {}
 ): StylesResult => {
-  const {clearCache = true} = options
+  const {clearCache = false} = options
   const {dash} = styles
   const styleCache = dash.cache
   const names = new Set(Object.keys(styles.dash.sheets))
@@ -136,7 +136,7 @@ export const writeStylesFromString = async (
   // eslint-disable-next-line @typescript-eslint/no-var-requires
   const path = require('path')
   styles = styles || defaultStyles
-  let {name, hash = styles.dash.hash, clearCache = true} = options || {}
+  let {name, hash = styles.dash.hash, clearCache = false} = options || {}
   const stylesString = createStylesFromString(string, styles, {clearCache}).css
   name = `${name || styles.dash.key + '-' + hash(stylesString) + '.css'}`
   const filename = path.join(outputPath, name)

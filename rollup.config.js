@@ -3,6 +3,7 @@ import replace from '@rollup/plugin-replace'
 import resolve from '@rollup/plugin-node-resolve'
 import commonjs from '@rollup/plugin-commonjs'
 import {terser} from 'rollup-plugin-terser'
+import filesize from 'rollup-plugin-filesize'
 import pkg from './package.json'
 
 process.env.BABEL_ENV = 'umd'
@@ -23,6 +24,7 @@ const config = (filename, env, plugins = []) => ({
     replace({
       'process.env.NODE_ENV': JSON.stringify(env),
     }),
+    filesize({showBrotliSize: true, showBeforeSizes: true}),
     ...plugins,
   ],
 })
