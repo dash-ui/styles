@@ -3,7 +3,6 @@
 import Stylis from '@dash-ui/stylis'
 import unitless from '@dash-ui/unitless'
 import type {Plugable, Plugin, Context} from '@dash-ui/stylis'
-const IS_BROWSER = typeof document !== 'undefined'
 
 //
 // Where the magic happens
@@ -14,7 +13,7 @@ export const createStyles = <
   options: CreateStylesOptions<V, T> = {}
 ): Styles<V, T> => {
   const dash = createDash(options)
-  const {key, sheet, insert, hash, inserted, sheets} = dash
+  const {key, insert, inserted, hash, sheet, sheets} = dash
   const themes = Object.assign({}, options.themes)
   let label: (args: any[]) => string
   // explicit here on purpose so it's not in every test
@@ -43,23 +42,6 @@ export const createStyles = <
     }
   }
 
-  const insertCssClass = (css: string | Falsy, devName = '') => {
-    if (!css) return ''
-    let name = hash(css)
-
-    /* istanbul ignore next */
-    if (
-      typeof process !== 'undefined' &&
-      process.env.NODE_ENV === 'development'
-    ) {
-      if (devName) name += devName
-    }
-
-    const className = key + '-' + name
-    insert('.' + className, name, css, sheet)
-    return className
-  }
-
   const styles: Styles<V, T> = <N extends string>(
     styleMap: StyleMap<N, V>
   ): Style<N, V> => {
@@ -76,12 +58,25 @@ export const createStyles = <
 
     // style('text', 'space', {})
     const style: Style<N, V> = function () {
-      return insertCssClass(
-        compileArguments<N, V>(dash, compiledStyleMap, arguments as any),
-        typeof process !== 'undefined' && process.env.NODE_ENV === 'development'
-          ? label(arguments as any)
-          : ''
+      const css = compileArguments<N, V>(
+        dash,
+        compiledStyleMap,
+        arguments as any
       )
+      if (!css) return ''
+      let name = hash(css)
+
+      /* istanbul ignore next */
+      if (
+        typeof process !== 'undefined' &&
+        process.env.NODE_ENV === 'development'
+      ) {
+        name += label(arguments as any)
+      }
+
+      const className = key + '-' + name
+      insert('.' + className, name, css)
+      return className
     }
 
     style.styles = compiledStyleMap
@@ -111,7 +106,7 @@ export const createStyles = <
       if (!createClassName && createClassName !== void 0) return ''
       const one = css()
       className = className || key + '-' + (name = name || hash(one))
-      insert('.' + className, name, one, sheet)
+      insert('.' + className, name, one)
       return className
     }
 
@@ -119,24 +114,55 @@ export const createStyles = <
     return (callback.toString = callback)
   }
 
-  styles.join = (...style) => insertCssClass(style.join(''))
+  styles.join = (...style) => {
+    const css = style.join('')
+    let name = hash(css)
+    const className = key + '-' + name
+    insert('.' + className, name, css)
+    return className
+  }
 
   styles.keyframes = function () {
-    let css = compileStyles<V>(
+    const css = compileStyles<V>(
       compileLiterals.call(null, arguments),
       dash.variables
     )
     const name = hash(css)
-    const safeName = 'k-' + name
-    insert('', name, `@keyframes ${safeName}{${css}}`, sheet)
-    return safeName
+    const className = key + '-' + name
+    insert('', name, `@keyframes ${className}{${css}}`)
+    return className
+  }
+
+  styles.global = function () {
+    const css = compileStyles<V>(
+      compileLiterals.call(null, arguments),
+      dash.variables
+    )
+    if (!css) return noop
+    const name = hash(css)
+    const cache = (sheets[name] = sheets[name] || {
+      n: 0,
+      sheet: styleSheet(sheet),
+    })
+    cache.n++
+    insert('', name, css, cache.sheet)
+
+    return () => {
+      if (cache.n === 1) {
+        delete inserted[name]
+        delete sheets[name]
+        cache.sheet.flush()
+      } else {
+        cache.n--
+      }
+    }
   }
 
   styles.variables = (vars, selector = ':root') => {
     const {css, variables} = serializeVariables(vars, options.mangleVariables)
     if (!css) return noop
     dash.variables = mergeVariables<V>(dash.variables, variables)
-    return styles.global(`${selector}{${css}}`)
+    return styles.global(selector + '{' + css + '}')
   }
 
   styles.themes = (nextThemes) => {
@@ -162,31 +188,6 @@ export const createStyles = <
   }
 
   styles.theme = (theme) => `${key}-${theme}-theme`
-
-  styles.global = function () {
-    const css = compileStyles<V>(
-      compileLiterals.call(null, arguments),
-      dash.variables
-    )
-    if (!css) return noop
-    const name = hash(css)
-    const cache = (sheets[name] = sheets[name] || {
-      n: 0,
-      sheet: styleSheet(sheet),
-    })
-    cache.n += 1
-    insert('', name, css, cache.sheet)
-
-    return () => {
-      if (cache.n === 1) {
-        delete inserted[name]
-        delete sheets[name]
-        cache.sheet.flush()
-      } else {
-        cache.n -= 1
-      }
-    }
-  }
 
   styles.variables(dash.variables as any)
   styles.themes(themes as any)
@@ -302,7 +303,7 @@ export const createDash = <V extends DashVariables = DashVariables>(
     hash: dashHash = hash,
     stylisPlugins,
     prefix = true,
-    container = IS_BROWSER ? document.head : void 0,
+    container = typeof document !== 'undefined' ? document.head : void 0,
     variables = {} as V,
   } = options
   const stylis = new Stylis({prefix})
@@ -313,11 +314,16 @@ export const createDash = <V extends DashVariables = DashVariables>(
           process.env.NODE_ENV !== 'production'
         )
       : speedy
-  let insert: Dash<V>['insert'],
-    inserted: Dash<V>['inserted'] = {},
-    cache: Dash<V>['cache'] = {}
+  let inserted: Dash<V>['inserted'] = {}
+  const cache: Dash<V>['cache'] = {}
+  const sheet = styleSheet({
+    key,
+    container,
+    nonce,
+    speedy,
+  })
 
-  if (IS_BROWSER) {
+  if (typeof document !== 'undefined') {
     let nodes = document.querySelectorAll(`style[data-cache="${key}"]`)
     let i = 0
     let attr
@@ -334,23 +340,6 @@ export const createDash = <V extends DashVariables = DashVariables>(
     }
 
     stylis.use(stylisPlugins)(ruleSheet)
-
-    insert = (selector, name, styles, sheet) => {
-      if (inserted[name] === 1) return
-      inserted[name] = 1
-      Sheet.current = sheet
-      stylis(selector, styles)
-    }
-  } else {
-    // server side
-    if (stylisPlugins || prefix !== void 0) stylis.use(stylisPlugins)
-    cache = (getServerCache as any)(stylisPlugins || [])(prefix)
-
-    insert = (selector, name, styles) => {
-      if (inserted[name]) return
-      inserted[name] = 1
-      cache[name] = stylis(selector, styles)
-    }
   }
 
   /* istanbul ignore next */
@@ -382,19 +371,23 @@ export const createDash = <V extends DashVariables = DashVariables>(
 
   return {
     key,
-    sheet: styleSheet({
-      key,
-      container,
-      nonce,
-      speedy,
-    }),
+    sheet,
+    sheets: {},
     stylis,
     hash: safeHash(key, dashHash),
-    insert,
-    variables,
-    cache,
+    insert(selector, name, styles, insertSheet = sheet) {
+      if (inserted[name] === 1) return
+      inserted[name] = 1
+      Sheet.current = insertSheet
+      if (typeof document !== 'undefined') {
+        stylis(selector, styles)
+      } else {
+        cache[name] = stylis(selector, styles)
+      }
+    },
     inserted,
-    sheets: {},
+    cache,
+    variables,
     clear() {
       this.inserted = inserted = {}
     },
@@ -426,7 +419,7 @@ export type Dash<V extends DashVariables = DashVariables> = {
     selector: string,
     name: string,
     styles: string,
-    sheet: DashStyleSheet
+    sheet?: DashStyleSheet
   ) => void
   inserted: {
     [name: string]: number
@@ -559,17 +552,6 @@ export interface DashStyleSheet {
 function noop() {}
 export type Falsy = false | 0 | null | undefined
 
-const weakMemo = <A extends object, T = any>(fn: (arg: A) => T) => {
-  const cache = new WeakMap()
-  return (arg: A) => {
-    let cached = cache.get(arg)
-    if (cached) return cached
-    cached = fn(arg)
-    cache.set(arg, cached)
-    return cached
-  }
-}
-
 export const hash = (string: string): string => {
   // fnv1a hash
   let out = 2166136261 // 32-bit offset basis
@@ -584,12 +566,11 @@ export const hash = (string: string): string => {
   return (out >>> 0).toString(36)
 }
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const safeHash = (key: string, hashFn: typeof hash) => {
   const hashCache: Record<string, string> = {}
+  let value: string | undefined
   return (string: string) => {
-    let value: string | undefined = hashCache[string]
-    if (value) return value
+    if ((value = hashCache[string])) return value
     value = hashFn(string)
     // allows class names to start with numbers
     return (hashCache[string] =
@@ -599,26 +580,6 @@ const safeHash = (key: string, hashFn: typeof hash) => {
 
 //
 // Stylis plugins
-const getServerCache = IS_BROWSER
-  ? null
-  : // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    weakMemo((plugins: Plugable[]) => {
-      const getCache = weakMemo((
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        prefix: (key: string, value: any, context: any) => boolean
-      ) => ({}))
-      const prefixTrueCache = {}
-      const prefixFalseCache = {}
-
-      return (
-        prefix: boolean | ((key: string, value: any, context: any) => boolean)
-      ): {} => {
-        if (prefix === void 0 || prefix === true) return prefixTrueCache
-        if (prefix === false) return prefixFalseCache
-        return getCache(prefix)
-      }
-    })
-
 const RULE_DELIMITER = '/*|*/'
 const RULE_NEEDLE = RULE_DELIMITER + '}'
 
@@ -764,7 +725,7 @@ const stringifyStyleObject = (object: StyleObject) => {
     const toV = typeof value
     if (value === null || toV === 'boolean') continue
     if (toV === 'object')
-      string += `${key}{${stringifyStyleObject(value as StyleObject)}}`
+      string += key + '{' + stringifyStyleObject(value as StyleObject) + '}'
     else {
       const isCustom = key.charCodeAt(1) === 45
       string += `${isCustom ? key : cssCase(key)}:${

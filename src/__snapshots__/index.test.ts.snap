@@ -293,32 +293,32 @@ exports[`styles.global() still exists in caches when a global is used more than 
 </style>
 `;
 
-exports[`styles.keyframes() adds keyframes to dom: @-webkit-keyframes k-10r5bpr 1`] = `
+exports[`styles.keyframes() adds keyframes to dom: @-webkit-keyframes ui-10r5bpr 1`] = `
 <style
   data-dash="ui"
 >
   
-  @-webkit-keyframes k-10r5bpr{0%{opacity:0;}100%{opacity:1;}}
+  @-webkit-keyframes ui-10r5bpr{0%{opacity:0;}100%{opacity:1;}}
 </style>
 `;
 
-exports[`styles.keyframes() adds keyframes to dom: @keyframes k-10r5bpr 1`] = `
+exports[`styles.keyframes() adds keyframes to dom: @keyframes ui-10r5bpr 1`] = `
 <style
   data-dash="ui"
 >
   
-  @keyframes k-10r5bpr{0%{opacity:0;}100%{opacity:1;}}
+  @keyframes ui-10r5bpr{0%{opacity:0;}100%{opacity:1;}}
 </style>
 `;
 
-exports[`styles.keyframes() returns keyframes name 1`] = `"k-10r5bpr"`;
+exports[`styles.keyframes() returns keyframes name 1`] = `"ui-10r5bpr"`;
 
 exports[`styles.keyframes() works with variables callback: 0% blue; 100% red; 1`] = `
 <style
   data-dash="ui"
 >
   
-  @keyframes k-1ryth4d{0%{background-color:var(--color-blue);}100%{background-color:var(--color-red);}}
+  @keyframes ui-1ryth4d{0%{background-color:var(--color-blue);}100%{background-color:var(--color-red);}}
 </style>
 `;
 

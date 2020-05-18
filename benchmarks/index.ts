@@ -70,5 +70,5 @@ bench('[cold] style callback', ({before}) => {
   before(() => {
     style = styles({foo: () => ({display: 'flex'})})
   })
-  return () => style('foo')
+  return () => style('foo', 'bar')
 })
