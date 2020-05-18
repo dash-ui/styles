@@ -1,6 +1,6 @@
 {
   "name": "@dash-ui/styles",
-  "version": "0.4.9",
+  "version": "0.4.10",
   "homepage": "https://github.com/dash-ui/styles#readme",
   "repository": "github:dash-ui/styles",
   "bugs": "https://github.com/dash-ui/styles/issues",
@@ -27,7 +27,7 @@
     "css-in-svelte"
   ],
   "main": "dist/main/index.js",
-  "module": "dist/module/index.mjs",
+  "module": "dist/module/index.js",
   "umd:main": "dist/umd/dash-ui.min.js",
   "unpkg": "dist/umd/dash-ui.min.js",
   "source": "src/index.ts",
