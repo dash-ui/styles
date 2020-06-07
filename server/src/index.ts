@@ -1,5 +1,4 @@
-import defaultStyles from '@dash-ui/styles'
-
+/* eslint-disable @typescript-eslint/no-var-requires */
 type ElementType<T extends ReadonlyArray<unknown>> = T extends ReadonlyArray<
   infer ElementType
 >
@@ -16,7 +15,7 @@ export interface CreateStylesOptions {
 }
 
 export const createStylesFromCache = (
-  styles = defaultStyles,
+  styles = require('@dash-ui/styles').default,
   options: CreateStylesOptions = {}
 ): StylesResult => {
   // createStylesFromCache() is unsafe in asynchronous render environments
@@ -36,7 +35,7 @@ export const createStylesFromCache = (
 }
 
 export const createStyleTagFromCache = (
-  styles = defaultStyles,
+  styles = require('@dash-ui/styles').default,
   options: CreateStylesOptions = {}
 ): string => {
   // createStyleTagFromCache() is unsafe in asynchronous render environments
@@ -65,7 +64,7 @@ export interface WriteStylesResult {
 
 export const writeStylesFromCache = async (
   outputPath = '',
-  styles = defaultStyles,
+  styles = require('@dash-ui/styles').default,
   options?: WriteStylesOptions
 ): Promise<WriteStylesResult> => {
   // requiring in here prevents webpack errors in stuff like Next.js apps
@@ -73,7 +72,6 @@ export const writeStylesFromCache = async (
   const fs = require('fs')
   // eslint-disable-next-line @typescript-eslint/no-var-requires
   const path = require('path')
-  styles = styles || defaultStyles
   // eslint-disable-next-line
   let {name, hash = styles.dash.hash, clearCache = false} = options || {}
   const stylesString = createStylesFromCache(styles, {clearCache}).css
@@ -85,7 +83,7 @@ export const writeStylesFromCache = async (
 
 export const createStylesFromString = (
   string: string,
-  styles = defaultStyles,
+  styles = require('@dash-ui/styles').default,
   options: CreateStylesOptions = {}
 ): StylesResult => {
   const {clearCache = false} = options
@@ -111,7 +109,7 @@ export const createStylesFromString = (
 
 export const createStyleTagFromString = (
   string: string,
-  styles = defaultStyles,
+  styles = require('@dash-ui/styles').default,
   options: CreateStylesOptions = {}
 ): string => {
   const {css, names} = createStylesFromString(string, styles, options)
@@ -127,7 +125,7 @@ export const createStyleTagFromString = (
 export const writeStylesFromString = async (
   string: string,
   outputPath = '',
-  styles = defaultStyles,
+  styles = require('@dash-ui/styles').default,
   options?: WriteStylesOptions
 ): Promise<WriteStylesResult> => {
   // requiring in here prevents webpack errors in stuff like Next.js apps
@@ -135,7 +133,6 @@ export const writeStylesFromString = async (
   const fs = require('fs')
   // eslint-disable-next-line @typescript-eslint/no-var-requires
   const path = require('path')
-  styles = styles || defaultStyles
   let {name, hash = styles.dash.hash, clearCache = false} = options || {}
   const stylesString = createStylesFromString(string, styles, {clearCache}).css
   name = `${name || styles.dash.key + '-' + hash(stylesString) + '.css'}`

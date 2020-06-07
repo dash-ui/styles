@@ -1,12 +1,12 @@
 {
-  "include": ["src", "server/src"],
-  "exclude": ["src/**/*.test.ts", "server/src/**/*.test.ts"],
+  "include": ["server/src", "src"],
+  "exclude": ["**/src/**/*.test.ts", "**/src/**/test.ts"],
   "compilerOptions": {
     "target": "es5",
     "lib": ["esnext", "dom"],
-    "strict": true,
     "moduleResolution": "node",
     "esModuleInterop": true,
+    "strict": true,
     "downlevelIteration": true,
     "baseUrl": ".",
     "paths": {

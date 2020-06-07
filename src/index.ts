@@ -283,9 +283,9 @@ export type StylesOne = {
   }
 }
 
-type DeepPartial<T> = T extends Function
+type DeepPartial<T> = T extends (...args: any[]) => any
   ? T
-  : T extends object
+  : T extends Record<string, unknown>
   ? {[P in keyof T]?: DeepPartial<T[P]>}
   : T
 
@@ -729,7 +729,10 @@ const stringifyStyleObject = (object: StyleObject) => {
     else {
       const isCustom = key.charCodeAt(1) === 45
       string += `${isCustom ? key : cssCase(key)}:${
-        toV !== 'number' || unitless[key] === 1 || value === 0 || isCustom
+        toV !== 'number' ||
+        unitless[key as keyof typeof unitless] === 1 ||
+        value === 0 ||
+        isCustom
           ? value
           : value + 'px'
       };`

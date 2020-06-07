@@ -8,10 +8,21 @@
   "main": "dist/main/index.js",
   "module": "dist/module/index.js",
   "source": "src/index.ts",
-  "types": "src/index.d.ts",
+  "types": "types/index.d.ts",
+  ".": {
+    "browser": "./dist/module/index.js",
+    "import": "./dist/esm/index.mjs",
+    "require": "./dist/main/index.js",
+    "source": "./src/index.ts",
+    "types": "./types/index.d.ts",
+    "default": "./dist/main/index.js"
+  },
+  "./package.json": "./package.json",
+  "./": "./",
   "files": [
     "/src",
-    "/dist"
+    "/dist",
+    "package.json"
   ],
   "sideEffects": false
 }
