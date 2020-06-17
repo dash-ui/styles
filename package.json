@@ -31,12 +31,6 @@
   "unpkg": "dist/umd/dash.js",
   "source": "src/index.ts",
   "types": "types/index.d.ts",
-  "files": [
-    "/src",
-    "/dist",
-    "/types",
-    "/server"
-  ],
   "exports": {
     ".": {
       "browser": "./dist/module/index.js",
@@ -58,6 +52,12 @@
     "./package.json": "./package.json",
     "./": "./"
   },
+  "files": [
+    "/src",
+    "/dist",
+    "/types",
+    "/server"
+  ],
   "sideEffects": false,
   "scripts": {
     "build": "lundle build",
