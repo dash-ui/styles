@@ -26,26 +26,26 @@
     "css-in-vue",
     "css-in-svelte"
   ],
+  "source": "src/index.ts",
   "main": "dist/main/index.js",
   "module": "dist/module/index.js",
   "unpkg": "dist/umd/dash.js",
-  "source": "src/index.ts",
   "types": "types/index.d.ts",
   "exports": {
     ".": {
-      "browser": "./dist/module/index.js",
+      "source": "./src/index.ts",
       "import": "./dist/esm/index.mjs",
       "require": "./dist/main/index.js",
+      "browser": "./dist/module/index.js",
       "umd": "./dist/umd/dash.js",
-      "source": "./src/index.ts",
       "types": "./types/index.d.ts",
       "default": "./dist/main/index.js"
     },
     "./server": {
-      "browser": "./server/dist/module/index.js",
+      "source": "./server/src/index.ts",
       "import": "./server/dist/esm/index.mjs",
       "require": "./server/dist/main/index.js",
-      "source": "./server/src/index.ts",
+      "browser": "./server/dist/module/index.js",
       "types": "./server/types/index.d.ts",
       "default": "./server/dist/main/index.js"
     },
