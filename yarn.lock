@@ -5374,10 +5374,10 @@ lower-case@^2.0.1:
   dependencies:
     tslib "^1.10.0"
 
-lundle@^0.3.3:
-  version "0.3.3"
-  resolved "https://registry.yarnpkg.com/lundle/-/lundle-0.3.3.tgz#371b4bb608560a76821e69ee42ea73b55c9ffb0b"
-  integrity sha512-4EpiQFXiscVF7cbi6CtGYUrj6W71j7MGXgoyeMNWHwJptmIHOCsMB1v4b3xHhoT/nUIOTFRla/5JZr0JDxe4mA==
+lundle@^0.4.7:
+  version "0.4.7"
+  resolved "https://registry.yarnpkg.com/lundle/-/lundle-0.4.7.tgz#3ade8c55571d0849fd10d1275381239fe79a9700"
+  integrity sha512-7p96fSNaVX5oxtpaIGtE+PUQPYX0tQbddIC2P2l0lbOoJOTdplm/YiEHZwnTi6wL1WQpjNMuc5hGxVJIsdzxyA==
   dependencies:
     "@babel/core" "^7.10.2"
     "@babel/preset-react" "^7.10.1"

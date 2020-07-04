@@ -152,7 +152,7 @@
     "husky": "latest",
     "jest": "latest",
     "lint-staged": "latest",
-    "lundle": "^0.3.3",
+    "lundle": "^0.4.7",
     "prettier": "latest",
     "standard-version": "^8.0.0",
     "typescript": "latest"
