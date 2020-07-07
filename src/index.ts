@@ -558,10 +558,14 @@ export const hash = (string: string): string => {
   let i = 0
   let len = string.length
 
-  for (; i < len; ++i) {
-    out ^= string.charCodeAt(i)
-    out += (out << 1) + (out << 4) + (out << 7) + (out << 8) + (out << 24)
-  }
+  for (; i < len; ++i)
+    out =
+      (out ^= string.charCodeAt(i)) +
+      (out << 1) +
+      (out << 4) +
+      (out << 7) +
+      (out << 8) +
+      (out << 24)
 
   return (out >>> 0).toString(36)
 }
@@ -724,9 +728,9 @@ const stringifyStyleObject = (object: StyleObject) => {
     const value = object[key]
     const toV = typeof value
     if (value === null || toV === 'boolean') continue
-    if (toV === 'object')
+    if (toV === 'object') {
       string += key + '{' + stringifyStyleObject(value as StyleObject) + '}'
-    else {
+    } else {
       const isCustom = key.charCodeAt(1) === 45
       string += `${isCustom ? key : cssCase(key)}:${
         toV !== 'number' ||
