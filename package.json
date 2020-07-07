@@ -6,7 +6,7 @@
   "bugs": "https://github.com/dash-ui/styles/issues",
   "author": "Jared Lunde <jared.lunde@gmail.com> (https://jaredLunde.com)",
   "license": "MIT",
-  "description": "Yet another CSS-in-JS library. Based on Facebook's internal styling library as seen at React Conf 2019.",
+  "description": "A tiny, powerful, framework-agnostic CSS-in-JS library.",
   "keywords": [
     "styles",
     "css-in-js",
