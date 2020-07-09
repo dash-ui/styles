@@ -975,6 +975,19 @@ describe('styles.one()', () => {
   })
 })
 
+describe('styles.cls()', () => {
+  it('creates style and inserts it into the dom right away', () => {
+    const myStyles = createStyles()
+    expect(
+      typeof myStyles.cls`
+      display: flex;
+    `
+    ).toBe('string')
+    expect(document.querySelectorAll(`style[data-dash]`).length).toBe(1)
+    expect(document.querySelectorAll(`style[data-dash]`)[0]).toMatchSnapshot()
+  })
+})
+
 describe('Exceptions', () => {
   it('throws for unterminated comments', () => {
     const style = createStyles()({

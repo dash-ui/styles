@@ -192,6 +192,15 @@ exports[`styles() returns single class name 3`] = `"ui-broszf"`;
 
 exports[`styles() shouldn't do anything with unprocessable object values 1`] = `"display:flex;"`;
 
+exports[`styles.cls() creates style and inserts it into the dom right away 1`] = `
+<style
+  data-dash="ui"
+>
+  
+  .ui-1ut9bc3{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;}
+</style>
+`;
+
 exports[`styles.global() allows @font-face 1`] = `
 <style
   data-dash="ui"

@@ -4,8 +4,12 @@ import Stylis from '@dash-ui/stylis'
 import unitless from '@dash-ui/unitless'
 import type {Plugable, Plugin, Context} from '@dash-ui/stylis'
 
-//
-// Where the magic happens
+/**
+ * A function that returns a new `styles()` function with custom
+ * options.
+ *
+ * @param options Configuration options
+ */
 export function createStyles<
   V extends DashVariables = DashVariables,
   T extends string = ThemeNames
@@ -54,7 +58,7 @@ export function createStyles<
           ? compileStyles(styleMap[styleName], dash.variables)
           : styleMap[styleName]
 
-    // style('text', 'space', {})
+    // style('text', {})
     const style: Style<N, V> = function () {
       const css = compileArguments<N, V>(
         dash,
@@ -110,6 +114,11 @@ export function createStyles<
 
     ;(callback.css = css).toString = callback.css
     return (callback.toString = callback)
+  }
+
+  styles.cls = function () {
+    // @ts-expect-error
+    return styles.one.apply(this, arguments)()
   }
 
   styles.join = (...style) => {
@@ -200,18 +209,55 @@ export interface CreateStylesOptions<
   themes?: {
     [Name in T]: V
   }
+  /**
+   * When `true` this will mangle CSS variable names. You can also
+   * provide an object with `{key: boolean}` pairs of reserved keys
+   * which will not be mangled.
+   */
   mangleVariables?: boolean | Record<string, boolean>
 }
 
+/**
+ * A styles object
+ */
 export interface Styles<
   V extends DashVariables = DashVariables,
   T extends string = ThemeNames
 > {
   <N extends string>(styleMap: StyleMap<N, V>): Style<N, V>
+  /**
+   * A function that accepts a tagged template literal, style object, or style callback,
+   * and returns a function. That function inserts the style into a `<style>` tag and
+   * returns a class name when called. The caching algorithm for this function is O(1)
+   * and this is the most performant way to create styles.
+   *
+   * @example
+   * const row = styles.one`
+   *   display: flex;
+   *   flex-wrap: nowrap;
+   * `
+   *
+   * const Row = props => <div {...props} className={row()}/>>
+   */
   one: (
     literals: TemplateStringsArray | string | StyleObject | StyleCallback<V>,
     ...placeholders: string[]
   ) => StylesOne
+  cls: (
+    literals: TemplateStringsArray | string | StyleObject | StyleCallback<V>,
+    ...placeholders: string[]
+  ) => string
+  /**
+   * Joins CSS, inserts it into the DOM, and returns a class name.
+   *
+   * @example
+   * <div
+   *   className={styles.join(
+   *     button.css('primary'),
+   *     transition.css('fade')
+   *   )}
+   * />
+   */
   join: (...styleCss: string[]) => string
   keyframes: (
     literals: TemplateStringsArray | string | StyleCallback<V> | StyleObject,
