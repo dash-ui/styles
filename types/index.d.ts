@@ -1,11 +1,9 @@
 import Stylis from '@dash-ui/stylis'
 import type {Plugable} from '@dash-ui/stylis'
-export declare const createStyles: <
+export declare function createStyles<
   V extends DashVariables = DashVariables,
-  T extends string = never
->(
-  options?: CreateStylesOptions<V, T>
-) => Styles<V, T>
+  T extends string = ThemeNames
+>(options?: CreateStylesOptions<V, T>): Styles<V, T>
 export interface CreateStylesOptions<
   V extends DashVariables = DashVariables,
   T extends string = ThemeNames
@@ -92,9 +90,9 @@ declare type DeepPartial<T> = T extends (...args: any[]) => any
       [P in keyof T]?: DeepPartial<T[P]>
     }
   : T
-export declare const createDash: <V extends DashVariables = DashVariables>(
+export declare function createDash<V extends DashVariables = DashVariables>(
   options?: CreateDashOptions<V>
-) => Dash<V>
+): Dash<V>
 export interface CreateDashOptions<V extends DashVariables = DashVariables> {
   readonly key?: string
   readonly nonce?: string
@@ -148,18 +146,11 @@ export interface DashStyleSheet {
   readonly flush: () => void
 }
 export declare type Falsy = false | 0 | null | undefined
-export declare const hash: (string: string) => string
-export declare const compileStyles: <V extends DashVariables = DashVariables>(
-  styles:
-    | string
-    | false
-    | 0
-    | StyleObject
-    | StyleCallback<V>
-    | null
-    | undefined,
+export declare function hash(string: string): string
+export declare function compileStyles<V extends DashVariables = DashVariables>(
+  styles: StyleValue<V> | Falsy,
   variables: V
-) => string
+): string
 export interface DashVariables {}
 export interface DashThemes {}
 export declare type ThemeNames = Extract<keyof DashThemes, string>

@@ -6,12 +6,10 @@ import type {Plugable, Plugin, Context} from '@dash-ui/stylis'
 
 //
 // Where the magic happens
-export const createStyles = <
+export function createStyles<
   V extends DashVariables = DashVariables,
   T extends string = ThemeNames
->(
-  options: CreateStylesOptions<V, T> = {}
-): Styles<V, T> => {
+>(options: CreateStylesOptions<V, T> = {}): Styles<V, T> {
   const dash = createDash(options)
   const {key, insert, inserted, hash, sheet, sheets} = dash
   const themes = Object.assign({}, options.themes)
@@ -291,9 +289,9 @@ type DeepPartial<T> = T extends (...args: any[]) => any
 
 //
 // Dash cache
-export const createDash = <V extends DashVariables = DashVariables>(
+export function createDash<V extends DashVariables = DashVariables>(
   options: CreateDashOptions<V> = {}
-): Dash<V> => {
+): Dash<V> {
   // Based on
   // https://github.com/emotion-js/emotion/blob/master/packages/cache/src/index.js
   let {
@@ -339,7 +337,7 @@ export const createDash = <V extends DashVariables = DashVariables>(
         (container as HTMLElement).appendChild(node)
     }
 
-    stylis.use(stylisPlugins)(ruleSheet)
+    stylis.use(stylisPlugins)(ruleSheet as Plugin)
   }
 
   /* istanbul ignore next */
@@ -436,7 +434,7 @@ export type Dash<V extends DashVariables = DashVariables> = {
 
 //
 // Stylesheet
-const styleSheet = (options: DashStyleSheetOptions): DashStyleSheet => {
+function styleSheet(options: DashStyleSheetOptions): DashStyleSheet {
   // Based off emotion and glamor's StyleSheet
   const {key, container, nonce, speedy} = options
   const tags: HTMLStyleElement[] = []
@@ -552,7 +550,7 @@ export interface DashStyleSheet {
 function noop() {}
 export type Falsy = false | 0 | null | undefined
 
-export const hash = (string: string): string => {
+export function hash(string: string): string {
   // fnv1a hash
   let out = 2166136261 // 32-bit offset basis
   let i = 0
@@ -570,7 +568,7 @@ export const hash = (string: string): string => {
   return (out >>> 0).toString(36)
 }
 
-const safeHash = (key: string, hashFn: typeof hash) => {
+function safeHash(key: string, hashFn: typeof hash) {
   const hashCache: Record<string, string> = {}
   let value: string | undefined
   return (string: string) => {
@@ -587,8 +585,7 @@ const safeHash = (key: string, hashFn: typeof hash) => {
 const RULE_DELIMITER = '/*|*/'
 const RULE_NEEDLE = RULE_DELIMITER + '}'
 
-// @ts-ignore
-const ruleSheet: Plugin = (
+function ruleSheet(
   // https://github.com/thysultan/stylis.js/tree/master/plugins/rule-sheet
   context: Context,
   content: any,
@@ -600,7 +597,7 @@ const ruleSheet: Plugin = (
   ns: number,
   depth: number,
   at: number
-): string | undefined => {
+): string | undefined {
   // property
   if (context === 1) {
     if (content.charCodeAt(0) === 64) {
@@ -638,20 +635,16 @@ const Sheet: {
   },
 }
 
-const toSheet = (block: string) => {
+function toSheet(block: string) {
   block && Sheet.current.insert(block + '}')
 }
 
 //
 // Style serialization
-const compileArguments = <
+function compileArguments<
   N extends string,
   V extends DashVariables = DashVariables
->(
-  dash: Dash<V>,
-  styleMap: StyleMap<N, V>,
-  args: StyleArguments<N>
-): string => {
+>(dash: Dash<V>, styleMap: StyleMap<N, V>, args: StyleArguments<N>): string {
   let styles = args[0]
 
   if (args.length > 1) {
@@ -691,10 +684,10 @@ const minifyRe = [
   /\s+([;,)\]{}>~/!]|\*\/)/g,
 ]
 
-export const compileStyles = <V extends DashVariables = DashVariables>(
+export function compileStyles<V extends DashVariables = DashVariables>(
   styles: StyleValue<V> | Falsy,
   variables: V
-): string => {
+): string {
   const value = typeof styles === 'function' ? styles(variables) : styles
   return (typeof value === 'object' && value !== null
     ? stringifyStyleObject(value)
@@ -707,21 +700,17 @@ export const compileStyles = <V extends DashVariables = DashVariables>(
     .replace(minifyRe[2], '$1')
 }
 
-const compileStylesMemo = <
+function compileStylesMemo<
   N extends string,
   V extends DashVariables = DashVariables
->(
-  styleMap: StyleMap<N, V>,
-  key: N | 'default',
-  variables: V
-): string => {
+>(styleMap: StyleMap<N, V>, key: N | 'default', variables: V): string {
   const styles = styleMap[key]
   return typeof styles === 'function'
     ? (styleMap[key] = compileStyles<V>(styles, variables))
     : (styles as string | Falsy) || ''
 }
 
-const stringifyStyleObject = (object: StyleObject) => {
+function stringifyStyleObject(object: StyleObject) {
   let string = ''
 
   for (const key in object) {
@@ -760,11 +749,11 @@ const cssDisallowedRe = /[^\w-]/g
 const cssCase = (string: string) =>
   string.replace(cssCaseRe, '-$&').toLowerCase()
 
-const serializeVariables = (
+function serializeVariables(
   vars: Record<string, any>,
   mangle?: CreateStylesOptions['mangleVariables'],
   names: string[] = []
-): SerializedVariables => {
+): SerializedVariables {
   const keys = Object.keys(vars)
   const variables: Record<string, any> = {}
   let css = ''
@@ -801,10 +790,10 @@ type SerializedVariables = {
   readonly css: string
 }
 
-const mergeVariables = <V extends DashVariables = DashVariables>(
+function mergeVariables<V extends DashVariables = DashVariables>(
   target: V,
   source: {[name: string]: any}
-): V => {
+): V {
   const next: any = Object.assign({}, target)
 
   for (const key in source) {
