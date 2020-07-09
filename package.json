@@ -60,6 +60,7 @@
   ],
   "sideEffects": false,
   "scripts": {
+    "bench": "lundle build -f module -e . && babel-node ./benchmark -x .ts,.js,.json",
     "build": "lundle build",
     "check-types": "lundle check-types",
     "dev": "lundle build -f module,cjs -w",
@@ -141,8 +142,10 @@
     "bracketSpacing": false
   },
   "devDependencies": {
+    "@babel/node": "^7.10.4",
     "@commitlint/cli": "^8.3.5",
     "@commitlint/config-conventional": "^8.3.4",
+    "@essentials/benchmark": "^1.0.7",
     "@types/jest": "latest",
     "babel-jest": "latest",
     "crc": "^3.8.0",
