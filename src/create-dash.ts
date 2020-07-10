@@ -171,10 +171,11 @@ export function styleSheet(options: DashStyleSheetOptions): DashStyleSheet {
         tag.setAttribute(`data-dash`, key)
         if (nonce !== void 0) tag.setAttribute('nonce', nonce)
         tag.appendChild(document.createTextNode(''))
-        container?.insertBefore(
-          tag,
-          tags.length === 0 ? null : tags[tags.length - 1].nextSibling
-        )
+        container &&
+          container.insertBefore(
+            tag,
+            tags.length === 0 ? null : tags[tags.length - 1].nextSibling
+          )
         tags.push(tag)
       }
 
@@ -307,7 +308,9 @@ function ruleSheet(
       return content + (at === 0 ? RULE_DELIMITER : '')
     }
   } else if (context === -2) {
-    content.split(RULE_NEEDLE).forEach((c: string) => toSheet(c))
+    content.split(RULE_NEEDLE).forEach((block: string) => {
+      block && Sheet.x.insert(block + '}')
+    })
   }
 }
 
@@ -319,8 +322,4 @@ const Sheet: {
   x: {
     insert: noop,
   },
-}
-
-function toSheet(block: string) {
-  block && Sheet.x.insert(block + '}')
 }

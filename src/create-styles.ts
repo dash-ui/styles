@@ -175,10 +175,10 @@ export function createStyles<
     }
   }
 
-  styles.variables = (vars, selector = ':root') => {
-    const {css, variables} = serializeVariables(vars, options.mangleVariables)
+  styles.variables = (variables, selector = ':root') => {
+    const {css, vars} = serializeVariables(variables, options.mangleVariables)
     if (!css) return noop
-    dash.variables = mergeVariables<V>(dash.variables, variables)
+    dash.variables = mergeVariables<V>(dash.variables, vars)
     return styles.global(selector + '{' + css + '}')
   }
 
@@ -455,28 +455,28 @@ const cssCase = (string: string) =>
   string.replace(cssCaseRe, '-$&').toLowerCase()
 
 function serializeVariables(
-  vars: Record<string, any>,
+  variables: Record<string, any>,
   mangle?: CreateStylesOptions['mangleVariables'],
   names: string[] = []
 ): SerializedVariables {
-  const keys = Object.keys(vars)
-  const variables: Record<string, any> = {}
+  const keys = Object.keys(variables)
+  const vars: Record<string, any> = {}
   let css = ''
   let i = 0
 
   for (; i < keys.length; i++) {
     const key = keys[i]
-    const value = vars[key]
+    const value = variables[key]
 
     if (typeof value === 'object') {
       const result = serializeVariables(value, mangle, names.concat(key))
-      variables[key] = result.variables
+      vars[key] = result.vars
       css += result.css
     } else {
       let name = cssCase(
         names.length > 0 ? names.join('-') + '-' + key : key
       ).replace(cssDisallowedRe, '-')
-      variables[key] = `var(${(name =
+      vars[key] = `var(${(name =
         '--' +
         (mangle === true || (mangle && !mangle[name])
           ? mangled(name)
@@ -485,13 +485,13 @@ function serializeVariables(
     }
   }
 
-  return {variables, css}
+  return {vars, css}
 }
 
 const mangled = safeHash('', hash)
 
 type SerializedVariables = {
-  readonly variables: Record<string, Record<string, any> | string | number>
+  readonly vars: Record<string, Record<string, any> | string | number>
   readonly css: string
 }
 
