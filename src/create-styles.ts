@@ -386,8 +386,8 @@ function compileArguments<
 }
 
 const minSpace = /\s{2,}/g
-const minLeft = /([:;,([{}>~/]|\/\*)\s+/g
-const minRight = /\s+([;,)\]{}>~/!]|\*\/)/g
+const minLeft = /([:;,([{}>~/]|\/\*)\s/g
+const minRight = /\s([;,)\]{}>~/!]|\*\/)/g
 
 export function compileStyles<V extends DashVariables = DashVariables>(
   styles: StyleValue<V> | Falsy,
