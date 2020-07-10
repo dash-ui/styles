@@ -91,7 +91,7 @@ export function createDash<V extends DashVariables = DashVariables>(
     insert(selector, name, styles, insertSheet = sheet) {
       if (inserted[name] === 1) return
       inserted[name] = 1
-      Sheet.current = insertSheet
+      Sheet.x = insertSheet
       if (typeof document !== 'undefined') {
         stylis(selector, styles)
       } else {
@@ -288,7 +288,7 @@ function ruleSheet(
   if (context === 1) {
     if (content.charCodeAt(0) === 64) {
       // @import
-      Sheet.current.insert(content + ';')
+      Sheet.x.insert(content + ';')
       return ''
     }
   }
@@ -300,7 +300,7 @@ function ruleSheet(
   else if (context === 3) {
     // @font-face, @page
     if (ns === 102 || ns === 112) {
-      Sheet.current.insert(selectors[0] + content)
+      Sheet.x.insert(selectors[0] + content)
       return ''
     } else {
       /* istanbul ignore next */
@@ -312,15 +312,15 @@ function ruleSheet(
 }
 
 const Sheet: {
-  current: {
+  x: {
     readonly insert: (rule: string) => void
   }
 } = {
-  current: {
+  x: {
     insert: noop,
   },
 }
 
 function toSheet(block: string) {
-  block && Sheet.current.insert(block + '}')
+  block && Sheet.x.insert(block + '}')
 }

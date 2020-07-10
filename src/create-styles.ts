@@ -201,7 +201,6 @@ export function createStyles<
   }
 
   styles.theme = (theme) => `${key}-${theme}-theme`
-
   styles.variables(dash.variables as any)
   styles.themes(themes as any)
   styles.dash = dash
