@@ -1,7 +1,7 @@
 // A huge amount of credit for this library goes to the emotion
 // team
 import unitless from '@dash-ui/unitless'
-import {safeHash, hash} from './utils'
+import {safeHash, hash, noop} from './utils'
 import {createDash, styleSheet} from './create-dash'
 import type {
   Dash,
@@ -67,8 +67,8 @@ export function createStyles<
     // style('text', {})
     const style: Style<N, V> = function () {
       const css = compileArguments<N, V>(
-        dash,
         compiledStyleMap,
+        dash.variables,
         arguments as any
       )
       if (!css) return ''
@@ -89,7 +89,11 @@ export function createStyles<
 
     style.styles = compiledStyleMap
     style.css = function () {
-      return compileArguments<N, V>(dash, compiledStyleMap, arguments as any)
+      return compileArguments<N, V>(
+        compiledStyleMap,
+        dash.variables,
+        arguments as any
+      )
     }
     return style
   }
@@ -347,7 +351,7 @@ export type Falsy = false | 0 | null | undefined
 function compileArguments<
   N extends string,
   V extends DashVariables = DashVariables
->(dash: Dash<V>, styleMap: StyleMap<N, V>, args: StyleArguments<N>): string {
+>(styleMap: StyleMap<N, V>, variables: V, args: StyleArguments<N>): string {
   let styles = args[0]
 
   if (args.length > 1) {
@@ -367,25 +371,23 @@ function compileArguments<
   }
 
   let nextStyles = styleMap.default
-    ? compileStylesMemo<N, V>(styleMap, 'default', dash.variables)
+    ? compileStylesMemo<N, V>(styleMap, 'default', variables)
     : ''
 
-  if (typeof styles === 'string' && styles !== 'default') {
-    nextStyles += compileStylesMemo<N, V>(styleMap, styles, dash.variables)
+  if (typeof styles === 'string') {
+    nextStyles += compileStylesMemo<N, V>(styleMap, styles, variables)
   } else if (typeof styles === 'object' && styles !== null) {
     for (const key in styles)
-      if (styles[key] && key !== 'default')
-        nextStyles += compileStylesMemo<N, V>(styleMap, key, dash.variables)
+      if (styles[key])
+        nextStyles += compileStylesMemo<N, V>(styleMap, key, variables)
   }
 
   return nextStyles
 }
 
-const minifyRe = [
-  /[\s\n\t]{2,}/g,
-  /([:;,([{}>~/]|\/\*)\s+/g,
-  /\s+([;,)\]{}>~/!]|\*\/)/g,
-]
+const minSpace = /\s{2,}/g
+const minLeft = /([:;,([{}>~/]|\/\*)\s+/g
+const minRight = /\s+([;,)\]{}>~/!]|\*\/)/g
 
 export function compileStyles<V extends DashVariables = DashVariables>(
   styles: StyleValue<V> | Falsy,
@@ -394,13 +396,13 @@ export function compileStyles<V extends DashVariables = DashVariables>(
   const value = typeof styles === 'function' ? styles(variables) : styles
   return (typeof value === 'object' && value !== null
     ? stringifyStyleObject(value)
-    : // Fucking TypeScript w/o "strict": true throws here
+    : // TypeScript w/o "strict": true throws here
       ((value || '') as string)
   )
     .trim()
-    .replace(minifyRe[0], ' ')
-    .replace(minifyRe[1], '$1')
-    .replace(minifyRe[2], '$1')
+    .replace(minSpace, ' ')
+    .replace(minLeft, '$1')
+    .replace(minRight, '$1')
 }
 
 function compileStylesMemo<
@@ -507,10 +509,6 @@ function mergeVariables<V extends DashVariables = DashVariables>(
 
   return next
 }
-
-//
-// Utils
-function noop() {}
 
 //
 // Creates and exports default dash styles function

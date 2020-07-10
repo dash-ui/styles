@@ -144,17 +144,6 @@ exports[`styles() joins css styles and returns class name: display:flex;display:
 </style>
 `;
 
-exports[`styles() only applies default style once 1`] = `
-NodeList [
-  <style
-    data-dash="ui"
-  >
-    
-    .ui-1ut9bc3{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;}
-  </style>,
-]
-`;
-
 exports[`styles() passes variables to style callbacks 1`] = `
 Object {
   "colors": Object {

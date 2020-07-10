@@ -377,16 +377,6 @@ describe('styles()', () => {
     expect(document.querySelectorAll(`style[data-dash]`)).toMatchSnapshot()
   })
 
-  it('only applies default style once', () => {
-    const style = createStyles()({
-      default: `display: flex;`,
-    })
-
-    style('default')
-    expect(document.querySelectorAll(`style[data-dash]`).length).toBe(1)
-    expect(document.querySelectorAll(`style[data-dash]`)).toMatchSnapshot()
-  })
-
   it('flushes sheet tags', () => {
     const myStyles = createStyles({})
     const style = myStyles({
