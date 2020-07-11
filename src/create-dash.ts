@@ -7,8 +7,6 @@ import {hash, safeHash, noop} from './utils'
 export function createDash<V extends DashVariables = DashVariables>(
   options: CreateDashOptions<V> = {}
 ): Dash<V> {
-  // Based on
-  // https://github.com/emotion-js/emotion/blob/master/packages/cache/src/index.js
   let {
     key = 'ui',
     nonce,

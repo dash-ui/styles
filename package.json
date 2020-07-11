@@ -110,6 +110,7 @@
     "coverage",
     "dist",
     "test",
+    "types",
     "*.config.js"
   ],
   "jest": {
@@ -161,7 +162,7 @@
     "typescript": "latest"
   },
   "dependencies": {
-    "@dash-ui/stylis": "^1.0.3",
+    "@dash-ui/stylis": "^1.0.5",
     "@dash-ui/unitless": "^2.0.0"
   },
   "peerDependencies": {}

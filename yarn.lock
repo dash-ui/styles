@@ -1168,10 +1168,10 @@
   dependencies:
     find-up "^4.0.0"
 
-"@dash-ui/stylis@^1.0.3":
-  version "1.0.3"
-  resolved "https://registry.yarnpkg.com/@dash-ui/stylis/-/stylis-1.0.3.tgz#2708b3155a24e449ac8b7affd5195d056e5e3fbd"
-  integrity sha512-zEjlIjUi9mElj1UDo2PxagtFpWX5xgVgHZUJMrStuS6vG6Uj4o2bKIQ9U/oe4ET9QpnefOM7QK7OZDijFCyNLg==
+"@dash-ui/stylis@^1.0.5":
+  version "1.0.5"
+  resolved "https://registry.yarnpkg.com/@dash-ui/stylis/-/stylis-1.0.5.tgz#a577b0f18cb34b63fcc04944395c43148ea7acda"
+  integrity sha512-7G2I1tqfIcBNyegJeORLapdsfAVSQiuoyyp725K+FBSemWNOaVMTrtRE7us1HFbAN+CP1S88vSDcKcKxgNBuxw==
 
 "@dash-ui/unitless@^2.0.0":
   version "2.0.0"

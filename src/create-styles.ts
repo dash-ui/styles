@@ -513,5 +513,4 @@ function mergeVariables<V extends DashVariables = DashVariables>(
 //
 // Creates and exports default dash styles function
 const styles: Styles<DashVariables, ThemeNames> = createStyles()
-
 export default styles
