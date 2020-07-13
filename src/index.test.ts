@@ -537,12 +537,12 @@ describe(`styles.variables()`, () => {
 
     expect(document.querySelectorAll(`style[data-dash]`).length).toBe(1)
     expect(document.querySelectorAll(`style[data-dash]`)).toMatchSnapshot()
-    expect(Object.keys(myStyles.dash.inserted).length).toBe(1)
-    expect(Object.keys(myStyles.dash.sheets).length).toBe(1)
+    expect(myStyles.dash.inserted.size).toBe(1)
+    expect(myStyles.dash.sheets.size).toBe(1)
     eject()
     expect(document.querySelectorAll(`style[data-dash]`).length).toBe(0)
-    expect(Object.keys(myStyles.dash.inserted).length).toBe(0)
-    expect(Object.keys(myStyles.dash.sheets).length).toBe(0)
+    expect(myStyles.dash.inserted.size).toBe(0)
+    expect(myStyles.dash.sheets.size).toBe(0)
   })
 
   it('mangles variables', () => {
@@ -620,16 +620,16 @@ describe(`styles.variables()`, () => {
 
     expect(document.querySelectorAll(`style[data-dash]`).length).toBe(1)
     expect(document.querySelectorAll(`style[data-dash]`)[0]).toMatchSnapshot()
-    expect(Object.keys(myStyles.dash.inserted).length).toBe(1)
-    expect(Object.keys(myStyles.dash.sheets).length).toBe(1)
+    expect(myStyles.dash.inserted.size).toBe(1)
+    expect(myStyles.dash.sheets.size).toBe(1)
     ejectA()
     expect(document.querySelectorAll(`style[data-dash]`).length).toBe(1)
-    expect(Object.keys(myStyles.dash.inserted).length).toBe(1)
-    expect(Object.keys(myStyles.dash.sheets).length).toBe(1)
+    expect(myStyles.dash.inserted.size).toBe(1)
+    expect(myStyles.dash.sheets.size).toBe(1)
     ejectB()
     expect(document.querySelectorAll(`style[data-dash]`).length).toBe(0)
-    expect(Object.keys(myStyles.dash.inserted).length).toBe(0)
-    expect(Object.keys(myStyles.dash.sheets).length).toBe(0)
+    expect(myStyles.dash.inserted.size).toBe(0)
+    expect(myStyles.dash.sheets.size).toBe(0)
   })
 
   it('creates variables w/ scales', () => {
@@ -689,12 +689,12 @@ describe(`styles.themes()`, () => {
 
     expect(document.querySelectorAll(`style[data-dash]`).length).toBe(2)
     expect(document.querySelectorAll(`style[data-dash]`)).toMatchSnapshot()
-    expect(Object.keys(myStyles.dash.inserted).length).toBe(2)
-    expect(Object.keys(myStyles.dash.sheets).length).toBe(2)
+    expect(myStyles.dash.inserted.size).toBe(2)
+    expect(myStyles.dash.sheets.size).toBe(2)
     eject()
     expect(document.querySelectorAll(`style[data-dash]`).length).toBe(0)
-    expect(Object.keys(myStyles.dash.inserted).length).toBe(0)
-    expect(Object.keys(myStyles.dash.sheets).length).toBe(0)
+    expect(myStyles.dash.inserted.size).toBe(0)
+    expect(myStyles.dash.sheets.size).toBe(0)
   })
 })
 
@@ -793,12 +793,12 @@ describe(`styles.global()`, () => {
 
     expect(document.querySelectorAll(`style[data-dash]`).length).toBe(1)
     expect(document.querySelectorAll(`style[data-dash]`)[0]).toMatchSnapshot()
-    expect(Object.keys(myStyles.dash.inserted).length).toBe(1)
-    expect(Object.keys(myStyles.dash.sheets).length).toBe(1)
+    expect(myStyles.dash.inserted.size).toBe(1)
+    expect(myStyles.dash.sheets.size).toBe(1)
     eject()
     expect(document.querySelectorAll(`style[data-dash]`).length).toBe(0)
-    expect(Object.keys(myStyles.dash.inserted).length).toBe(0)
-    expect(Object.keys(myStyles.dash.sheets).length).toBe(0)
+    expect(myStyles.dash.inserted.size).toBe(0)
+    expect(myStyles.dash.sheets.size).toBe(0)
   })
 
   it('still exists in caches when a global is used more than once but ejected once', () => {
@@ -816,16 +816,16 @@ describe(`styles.global()`, () => {
 
     expect(document.querySelectorAll(`style[data-dash]`).length).toBe(1)
     expect(document.querySelectorAll(`style[data-dash]`)[0]).toMatchSnapshot()
-    expect(Object.keys(myStyles.dash.inserted).length).toBe(1)
-    expect(Object.keys(myStyles.dash.sheets).length).toBe(1)
+    expect(myStyles.dash.inserted.size).toBe(1)
+    expect(myStyles.dash.sheets.size).toBe(1)
     ejectA()
     expect(document.querySelectorAll(`style[data-dash]`).length).toBe(1)
-    expect(Object.keys(myStyles.dash.inserted).length).toBe(1)
-    expect(Object.keys(myStyles.dash.sheets).length).toBe(1)
+    expect(myStyles.dash.inserted.size).toBe(1)
+    expect(myStyles.dash.sheets.size).toBe(1)
     ejectB()
     expect(document.querySelectorAll(`style[data-dash]`).length).toBe(0)
-    expect(Object.keys(myStyles.dash.inserted).length).toBe(0)
-    expect(Object.keys(myStyles.dash.sheets).length).toBe(0)
+    expect(myStyles.dash.inserted.size).toBe(0)
+    expect(myStyles.dash.sheets.size).toBe(0)
   })
 
   it('allows @font-face', () => {

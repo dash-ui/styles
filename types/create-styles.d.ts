@@ -142,5 +142,5 @@ export declare function compileStyles<V extends DashVariables = DashVariables>(
   styles: StyleValue<V> | Falsy,
   variables: V
 ): string
-declare const styles: Styles<DashVariables, ThemeNames>
-export default styles
+export declare const styles: Styles<DashVariables, ThemeNames>
+export {}

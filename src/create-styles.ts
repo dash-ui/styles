@@ -53,8 +53,8 @@ export function createStyles<
   const styles: Styles<V, T> = <N extends string>(
     styleMap: StyleMap<N, V>
   ): Style<N, V> => {
-    // Compiles style objects down to strings right away since that's what
-    // they'll be eventually anyway.
+    // We are mutating this object via memoization so we need to create
+    // a mutable copy
     const compiledStyleMap: StyleMap<N, V> = {}
     let styleName: keyof typeof styleMap
     /* istanbul ignore next */
@@ -87,7 +87,7 @@ export function createStyles<
       return className
     }
 
-    style.styles = compiledStyleMap
+    style.styles = styleMap
     style.css = function () {
       return compileArguments<N, V>(
         compiledStyleMap,
@@ -157,17 +157,18 @@ export function createStyles<
     )
     if (!css) return noop
     const name = hash(css)
-    const cache = (sheets[name] = sheets[name] || {
+    const cache = sheets.get(name) || {
       n: 0,
       sheet: styleSheet(sheet),
-    })
+    }
+    sheets.set(name, cache)
     cache.n++
     insert('', name, css, cache.sheet)
 
     return () => {
       if (cache.n === 1) {
-        delete inserted[name]
-        delete sheets[name]
+        inserted.delete(name)
+        sheets.delete(name)
         cache.sheet.flush()
       } else {
         cache.n--
@@ -410,6 +411,7 @@ function compileStylesMemo<
   V extends DashVariables = DashVariables
 >(styleMap: StyleMap<N, V>, key: N | 'default', variables: V): string {
   const styles = styleMap[key]
+  // istanbul ignore next
   return typeof styles === 'function'
     ? (styleMap[key] = compileStyles<V>(styles, variables))
     : (styles as string | Falsy) || ''
@@ -512,5 +514,4 @@ function mergeVariables<V extends DashVariables = DashVariables>(
 
 //
 // Creates and exports default dash styles function
-const styles: Styles<DashVariables, ThemeNames> = createStyles()
-export default styles
+export const styles: Styles<DashVariables, ThemeNames> = createStyles()

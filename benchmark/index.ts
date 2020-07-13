@@ -1,5 +1,5 @@
 import bench from '@essentials/benchmark'
-import styles from '../dist/module'
+import {styles} from '../dist/module'
 
 bench('create styles [object]', ({duration}) => {
   duration(3000)

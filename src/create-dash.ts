@@ -25,8 +25,8 @@ export function createDash<V extends DashVariables = DashVariables>(
           process.env.NODE_ENV !== 'production'
         )
       : speedy
-  let inserted: Dash<V>['inserted'] = {}
-  const cache: Dash<V>['cache'] = {}
+  const inserted: Dash<V>['inserted'] = new Set<string>()
+  const cache: Dash<V>['cache'] = new Map()
   const sheet = styleSheet({
     key,
     container,
@@ -44,7 +44,7 @@ export function createDash<V extends DashVariables = DashVariables>(
       /* istanbul ignore next */
       if ((attr = (node = nodes[i]).getAttribute(`data-dash`)) === null)
         continue
-      attr.split(' ').map((id) => (inserted[id] = 1))
+      attr.split(' ').map((id) => inserted.add(id))
 
       if (node.parentNode !== container)
         (container as HTMLElement).appendChild(node)
@@ -83,25 +83,23 @@ export function createDash<V extends DashVariables = DashVariables>(
   return {
     key,
     sheet,
-    sheets: {},
+    sheets: new Map(),
     stylis,
     hash: safeHash(key, dashHash),
     insert(selector, name, styles, insertSheet = sheet) {
-      if (inserted[name] === 1) return
-      inserted[name] = 1
+      if (inserted.has(name)) return
+      inserted.add(name)
       Sheet.x = insertSheet
       if (typeof document !== 'undefined') {
         stylis(selector, styles)
       } else {
-        cache[name] = stylis(selector, styles)
+        cache.set(name, stylis(selector, styles))
       }
     },
     inserted,
     cache,
     variables,
-    clear() {
-      this.inserted = inserted = {}
-    },
+    clear: inserted.clear.bind(inserted),
   }
 }
 
@@ -123,26 +121,22 @@ export type Dash<V extends DashVariables = DashVariables> = {
   readonly sheet: DashStyleSheet
   readonly hash: (string: string) => string
   readonly stylis: typeof Stylis
-  readonly cache: {
-    [name: string]: string
-  }
+  readonly cache: Map<string, string>
   readonly insert: (
     selector: string,
     name: string,
     styles: string,
     sheet?: DashStyleSheet
   ) => void
-  inserted: {
-    [name: string]: number
-  }
+  readonly inserted: Set<string>
   variables: V
-  readonly sheets: {
-    [name: string]: {
-      n: number
-      sheet: DashStyleSheet
-    }
-  }
+  readonly sheets: Map<string, DashSheet>
   readonly clear: () => void
+}
+
+interface DashSheet {
+  n: number
+  sheet: DashStyleSheet
 }
 
 //

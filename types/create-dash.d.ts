@@ -21,26 +21,21 @@ export declare type Dash<V extends DashVariables = DashVariables> = {
   readonly sheet: DashStyleSheet
   readonly hash: (string: string) => string
   readonly stylis: typeof Stylis
-  readonly cache: {
-    [name: string]: string
-  }
+  readonly cache: Map<string, string>
   readonly insert: (
     selector: string,
     name: string,
     styles: string,
     sheet?: DashStyleSheet
   ) => void
-  inserted: {
-    [name: string]: number
-  }
+  readonly inserted: Set<string>
   variables: V
-  readonly sheets: {
-    [name: string]: {
-      n: number
-      sheet: DashStyleSheet
-    }
-  }
+  readonly sheets: Map<string, DashSheet>
   readonly clear: () => void
+}
+interface DashSheet {
+  n: number
+  sheet: DashStyleSheet
 }
 export declare function styleSheet(
   options: DashStyleSheetOptions
@@ -62,3 +57,4 @@ export interface DashStyleSheet {
 export interface DashVariables {}
 export interface DashThemes {}
 export declare type ThemeNames = Extract<keyof DashThemes, string>
+export {}

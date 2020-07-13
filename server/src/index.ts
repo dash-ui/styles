@@ -22,13 +22,10 @@ export const createStylesFromCache = (
   const {clearCache = false} = options
   const {dash} = styles
   const styleCache = dash.cache
-  const names = new Set([
-    ...Object.keys(dash.sheets),
-    ...Object.keys(dash.inserted),
-  ])
+  const names = new Set([...dash.sheets.keys(), ...dash.inserted.values()])
   let css = ''
 
-  for (const name of names) css += styleCache[name]
+  for (const name of names) css += styleCache.get(name)
 
   if (clearCache) dash.clear()
   return {names: [...names], css}
@@ -89,16 +86,16 @@ export const createStylesFromString = (
   const {clearCache = false} = options
   const {dash} = styles
   const styleCache = dash.cache
-  const names = new Set(Object.keys(styles.dash.sheets))
+  const names = new Set<string>(dash.sheets.keys())
   let css = ''
 
-  for (let name of names) css += styleCache[name]
+  for (let name of names) css += styleCache.get(name)
 
   for (const [, name] of string.matchAll(
     new RegExp(`["\\s'=]${dash.key}-([A-Za-z0-9]+)`, 'g')
   )) {
     if (!names.has(name)) {
-      css += styleCache[name] || ''
+      css += styleCache.get(name) || ''
       names.add(name)
     }
   }
