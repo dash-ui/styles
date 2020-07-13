@@ -86,10 +86,10 @@ export function createDash<V extends DashVariables = DashVariables>(
     sheets: new Map(),
     stylis,
     hash: safeHash(key, dashHash),
-    insert(selector, name, styles, insertSheet = sheet) {
+    insert(selector, name, styles, insertSheet) {
       if (inserted.has(name)) return
       inserted.add(name)
-      Sheet.x = insertSheet
+      Sheet.x = insertSheet || sheet
       if (typeof document !== 'undefined') {
         stylis(selector, styles)
       } else {

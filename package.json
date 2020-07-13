@@ -69,7 +69,7 @@
     "prerelease": "npm run validate && npm run build",
     "release": "git add . && standard-version -a",
     "test": "jest",
-    "validate": "lundle check-types && npm run lint && jest --coverage"
+    "validate": "lundle check-types && lundle build -f module && npm run lint && jest --coverage"
   },
   "husky": {
     "hooks": {
