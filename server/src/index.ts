@@ -15,7 +15,7 @@ export interface CreateStylesOptions {
 }
 
 export const createStylesFromCache = (
-  styles = require('@dash-ui/styles').default,
+  styles = require('@dash-ui/styles').styles,
   options: CreateStylesOptions = {}
 ): StylesResult => {
   // createStylesFromCache() is unsafe in asynchronous render environments
@@ -32,7 +32,7 @@ export const createStylesFromCache = (
 }
 
 export const createStyleTagFromCache = (
-  styles = require('@dash-ui/styles').default,
+  styles = require('@dash-ui/styles').styles,
   options: CreateStylesOptions = {}
 ): string => {
   // createStyleTagFromCache() is unsafe in asynchronous render environments
@@ -61,7 +61,7 @@ export interface WriteStylesResult {
 
 export const writeStylesFromCache = async (
   outputPath = '',
-  styles = require('@dash-ui/styles').default,
+  styles = require('@dash-ui/styles').styles,
   options?: WriteStylesOptions
 ): Promise<WriteStylesResult> => {
   // requiring in here prevents webpack errors in stuff like Next.js apps
@@ -80,7 +80,7 @@ export const writeStylesFromCache = async (
 
 export const createStylesFromString = (
   string: string,
-  styles = require('@dash-ui/styles').default,
+  styles = require('@dash-ui/styles').styles,
   options: CreateStylesOptions = {}
 ): StylesResult => {
   const {clearCache = false} = options
@@ -106,7 +106,7 @@ export const createStylesFromString = (
 
 export const createStyleTagFromString = (
   string: string,
-  styles = require('@dash-ui/styles').default,
+  styles = require('@dash-ui/styles').styles,
   options: CreateStylesOptions = {}
 ): string => {
   const {css, names} = createStylesFromString(string, styles, options)
@@ -122,7 +122,7 @@ export const createStyleTagFromString = (
 export const writeStylesFromString = async (
   string: string,
   outputPath = '',
-  styles = require('@dash-ui/styles').default,
+  styles = require('@dash-ui/styles').styles,
   options?: WriteStylesOptions
 ): Promise<WriteStylesResult> => {
   // requiring in here prevents webpack errors in stuff like Next.js apps

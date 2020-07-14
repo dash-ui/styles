@@ -69,7 +69,7 @@ export function createStyles<
     }
 
     // style('text', {})
-    const style: Style<N, V> = function () {
+    function style() {
       const css = compileArguments<N, V>(
         compiledStyleMap,
         dash.variables,
@@ -96,6 +96,7 @@ export function createStyles<
         arguments as any
       )
     }
+
     return style
   }
 
@@ -132,8 +133,8 @@ export function createStyles<
     return styles.one.apply(this, arguments)()
   }
 
-  styles.join = (...style) => {
-    const css = style.join('')
+  styles.join = function () {
+    const css = Array.prototype.slice.call(arguments).join('')
     let name = hash(css)
     const className = key + '-' + name
     insert('.' + className, name, css)
@@ -207,9 +208,9 @@ export function createStyles<
   }
 
   styles.theme = (theme) => `${key}-${theme}-theme`
+  styles.dash = dash
   styles.variables(dash.variables as any)
   styles.themes(themes as any)
-  styles.dash = dash
   return styles
 }
 

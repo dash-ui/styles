@@ -1,5 +1,5 @@
 import crc from 'crc'
-import styles, {createStyles} from './index'
+import {styles, createStyles} from './index'
 
 afterEach(() => {
   styles.dash.sheet.flush()

@@ -10,25 +10,45 @@ bench('create styles [string]', ({duration}) => {
   return () => styles({foo: `display: flex;`})
 })
 
-bench('create styles.one [object]', ({duration}) => {
+bench('create one [object]', ({duration}) => {
   duration(3000)
   return () => styles.one({display: 'flex'})()
 })
 
-bench('create styles.one [string]', ({duration}) => {
+bench('create one [string]', ({duration}) => {
   duration(3000)
   return () => styles.one(`display: flex;`)()
 })
 
-const one = styles.one(`display: flex;`)
-bench('use styles.one [object]', ({duration}) => {
+const uno = styles.one(`display: flex;`)
+bench('use one [object]', ({duration}) => {
   duration(3000)
-  return () => one()
+  return () => uno()
 })
 
-bench('use styles.one [string]', ({duration}) => {
+bench('use one [string]', ({duration}) => {
   duration(3000)
-  return () => one()
+  return () => uno()
+})
+
+bench('use one [string]', ({duration}) => {
+  duration(3000)
+  return () => uno()
+})
+
+bench('use cls [string]', ({duration}) => {
+  duration(3000)
+  return () => styles.cls(`display: flex;`)
+})
+
+bench('use cls [object]', ({duration}) => {
+  duration(3000)
+  return () => styles.cls({display: 'flex'})
+})
+
+bench('use cls [callback]', ({duration}) => {
+  duration(3000)
+  return () => styles.cls(() => ({display: 'flex'}))
 })
 
 const style = styles({foo: {display: 'flex'}})
