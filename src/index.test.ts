@@ -917,17 +917,6 @@ describe('styles.one()', () => {
     expect(document.querySelectorAll(`style[data-dash]`).length).toBe(0)
   })
 
-  it(`returns a class name when toString() is called`, () => {
-    const myStyles = createStyles()
-    const myCls = myStyles.one`
-      display: flex;
-    `
-
-    String(myCls)
-    expect(document.querySelectorAll(`style[data-dash]`).length).toBe(1)
-    expect(document.querySelectorAll(`style[data-dash]`)[0]).toMatchSnapshot()
-  })
-
   it(`returns css when css() is called`, () => {
     const myStyles = createStyles()
     const myCls = myStyles.one`
@@ -935,15 +924,6 @@ describe('styles.one()', () => {
     `
 
     expect(myCls.css()).toMatchSnapshot()
-  })
-
-  it(`returns css when css.toString() is called`, () => {
-    const myStyles = createStyles()
-    const myCls = myStyles.one`
-      display: flex;
-    `
-
-    expect(`${myCls.css}`).toMatchSnapshot()
   })
 
   it(`can be called as a function w/ string value`, () => {

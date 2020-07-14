@@ -124,8 +124,8 @@ export function createStyles<
       return className
     }
 
-    ;(callback.css = css).toString = callback.css
-    return (callback.toString = callback)
+    callback.css = css
+    return callback
   }
 
   styles.cls = function () {
@@ -291,6 +291,24 @@ export interface Styles<
   dash: Dash<V>
 }
 
+export type Style<
+  N extends string = string,
+  V extends DashVariables = DashVariables
+> = {
+  (...args: StyleArguments<N>): string
+  css: {
+    (...names: StyleArguments<N>): string
+  }
+  styles: StyleMap<N, V>
+}
+
+export type StylesOne = {
+  (createClassName?: boolean | number | string | null): string
+  css: {
+    (): string
+  }
+}
+
 export type StyleMap<
   N extends string,
   V extends DashVariables = DashVariables
@@ -302,17 +320,6 @@ type StyleMapMemo<
   N extends string,
   V extends DashVariables = DashVariables
 > = Map<N | 'default', StyleCallback<V> | string>
-
-export interface Style<
-  N extends string = string,
-  V extends DashVariables = DashVariables
-> {
-  (...args: StyleArguments<N>): string
-  css: {
-    (...names: StyleArguments<N>): string
-  }
-  styles: StyleMap<N, V>
-}
 
 export type StyleArguments<N extends string = string> = (
   | N
@@ -334,15 +341,6 @@ export type StyleObject = {
 export type StyleCallback<V extends DashVariables = DashVariables> = (
   variables: V
 ) => StyleObject | string
-
-export type StylesOne = {
-  (createClassName?: boolean | number | string | null): string
-  toString: () => string
-  css: {
-    (): string
-    toString: () => string
-  }
-}
 
 type DeepPartial<T> = T extends (...args: any[]) => any
   ? T

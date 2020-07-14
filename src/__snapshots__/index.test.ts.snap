@@ -351,18 +351,7 @@ exports[`styles.one() creates style w/ template literal 1`] = `
 </style>
 `;
 
-exports[`styles.one() returns a class name when toString() is called 1`] = `
-<style
-  data-dash="ui"
->
-  
-  .ui-1ut9bc3{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;}
-</style>
-`;
-
 exports[`styles.one() returns css when css() is called 1`] = `"display:flex;"`;
-
-exports[`styles.one() returns css when css.toString() is called 1`] = `"display:flex;"`;
 
 exports[`styles.one() won't create style def if falsy 1`] = `
 <style
