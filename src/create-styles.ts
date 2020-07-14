@@ -296,17 +296,13 @@ export type Style<
   V extends DashVariables = DashVariables
 > = {
   (...args: StyleArguments<N>): string
-  css: {
-    (...names: StyleArguments<N>): string
-  }
+  css(...names: StyleArguments<N>): string
   styles: StyleMap<N, V>
 }
 
 export type StylesOne = {
   (createClassName?: boolean | number | string | null): string
-  css: {
-    (): string
-  }
+  css(): string
 }
 
 export type StyleMap<

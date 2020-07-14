@@ -50,14 +50,14 @@ export interface Styles<
    *
    * const Row = props => <div {...props} className={row()}/>>
    */
-  one: (
+  one(
     literals: TemplateStringsArray | string | StyleObject | StyleCallback<V>,
     ...placeholders: string[]
-  ) => StylesOne
-  cls: (
+  ): StylesOne
+  cls(
     literals: TemplateStringsArray | string | StyleObject | StyleCallback<V>,
     ...placeholders: string[]
-  ) => string
+  ): string
   /**
    * Joins CSS, inserts it into the DOM, and returns a class name.
    *
@@ -69,41 +69,47 @@ export interface Styles<
    *   )}
    * />
    */
-  join: (...styleCss: string[]) => string
-  keyframes: (
+  join(...styleCss: string[]): string
+  keyframes(
     literals: TemplateStringsArray | string | StyleCallback<V> | StyleObject,
     ...placeholders: string[]
-  ) => string
-  variables: (vars: DeepPartial<V>, selector?: string) => () => void
-  themes: (
+  ): string
+  variables(vars: DeepPartial<V>, selector?: string): () => void
+  themes(
     themes: DeepPartial<
       {
         [Name in T]: V
       }
     >
-  ) => () => void
-  theme: (name: T) => string
-  global: (
+  ): () => void
+  theme(name: T): string
+  global(
     literals: TemplateStringsArray | string | StyleCallback<V> | StyleObject,
     ...placeholders: string[]
-  ) => () => void
+  ): () => void
   dash: Dash<V>
+}
+export declare type Style<
+  N extends string = string,
+  V extends DashVariables = DashVariables
+> = {
+  (...args: StyleArguments<N>): string
+  css: {
+    (...names: StyleArguments<N>): string
+  }
+  styles: StyleMap<N, V>
+}
+export declare type StylesOne = {
+  (createClassName?: boolean | number | string | null): string
+  css: {
+    (): string
+  }
 }
 export declare type StyleMap<
   N extends string,
   V extends DashVariables = DashVariables
 > = {
   [Name in N | 'default']?: StyleValue<V>
-}
-export interface Style<
-  N extends string = string,
-  V extends DashVariables = DashVariables
-> {
-  (...args: StyleArguments<N>): string
-  css: {
-    (...names: StyleArguments<N>): string
-  }
-  styles: StyleMap<N, V>
 }
 export declare type StyleArguments<N extends string = string> = (
   | N
@@ -122,14 +128,6 @@ export declare type StyleObject = {
 export declare type StyleCallback<V extends DashVariables = DashVariables> = (
   variables: V
 ) => StyleObject | string
-export declare type StylesOne = {
-  (createClassName?: boolean | number | string | null): string
-  toString: () => string
-  css: {
-    (): string
-    toString: () => string
-  }
-}
 declare type DeepPartial<T> = T extends (...args: any[]) => any
   ? T
   : T extends Record<string, unknown>
