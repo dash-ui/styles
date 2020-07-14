@@ -251,14 +251,14 @@ export interface Styles<
    *
    * const Row = props => <div {...props} className={row()}/>>
    */
-  one: (
+  one(
     literals: TemplateStringsArray | string | StyleObject | StyleCallback<V>,
     ...placeholders: string[]
-  ) => StylesOne
-  cls: (
+  ): StylesOne
+  cls(
     literals: TemplateStringsArray | string | StyleObject | StyleCallback<V>,
     ...placeholders: string[]
-  ) => string
+  ): string
   /**
    * Joins CSS, inserts it into the DOM, and returns a class name.
    *
@@ -270,24 +270,24 @@ export interface Styles<
    *   )}
    * />
    */
-  join: (...styleCss: string[]) => string
-  keyframes: (
+  join(...styleCss: string[]): string
+  keyframes(
     literals: TemplateStringsArray | string | StyleCallback<V> | StyleObject,
     ...placeholders: string[]
-  ) => string
-  variables: (vars: DeepPartial<V>, selector?: string) => () => void
-  themes: (
+  ): string
+  variables(vars: DeepPartial<V>, selector?: string): () => void
+  themes(
     themes: DeepPartial<
       {
         [Name in T]: V
       }
     >
-  ) => () => void
-  theme: (name: T) => string
-  global: (
+  ): () => void
+  theme(name: T): string
+  global(
     literals: TemplateStringsArray | string | StyleCallback<V> | StyleObject,
     ...placeholders: string[]
-  ) => () => void
+  ): () => void
   dash: Dash<V>
 }
 

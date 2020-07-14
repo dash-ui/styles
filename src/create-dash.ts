@@ -119,19 +119,19 @@ export interface CreateDashOptions<V extends DashVariables = DashVariables> {
 export type Dash<V extends DashVariables = DashVariables> = {
   readonly key: string
   readonly sheet: DashStyleSheet
-  readonly hash: (string: string) => string
+  hash(string: string): string
   readonly stylis: typeof Stylis
   readonly cache: Map<string, string>
-  readonly insert: (
+  insert(
     selector: string,
     name: string,
     styles: string,
     sheet?: DashStyleSheet
-  ) => void
+  ): void
   readonly inserted: Set<string>
   variables: V
   readonly sheets: Map<string, DashSheet>
-  readonly clear: () => void
+  clear(): void
 }
 
 interface DashSheet {
@@ -249,8 +249,8 @@ export interface DashStyleSheet {
   readonly nonce?: string
   readonly container?: HTMLElement
   readonly speedy: boolean
-  readonly insert: (rule: string) => void
-  readonly flush: () => void
+  insert(rule: string): void
+  flush(): void
 }
 
 //
@@ -308,7 +308,7 @@ function ruleSheet(
 
 const Sheet: {
   x: {
-    readonly insert: (rule: string) => void
+    insert(rule: string): void
   }
 } = {
   x: {
