@@ -55,14 +55,18 @@ export function createStyles<
   ): Style<N, V> => {
     // We are mutating this object via memoization so we need to create
     // a mutable copy
-    const compiledStyleMap: StyleMap<N, V> = {}
+    const compiledStyleMap: StyleMapMemo<N, V> = new Map()
     let styleName: keyof typeof styleMap
     /* istanbul ignore next */
-    for (styleName in styleMap)
-      compiledStyleMap[styleName] =
-        typeof compiledStyleMap[styleName] !== 'function'
-          ? compileStyles(styleMap[styleName], dash.variables)
-          : styleMap[styleName]
+    for (styleName in styleMap) {
+      const styles = styleMap[styleName]
+      compiledStyleMap.set(
+        styleName,
+        typeof styles !== 'function'
+          ? compileStyles(styles, dash.variables)
+          : (styles as StyleCallback<V>)
+      )
+    }
 
     // style('text', {})
     const style: Style<N, V> = function () {
@@ -75,10 +79,7 @@ export function createStyles<
       let name = hash(css)
 
       /* istanbul ignore next */
-      if (
-        typeof process !== 'undefined' &&
-        process.env.NODE_ENV === 'development'
-      ) {
+      if (label !== undefined) {
         name += label(arguments as any)
       }
 
@@ -296,6 +297,11 @@ export type StyleMap<
   [Name in N | 'default']?: StyleValue<V>
 }
 
+type StyleMapMemo<
+  N extends string,
+  V extends DashVariables = DashVariables
+> = Map<N | 'default', StyleCallback<V> | string>
+
 export interface Style<
   N extends string = string,
   V extends DashVariables = DashVariables
@@ -352,7 +358,7 @@ export type Falsy = false | 0 | null | undefined
 function compileArguments<
   N extends string,
   V extends DashVariables = DashVariables
->(styleMap: StyleMap<N, V>, variables: V, args: StyleArguments<N>): string {
+>(styleMap: StyleMapMemo<N, V>, variables: V, args: StyleArguments<N>): string {
   let styles = args[0]
 
   if (args.length > 1) {
@@ -371,7 +377,7 @@ function compileArguments<
     }
   }
 
-  let nextStyles = styleMap.default
+  let nextStyles = styleMap.get('default')
     ? compileStylesMemo<N, V>(styleMap, 'default', variables)
     : ''
 
@@ -395,26 +401,24 @@ export function compileStyles<V extends DashVariables = DashVariables>(
   variables: V
 ): string {
   const value = typeof styles === 'function' ? styles(variables) : styles
-  return (typeof value === 'object' && value !== null
+  return typeof value === 'object' && value !== null
     ? stringifyStyleObject(value)
     : // TypeScript w/o "strict": true throws here
       ((value || '') as string)
-  )
-    .trim()
-    .replace(minSpace, ' ')
-    .replace(minLeft, '$1')
-    .replace(minRight, '$1')
+        .trim()
+        .replace(minSpace, ' ')
+        .replace(minLeft, '$1')
+        .replace(minRight, '$1')
 }
 
 function compileStylesMemo<
   N extends string,
   V extends DashVariables = DashVariables
->(styleMap: StyleMap<N, V>, key: N | 'default', variables: V): string {
-  const styles = styleMap[key]
-  // istanbul ignore next
-  return typeof styles === 'function'
-    ? (styleMap[key] = compileStyles<V>(styles, variables))
-    : (styles as string | Falsy) || ''
+>(styleMap: StyleMapMemo<N, V>, key: N | 'default', variables: V): string {
+  let styles = styleMap.get(key)
+  if (typeof styles === 'function')
+    styleMap.set(key, (styles = compileStyles<V>(styles, variables)))
+  return styles || ''
 }
 
 function stringifyStyleObject(object: StyleObject) {

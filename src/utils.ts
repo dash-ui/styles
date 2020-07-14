@@ -17,14 +17,17 @@ export function hash(string: string): string {
 }
 
 export function safeHash(key: string, hashFn: typeof hash) {
-  const hashCache: Record<string, string> = {}
+  const hashCache = new Map<string, string>()
   let value: string | undefined
   return (string: string) => {
-    if ((value = hashCache[string])) return value
+    if ((value = hashCache.get(string))) return value
     value = hashFn(string)
     // allows class names to start with numbers
-    return (hashCache[string] =
-      !key && !isNaN(value[0] as any) ? '_' + value : value)
+    hashCache.set(
+      string,
+      (value = !key && !isNaN(value[0] as any) ? '_' + value : value)
+    )
+    return value
   }
 }
 
