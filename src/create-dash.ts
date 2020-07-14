@@ -4,9 +4,7 @@ import {hash, safeHash, noop} from './utils'
 
 //
 // Dash cache
-export function createDash<V extends DashVariables = DashVariables>(
-  options: CreateDashOptions<V> = {}
-): Dash<V> {
+export function createDash(options: CreateDashOptions = {}): Dash {
   let {
     key = 'ui',
     nonce,
@@ -15,7 +13,6 @@ export function createDash<V extends DashVariables = DashVariables>(
     stylisPlugins,
     prefix = true,
     container = typeof document !== 'undefined' ? document.head : void 0,
-    variables = {} as V,
   } = options
   const stylis = new Stylis({prefix})
   speedy =
@@ -25,8 +22,8 @@ export function createDash<V extends DashVariables = DashVariables>(
           process.env.NODE_ENV !== 'production'
         )
       : speedy
-  const inserted: Dash<V>['inserted'] = new Set<string>()
-  const cache: Dash<V>['cache'] = new Map()
+  const inserted: Dash['inserted'] = new Set<string>()
+  const cache: Dash['cache'] = new Map()
   const sheet = styleSheet({
     key,
     container,
@@ -46,8 +43,8 @@ export function createDash<V extends DashVariables = DashVariables>(
         continue
       attr.split(' ').map((id) => inserted.add(id))
 
-      if (node.parentNode !== container)
-        (container as HTMLElement).appendChild(node)
+      if (node.parentNode !== container && container)
+        container.appendChild(node)
     }
 
     stylis.use(stylisPlugins)(ruleSheet as Plugin)
@@ -98,12 +95,11 @@ export function createDash<V extends DashVariables = DashVariables>(
     },
     inserted,
     cache,
-    variables,
     clear: inserted.clear.bind(inserted),
   }
 }
 
-export interface CreateDashOptions<V extends DashVariables = DashVariables> {
+export interface CreateDashOptions {
   readonly key?: string
   readonly nonce?: string
   readonly hash?: typeof hash
@@ -113,10 +109,9 @@ export interface CreateDashOptions<V extends DashVariables = DashVariables> {
     | ((key: string, value: any, context: any) => boolean)
   readonly container?: HTMLElement
   readonly speedy?: boolean
-  readonly variables?: V
 }
 
-export type Dash<V extends DashVariables = DashVariables> = {
+export type Dash = {
   readonly key: string
   readonly sheet: DashStyleSheet
   hash(string: string): string
@@ -129,7 +124,6 @@ export type Dash<V extends DashVariables = DashVariables> = {
     sheet?: DashStyleSheet
   ): void
   readonly inserted: Set<string>
-  variables: V
   readonly sheets: Map<string, DashSheet>
   clear(): void
 }
@@ -252,12 +246,6 @@ export interface DashStyleSheet {
   insert(rule: string): void
   flush(): void
 }
-
-//
-// Variables and themes defined in user space
-export interface DashVariables {}
-export interface DashThemes {}
-export type ThemeNames = Extract<keyof DashThemes, string>
 
 //
 // Stylis plugins

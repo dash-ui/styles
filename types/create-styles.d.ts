@@ -1,23 +1,19 @@
-import type {
-  Dash,
-  CreateDashOptions,
-  DashVariables,
-  ThemeNames,
-} from './create-dash'
+import type {Dash, CreateDashOptions} from './create-dash'
 /**
- * A function that returns a new `styles()` function with custom
- * options.
+ * A factory function that returns a new `styles` instance with
+ * your custom `dash` options.
  *
- * @param options Configuration options
+ * @param options Dash configuration options
  */
 export declare function createStyles<
   V extends DashVariables = DashVariables,
-  T extends string = ThemeNames
+  T extends string = DashThemeNames
 >(options?: CreateStylesOptions<V, T>): Styles<V, T>
 export interface CreateStylesOptions<
   V extends DashVariables = DashVariables,
-  T extends string = ThemeNames
-> extends CreateDashOptions<V> {
+  T extends string = DashThemeNames
+> extends CreateDashOptions {
+  variables?: V
   themes?: {
     [Name in T]: V
   }
@@ -33,7 +29,7 @@ export interface CreateStylesOptions<
  */
 export interface Styles<
   V extends DashVariables = DashVariables,
-  T extends string = ThemeNames
+  T extends string = DashThemeNames
 > {
   <N extends string>(styleMap: StyleMap<N, V>): Style<N, V>
   /**
@@ -74,7 +70,7 @@ export interface Styles<
     literals: TemplateStringsArray | string | StyleCallback<V> | StyleObject,
     ...placeholders: string[]
   ): string
-  variables(vars: DeepPartial<V>, selector?: string): () => void
+  variables(variables: DeepPartial<V>, selector?: string): () => void
   themes(
     themes: DeepPartial<
       {
@@ -87,23 +83,19 @@ export interface Styles<
     literals: TemplateStringsArray | string | StyleCallback<V> | StyleObject,
     ...placeholders: string[]
   ): () => void
-  dash: Dash<V>
+  dash: Dash
 }
 export declare type Style<
   N extends string = string,
   V extends DashVariables = DashVariables
 > = {
   (...args: StyleArguments<N>): string
-  css: {
-    (...names: StyleArguments<N>): string
-  }
+  css(...names: StyleArguments<N>): string
   styles: StyleMap<N, V>
 }
 export declare type StylesOne = {
   (createClassName?: boolean | number | string | null): string
-  css: {
-    (): string
-  }
+  css(): string
 }
 export declare type StyleMap<
   N extends string,
@@ -140,5 +132,8 @@ export declare function compileStyles<V extends DashVariables = DashVariables>(
   styles: StyleValue<V> | Falsy,
   variables: V
 ): string
-export declare const styles: Styles<DashVariables, ThemeNames>
+export declare const styles: Styles<DashVariables, DashThemeNames>
+export interface DashVariables {}
+export interface DashThemes {}
+export declare type DashThemeNames = Extract<keyof DashThemes, string>
 export {}

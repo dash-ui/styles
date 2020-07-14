@@ -3,26 +3,22 @@
 import unitless from '@dash-ui/unitless'
 import {safeHash, hash, noop} from './utils'
 import {createDash, styleSheet} from './create-dash'
-import type {
-  Dash,
-  CreateDashOptions,
-  DashVariables,
-  ThemeNames,
-} from './create-dash'
+import type {Dash, CreateDashOptions} from './create-dash'
 
 /**
- * A function that returns a new `styles()` function with custom
- * options.
+ * A factory function that returns a new `styles` instance with
+ * your custom `dash` options.
  *
- * @param options Configuration options
+ * @param options Dash configuration options
  */
 export function createStyles<
   V extends DashVariables = DashVariables,
-  T extends string = ThemeNames
+  T extends string = DashThemeNames
 >(options: CreateStylesOptions<V, T> = {}): Styles<V, T> {
   const dash = createDash(options)
   const {key, insert, inserted, hash, sheet, sheets} = dash
   const themes = Object.assign({}, options.themes)
+  const variables = Object.assign({}, options.variables)
   let label: (args: any[]) => string
   // explicit here on purpose so it's not in every test
   /* istanbul ignore next */
@@ -63,7 +59,7 @@ export function createStyles<
       compiledStyleMap.set(
         styleName,
         typeof styles !== 'function'
-          ? compileStyles(styles, dash.variables)
+          ? compileStyles(styles, variables)
           : (styles as StyleCallback<V>)
       )
     }
@@ -72,7 +68,7 @@ export function createStyles<
     function style() {
       const css = compileArguments<N, V>(
         compiledStyleMap,
-        dash.variables,
+        variables,
         arguments as any
       )
       if (!css) return ''
@@ -92,7 +88,7 @@ export function createStyles<
     style.css = function () {
       return compileArguments<N, V>(
         compiledStyleMap,
-        dash.variables,
+        variables,
         arguments as any
       )
     }
@@ -104,15 +100,10 @@ export function createStyles<
     let one =
       typeof arguments[0] === 'function'
         ? arguments[0]
-        : compileStyles<V>(
-            compileLiterals.call(null, arguments),
-            dash.variables
-          )
+        : compileStyles<V>(compileLiterals.call(null, arguments), variables)
 
     const css = () =>
-      typeof one === 'string'
-        ? one
-        : (one = compileStyles<V>(one, dash.variables))
+      typeof one === 'string' ? one : (one = compileStyles<V>(one, variables))
     let name: string
     let className: string
 
@@ -144,7 +135,7 @@ export function createStyles<
   styles.keyframes = function () {
     const css = compileStyles<V>(
       compileLiterals.call(null, arguments),
-      dash.variables
+      variables
     )
     const name = hash(css)
     const className = key + '-' + name
@@ -155,7 +146,7 @@ export function createStyles<
   styles.global = function () {
     const css = compileStyles<V>(
       compileLiterals.call(null, arguments),
-      dash.variables
+      variables
     )
     if (!css) return noop
     const name = hash(css)
@@ -178,10 +169,13 @@ export function createStyles<
     }
   }
 
-  styles.variables = (variables, selector = ':root') => {
-    const {css, vars} = serializeVariables(variables, options.mangleVariables)
+  styles.variables = (nextVariables, selector = ':root') => {
+    const {css, vars} = serializeVariables(
+      nextVariables,
+      options.mangleVariables
+    )
     if (!css) return noop
-    dash.variables = mergeVariables<V>(dash.variables, vars)
+    mergeVariables<V>(variables, vars)
     return styles.global(selector + '{' + css + '}')
   }
 
@@ -209,15 +203,16 @@ export function createStyles<
 
   styles.theme = (theme) => `${key}-${theme}-theme`
   styles.dash = dash
-  styles.variables(dash.variables as any)
+  styles.variables(variables as any)
   styles.themes(themes as any)
   return styles
 }
 
 export interface CreateStylesOptions<
   V extends DashVariables = DashVariables,
-  T extends string = ThemeNames
-> extends CreateDashOptions<V> {
+  T extends string = DashThemeNames
+> extends CreateDashOptions {
+  variables?: V
   themes?: {
     [Name in T]: V
   }
@@ -234,7 +229,7 @@ export interface CreateStylesOptions<
  */
 export interface Styles<
   V extends DashVariables = DashVariables,
-  T extends string = ThemeNames
+  T extends string = DashThemeNames
 > {
   <N extends string>(styleMap: StyleMap<N, V>): Style<N, V>
   /**
@@ -275,7 +270,7 @@ export interface Styles<
     literals: TemplateStringsArray | string | StyleCallback<V> | StyleObject,
     ...placeholders: string[]
   ): string
-  variables(vars: DeepPartial<V>, selector?: string): () => void
+  variables(variables: DeepPartial<V>, selector?: string): () => void
   themes(
     themes: DeepPartial<
       {
@@ -288,7 +283,7 @@ export interface Styles<
     literals: TemplateStringsArray | string | StyleCallback<V> | StyleObject,
     ...placeholders: string[]
   ): () => void
-  dash: Dash<V>
+  dash: Dash
 }
 
 export type Style<
@@ -497,20 +492,26 @@ type SerializedVariables = {
 }
 
 function mergeVariables<V extends DashVariables = DashVariables>(
-  target: V,
-  source: {[name: string]: any}
+  target: Record<string, any>,
+  source: Record<string, any>
 ): V {
-  const next: any = Object.assign({}, target)
-
   for (const key in source) {
     const value = source[key]
-    next[key] =
-      typeof value === 'object' ? mergeVariables(next[key] || {}, value) : value
+    target[key] =
+      typeof value === 'object'
+        ? mergeVariables(target[key] || {}, value)
+        : value
   }
 
-  return next
+  return target as V
 }
 
 //
 // Creates and exports default dash styles function
-export const styles: Styles<DashVariables, ThemeNames> = createStyles()
+export const styles: Styles<DashVariables, DashThemeNames> = createStyles()
+
+//
+// Variables and themes defined in user space
+export interface DashVariables {}
+export interface DashThemes {}
+export type DashThemeNames = Extract<keyof DashThemes, string>
