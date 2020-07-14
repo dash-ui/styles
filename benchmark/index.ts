@@ -45,30 +45,38 @@ bench('object-style [callback]', () =>
 
 bench('[cold] style', ({before}) => {
   let style
+  let key
   before(() => {
-    style = styles({foo: {display: 'flex'}})
+    key = String(Math.random())
+    style = styles({[key]: {display: 'flex'}})
   })
-  return () => style('foo')
+  return () => style(key)
 })
 bench('[cold] multi-style', ({before}) => {
   let style
+  let key
   before(() => {
-    style = styles({foo: {display: 'flex'}})
+    key = String(Math.random())
+    style = styles({[key]: {display: 'flex'}})
   })
-  return () => style('foo', 'bar')
+  return () => style(key, 'bar')
 })
 bench('[cold] object style', ({before}) => {
   let style
+  let key
   before(() => {
-    style = styles({foo: {display: 'flex'}})
+    key = String(Math.random())
+    style = styles({[String(key)]: {display: 'flex'}})
   })
-  return () => style({foo: true, bar: false}, 'bar')
+  return () => style({bar: true, [key]: false}, 'bar')
 })
 
 bench('[cold] style callback', ({before}) => {
   let style
+  let key
   before(() => {
-    style = styles({foo: () => ({display: 'flex'})})
+    key = String(Math.random())
+    style = styles({[String(key)]: () => ({display: 'flex'})})
   })
-  return () => style('foo', 'bar')
+  return () => style(key, 'bar')
 })

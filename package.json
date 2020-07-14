@@ -60,7 +60,7 @@
   ],
   "sideEffects": false,
   "scripts": {
-    "bench": "lundle build -f module -e . && babel-node ./benchmark -x .ts,.js,.json",
+    "bench": "lundle build -f module -e . && NODE_ENV=production babel-node ./benchmark -x .ts,.js,.json",
     "build": "lundle build",
     "check-types": "lundle check-types",
     "dev": "lundle build -f module,cjs -w",
