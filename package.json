@@ -159,7 +159,7 @@
     "lint-staged": "latest",
     "lundle": "^0.4.9",
     "prettier": "latest",
-    "standard-version": "^8.0.0",
+    "standard-version": "^8.0.2",
     "typescript": "latest"
   },
   "dependencies": {
