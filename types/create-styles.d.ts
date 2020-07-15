@@ -85,7 +85,7 @@ export interface Styles<
   dash: Dash
 }
 export declare type Style<
-  N extends string = string,
+  N extends string,
   V extends DashVariables = DashVariables
 > = {
   (...args: StyleArguments<N>): string
@@ -102,7 +102,7 @@ export declare type StyleMap<
 > = {
   [Name in N | 'default']?: StyleValue<V>
 }
-export declare type StyleArguments<N extends string = string> = (
+export declare type StyleArguments<N extends string> = (
   | N
   | {
       [Name in N]?: boolean | null | undefined | string | number
