@@ -282,10 +282,7 @@ export interface Styles<
   dash: Dash
 }
 
-export type Style<
-  N extends string = string,
-  V extends DashVariables = DashVariables
-> = {
+export type Style<N extends string, V extends DashVariables = DashVariables> = {
   (...args: StyleArguments<N>): string
   css(...names: StyleArguments<N>): string
   styles: StyleMap<N, V>
@@ -308,7 +305,7 @@ type StyleMapMemo<
   V extends DashVariables = DashVariables
 > = Map<N | 'default', StyleCallback<V> | string>
 
-export type StyleArguments<N extends string = string> = (
+export type StyleArguments<N extends string> = (
   | N
   | {
       [Name in N]?: boolean | null | undefined | string | number
