@@ -38,90 +38,128 @@ exports[`createStyleTagFromString uses default styles instance 1`] = `"<style da
 
 exports[`writeStylesFromCache writes 1`] = `
 Object {
+  "css": ".ui-1ut9bc3{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;}.ui-1i986zm{border-radius:1000px;background:blue;color:white;}",
   "filename": "ui-9drnu4.css",
   "name": "ui-9drnu4.css",
+  "names": Array [
+    "1ut9bc3",
+    "1i986zm",
+  ],
   "path": "./",
-  "styles": ".ui-1ut9bc3{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;}.ui-1i986zm{border-radius:1000px;background:blue;color:white;}",
 }
 `;
 
 exports[`writeStylesFromCache writes custom hash 1`] = `
 Object {
+  "css": ".ui-f8bCooDawg{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;}",
   "filename": "ui-f8bCooDawg.css",
   "name": "ui-f8bCooDawg.css",
+  "names": Array [
+    "f8bCooDawg",
+  ],
   "path": "./",
-  "styles": ".ui-f8bCooDawg{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;}",
 }
 `;
 
 exports[`writeStylesFromCache writes custom key 1`] = `
 Object {
+  "css": ".css-1ut9bc3{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;}.css-1i986zm{border-radius:1000px;background:blue;color:white;}",
   "filename": "css-mz4oaa.css",
   "name": "css-mz4oaa.css",
+  "names": Array [
+    "1ut9bc3",
+    "1i986zm",
+  ],
   "path": "./",
-  "styles": ".css-1ut9bc3{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;}.css-1i986zm{border-radius:1000px;background:blue;color:white;}",
 }
 `;
 
 exports[`writeStylesFromCache writes custom name 1`] = `
 Object {
+  "css": ".ui-1ut9bc3{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;}.ui-1i986zm{border-radius:1000px;background:blue;color:white;}",
   "filename": "foo.css",
   "name": "foo.css",
+  "names": Array [
+    "1ut9bc3",
+    "1i986zm",
+  ],
   "path": "./",
-  "styles": ".ui-1ut9bc3{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;}.ui-1i986zm{border-radius:1000px;background:blue;color:white;}",
 }
 `;
 
 exports[`writeStylesFromCache writes from default styles instance 1`] = `
 Object {
+  "css": ".ui-1ut9bc3{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;}.ui-1i986zm{border-radius:1000px;background:blue;color:white;}",
   "filename": "ui-9drnu4.css",
   "name": "ui-9drnu4.css",
+  "names": Array [
+    "1ut9bc3",
+    "1i986zm",
+  ],
   "path": "",
-  "styles": ".ui-1ut9bc3{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;}.ui-1i986zm{border-radius:1000px;background:blue;color:white;}",
 }
 `;
 
 exports[`writeStylesFromString writes 1`] = `
 Object {
+  "css": ".ui-1ut9bc3{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;}.ui-1i986zm{border-radius:1000px;background:blue;color:white;}",
   "filename": "ui-9drnu4.css",
   "name": "ui-9drnu4.css",
+  "names": Array [
+    "1ut9bc3",
+    "1i986zm",
+  ],
   "path": "./",
-  "styles": ".ui-1ut9bc3{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;}.ui-1i986zm{border-radius:1000px;background:blue;color:white;}",
 }
 `;
 
 exports[`writeStylesFromString writes custom hash 1`] = `
 Object {
+  "css": ".ui-f8bCooDawg{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;}",
   "filename": "ui-f8bCooDawg.css",
   "name": "ui-f8bCooDawg.css",
+  "names": Array [
+    "f8bCooDawg",
+  ],
   "path": "./",
-  "styles": ".ui-f8bCooDawg{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;}",
 }
 `;
 
 exports[`writeStylesFromString writes custom key 1`] = `
 Object {
+  "css": ".css-1ut9bc3{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;}.css-1i986zm{border-radius:1000px;background:blue;color:white;}",
   "filename": "css-mz4oaa.css",
   "name": "css-mz4oaa.css",
+  "names": Array [
+    "1ut9bc3",
+    "1i986zm",
+  ],
   "path": "./",
-  "styles": ".css-1ut9bc3{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;}.css-1i986zm{border-radius:1000px;background:blue;color:white;}",
 }
 `;
 
 exports[`writeStylesFromString writes custom name 1`] = `
 Object {
+  "css": ".ui-1ut9bc3{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;}.ui-1i986zm{border-radius:1000px;background:blue;color:white;}",
   "filename": "foo.css",
   "name": "foo.css",
+  "names": Array [
+    "1ut9bc3",
+    "1i986zm",
+  ],
   "path": "./",
-  "styles": ".ui-1ut9bc3{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;}.ui-1i986zm{border-radius:1000px;background:blue;color:white;}",
 }
 `;
 
 exports[`writeStylesFromString writes from default styles instance 1`] = `
 Object {
+  "css": ".ui-1ut9bc3{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;}.ui-1i986zm{border-radius:1000px;background:blue;color:white;}",
   "filename": "ui-9drnu4.css",
   "name": "ui-9drnu4.css",
+  "names": Array [
+    "1ut9bc3",
+    "1i986zm",
+  ],
   "path": "./",
-  "styles": ".ui-1ut9bc3{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;}.ui-1i986zm{border-radius:1000px;background:blue;color:white;}",
 }
 `;

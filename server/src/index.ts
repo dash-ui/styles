@@ -25,7 +25,7 @@ export const createStylesFromCache = (
 
   for (const name of names) css += styleCache.get(name)
 
-  if (clearCache) dash.clear()
+  if (clearCache) dash.inserted.clear()
   return {names: [...names], css}
 }
 

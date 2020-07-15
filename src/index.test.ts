@@ -247,7 +247,7 @@ describe('styles()', () => {
       'flex, block, inline'
     )
 
-    styles.dash.clear()
+    styles.dash.inserted.clear()
     styles.dash.sheet.flush()
     style({flex: true, block: true, inline: true})
 

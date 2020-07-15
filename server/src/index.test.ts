@@ -11,7 +11,7 @@ import {
 } from './index'
 
 afterEach(() => {
-  styles.dash.clear()
+  styles.dash.inserted.clear()
   styles.dash.sheet.flush()
 })
 
