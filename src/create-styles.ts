@@ -377,9 +377,8 @@ function compileArguments<
   return nextStyles
 }
 
-const minSpace = /\s{2,}/g
-const minLeft = /([:;,([{}>~/]|\/\*)\s/g
-const minRight = /\s([;,)\]{}>~/!]|\*\/)/g
+const minLeft = /([:;,([{}>~/\s]|\/\*)\s+/g
+const minRight = /\s+([:;,)\]{}>~/!]|\*\/)/g
 
 export function compileStyles<V extends DashVariables = DashVariables>(
   styles: StyleValue<V> | Falsy,
@@ -391,7 +390,6 @@ export function compileStyles<V extends DashVariables = DashVariables>(
     : // TypeScript w/o "strict": true throws here
       ((value || '') as string)
         .trim()
-        .replace(minSpace, ' ')
         .replace(minLeft, '$1')
         .replace(minRight, '$1')
 }

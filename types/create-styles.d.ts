@@ -43,7 +43,6 @@ export interface Styles<
    *   display: flex;
    *   flex-wrap: nowrap;
    * `
-   *
    * const Row = props => <div {...props} className={row()}/>>
    */
   one(
@@ -70,16 +69,16 @@ export interface Styles<
     literals: TemplateStringsArray | string | StyleCallback<V> | StyleObject,
     ...placeholders: string[]
   ): string
-  variables(variables: DeepPartial<V>, selector?: string): () => void
-  themes(
+  theme(name: T): string
+  insertVariables(variables: DeepPartial<V>, selector?: string): () => void
+  insertThemes(
     themes: DeepPartial<
       {
         [Name in T]: V
       }
     >
   ): () => void
-  theme(name: T): string
-  global(
+  insertGlobal(
     literals: TemplateStringsArray | string | StyleCallback<V> | StyleObject,
     ...placeholders: string[]
   ): () => void
