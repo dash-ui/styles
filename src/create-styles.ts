@@ -7,9 +7,9 @@ import type {Dash, CreateDashOptions} from './create-dash'
 
 /**
  * A factory function that returns a new `styles` instance with
- * your custom `dash` options.
+ * your custom configuration options.
  *
- * @param options Dash configuration options
+ * @param options Configuration options
  */
 export function createStyles<
   V extends DashVariables = DashVariables,
@@ -52,17 +52,16 @@ export function createStyles<
     // We are mutating this object via memoization so we need to create
     // a mutable copy
     const compiledStyleMap: StyleMapMemo<N, V> = new Map()
-    let styleName: keyof typeof styleMap
+    let styleKey: keyof typeof styleMap
+    let styleVal: StyleValue<V> | undefined
     /* istanbul ignore next */
-    for (styleName in styleMap) {
-      const styles = styleMap[styleName]
+    for (styleKey in styleMap)
       compiledStyleMap.set(
-        styleName,
-        typeof styles !== 'function'
-          ? compileStyles(styles, variables)
-          : (styles as StyleCallback<V>)
+        styleKey,
+        typeof (styleVal = styleMap[styleKey]) !== 'function'
+          ? compileStyles(styleVal, variables)
+          : (styleVal as StyleCallback<V>)
       )
-    }
 
     // style('text', {})
     function style() {
@@ -73,11 +72,8 @@ export function createStyles<
       )
       if (!css) return ''
       let name = hash(css)
-
       /* istanbul ignore next */
-      if (label !== undefined) {
-        name += label(arguments as any)
-      }
+      if (label !== undefined) name += label(arguments as any)
 
       const className = key + '-' + name
       insert('.' + className, name, css)
@@ -107,7 +103,7 @@ export function createStyles<
     let name: string
     let className: string
 
-    const callback: StylesOne = (createClassName): string => {
+    const callback: StylesOne = (createClassName) => {
       if (!createClassName && createClassName !== void 0) return ''
       const one = css()
       className = className || key + '-' + (name = name || hash(one))
@@ -138,12 +134,12 @@ export function createStyles<
       variables
     )
     const name = hash(css)
-    const className = key + '-' + name
-    insert('', name, `@keyframes ${className}{${css}}`)
-    return className
+    const animationName = key + '-' + name
+    insert('', name, `@keyframes ${animationName}{${css}}`)
+    return animationName
   }
 
-  styles.global = function () {
+  styles.insertGlobal = function () {
     const css = compileStyles<V>(
       compileLiterals.call(null, arguments),
       variables
@@ -169,22 +165,22 @@ export function createStyles<
     }
   }
 
-  styles.variables = (nextVariables, selector = ':root') => {
+  styles.insertVariables = (nextVariables, selector = ':root') => {
     const {css, vars} = serializeVariables(
       nextVariables,
       options.mangleVariables
     )
     if (!css) return noop
     mergeVariables<V>(variables, vars)
-    return styles.global(selector + '{' + css + '}')
+    return styles.insertGlobal(selector + '{' + css + '}')
   }
 
-  styles.themes = (nextThemes) => {
+  styles.insertThemes = (nextThemes) => {
     const ejectors: (() => void)[] = []
 
     for (const name in nextThemes) {
       ejectors.push(
-        styles.variables(
+        styles.insertVariables(
           // God the types here are f'ing stupid. Someone should feel free to fix this.
           (themes[name as Extract<T, string>] =
             themes[name as Extract<T, string>] === void 0
@@ -203,8 +199,8 @@ export function createStyles<
 
   styles.theme = (theme) => `${key}-${theme}-theme`
   styles.dash = dash
-  styles.variables(variables as any)
-  styles.themes(themes as any)
+  styles.insertVariables(variables as any)
+  styles.insertThemes(themes as any)
   return styles
 }
 
@@ -243,7 +239,6 @@ export interface Styles<
    *   display: flex;
    *   flex-wrap: nowrap;
    * `
-   *
    * const Row = props => <div {...props} className={row()}/>>
    */
   one(
@@ -270,16 +265,16 @@ export interface Styles<
     literals: TemplateStringsArray | string | StyleCallback<V> | StyleObject,
     ...placeholders: string[]
   ): string
-  variables(variables: DeepPartial<V>, selector?: string): () => void
-  themes(
+  theme(name: T): string
+  insertVariables(variables: DeepPartial<V>, selector?: string): () => void
+  insertThemes(
     themes: DeepPartial<
       {
         [Name in T]: V
       }
     >
   ): () => void
-  theme(name: T): string
-  global(
+  insertGlobal(
     literals: TemplateStringsArray | string | StyleCallback<V> | StyleObject,
     ...placeholders: string[]
   ): () => void

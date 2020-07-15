@@ -1,9 +1,9 @@
 import type {Dash, CreateDashOptions} from './create-dash'
 /**
  * A factory function that returns a new `styles` instance with
- * your custom `dash` options.
+ * your custom configuration options.
  *
- * @param options Dash configuration options
+ * @param options Configuration options
  */
 export declare function createStyles<
   V extends DashVariables = DashVariables,

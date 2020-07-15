@@ -35,38 +35,87 @@
 
 ```jsx harmony
 // React example
-import React from 'react'
-import styles from '@dash-ui/styles'
+import * as React from 'react'
+import {styles} from '@dash-ui/styles'
 
-styles.variables({
-  colors: {
-    red: '#c12',
-    blue: '#09a',
-    purple: '#800080',
+// Any global styles or variables that are inserted into the DOM
+// can be easily ejected by calling the function they return.
+const ejectVariables = styles.insertVariables({
+  color: {
+    // var(--color-brand)
+    brand: '#ee5b5f',
+    // var(--color-white)
+    white: '#fafafa',
+  },
+  elevation: {
+    // var(--elevation-resting)
+    resting:
+      '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
+  },
+  radius: {
+    // var(--radius-primary)
+    primary: '4px',
   },
 })
 
-const style = styles({
-  red: `
-    color: var(--colors-red);
-  `,
-  blue: ({colors}) => `
-    color: ${colors.blue};
+const ejectGlobal = styles.insertGlobal`
+  body {
+    min-height: 100vh;
+  }
+`
 
-    .${style('red')} {
-      color: ${colors.purple};
+// `styles` is a function for composing style definitions in a
+// deterministic way. In the example below, you'll see an example
+// of a button with default styles and two variants: one for a
+// 'brand' background color and one for a 'black' background color.
+const button = styles({
+  // The object in this callback is a mapping to the CSS
+  // variables above. `default` here is a special style name
+  // that will be applied to each invocation of `button()`
+  default: ({radius}) => `
+    display: inline-block;
+    border: none;
+    background: transparent;
+    padding: 0.5rem 1rem;
+    font-weight: 700;
+    border-radius: ${radius.primary};
+    box-shadow: ${elevation.resting};
+    color: ${color.white};
+    
+    /**
+     * Dash uses a CSS preprocessor called stylis so nesting,
+     * autoprefixing, etc. come out of the box.
+     * https://www.npmjs.com/package/stylis
+     */
+    :active {
+      transform: translateY(1px);
     }
   `,
+  // Styles can also be defined in the object format
+  brand: ({color}) => ({
+    backgroundColor: color.brand,
+  }),
+  // Lastly, styles need not use callbacks if they don't need
+  // access to CSS variables
+  black: {
+    backgroundColor: '#000',
+  },
 })
 
 const Component = (props) => (
-  <div className={style({blue: props.blue, red: props.red})}>
-    Hello world
-    <span className={style(props.blue && 'blue', props.red && 'red')}>
-      Hello world
-    </span>
-    <span className={style('blue')}>I'm always blue</span>
-    <span className={style('red')}>I'm purple when my parent is blue</span>
+  <div>
+    {/**
+     * Styles are composed in the order they're defined in arguments,
+     * so they are completely deterministic.
+     */}
+    <button className={button('solid', 'brand')}>Solid brand</button>
+    {/**
+     * That is, in the button below `black`'s background color will
+     * take precendence over the `brand` background color.
+     */}
+    <button className={button({outline: true, brand: true, black: true})}>
+      Solid black
+    </button>
   </div>
 )
 ```

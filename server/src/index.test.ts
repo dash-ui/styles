@@ -71,7 +71,7 @@ describe('createStyleTagFromCache', () => {
 
   it('extracts global styles', () => {
     const myStyles = createStyles({})
-    myStyles.global`
+    myStyles.insertGlobal`
       :root {
         --hello: "world";
       } 
@@ -82,7 +82,7 @@ describe('createStyleTagFromCache', () => {
 
   it('extracts global variables', () => {
     const myStyles = createStyles({})
-    myStyles.variables({
+    myStyles.insertVariables({
       colors: {
         blue: '#09a',
       },
@@ -93,7 +93,7 @@ describe('createStyleTagFromCache', () => {
 
   it('extracts theme variables', () => {
     const myStyles = createStyles({})
-    myStyles.themes({
+    myStyles.insertThemes({
       dark: {
         colors: {
           primary: '#000',
@@ -147,7 +147,7 @@ describe('createStyleTagFromString', () => {
 
   it('extracts global styles', () => {
     const myStyles = createStyles({})
-    myStyles.global`
+    myStyles.insertGlobal`
       :root {
         --hello: "world";
       }
@@ -158,7 +158,7 @@ describe('createStyleTagFromString', () => {
 
   it('extracts global variables', () => {
     const myStyles = createStyles({})
-    myStyles.variables({
+    myStyles.insertVariables({
       colors: {
         blue: '#09a',
       },

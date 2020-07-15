@@ -190,7 +190,7 @@ exports[`styles.cls() creates style and inserts it into the dom right away 1`] =
 </style>
 `;
 
-exports[`styles.global() allows @font-face 1`] = `
+exports[`styles.insertGlobal() allows @font-face 1`] = `
 <style
   data-dash="ui"
 >
@@ -199,7 +199,7 @@ exports[`styles.global() allows @font-face 1`] = `
 </style>
 `;
 
-exports[`styles.global() allows @import 1`] = `
+exports[`styles.insertGlobal() allows @import 1`] = `
 <style
   data-dash="ui"
 >
@@ -208,7 +208,7 @@ exports[`styles.global() allows @import 1`] = `
 </style>
 `;
 
-exports[`styles.global() allows style object 1`] = `
+exports[`styles.insertGlobal() allows style object 1`] = `
 <style
   data-dash="ui"
 >
@@ -217,7 +217,7 @@ exports[`styles.global() allows style object 1`] = `
 </style>
 `;
 
-exports[`styles.global() ejects global styles when callback is called 1`] = `
+exports[`styles.insertGlobal() ejects global styles when callback is called 1`] = `
 <style
   data-dash="ui"
 >
@@ -226,7 +226,7 @@ exports[`styles.global() ejects global styles when callback is called 1`] = `
 </style>
 `;
 
-exports[`styles.global() injects global style object 1`] = `
+exports[`styles.insertGlobal() injects global style object 1`] = `
 <style
   data-dash="ui"
 >
@@ -235,7 +235,7 @@ exports[`styles.global() injects global style object 1`] = `
 </style>
 `;
 
-exports[`styles.global() injects global style object 2`] = `
+exports[`styles.insertGlobal() injects global style object 2`] = `
 <style
   data-dash="ui"
 >
@@ -244,7 +244,7 @@ exports[`styles.global() injects global style object 2`] = `
 </style>
 `;
 
-exports[`styles.global() passes variables to global styles 1`] = `
+exports[`styles.insertGlobal() passes variables to global styles 1`] = `
 Object {
   "colors": Object {
     "bg": "var(--colors-bg)",
@@ -255,7 +255,7 @@ Object {
 }
 `;
 
-exports[`styles.global() should inject global styles once: :root 1`] = `
+exports[`styles.insertGlobal() should inject global styles once: :root 1`] = `
 <style
   data-dash="ui"
 >
@@ -264,7 +264,7 @@ exports[`styles.global() should inject global styles once: :root 1`] = `
 </style>
 `;
 
-exports[`styles.global() should inject global styles once: :root 2`] = `
+exports[`styles.insertGlobal() should inject global styles once: :root 2`] = `
 <style
   data-dash="ui"
 >
@@ -273,7 +273,7 @@ exports[`styles.global() should inject global styles once: :root 2`] = `
 </style>
 `;
 
-exports[`styles.global() should inject global styles once: html 1`] = `
+exports[`styles.insertGlobal() should inject global styles once: html 1`] = `
 <style
   data-dash="ui"
 >
@@ -282,12 +282,103 @@ exports[`styles.global() should inject global styles once: html 1`] = `
 </style>
 `;
 
-exports[`styles.global() still exists in caches when a global is used more than once but ejected once 1`] = `
+exports[`styles.insertGlobal() still exists in caches when a global is used more than once but ejected once 1`] = `
 <style
   data-dash="ui"
 >
   
   html{font-size:100%;}
+</style>
+`;
+
+exports[`styles.insertThemes() creates variables: dark 1`] = `
+<style
+  data-dash="ui"
+>
+  
+  .ui-dark-theme{--colors-bg:#000;--colors-text:#fff;}
+</style>
+`;
+
+exports[`styles.insertThemes() creates variables: light 1`] = `
+<style
+  data-dash="ui"
+>
+  
+  .ui-dark-theme{--colors-bg:#000;--colors-text:#fff;}
+</style>
+`;
+
+exports[`styles.insertThemes() removes variables when eject is called 1`] = `
+NodeList [
+  <style
+    data-dash="ui"
+  >
+    
+    .ui-dark-theme{--colors-bg:#000;--colors-text:#fff;}
+  </style>,
+  <style
+    data-dash="ui"
+  >
+    
+    .ui-light-theme{--colors-bg:#fff;--colors-text:#000;}
+  </style>,
+]
+`;
+
+exports[`styles.insertVariables() creates variables w/ scales: :root 1`] = `
+<style
+  data-dash="ui"
+>
+  
+  :root{--spacing-0:1rem;--spacing-1:2rem;--spacing-2:4rem;}
+</style>
+`;
+
+exports[`styles.insertVariables() creates variables: :root 1`] = `
+<style
+  data-dash="ui"
+>
+  
+  :root{--columns:12;--colors-blue:#09a;--colors-red:#c12;--colors-light-red:#c1a;--spacing-xs:1rem;--system-p-md:1rem;--system-p-xs:0.25rem;--system-p-sm:0.5rem;--system-p-lg:2rem;--system-p-xl:4rem;}
+</style>
+`;
+
+exports[`styles.insertVariables() mangles variables w/ reserved keys: :root 1`] = `
+<style
+  data-dash="ui"
+>
+  
+  :root{--_12hfjng:12;--colors-blue:#09a;--_89k0f7:#c12;--_1mhhw7a:#c1a;--_1qcm7yo:1rem;--_16er4c5:1rem;--_16ql9bx:0.25rem;--yg0a80:0.5rem;--wp1vk5:2rem;--_170kv0w:4rem;}
+</style>
+`;
+
+exports[`styles.insertVariables() mangles variables: :root 1`] = `
+<style
+  data-dash="ui"
+>
+  
+  :root{--_12hfjng:12;--qqs9ko:#09a;--_89k0f7:#c12;--_1mhhw7a:#c1a;--_1qcm7yo:1rem;--_16er4c5:1rem;--_16ql9bx:0.25rem;--yg0a80:0.5rem;--wp1vk5:2rem;--_170kv0w:4rem;}
+</style>
+`;
+
+exports[`styles.insertVariables() removes variables when eject is called 1`] = `
+NodeList [
+  <style
+    data-dash="ui"
+  >
+    
+    :root{--colors-blue:#09a;--colors-red:#c12;--colors-light-red:#c1a;--spacing-xs:1rem;--system-p-md:1rem;--system-p-xs:0.25rem;--system-p-sm:0.5rem;--system-p-lg:2rem;--system-p-xl:4rem;}
+  </style>,
+]
+`;
+
+exports[`styles.insertVariables() still exists in caches when used more than once 1`] = `
+<style
+  data-dash="ui"
+>
+  
+  :root{--colors-blue:#09a;--colors-red:#c12;--colors-light-red:#c1a;--spacing-xs:1rem;--system-p-md:1rem;--system-p-xs:0.25rem;--system-p-sm:0.5rem;--system-p-lg:2rem;--system-p-xl:4rem;}
 </style>
 `;
 
@@ -359,96 +450,5 @@ exports[`styles.one() won't create style def if falsy 1`] = `
 >
   
   .ui-1ut9bc3{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;}
-</style>
-`;
-
-exports[`styles.themes() creates variables: dark 1`] = `
-<style
-  data-dash="ui"
->
-  
-  .ui-dark-theme{--colors-bg:#000;--colors-text:#fff;}
-</style>
-`;
-
-exports[`styles.themes() creates variables: light 1`] = `
-<style
-  data-dash="ui"
->
-  
-  .ui-dark-theme{--colors-bg:#000;--colors-text:#fff;}
-</style>
-`;
-
-exports[`styles.themes() removes variables when eject is called 1`] = `
-NodeList [
-  <style
-    data-dash="ui"
-  >
-    
-    .ui-dark-theme{--colors-bg:#000;--colors-text:#fff;}
-  </style>,
-  <style
-    data-dash="ui"
-  >
-    
-    .ui-light-theme{--colors-bg:#fff;--colors-text:#000;}
-  </style>,
-]
-`;
-
-exports[`styles.variables() creates variables w/ scales: :root 1`] = `
-<style
-  data-dash="ui"
->
-  
-  :root{--spacing-0:1rem;--spacing-1:2rem;--spacing-2:4rem;}
-</style>
-`;
-
-exports[`styles.variables() creates variables: :root 1`] = `
-<style
-  data-dash="ui"
->
-  
-  :root{--columns:12;--colors-blue:#09a;--colors-red:#c12;--colors-light-red:#c1a;--spacing-xs:1rem;--system-p-md:1rem;--system-p-xs:0.25rem;--system-p-sm:0.5rem;--system-p-lg:2rem;--system-p-xl:4rem;}
-</style>
-`;
-
-exports[`styles.variables() mangles variables w/ reserved keys: :root 1`] = `
-<style
-  data-dash="ui"
->
-  
-  :root{--_12hfjng:12;--colors-blue:#09a;--_89k0f7:#c12;--_1mhhw7a:#c1a;--_1qcm7yo:1rem;--_16er4c5:1rem;--_16ql9bx:0.25rem;--yg0a80:0.5rem;--wp1vk5:2rem;--_170kv0w:4rem;}
-</style>
-`;
-
-exports[`styles.variables() mangles variables: :root 1`] = `
-<style
-  data-dash="ui"
->
-  
-  :root{--_12hfjng:12;--qqs9ko:#09a;--_89k0f7:#c12;--_1mhhw7a:#c1a;--_1qcm7yo:1rem;--_16er4c5:1rem;--_16ql9bx:0.25rem;--yg0a80:0.5rem;--wp1vk5:2rem;--_170kv0w:4rem;}
-</style>
-`;
-
-exports[`styles.variables() removes variables when eject is called 1`] = `
-NodeList [
-  <style
-    data-dash="ui"
-  >
-    
-    :root{--colors-blue:#09a;--colors-red:#c12;--colors-light-red:#c1a;--spacing-xs:1rem;--system-p-md:1rem;--system-p-xs:0.25rem;--system-p-sm:0.5rem;--system-p-lg:2rem;--system-p-xl:4rem;}
-  </style>,
-]
-`;
-
-exports[`styles.variables() still exists in caches when used more than once 1`] = `
-<style
-  data-dash="ui"
->
-  
-  :root{--colors-blue:#09a;--colors-red:#c12;--colors-light-red:#c1a;--spacing-xs:1rem;--system-p-md:1rem;--system-p-xs:0.25rem;--system-p-sm:0.5rem;--system-p-lg:2rem;--system-p-xl:4rem;}
 </style>
 `;

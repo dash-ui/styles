@@ -496,9 +496,9 @@ describe('styles.keyframes()', () => {
   })
 })
 
-describe(`styles.variables()`, () => {
+describe(`styles.insertVariables()`, () => {
   it('creates variables', () => {
-    createStyles().variables({
+    createStyles().insertVariables({
       columns: 12,
       colors: {
         blue: '#09a',
@@ -521,7 +521,7 @@ describe(`styles.variables()`, () => {
 
   it('removes variables when eject is called', () => {
     const myStyles = createStyles()
-    const eject = myStyles.variables({
+    const eject = myStyles.insertVariables({
       colors: {
         blue: '#09a',
         red: '#c12',
@@ -546,7 +546,7 @@ describe(`styles.variables()`, () => {
   })
 
   it('mangles variables', () => {
-    createStyles({mangleVariables: true}).variables({
+    createStyles({mangleVariables: true}).insertVariables({
       columns: 12,
       colors: {
         blue: '#09a',
@@ -568,7 +568,7 @@ describe(`styles.variables()`, () => {
   })
 
   it('mangles variables w/ reserved keys', () => {
-    createStyles({mangleVariables: {'colors-blue': true}}).variables({
+    createStyles({mangleVariables: {'colors-blue': true}}).insertVariables({
       columns: 12,
       colors: {
         blue: '#09a',
@@ -591,7 +591,7 @@ describe(`styles.variables()`, () => {
 
   it('still exists in caches when used more than once', () => {
     const myStyles = createStyles()
-    const ejectA = myStyles.variables({
+    const ejectA = myStyles.insertVariables({
       colors: {
         blue: '#09a',
         red: '#c12',
@@ -604,7 +604,7 @@ describe(`styles.variables()`, () => {
         p: {md: '1rem', xs: '0.25rem', sm: '0.5rem', lg: '2rem', xl: '4rem'},
       },
     })
-    const ejectB = myStyles.variables({
+    const ejectB = myStyles.insertVariables({
       colors: {
         blue: '#09a',
         red: '#c12',
@@ -633,7 +633,7 @@ describe(`styles.variables()`, () => {
   })
 
   it('creates variables w/ scales', () => {
-    createStyles().variables({
+    createStyles().insertVariables({
       spacing: ['1rem', '2rem', '4rem'],
     })
 
@@ -644,9 +644,9 @@ describe(`styles.variables()`, () => {
   })
 })
 
-describe(`styles.themes()`, () => {
+describe(`styles.insertThemes()`, () => {
   it('creates variables', () => {
-    createStyles().themes({
+    createStyles().insertThemes({
       dark: {
         colors: {
           bg: '#000',
@@ -672,7 +672,7 @@ describe(`styles.themes()`, () => {
 
   it('removes variables when eject is called', () => {
     const myStyles = createStyles()
-    const eject = myStyles.themes({
+    const eject = myStyles.insertThemes({
       dark: {
         colors: {
           bg: '#000',
@@ -698,17 +698,17 @@ describe(`styles.themes()`, () => {
   })
 })
 
-describe(`styles.global()`, () => {
+describe(`styles.insertGlobal()`, () => {
   it('passes variables to global styles', () => {
     const myStyles = createStyles()
-    myStyles.variables({
+    myStyles.insertVariables({
       colors: {
         blue: '#09a',
         red: '#c12',
       },
     })
 
-    myStyles.themes({
+    myStyles.insertThemes({
       dark: {
         colors: {
           bg: '#000',
@@ -723,7 +723,7 @@ describe(`styles.global()`, () => {
       },
     })
 
-    myStyles.global((vars) => {
+    myStyles.insertGlobal((vars) => {
       expect(vars).toMatchSnapshot()
       return ''
     })
@@ -731,7 +731,7 @@ describe(`styles.global()`, () => {
 
   it('injects global style object', () => {
     const styles_ = createStyles()
-    styles_.global({
+    styles_.insertGlobal({
       html: {
         color: 'blue',
         '.foo': {
@@ -746,8 +746,8 @@ describe(`styles.global()`, () => {
   })
 
   it('should inject global styles once', () => {
-    const {global} = createStyles()
-    global(`
+    const {insertGlobal} = createStyles()
+    insertGlobal(`
       :root {
         --spacing-0: 0;
       }
@@ -756,7 +756,7 @@ describe(`styles.global()`, () => {
         font-size: 100%;
       }
     `)
-    global`
+    insertGlobal`
       :root {
         --spacing-0: 0;
       }
@@ -765,7 +765,7 @@ describe(`styles.global()`, () => {
         font-size: 100%;
       }
     `
-    global`
+    insertGlobal`
       :root {
         --spacing-1: 0.5rem;
       }
@@ -785,7 +785,7 @@ describe(`styles.global()`, () => {
 
   it('ejects global styles when callback is called', () => {
     const myStyles = createStyles()
-    const eject = myStyles.global(`
+    const eject = myStyles.insertGlobal(`
       html {
         font-size: 100%;
       }
@@ -803,12 +803,12 @@ describe(`styles.global()`, () => {
 
   it('still exists in caches when a global is used more than once but ejected once', () => {
     const myStyles = createStyles()
-    const ejectA = myStyles.global(`
+    const ejectA = myStyles.insertGlobal(`
       html {
         font-size: 100%;
       }
     `)
-    const ejectB = myStyles.global(`
+    const ejectB = myStyles.insertGlobal(`
       html {
         font-size: 100%;
       }
@@ -829,8 +829,8 @@ describe(`styles.global()`, () => {
   })
 
   it('allows @font-face', () => {
-    const {global} = createStyles()
-    global`
+    const {insertGlobal} = createStyles()
+    insertGlobal`
       @font-face {
         font-family: "Open Sans";
         src: url("/fonts/OpenSans-Regular-webfont.woff2") format("woff2"),
@@ -843,8 +843,8 @@ describe(`styles.global()`, () => {
   })
 
   it('allows @import', () => {
-    const {global} = createStyles()
-    global`
+    const {insertGlobal} = createStyles()
+    insertGlobal`
       @import url("navigation.css");
     `
 
@@ -853,8 +853,8 @@ describe(`styles.global()`, () => {
   })
 
   it('allows style object', () => {
-    const {global} = createStyles()
-    global({
+    const {insertGlobal} = createStyles()
+    insertGlobal({
       ':root': {
         '--foo': 'bar',
       },
@@ -939,7 +939,7 @@ describe('styles.one()', () => {
       }
     }
     const myStyles = createStyles<Variables>()
-    myStyles.variables({color: {blue: 'blue'}})
+    myStyles.insertVariables({color: {blue: 'blue'}})
     const myCls = myStyles.one(({color}) => `color: ${color.blue};`)
     expect(myCls.css()).toMatchSnapshot()
   })
