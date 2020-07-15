@@ -17,8 +17,9 @@ export function createStyles<
 >(options: CreateStylesOptions<V, T> = {}): Styles<V, T> {
   const dash = createDash(options)
   const {key, insert, inserted, hash, sheet, sheets} = dash
-  const themes = Object.assign({}, options.themes)
-  const variables = Object.assign({}, options.variables)
+  const themes = {} as Record<T, V>
+  const variables = {} as V
+
   let label: (args: any[]) => string
   // explicit here on purpose so it's not in every test
   /* istanbul ignore next */
@@ -199,8 +200,8 @@ export function createStyles<
 
   styles.theme = (theme) => `${key}-${theme}-theme`
   styles.dash = dash
-  styles.insertVariables(variables as any)
-  styles.insertThemes(themes as any)
+  styles.insertVariables(options.variables || ({} as any))
+  styles.insertThemes(options.themes || ({} as any))
   return styles
 }
 
