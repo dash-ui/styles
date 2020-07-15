@@ -49,7 +49,6 @@ export const createStyleTagFromCache = (
 export interface WriteStylesOptions {
   name?: string
   hash?: (string: string) => string
-  clearCache?: boolean
 }
 
 export interface WriteStylesResult {
@@ -62,7 +61,7 @@ export interface WriteStylesResult {
 export const writeStylesFromCache = async (
   outputPath = '',
   styles = require('@dash-ui/styles').styles,
-  options?: WriteStylesOptions
+  options?: WriteStylesOptions & {clearCache?: boolean}
 ): Promise<WriteStylesResult> => {
   // requiring in here prevents webpack errors in stuff like Next.js apps
   // eslint-disable-next-line @typescript-eslint/no-var-requires
@@ -80,10 +79,8 @@ export const writeStylesFromCache = async (
 
 export const createStylesFromString = (
   string: string,
-  styles = require('@dash-ui/styles').styles,
-  options: CreateStylesOptions = {}
+  styles = require('@dash-ui/styles').styles
 ): StylesResult => {
-  const {clearCache = false} = options
   const {dash} = styles
   const styleCache = dash.cache
   const names = new Set<string>(dash.sheets.keys())
@@ -100,16 +97,14 @@ export const createStylesFromString = (
     }
   }
 
-  if (clearCache) dash.clear()
   return {names: [...names], css}
 }
 
 export const createStyleTagFromString = (
   string: string,
-  styles = require('@dash-ui/styles').styles,
-  options: CreateStylesOptions = {}
+  styles = require('@dash-ui/styles').styles
 ): string => {
-  const {css, names} = createStylesFromString(string, styles, options)
+  const {css, names} = createStylesFromString(string, styles)
   const nonceString = styles.dash.sheet.nonce
     ? ` nonce="${styles.dash.sheet.nonce}"`
     : ''
@@ -130,8 +125,8 @@ export const writeStylesFromString = async (
   const fs = require('fs')
   // eslint-disable-next-line @typescript-eslint/no-var-requires
   const path = require('path')
-  let {name, hash = styles.dash.hash, clearCache = false} = options || {}
-  const stylesString = createStylesFromString(string, styles, {clearCache}).css
+  let {name, hash = styles.dash.hash} = options || {}
+  const stylesString = createStylesFromString(string, styles).css
   name = `${name || styles.dash.key + '-' + hash(stylesString) + '.css'}`
   const filename = path.join(outputPath, name)
   await fs.promises.writeFile(filename, stylesString)

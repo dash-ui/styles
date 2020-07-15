@@ -2,13 +2,18 @@
  * @jest-environment node
  */
 import * as fs from 'fs'
-import {createStyles} from '../../src'
+import {styles, createStyles} from '../../src'
 import {
   createStyleTagFromString,
   createStyleTagFromCache,
   writeStylesFromCache,
   writeStylesFromString,
 } from './index'
+
+afterEach(() => {
+  styles.dash.clear()
+  styles.dash.sheet.flush()
+})
 
 describe('Configure', () => {
   it('removes vendor prefixing', () => {
@@ -59,6 +64,15 @@ describe('Configure', () => {
 })
 
 describe('createStyleTagFromCache', () => {
+  it('uses default styles', () => {
+    const style = styles({
+      flex: {display: 'flex'},
+    })
+
+    style('flex')
+    expect(createStyleTagFromCache()).toMatchSnapshot()
+  })
+
   it('adds nonce to style tags', () => {
     const myStyles = createStyles({nonce: 'EDNnf03nceIOfn39fn3e9h3sdfa'})
     const style = myStyles({
@@ -92,16 +106,17 @@ describe('createStyleTagFromCache', () => {
   })
 
   it('extracts theme variables', () => {
-    const myStyles = createStyles({})
-    myStyles.insertThemes({
-      dark: {
-        colors: {
-          primary: '#000',
+    const myStyles = createStyles({
+      themes: {
+        dark: {
+          colors: {
+            primary: '#000',
+          },
         },
-      },
-      light: {
-        colors: {
-          primary: '#fff',
+        light: {
+          colors: {
+            primary: '#fff',
+          },
         },
       },
     })
@@ -130,9 +145,43 @@ describe('createStyleTagFromCache', () => {
     style('btn')
     expect(createStyleTagFromCache(myStyles)).toMatchSnapshot()
   })
+
+  it('clears cached styles after render when `clearCache` is true', () => {
+    const myStyles = createStyles({})
+    const style = myStyles({
+      flex: {display: 'flex'},
+      btn: `
+        border-radius: 1000px;
+        background: blue;
+        color: white;
+      `,
+    })
+
+    style('flex')
+    style('btn')
+    style('flex')
+    style('btn')
+    expect(
+      createStyleTagFromCache(myStyles, {clearCache: true})
+    ).toMatchSnapshot()
+    expect(
+      createStyleTagFromCache(myStyles, {clearCache: true})
+    ).toMatchSnapshot('empty')
+  })
 })
 
 describe('createStyleTagFromString', () => {
+  it('uses default styles instance', () => {
+    const style = styles({
+      flex: {display: 'flex'},
+    })
+
+    style('flex')
+    expect(
+      createStyleTagFromString(`<div className=${style('flex')}>`)
+    ).toMatchSnapshot()
+  })
+
   it('adds nonce to style tags', () => {
     const myStyles = createStyles({nonce: 'EDNnf03nceIOfn39fn3e9h3sdfa'})
     const style = myStyles({
@@ -198,6 +247,32 @@ describe('createStyleTagFromString', () => {
 })
 
 describe('writeStylesFromString', () => {
+  it('writes from default styles instance', async () => {
+    const style = styles({
+      flex: {display: 'flex'},
+      btn: `
+        border-radius: 1000px;
+        background: blue;
+        color: white;
+      `,
+    })
+
+    const finfo = await writeStylesFromString(
+      `
+        <div class=${style('flex')}>
+          <div class=${style('btn')}>
+            Hello
+          </div>
+        </div>
+      `,
+      './'
+    )
+
+    expect(fs.existsSync(finfo.filename)).toBe(true)
+    fs.unlinkSync(finfo.filename)
+    expect(finfo).toMatchSnapshot()
+  })
+
   it('writes', async () => {
     const myStyles = createStyles({})
     const style = myStyles({
@@ -315,6 +390,24 @@ describe('writeStylesFromString', () => {
 })
 
 describe('writeStylesFromCache', () => {
+  it('writes from default styles instance', async () => {
+    const style = styles({
+      flex: {display: 'flex'},
+      btn: `
+        border-radius: 1000px;
+        background: blue;
+        color: white;
+      `,
+    })
+    style('flex')
+    style('btn')
+
+    const finfo = await writeStylesFromCache()
+    expect(fs.existsSync(finfo.filename)).toBe(true)
+    fs.unlinkSync(finfo.filename)
+    expect(finfo).toMatchSnapshot()
+  })
+
   it('writes', async () => {
     const myStyles = createStyles({})
     const style = myStyles({

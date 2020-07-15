@@ -10,6 +10,10 @@ exports[`createStyleTagFromCache adds nonce to style tags 1`] = `"<style data-da
 
 exports[`createStyleTagFromCache caches styles 1`] = `"<style data-dash=\\"1ut9bc3 1i986zm\\" data-cache=\\"ui\\">.ui-1ut9bc3{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;}.ui-1i986zm{border-radius:1000px;background:blue;color:white;}</style>"`;
 
+exports[`createStyleTagFromCache clears cached styles after render when \`clearCache\` is true 1`] = `"<style data-dash=\\"1ut9bc3 1i986zm\\" data-cache=\\"ui\\">.ui-1ut9bc3{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;}.ui-1i986zm{border-radius:1000px;background:blue;color:white;}</style>"`;
+
+exports[`createStyleTagFromCache clears cached styles after render when \`clearCache\` is true: empty 1`] = `"<style data-dash=\\"\\" data-cache=\\"ui\\"></style>"`;
+
 exports[`createStyleTagFromCache extracts global styles 1`] = `"<style data-dash=\\"1r8lpmu\\" data-cache=\\"ui\\">:root{--hello:\\"world\\";}</style>"`;
 
 exports[`createStyleTagFromCache extracts global variables 1`] = `"<style data-dash=\\"1ahrdya\\" data-cache=\\"ui\\">:root{--colors-blue:#09a;}</style>"`;
@@ -20,6 +24,8 @@ exports[`createStyleTagFromCache extracts theme variables 2`] = `"<style data-da
 
 exports[`createStyleTagFromCache extracts theme variables 3`] = `"<style data-dash=\\"1uitam7 14zev9x\\" data-cache=\\"ui\\">.ui-dark-theme{--colors-primary:#000;}.ui-light-theme{--colors-primary:#fff;}</style>"`;
 
+exports[`createStyleTagFromCache uses default styles 1`] = `"<style data-dash=\\"1ut9bc3\\" data-cache=\\"ui\\">.ui-1ut9bc3{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;}</style>"`;
+
 exports[`createStyleTagFromString adds nonce to style tags 1`] = `"<style data-dash=\\"1ut9bc3\\" data-cache=\\"ui\\" nonce=\\"EDNnf03nceIOfn39fn3e9h3sdfa\\">.ui-1ut9bc3{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;}</style>"`;
 
 exports[`createStyleTagFromString caches styles 1`] = `"<style data-dash=\\"1ut9bc3 1i986zm\\" data-cache=\\"ui\\">.ui-1ut9bc3{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;}.ui-1i986zm{border-radius:1000px;background:blue;color:white;}</style>"`;
@@ -27,6 +33,8 @@ exports[`createStyleTagFromString caches styles 1`] = `"<style data-dash=\\"1ut9
 exports[`createStyleTagFromString extracts global styles 1`] = `"<style data-dash=\\"1r8lpmu\\" data-cache=\\"ui\\">:root{--hello:\\"world\\";}</style>"`;
 
 exports[`createStyleTagFromString extracts global variables 1`] = `"<style data-dash=\\"1ahrdya\\" data-cache=\\"ui\\">:root{--colors-blue:#09a;}</style>"`;
+
+exports[`createStyleTagFromString uses default styles instance 1`] = `"<style data-dash=\\"1ut9bc3\\" data-cache=\\"ui\\">.ui-1ut9bc3{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;}</style>"`;
 
 exports[`writeStylesFromCache writes 1`] = `
 Object {
@@ -64,6 +72,15 @@ Object {
 }
 `;
 
+exports[`writeStylesFromCache writes from default styles instance 1`] = `
+Object {
+  "filename": "ui-9drnu4.css",
+  "name": "ui-9drnu4.css",
+  "path": "",
+  "styles": ".ui-1ut9bc3{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;}.ui-1i986zm{border-radius:1000px;background:blue;color:white;}",
+}
+`;
+
 exports[`writeStylesFromString writes 1`] = `
 Object {
   "filename": "ui-9drnu4.css",
@@ -95,6 +112,15 @@ exports[`writeStylesFromString writes custom name 1`] = `
 Object {
   "filename": "foo.css",
   "name": "foo.css",
+  "path": "./",
+  "styles": ".ui-1ut9bc3{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;}.ui-1i986zm{border-radius:1000px;background:blue;color:white;}",
+}
+`;
+
+exports[`writeStylesFromString writes from default styles instance 1`] = `
+Object {
+  "filename": "ui-9drnu4.css",
+  "name": "ui-9drnu4.css",
   "path": "./",
   "styles": ".ui-1ut9bc3{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;}.ui-1i986zm{border-radius:1000px;background:blue;color:white;}",
 }
