@@ -53,6 +53,13 @@ export declare type Dash = {
    */
   readonly sheet: DashStyleSheet
   /**
+   * Used for tracking external sheets. You can safely add/delete new
+   * custom sheets using this. Those sheets can be used in the `insert()`
+   * method. The primary reason you'd want to use this is so that you can
+   * create independently flushable styles/sheets.
+   */
+  readonly sheets: DashSheets
+  /**
    * The instance of Stylis used by this Dash instance
    */
   readonly stylis: typeof Stylis
@@ -69,25 +76,19 @@ export declare type Dash = {
    * @param selector The CSS selector to insert the rule under. Omit this
    *   when inserting a global style.
    * @param styles The rules string you'd like to insert into the document or cache.
-   * @param sheet The style sheet to insert a rule into, for example `dash.sheet`.
+   * @param styleSheet The style sheet to insert a rule into, for example `dash.sheet`.
    */
   insert(
     key: string,
     selector: string,
     styles: string,
-    sheet?: DashStyleSheet
+    styleSheet?: DashStyleSheet
   ): void
   /**
    * An insertion cache. This tracks which keys have already been inserted into
    * the DOM to prevent duplicates.
    */
   readonly inserted: Set<string>
-  /**
-   * Used for tracking external sheets. You can safely add/delete new
-   * custom sheets using this. Those sheets can be used in the `insert()`
-   * method.
-   */
-  readonly sheets: DashSheets
 }
 /**
  * A stylesheet cache that tracks references to the keys in it.
@@ -106,7 +107,7 @@ export interface DashSheets {
    * the key.
    * @param key The key to the sheet
    */
-  delete(key: string): void
+  delete(key: string): number
   /**
    * Returns an iterator containing all of the keys in the cache.
    */

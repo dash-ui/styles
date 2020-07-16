@@ -223,7 +223,7 @@ export interface Styles<
    * Inserts CSS variables into the DOM and makes them available for use in
    * style callbacks. The name of the CSS variables is automatically generated
    * based upon the depth of the mapping i.e. `foo.bar.baz` -> `--foo-bar-baz`.
-   * This function returns a function that will eject the styles inserted by
+   * This function returns a function that will flush the styles inserted by
    * `insertVariables()` when it is called.
    *
    * @param variables A map of CSS variable name/value pairs
@@ -245,7 +245,7 @@ export interface Styles<
    * })
    *
    * // Overrides the above when they are used within a `.dark` selector
-   * const ejectVariables = styles.insertVariables(
+   * const flushVariables = styles.insertVariables(
    *   {
    *     color: {
    *       // var(--color-indigo)
@@ -264,12 +264,12 @@ export interface Styles<
    * Creates a CSS variable-based theme by defining variables within a
    * class name selector matching the theme name. Apart from that it works
    * the same way `insertVariables()` does. This function returns a function
-   * that will eject the styles inserted by `insertVariables()` when it is called.
+   * that will flush the styles inserted by `insertVariables()` when it is called.
    *
    * @param themes A mapping of theme name/CSS variable pairs.
    *
    * @example
-   * const ejectThemes = styles.insertThemes({
+   * const flushThemes = styles.insertThemes({
    *   // .ui-light
    *   light: {
    *     // var(--background-color)
@@ -295,11 +295,11 @@ export interface Styles<
   /**
    * A function that accepts a tagged template literal, style object, or style callback.
    * Using this will immediately insert styles into the DOM relative to the root document.
-   * This function returns a function that will eject the styles inserted by
+   * This function returns a function that will flush the styles inserted by
    * `insertGlobal()` when it is called.
    *
    * @example
-   * const ejectGlobal = styles.insertGlobal(({color}) => `
+   * const flushGlobal = styles.insertGlobal(({color}) => `
    *   body {
    *     background-color: ${color.primaryBg};
    *   }

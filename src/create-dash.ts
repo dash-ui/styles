@@ -94,22 +94,20 @@ export function createDash(options: CreateDashOptions = {}): Dash {
       },
       delete(name) {
         const cache = sheetsCache.get(name)
-        if (!cache) return
+        if (!cache) return -1
         if (cache.n === 1) {
-          inserted.delete(name)
           sheetsCache.delete(name)
           cache.s.flush()
-        } else {
-          cache.n--
         }
+        return --cache.n
       },
       keys: sheetsCache.keys.bind(sheetsCache),
     },
     stylis,
-    insert(key, selector, styles, insertSheet) {
+    insert(key, selector, styles, styleSheet) {
       if (inserted.has(key)) return
       inserted.add(key)
-      Sheet.x = insertSheet || sheet
+      Sheet.x = styleSheet || sheet
       if (typeof document !== 'undefined') {
         stylis(selector, styles)
       } else {
@@ -170,6 +168,13 @@ export type Dash = {
    */
   readonly sheet: DashStyleSheet
   /**
+   * Used for tracking external sheets. You can safely add/delete new
+   * custom sheets using this. Those sheets can be used in the `insert()`
+   * method. The primary reason you'd want to use this is so that you can
+   * create independently flushable styles/sheets.
+   */
+  readonly sheets: DashSheets
+  /**
    * The instance of Stylis used by this Dash instance
    */
   readonly stylis: typeof Stylis
@@ -186,25 +191,19 @@ export type Dash = {
    * @param selector The CSS selector to insert the rule under. Omit this
    *   when inserting a global style.
    * @param styles The rules string you'd like to insert into the document or cache.
-   * @param sheet The style sheet to insert a rule into, for example `dash.sheet`.
+   * @param styleSheet The style sheet to insert a rule into, for example `dash.sheet`.
    */
   insert(
     key: string,
     selector: string,
     styles: string,
-    sheet?: DashStyleSheet
+    styleSheet?: DashStyleSheet
   ): void
   /**
    * An insertion cache. This tracks which keys have already been inserted into
    * the DOM to prevent duplicates.
    */
   readonly inserted: Set<string>
-  /**
-   * Used for tracking external sheets. You can safely add/delete new
-   * custom sheets using this. Those sheets can be used in the `insert()`
-   * method.
-   */
-  readonly sheets: DashSheets
 }
 
 /**
@@ -224,7 +223,7 @@ export interface DashSheets {
    * the key.
    * @param key The key to the sheet
    */
-  delete(key: string): void
+  delete(key: string): number
   /**
    * Returns an iterator containing all of the keys in the cache.
    */
@@ -265,7 +264,7 @@ export function styleSheet(options: DashStyleSheetOptions): DashStyleSheet {
         const tag = document.createElement('style')
         tag.setAttribute(`data-dash`, key)
         if (nonce !== void 0) tag.setAttribute('nonce', nonce)
-        tag.appendChild(document.createTextNode(''))
+        tag.textContent = ''
         container &&
           container.insertBefore(
             tag,
@@ -277,7 +276,7 @@ export function styleSheet(options: DashStyleSheetOptions): DashStyleSheet {
       const tag = tags[tags.length - 1]
 
       if (!speedy) {
-        tag.appendChild(document.createTextNode(rule))
+        tag.textContent += rule
       } else {
         let sheet: StyleSheet | CSSStyleSheet | null = tag.sheet
         let i = 0

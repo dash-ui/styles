@@ -149,7 +149,9 @@ export function createStyles<
     if (!css) return noop
     const name = hash(css)
     insert(name, '', css, sheets.add(name))
-    return () => sheets.delete(name)
+    return () => {
+      !sheets.delete(name) && dash.inserted.delete(name)
+    }
   }
 
   styles.insertVariables = (nextVariables, selector = ':root') => {
