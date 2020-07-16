@@ -75,7 +75,7 @@ export const writeStylesFromCache = async (
   // Requiring in here prevents webpack errors in stuff like Next.js apps
   const fs = require('fs')
   const path = require('path')
-  let {name, hash = styles.dash.hash, clearCache = false} = options || {}
+  let {name, hash = styles.hash, clearCache = false} = options || {}
   const {css, names} = createStylesFromCache(styles, {clearCache})
   name = `${name || styles.dash.key + '-' + hash(css) + '.css'}`
   const filename = path.join(outputPath, name)
@@ -162,7 +162,7 @@ export const writeStylesFromString = async (
   // Requiring in here prevents webpack errors in stuff like Next.js apps
   const fs = require('fs')
   const path = require('path')
-  let {name, hash = styles.dash.hash} = options || {}
+  let {name, hash = styles.hash} = options || {}
   const {css, names} = createStylesFromString(string, styles)
   name = `${name || styles.dash.key + '-' + hash(css) + '.css'}`
   const filename = path.join(outputPath, name)

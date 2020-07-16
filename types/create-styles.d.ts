@@ -1,6 +1,7 @@
+import {hash as fnv1aHash} from './utils'
 import type {Dash, CreateDashOptions} from './create-dash'
 /**
- * A factory function that returns a new `styles()` instance with
+ * A factory function that returns a new `styles` instance with
  * your custom configuration options.
  *
  * @param options Configuration options
@@ -34,7 +35,7 @@ export interface CreateStylesOptions<
    *
    * const Component = () => <div className={bgRed()} />
    */
-  variables?: V
+  readonly variables?: V
   /**
    * A mapping of theme name/CSS variable pairs.
    *
@@ -61,7 +62,7 @@ export interface CreateStylesOptions<
    * // CSS variables in the 'dark' theme take precedence in this component
    * const App = () => <div className={styles.theme('dark)}/>
    */
-  themes?: {
+  readonly themes?: {
     [Name in T]: V
   }
   /**
@@ -83,7 +84,12 @@ export interface CreateStylesOptions<
    *   }
    * })
    */
-  mangleVariables?: boolean | Record<string, boolean>
+  readonly mangleVariables?: boolean | Record<string, boolean>
+  /**
+   * Use your own hash function for creating selector names. By default
+   * Dash uses an fnv1a hashing algorithm.
+   */
+  readonly hash?: typeof fnv1aHash
 }
 /**
  * `styles()` is a function for composing style definitions in a
@@ -297,6 +303,11 @@ export interface Styles<
     literals: TemplateStringsArray | string | StyleCallback<V> | StyleObject,
     ...placeholders: string[]
   ): () => void
+  /**
+   * A hashing function for creating unique selector names
+   * @param string The string you'd like to create a unique has of
+   */
+  hash(string: string): string
   /**
    * The instance of underlying the Dash cache used by this instance. This was
    * automatically created by `createDash()` when `createStyles()` was called.

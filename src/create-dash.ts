@@ -1,6 +1,6 @@
 import Stylis from '@dash-ui/stylis'
 import type {Plugable, Plugin, Context} from '@dash-ui/stylis'
-import {hash, safeHash, noop} from './utils'
+import {noop} from './utils'
 
 /**
  * Dash is a tiny, performant CSS-in-JS style rule sheet manager similar to Emotion.
@@ -11,7 +11,6 @@ export function createDash(options: CreateDashOptions = {}): Dash {
     key = 'ui',
     nonce,
     speedy,
-    hash: dashHash = hash,
     stylisPlugins,
     prefix = true,
     container = typeof document !== 'undefined' ? document.head : void 0,
@@ -84,15 +83,14 @@ export function createDash(options: CreateDashOptions = {}): Dash {
     sheet,
     sheets: new Map(),
     stylis,
-    hash: safeHash(key, dashHash),
-    insert(selector, name, styles, insertSheet = sheet) {
-      if (inserted.has(name)) return
-      inserted.add(name)
+    insert(key, selector, styles, insertSheet = sheet) {
+      if (inserted.has(key)) return
+      inserted.add(key)
       Sheet.x = insertSheet
       if (typeof document !== 'undefined') {
         stylis(selector, styles)
       } else {
-        cache.set(name, stylis(selector, styles))
+        cache.set(key, stylis(selector, styles))
       }
     },
     inserted,
@@ -114,11 +112,6 @@ export interface CreateDashOptions {
    * once in a cryptographic communication.
    */
   readonly nonce?: string
-  /**
-   * Use your own hash function for creating selector names. By default
-   * Dash uses an fnv1a hashing algorithm.
-   */
-  readonly hash?: typeof hash
   /**
    * An array of stylis plugins
    * See: https://www.npmjs.com/package/stylis
@@ -156,37 +149,32 @@ export type Dash = {
    */
   readonly sheet: DashStyleSheet
   /**
-   * A hashing function for creating unique selector names
-   * @param string The string you'd like to create a unique has of
-   */
-  hash(string: string): string
-  /**
    * The instance of Stylis used by this Dash instance
    */
   readonly stylis: typeof Stylis
   /**
-   * A cache of Stylis rules saved by their name. This is only used
-   * on the server for generating CSS files and strings from the names
+   * A cache of Stylis rules saved by their keys. This is only used
+   * on the server for generating CSS files and strings from the keys
    * used in the cache.
    */
   readonly cache: Map<string, string>
   /**
    * A function for inserting style rules into the document and cache.
    *
+   * @param key The unique key of the rule. This is used for caching.
    * @param selector The CSS selector to insert the rule under. Omit this
    *   when inserting a global style.
-   * @param name The name of the rule. This is used for caching.
    * @param styles The rules string you'd like to insert into the document or cache.
    * @param sheet The style sheet to insert a rule into, for example `dash.sheet`.
    */
   insert(
+    key: string,
     selector: string,
-    name: string,
     styles: string,
     sheet?: DashStyleSheet
   ): void
   /**
-   * An insertion cache. This tracks which names have already been inserted into
+   * An insertion cache. This tracks which keys have already been inserted into
    * the DOM to prevent duplicates.
    */
   readonly inserted: Set<string>

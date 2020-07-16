@@ -1,7 +1,7 @@
 // A huge amount of credit for this library goes to the emotion
 // team
 import unitless from '@dash-ui/unitless'
-import {safeHash, hash, noop} from './utils'
+import {safeHash, hash as fnv1aHash, noop} from './utils'
 import {createDash, styleSheet} from './create-dash'
 import type {Dash, CreateDashOptions} from './create-dash'
 
@@ -16,9 +16,10 @@ export function createStyles<
   T extends string = DashThemeNames
 >(options: CreateStylesOptions<V, T> = {}): Styles<V, T> {
   const dash = createDash(options)
-  const {key, insert, inserted, hash, sheet, sheets} = dash
+  const {key, insert, inserted, sheet, sheets} = dash
   const themes = {} as Record<T, V>
   const variables = {} as V
+  const hash = safeHash(key, options.hash || fnv1aHash)
 
   let label: (args: any[]) => string
   // explicit here on purpose so it's not in every test
@@ -77,7 +78,7 @@ export function createStyles<
       if (label !== undefined) name += label(arguments as any)
 
       const className = key + '-' + name
-      insert('.' + className, name, css)
+      insert(name, '.' + className, css)
       return className
     }
 
@@ -108,7 +109,7 @@ export function createStyles<
       if (!createClassName && createClassName !== void 0) return ''
       const one = css()
       className = className || key + '-' + (name = name || hash(one))
-      insert('.' + className, name, one)
+      insert(name, '.' + className, one)
       return className
     }
 
@@ -125,7 +126,7 @@ export function createStyles<
     const css = Array.prototype.slice.call(arguments).join('')
     let name = hash(css)
     const className = key + '-' + name
-    insert('.' + className, name, css)
+    insert(name, '.' + className, css)
     return className
   }
 
@@ -136,7 +137,7 @@ export function createStyles<
     )
     const name = hash(css)
     const animationName = key + '-' + name
-    insert('', name, `@keyframes ${animationName}{${css}}`)
+    insert(name, '', `@keyframes ${animationName}{${css}}`)
     return animationName
   }
 
@@ -153,7 +154,7 @@ export function createStyles<
     }
     sheets.set(name, cache)
     cache.n++
-    insert('', name, css, cache.sheet)
+    insert(name, '', css, cache.sheet)
 
     return () => {
       if (cache.n === 1) {
@@ -200,6 +201,7 @@ export function createStyles<
 
   styles.theme = (theme) => `${key}-${theme}-theme`
   styles.dash = dash
+  styles.hash = hash
   styles.insertVariables(options.variables || ({} as any))
   styles.insertThemes(options.themes || ({} as any))
   return styles
@@ -230,7 +232,7 @@ export interface CreateStylesOptions<
    *
    * const Component = () => <div className={bgRed()} />
    */
-  variables?: V
+  readonly variables?: V
   /**
    * A mapping of theme name/CSS variable pairs.
    *
@@ -257,7 +259,7 @@ export interface CreateStylesOptions<
    * // CSS variables in the 'dark' theme take precedence in this component
    * const App = () => <div className={styles.theme('dark)}/>
    */
-  themes?: {
+  readonly themes?: {
     [Name in T]: V
   }
   /**
@@ -279,7 +281,12 @@ export interface CreateStylesOptions<
    *   }
    * })
    */
-  mangleVariables?: boolean | Record<string, boolean>
+  readonly mangleVariables?: boolean | Record<string, boolean>
+  /**
+   * Use your own hash function for creating selector names. By default
+   * Dash uses an fnv1a hashing algorithm.
+   */
+  readonly hash?: typeof fnv1aHash
 }
 
 /**
@@ -494,6 +501,11 @@ export interface Styles<
     literals: TemplateStringsArray | string | StyleCallback<V> | StyleObject,
     ...placeholders: string[]
   ): () => void
+  /**
+   * A hashing function for creating unique selector names
+   * @param string The string you'd like to create a unique has of
+   */
+  hash(string: string): string
   /**
    * The instance of underlying the Dash cache used by this instance. This was
    * automatically created by `createDash()` when `createStyles()` was called.
@@ -753,7 +765,7 @@ function serializeVariables(
   return {vars, css}
 }
 
-const mangled = safeHash('', hash)
+const mangled = safeHash('', fnv1aHash)
 
 type SerializedVariables = {
   readonly vars: Record<string, Record<string, any> | string | number>
