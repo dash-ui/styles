@@ -38,12 +38,13 @@ export function createDash(options: CreateDashOptions = {}): Dash {
     let i = 0
     let attr
     let node
+    const insert = inserted.add.bind(inserted)
 
     for (; i < nodes.length; i++) {
       /* istanbul ignore next */
       if ((attr = (node = nodes[i]).getAttribute(`data-dash`)) === null)
         continue
-      attr.split(' ').map((id) => inserted.add(id))
+      attr.split(' ').forEach(insert)
 
       if (node.parentNode !== container && container)
         container.appendChild(node)
