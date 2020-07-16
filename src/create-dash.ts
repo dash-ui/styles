@@ -46,8 +46,7 @@ export function createDash(options: CreateDashOptions = {}): Dash {
         continue
       attr.split(' ').forEach(insert)
 
-      if (node.parentNode !== container && container)
-        container.appendChild(node)
+      container && node.parentNode !== container && container.appendChild(node)
     }
 
     stylis.use(stylisPlugins)(ruleSheet as Plugin)
@@ -85,22 +84,22 @@ export function createDash(options: CreateDashOptions = {}): Dash {
     sheet,
     sheets: {
       add(name) {
-        const cache = sheetsCache.get(name) || {
+        const sheetRef = sheetsCache.get(name) || {
           n: 0,
           s: styleSheet(sheet),
         }
-        sheetsCache.set(name, cache)
-        cache.n++
-        return cache.s
+        sheetsCache.set(name, sheetRef)
+        sheetRef.n++
+        return sheetRef.s
       },
       delete(name) {
-        const cache = sheetsCache.get(name)
-        if (!cache) return -1
-        if (cache.n === 1) {
+        const sheetRef = sheetsCache.get(name)
+        if (!sheetRef) return -1
+        if (sheetRef.n === 1) {
           sheetsCache.delete(name)
-          cache.s.flush()
+          sheetRef.s.flush()
         }
-        return --cache.n
+        return --sheetRef.n
       },
       keys: sheetsCache.keys.bind(sheetsCache),
     },
