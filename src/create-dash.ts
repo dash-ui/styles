@@ -264,12 +264,12 @@ export function styleSheet(options: DashStyleSheetOptions): DashStyleSheet {
       if (size % (speedy ? 65000 : 1) === 0) {
         const tag = document.createElement('style')
         tag.setAttribute(`data-dash`, key)
-        if (nonce !== void 0) tag.setAttribute('nonce', nonce)
+        if (nonce) tag.setAttribute('nonce', nonce)
         tag.textContent = ''
         container &&
           container.insertBefore(
             tag,
-            tags.length === 0 ? null : tags[tags.length - 1].nextSibling
+            !tags.length ? null : tags[tags.length - 1].nextSibling
           )
         tags.push(tag)
       }
@@ -420,7 +420,7 @@ function ruleSheet(
   }
   // selector
   else if (context === 2) {
-    if (ns === 0) return content + RULE_DELIMITER
+    if (!ns) return content + RULE_DELIMITER
   }
   // at-rule
   else if (context === 3) {
@@ -430,7 +430,7 @@ function ruleSheet(
       return ''
     } else {
       /* istanbul ignore next */
-      return content + (at === 0 ? RULE_DELIMITER : '')
+      return content + (!at ? RULE_DELIMITER : '')
     }
   } else if (context === -2) {
     content.split(RULE_NEEDLE).forEach((block: string) => {

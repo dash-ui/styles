@@ -75,7 +75,7 @@ export function createStyles<
       if (!css) return ''
       let name = hash(css)
       /* istanbul ignore next */
-      if (label !== undefined) name += label(arguments as any)
+      if (label) name += label(arguments as any)
 
       const className = key + '-' + name
       insert(name, '.' + className, css)
