@@ -86,11 +86,11 @@ export function createDash(options: CreateDashOptions = {}): Dash {
       add(name) {
         const cache = sheetsCache.get(name) || {
           n: 0,
-          sheet: styleSheet(sheet),
+          s: styleSheet(sheet),
         }
         sheetsCache.set(name, cache)
         cache.n++
-        return cache.sheet
+        return cache.s
       },
       delete(name) {
         const cache = sheetsCache.get(name)
@@ -98,7 +98,7 @@ export function createDash(options: CreateDashOptions = {}): Dash {
         if (cache.n === 1) {
           inserted.delete(name)
           sheetsCache.delete(name)
-          cache.sheet.flush()
+          cache.s.flush()
         } else {
           cache.n--
         }
@@ -239,7 +239,7 @@ interface DashSheet {
   /**
    * A dash style sheet.
    */
-  sheet: DashStyleSheet
+  s: DashStyleSheet
 }
 
 //

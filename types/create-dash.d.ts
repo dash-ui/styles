@@ -120,7 +120,7 @@ interface DashSheet {
   /**
    * A dash style sheet.
    */
-  sheet: DashStyleSheet
+  s: DashStyleSheet
 }
 export declare function styleSheet(
   options: DashStyleSheetOptions
