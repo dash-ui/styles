@@ -101,13 +101,12 @@ export const createStylesFromString = (
   const {dash} = styles
   const styleCache = dash.cache
   const names = new Set<string>(dash.sheets.keys())
-  let css = ''
 
+  let css = ''
   for (let name of names) css += styleCache.get(name)
 
-  for (const [, name] of string.matchAll(
-    new RegExp(`["\\s'=]${dash.key}-([A-Za-z0-9]+)`, 'g')
-  )) {
+  const re = new RegExp(`["\\s'=]${dash.key}-(\\w+)`, 'g')
+  for (const [, name] of string.matchAll(re)) {
     if (!names.has(name)) {
       css += styleCache.get(name) || ''
       names.add(name)

@@ -83,19 +83,44 @@ export declare type Dash = {
    */
   readonly inserted: Set<string>
   /**
-   * Used for tracking external sheets. You can safely get/add/delete your
-   * custom sheets through this `Map`.
+   * Used for tracking external sheets. You can safely add/delete new
+   * custom sheets using this. Those sheets can be used in the `insert()`
+   * method.
    */
   readonly sheets: DashSheets
 }
-interface DashSheet {
-  n: number
-  sheet: DashStyleSheet
-}
+/**
+ * A stylesheet cache that tracks references to the keys in it.
+ * When there are no more references to a sheet, it will be flushed
+ * from the DOM.
+ */
 export interface DashSheets {
+  /**
+   * Creates a new stylesheet if it doesn't exist and returns it.
+   * @param key The unique key of the style sheet
+   */
   add(key: string): DashStyleSheet
+  /**
+   * Deletes the stylesheet from the sheets cache and flushes the
+   * `<style>` tag from the DOM if this is is the last reference to
+   * the key.
+   * @param key The key to the sheet
+   */
   delete(key: string): void
+  /**
+   * Returns an iterator containing all of the keys in the cache.
+   */
   keys(): ReturnType<Map<string, DashSheet>['keys']>
+}
+interface DashSheet {
+  /**
+   * The number of references to the sheet
+   */
+  n: number
+  /**
+   * A dash style sheet.
+   */
+  sheet: DashStyleSheet
 }
 export declare function styleSheet(
   options: DashStyleSheetOptions
