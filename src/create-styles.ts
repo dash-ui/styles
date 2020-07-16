@@ -412,7 +412,8 @@ export interface Styles<
    *
    * @param variables A map of CSS variable name/value pairs
    * @param selector Including a selector will only make these CSS variable
-   *   definitions take effect within the selector, e.g. a class name or ID.
+   *   definitions take effect within the selector, e.g. a class name or ID. By
+   *   default the selector is `":root"`.
    *
    * @example
    * // Inserts CSS variables into the document `:root`
