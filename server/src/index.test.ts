@@ -2,7 +2,7 @@
  * @jest-environment node
  */
 import * as fs from 'fs'
-import {styles, createStyles} from '../../src'
+import {styles, createStyles, createDash} from '../../src'
 import {
   createStyleTagFromString,
   createStyleTagFromCache,
@@ -17,7 +17,7 @@ afterEach(() => {
 
 describe('Configure', () => {
   it('removes vendor prefixing', () => {
-    const myStyles = createStyles({prefix: false})
+    const myStyles = createStyles({dash: createDash({prefix: false})})
     const style = myStyles({
       flex: {display: 'flex'},
     })
@@ -43,7 +43,7 @@ describe('Configure', () => {
       }
     }
 
-    const myStyles = createStyles({prefix})
+    const myStyles = createStyles({dash: createDash({prefix})})
     const style = myStyles({
       flex: {display: 'flex', transform: 'translateX(30px)'},
     })
@@ -53,7 +53,7 @@ describe('Configure', () => {
   })
 
   it('changes key to "css"', () => {
-    const myStyles = createStyles({key: 'css'})
+    const myStyles = createStyles({dash: createDash({key: 'css'})})
     const style = myStyles({
       flex: {display: 'flex'},
     })
@@ -74,7 +74,9 @@ describe('createStyleTagFromCache', () => {
   })
 
   it('adds nonce to style tags', () => {
-    const myStyles = createStyles({nonce: 'EDNnf03nceIOfn39fn3e9h3sdfa'})
+    const myStyles = createStyles({
+      dash: createDash({nonce: 'EDNnf03nceIOfn39fn3e9h3sdfa'}),
+    })
     const style = myStyles({
       flex: {display: 'flex'},
     })
@@ -183,7 +185,9 @@ describe('createStyleTagFromString', () => {
   })
 
   it('adds nonce to style tags', () => {
-    const myStyles = createStyles({nonce: 'EDNnf03nceIOfn39fn3e9h3sdfa'})
+    const myStyles = createStyles({
+      dash: createDash({nonce: 'EDNnf03nceIOfn39fn3e9h3sdfa'}),
+    })
     const style = myStyles({
       flex: {display: 'flex'},
     })
@@ -331,7 +335,7 @@ describe('writeStylesFromString', () => {
   })
 
   it('writes custom key', async () => {
-    const myStyles = createStyles({key: 'css'})
+    const myStyles = createStyles({dash: createDash({key: 'css'})})
     const style = myStyles({
       flex: {display: 'flex'},
       btn: `
@@ -447,7 +451,7 @@ describe('writeStylesFromCache', () => {
   })
 
   it('writes custom key', async () => {
-    const myStyles = createStyles({key: 'css'})
+    const myStyles = createStyles({dash: createDash({key: 'css'})})
     const style = myStyles({
       flex: {display: 'flex'},
       btn: `

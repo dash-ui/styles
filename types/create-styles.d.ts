@@ -1,5 +1,5 @@
 import {hash as fnv1aHash} from './utils'
-import type {Dash, CreateDashOptions} from './create-dash'
+import type {Dash} from './create-dash'
 /**
  * A factory function that returns a new `styles` instance with
  * your custom configuration options.
@@ -13,7 +13,12 @@ export declare function createStyles<
 export interface CreateStylesOptions<
   V extends DashVariables = DashVariables,
   T extends string = DashThemeNames
-> extends CreateDashOptions {
+> {
+  /**
+   * An instance of dash created by the `createDash()` factory
+   * @default createDash()
+   */
+  dash?: Dash
   /**
    * Inserts CSS variables into the DOM and makes them available for use in
    * style callbacks. The name of the CSS variables is automatically generated

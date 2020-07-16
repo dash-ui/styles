@@ -1,5 +1,5 @@
 import crc from 'crc'
-import {styles, createStyles} from './index'
+import {styles, createStyles, createDash} from './index'
 
 afterEach(() => {
   styles.dash.sheet.flush()
@@ -23,7 +23,7 @@ const serializeRules = (selector = `style[data-dash]`): any[] => {
 
 describe('createStyles()', () => {
   it('turns off vendor prefixing', () => {
-    const myStyles = createStyles({prefix: false})
+    const myStyles = createStyles({dash: createDash({prefix: false})})
     const style = myStyles({
       flex: {display: 'flex'},
     })
@@ -53,7 +53,9 @@ describe('createStyles()', () => {
   })
 
   it('adds nonce to style tags', () => {
-    const myStyles = createStyles({nonce: 'EDNnf03nceIOfn39fn3e9h3sdfa'})
+    const myStyles = createStyles({
+      dash: createDash({nonce: 'EDNnf03nceIOfn39fn3e9h3sdfa'}),
+    })
     const style = myStyles({
       flex: {display: 'flex'},
     })
@@ -66,7 +68,7 @@ describe('createStyles()', () => {
   })
 
   it('changes key to "css"', () => {
-    const myStyles = createStyles({key: 'css'})
+    const myStyles = createStyles({dash: createDash({key: 'css'})})
     const style = myStyles({
       flex: {display: 'flex'},
     })
@@ -79,7 +81,9 @@ describe('createStyles()', () => {
   })
 
   it('changes container to document.body', () => {
-    const myStyles = createStyles({container: document.body})
+    const myStyles = createStyles({
+      dash: createDash({container: document.body}),
+    })
     const style = myStyles({
       flex: {display: 'flex'},
     })
@@ -92,7 +96,7 @@ describe('createStyles()', () => {
   })
 
   it('turns on speedy', () => {
-    const myStyles = createStyles({speedy: true})
+    const myStyles = createStyles({dash: createDash({speedy: true})})
     const style = myStyles({
       flex: {display: 'flex'},
       block: {display: 'block'},
@@ -234,7 +238,7 @@ describe('styles()', () => {
   })
 
   it('adds styles by order of definition when called', () => {
-    const style = createStyles({prefix: false})({
+    const style = createStyles({dash: createDash({prefix: false})})({
       inline: 'display: inline;',
       flex: {display: 'flex'},
       block: {display: 'block'},
@@ -423,7 +427,9 @@ describe('styles()', () => {
     )
     document.head.appendChild(tag)
 
-    const myStyles = createStyles({container: document.body})
+    const myStyles = createStyles({
+      dash: createDash({container: document.body}),
+    })
     const style = myStyles({
       flex: {display: 'flex'},
     })
@@ -538,11 +544,11 @@ describe(`styles.insertVariables()`, () => {
     expect(document.querySelectorAll(`style[data-dash]`).length).toBe(1)
     expect(document.querySelectorAll(`style[data-dash]`)).toMatchSnapshot()
     expect(myStyles.dash.inserted.size).toBe(1)
-    expect(myStyles.dash.sheets.size).toBe(1)
+    expect(Array.from(myStyles.dash.sheets.keys()).length).toBe(1)
     eject()
     expect(document.querySelectorAll(`style[data-dash]`).length).toBe(0)
     expect(myStyles.dash.inserted.size).toBe(0)
-    expect(myStyles.dash.sheets.size).toBe(0)
+    expect(Array.from(myStyles.dash.sheets.keys()).length).toBe(0)
   })
 
   it('mangles variables', () => {
@@ -621,15 +627,15 @@ describe(`styles.insertVariables()`, () => {
     expect(document.querySelectorAll(`style[data-dash]`).length).toBe(1)
     expect(document.querySelectorAll(`style[data-dash]`)[0]).toMatchSnapshot()
     expect(myStyles.dash.inserted.size).toBe(1)
-    expect(myStyles.dash.sheets.size).toBe(1)
+    expect(Array.from(myStyles.dash.sheets.keys()).length).toBe(1)
     ejectA()
     expect(document.querySelectorAll(`style[data-dash]`).length).toBe(1)
     expect(myStyles.dash.inserted.size).toBe(1)
-    expect(myStyles.dash.sheets.size).toBe(1)
+    expect(Array.from(myStyles.dash.sheets.keys()).length).toBe(1)
     ejectB()
     expect(document.querySelectorAll(`style[data-dash]`).length).toBe(0)
     expect(myStyles.dash.inserted.size).toBe(0)
-    expect(myStyles.dash.sheets.size).toBe(0)
+    expect(Array.from(myStyles.dash.sheets.keys()).length).toBe(0)
   })
 
   it('creates variables w/ scales', () => {
@@ -690,11 +696,11 @@ describe(`styles.insertThemes()`, () => {
     expect(document.querySelectorAll(`style[data-dash]`).length).toBe(2)
     expect(document.querySelectorAll(`style[data-dash]`)).toMatchSnapshot()
     expect(myStyles.dash.inserted.size).toBe(2)
-    expect(myStyles.dash.sheets.size).toBe(2)
+    expect(Array.from(myStyles.dash.sheets.keys()).length).toBe(2)
     eject()
     expect(document.querySelectorAll(`style[data-dash]`).length).toBe(0)
     expect(myStyles.dash.inserted.size).toBe(0)
-    expect(myStyles.dash.sheets.size).toBe(0)
+    expect(Array.from(myStyles.dash.sheets.keys()).length).toBe(0)
   })
 })
 
@@ -794,11 +800,11 @@ describe(`styles.insertGlobal()`, () => {
     expect(document.querySelectorAll(`style[data-dash]`).length).toBe(1)
     expect(document.querySelectorAll(`style[data-dash]`)[0]).toMatchSnapshot()
     expect(myStyles.dash.inserted.size).toBe(1)
-    expect(myStyles.dash.sheets.size).toBe(1)
+    expect(Array.from(myStyles.dash.sheets.keys()).length).toBe(1)
     eject()
     expect(document.querySelectorAll(`style[data-dash]`).length).toBe(0)
     expect(myStyles.dash.inserted.size).toBe(0)
-    expect(myStyles.dash.sheets.size).toBe(0)
+    expect(Array.from(myStyles.dash.sheets.keys()).length).toBe(0)
   })
 
   it('still exists in caches when a global is used more than once but ejected once', () => {
@@ -817,15 +823,15 @@ describe(`styles.insertGlobal()`, () => {
     expect(document.querySelectorAll(`style[data-dash]`).length).toBe(1)
     expect(document.querySelectorAll(`style[data-dash]`)[0]).toMatchSnapshot()
     expect(myStyles.dash.inserted.size).toBe(1)
-    expect(myStyles.dash.sheets.size).toBe(1)
+    expect(Array.from(myStyles.dash.sheets.keys()).length).toBe(1)
     ejectA()
     expect(document.querySelectorAll(`style[data-dash]`).length).toBe(1)
     expect(myStyles.dash.inserted.size).toBe(1)
-    expect(myStyles.dash.sheets.size).toBe(1)
+    expect(Array.from(myStyles.dash.sheets.keys()).length).toBe(1)
     ejectB()
     expect(document.querySelectorAll(`style[data-dash]`).length).toBe(0)
     expect(myStyles.dash.inserted.size).toBe(0)
-    expect(myStyles.dash.sheets.size).toBe(0)
+    expect(Array.from(myStyles.dash.sheets.keys()).length).toBe(0)
   })
 
   it('allows @font-face', () => {

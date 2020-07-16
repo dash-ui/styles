@@ -2,8 +2,8 @@
 // team
 import unitless from '@dash-ui/unitless'
 import {safeHash, hash as fnv1aHash, noop} from './utils'
-import {createDash, styleSheet} from './create-dash'
-import type {Dash, CreateDashOptions} from './create-dash'
+import {createDash} from './create-dash'
+import type {Dash} from './create-dash'
 
 /**
  * A factory function that returns a new `styles` instance with
@@ -15,8 +15,8 @@ export function createStyles<
   V extends DashVariables = DashVariables,
   T extends string = DashThemeNames
 >(options: CreateStylesOptions<V, T> = {}): Styles<V, T> {
-  const dash = createDash(options)
-  const {key, insert, inserted, sheet, sheets} = dash
+  const dash = options.dash || createDash()
+  const {key, insert, sheets} = dash
   const themes = {} as Record<T, V>
   const variables = {} as V
   const hash = safeHash(key, options.hash || fnv1aHash)
@@ -146,25 +146,11 @@ export function createStyles<
       compileLiterals.call(null, arguments),
       variables
     )
+
     if (!css) return noop
     const name = hash(css)
-    const cache = sheets.get(name) || {
-      n: 0,
-      sheet: styleSheet(sheet),
-    }
-    sheets.set(name, cache)
-    cache.n++
-    insert(name, '', css, cache.sheet)
-
-    return () => {
-      if (cache.n === 1) {
-        inserted.delete(name)
-        sheets.delete(name)
-        cache.sheet.flush()
-      } else {
-        cache.n--
-      }
-    }
+    insert(name, '', css, sheets.add(name))
+    return () => sheets.delete(name)
   }
 
   styles.insertVariables = (nextVariables, selector = ':root') => {
@@ -210,7 +196,12 @@ export function createStyles<
 export interface CreateStylesOptions<
   V extends DashVariables = DashVariables,
   T extends string = DashThemeNames
-> extends CreateDashOptions {
+> {
+  /**
+   * An instance of dash created by the `createDash()` factory
+   * @default createDash()
+   */
+  dash?: Dash
   /**
    * Inserts CSS variables into the DOM and makes them available for use in
    * style callbacks. The name of the CSS variables is automatically generated

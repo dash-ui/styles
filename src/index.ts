@@ -4,6 +4,7 @@ export {hash} from './utils'
 export type {
   Dash,
   CreateDashOptions,
+  DashSheets,
   DashStyleSheet,
   DashStyleSheetOptions,
 } from './create-dash'

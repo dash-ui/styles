@@ -7,10 +7,8 @@ import type {Plugable} from '@dash-ui/stylis'
 export declare function createDash(options?: CreateDashOptions): Dash
 export interface CreateDashOptions {
   /**
-   * Keys in sheets used to associate style sheets with this
-   * specific `dash` instances. This is also used for prefixing
-   * class names. e.g. a key of `css` would create classes like
-   * `.css-f1Quoz`
+   * Keys in sheets used to associate `<style>` tags with this
+   * specific `dash` instances via the `dash-cache` property.
    * @default "ui"
    */
   readonly key?: string
@@ -88,11 +86,16 @@ export declare type Dash = {
    * Used for tracking external sheets. You can safely get/add/delete your
    * custom sheets through this `Map`.
    */
-  readonly sheets: Map<string, DashSheet>
+  readonly sheets: DashSheets
 }
 interface DashSheet {
   n: number
   sheet: DashStyleSheet
+}
+export interface DashSheets {
+  add(key: string): DashStyleSheet
+  delete(key: string): void
+  keys(): ReturnType<Map<string, DashSheet>['keys']>
 }
 export declare function styleSheet(
   options: DashStyleSheetOptions

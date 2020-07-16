@@ -25,6 +25,7 @@ export function createDash(options: CreateDashOptions = {}): Dash {
       : speedy
   const inserted: Dash['inserted'] = new Set<string>()
   const cache: Dash['cache'] = new Map()
+  const sheetsCache = new Map<string, DashSheet>()
   const sheet = styleSheet({
     key,
     container,
@@ -81,12 +82,34 @@ export function createDash(options: CreateDashOptions = {}): Dash {
   return {
     key,
     sheet,
-    sheets: new Map(),
+    sheets: {
+      add(name) {
+        const cache = sheetsCache.get(name) || {
+          n: 0,
+          sheet: styleSheet(sheet),
+        }
+        sheetsCache.set(name, cache)
+        cache.n++
+        return cache.sheet
+      },
+      delete(name) {
+        const cache = sheetsCache.get(name)
+        if (!cache) return
+        if (cache.n === 1) {
+          inserted.delete(name)
+          sheetsCache.delete(name)
+          cache.sheet.flush()
+        } else {
+          cache.n--
+        }
+      },
+      keys: sheetsCache.keys.bind(sheetsCache),
+    },
     stylis,
-    insert(key, selector, styles, insertSheet = sheet) {
+    insert(key, selector, styles, insertSheet) {
       if (inserted.has(key)) return
       inserted.add(key)
-      Sheet.x = insertSheet
+      Sheet.x = insertSheet || sheet
       if (typeof document !== 'undefined') {
         stylis(selector, styles)
       } else {
@@ -100,10 +123,8 @@ export function createDash(options: CreateDashOptions = {}): Dash {
 
 export interface CreateDashOptions {
   /**
-   * Keys in sheets used to associate style sheets with this
-   * specific `dash` instances. This is also used for prefixing
-   * class names. e.g. a key of `css` would create classes like
-   * `.css-f1Quoz`
+   * Keys in sheets used to associate `<style>` tags with this
+   * specific `dash` instances via the `dash-cache` property.
    * @default "ui"
    */
   readonly key?: string
@@ -179,14 +200,45 @@ export type Dash = {
    */
   readonly inserted: Set<string>
   /**
-   * Used for tracking external sheets. You can safely get/add/delete your
-   * custom sheets through this `Map`.
+   * Used for tracking external sheets. You can safely add/delete new
+   * custom sheets using this. Those sheets can be used in the `insert()`
+   * method.
    */
-  readonly sheets: Map<string, DashSheet>
+  readonly sheets: DashSheets
+}
+
+/**
+ * A stylesheet cache that tracks references to the keys in it.
+ * When there are no more references to a sheet, it will be flushed
+ * from the DOM.
+ */
+export interface DashSheets {
+  /**
+   * Creates a new stylesheet if it doesn't exist and returns it.
+   * @param key The unique key of the style sheet
+   */
+  add(key: string): DashStyleSheet
+  /**
+   * Deletes the stylesheet from the sheets cache and flushes the
+   * `<style>` tag from the DOM if this is is the last reference to
+   * the key.
+   * @param key The key to the sheet
+   */
+  delete(key: string): void
+  /**
+   * Returns an iterator containing all of the keys in the cache.
+   */
+  keys(): ReturnType<Map<string, DashSheet>['keys']>
 }
 
 interface DashSheet {
+  /**
+   * The number of references to the sheet
+   */
   n: number
+  /**
+   * A dash style sheet.
+   */
   sheet: DashStyleSheet
 }
 
