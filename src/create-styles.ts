@@ -189,10 +189,19 @@ export function createStyles<
   styles.theme = (theme) => `${key}-${theme}-theme`
   styles.dash = dash
   styles.hash = hash
-  styles.insertVariables(options.variables || ({} as any))
-  styles.insertThemes(options.themes || ({} as any))
+  styles.variables = emptyObj
+  Object.defineProperty(styles, 'variables', {
+    get() {
+      return variables
+    },
+    configurable: false,
+  })
+  styles.insertVariables(options.variables || emptyObj)
+  styles.insertThemes(options.themes || emptyObj)
   return styles
 }
+
+const emptyObj: any = {}
 
 export interface CreateStylesOptions<
   V extends DashVariables = DashVariables,
@@ -494,6 +503,10 @@ export interface Styles<
     literals: TemplateStringsArray | string | StyleCallback<V> | StyleObject,
     ...placeholders: string[]
   ): () => void
+  /**
+   * The CSS variables currently defined in the instance
+   */
+  variables: DashVariables
   /**
    * A hashing function for creating unique selector names
    * @param string The string you'd like to create a unique has of

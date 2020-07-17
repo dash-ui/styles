@@ -964,6 +964,23 @@ describe('styles.cls()', () => {
   })
 })
 
+describe('styles.variables', () => {
+  it('should make CSS variables available', () => {
+    const myStyles = createStyles({
+      variables: {
+        spacing: [0, '0.5rem'],
+      },
+    })
+
+    expect(myStyles.variables).toEqual({
+      spacing: {
+        0: 'var(--spacing-0)',
+        1: 'var(--spacing-1)',
+      },
+    })
+  })
+})
+
 describe('Exceptions', () => {
   it('throws for unterminated comments', () => {
     const style = createStyles()({

@@ -310,6 +310,10 @@ export interface Styles<
     ...placeholders: string[]
   ): () => void
   /**
+   * The CSS variables currently defined in the instance
+   */
+  variables: DashVariables
+  /**
    * A hashing function for creating unique selector names
    * @param string The string you'd like to create a unique has of
    */
