@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.6.2](https://github.com/dash-ui/styles/compare/v0.6.1...v0.6.2) (2020-07-17)
+
+### Features
+
+- **styles:** add css variables to styles instance ([96c81b7](https://github.com/dash-ui/styles/commit/96c81b7c8e4d1769e050c35d0f1ff75912783e58))
+
 ### [0.6.1](https://github.com/dash-ui/styles/compare/v0.6.0...v0.6.1) (2020-07-16)
 
 ### Bug Fixes
