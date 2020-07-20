@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.7.0](https://github.com/dash-ui/styles/compare/v0.6.2...v0.7.0) (2020-07-20)
+
+### ⚠ BREAKING CHANGES
+
+- **styles:** Normalizes CSS strings instead of minifying them. This will potentially result in
+  changes to class names.
+
+- **styles:** normalize css strings but don't minify ([dfa3e25](https://github.com/dash-ui/styles/commit/dfa3e25f57db15dbfd64f13ff28ef306fbf5bd27))
+
 ### [0.6.2](https://github.com/dash-ui/styles/compare/v0.6.1...v0.6.2) (2020-07-17)
 
 ### Features
