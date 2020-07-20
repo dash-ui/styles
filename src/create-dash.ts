@@ -34,7 +34,7 @@ export function createDash(options: CreateDashOptions = {}): Dash {
   })
 
   if (typeof document !== 'undefined') {
-    let nodes = document.querySelectorAll(`style[data-cache="${key}"]`)
+    let nodes = document.querySelectorAll('style[data-cache="' + key + '"]')
     let i = 0
     let attr
     let node
@@ -321,7 +321,9 @@ export function styleSheet(options: DashStyleSheetOptions): DashStyleSheet {
             process.env.NODE_ENV !== 'production'
           ) {
             console.warn(
-              `There was a problem inserting the following rule: "${rule}"`,
+              'There was a problem inserting the following rule: "' +
+                rule +
+                '"',
               e
             )
           }

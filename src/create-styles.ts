@@ -116,7 +116,12 @@ export function createStyles<
     const animationName = key + '-' + name
     // Adding to a cached sheet here rather than the default sheet because
     // we want this to persist between `clearCache()` calls.
-    insert(name, '', `@keyframes ${animationName}{${css}}`, sheets.add(name))
+    insert(
+      name,
+      '',
+      '@keyframes ' + animationName + '{' + css + '}',
+      sheets.add(name)
+    )
     return animationName
   }
 
@@ -163,7 +168,7 @@ export function createStyles<
     return () => flush.forEach((e) => e())
   }
 
-  styles.theme = (theme) => `${key}-${theme}-theme`
+  styles.theme = (theme) => key + '-' + theme + '-theme'
   styles.dash = dash
   styles.hash = hash
   styles.variables = emptyObj
@@ -714,11 +719,14 @@ function serializeVariables(
       let name = cssCase(
         names.length > 0 ? names.join('-') + '-' + key : key
       ).replace(cssDisallowedRe, '-')
-      vars[key] = `var(${(name =
-        '--' +
-        (mangle === true || (mangle && !mangle[name])
-          ? mangled(name)
-          : name))})`
+      vars[key] =
+        'var(' +
+        (name =
+          '--' +
+          (mangle === true || (mangle && !mangle[name])
+            ? mangled(name)
+            : name)) +
+        ')'
       css += name + ':' + value + ';'
     }
   }

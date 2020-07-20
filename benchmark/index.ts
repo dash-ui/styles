@@ -36,17 +36,8 @@ bench('create one [string]', ({duration}) => {
 })
 
 const uno = styles.one(`display: flex;`)
-bench('use one [object]', ({duration}) => {
-  duration(3000)
-  return () => uno()
-})
 
-bench('use one [string]', ({duration}) => {
-  duration(3000)
-  return () => uno()
-})
-
-bench('use one [string]', ({duration}) => {
+bench('use one', ({duration}) => {
   duration(3000)
   return () => uno()
 })
