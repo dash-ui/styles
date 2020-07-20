@@ -1,10 +1,25 @@
 import bench from '@essentials/benchmark'
+import {css} from 'emotion'
 import {styles} from '../dist/module'
+
+bench('emotion css [object]', ({duration}) => {
+  duration(3000)
+  return () => css({display: 'flex'})
+})
+
+bench('emotion css [string]', ({duration}) => {
+  duration(3000)
+  return () =>
+    css`
+      display: flex;
+    `
+})
 
 bench('create styles [object]', ({duration}) => {
   duration(3000)
   return () => styles({foo: {display: 'flex'}})
 })
+
 bench('create styles [string]', ({duration}) => {
   duration(3000)
   return () => styles({foo: `display: flex;`})
@@ -38,7 +53,7 @@ bench('use one [string]', ({duration}) => {
 
 bench('use cls [string]', ({duration}) => {
   duration(3000)
-  return () => styles.cls(`display: flex;`)
+  return () => styles.cls`display: flex;`
 })
 
 bench('use cls [object]', ({duration}) => {

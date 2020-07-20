@@ -54,17 +54,17 @@ Object {
 }
 `;
 
-exports[`styles() adds dev labels: -flex 1`] = `"ui-1ut9bc3-flex"`;
+exports[`styles() adds dev labels: -flex 1`] = `"ui-1gsnvr5-flex"`;
 
-exports[`styles() adds dev labels: -flex-block 1`] = `"ui-14t38od-flex-block"`;
+exports[`styles() adds dev labels: -flex-block 1`] = `"ui-1auscot-flex-block"`;
 
-exports[`styles() adds dev labels: -flex-inline 1`] = `"ui-broszf-flex-inline"`;
+exports[`styles() adds dev labels: -flex-inline 1`] = `"ui-17gir1n-flex-inline"`;
 
 exports[`styles() adds styles by order of definition when called: flex, block, inline 1`] = `
 <style
   data-dash="ui"
 >
-  .ui-qaw0al{display:flex;display:block;display:inline;}
+  .ui-1fwol6f{display:flex;display:block;display:inline;}
 </style>
 `;
 
@@ -72,18 +72,18 @@ exports[`styles() adds styles by order of definition when called: flex, block, i
 <style
   data-dash="ui"
 >
-  .ui-qaw0al{display:flex;display:block;display:inline;}
+  .ui-1fwol6f{display:flex;display:block;display:inline;}
 </style>
 `;
 
-exports[`styles() allows comments 1`] = `"/*this is a flex style*/display:flex;"`;
+exports[`styles() allows comments 1`] = `"/* this is a flex style */ display: flex;"`;
 
 exports[`styles() allows default styles 1`] = `
 NodeList [
   <style
     data-dash="ui"
   >
-    .ui-1ut9bc3{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;}
+    .ui-1gsnvr5{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;}
   </style>,
 ]
 `;
@@ -117,7 +117,7 @@ NodeList [
   <style
     data-dash="ui"
   >
-    .ui-14t38od{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;display:block;}
+    .ui-1auscot{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;display:block;}
   </style>,
 ]
 `;
@@ -156,15 +156,15 @@ exports[`styles() replaces disallowed characters in dev labels: 400x400 1`] = `
 
 exports[`styles() returns css styles 1`] = `"display:flex;"`;
 
-exports[`styles() returns css styles 2`] = `"display:flex;display:block;display:inline;"`;
+exports[`styles() returns css styles 2`] = `"display:flex;display:block;display: inline;"`;
 
-exports[`styles() returns css styles 3`] = `"display:flex;display:inline;"`;
+exports[`styles() returns css styles 3`] = `"display:flex;display: inline;"`;
 
 exports[`styles() returns single class name 1`] = `"ui-1ut9bc3"`;
 
-exports[`styles() returns single class name 2`] = `"ui-qaw0al"`;
+exports[`styles() returns single class name 2`] = `"ui-1fwol6f"`;
 
-exports[`styles() returns single class name 3`] = `"ui-broszf"`;
+exports[`styles() returns single class name 3`] = `"ui-yz87pd"`;
 
 exports[`styles() shouldn't do anything with unprocessable object values 1`] = `"display:flex;"`;
 
@@ -172,7 +172,7 @@ exports[`styles.cls() creates style and inserts it into the dom right away 1`] =
 <style
   data-dash="ui"
 >
-  .ui-1ut9bc3{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;}
+  .ui-1gsnvr5{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;}
 </style>
 `;
 
@@ -348,35 +348,35 @@ exports[`styles.insertVariables() still exists in caches when used more than onc
 </style>
 `;
 
-exports[`styles.keyframes() adds keyframes to dom: @-webkit-keyframes ui-10r5bpr 1`] = `
+exports[`styles.keyframes() adds keyframes to dom: @-webkit-keyframes ui-jottxx 1`] = `
 <style
   data-dash="ui"
 >
-  @-webkit-keyframes ui-10r5bpr{0%{opacity:0;}100%{opacity:1;}}
+  @-webkit-keyframes ui-jottxx{0%{opacity:0;}100%{opacity:1;}}
 </style>
 `;
 
-exports[`styles.keyframes() adds keyframes to dom: @keyframes ui-10r5bpr 1`] = `
+exports[`styles.keyframes() adds keyframes to dom: @keyframes ui-jottxx 1`] = `
 <style
   data-dash="ui"
 >
-  @keyframes ui-10r5bpr{0%{opacity:0;}100%{opacity:1;}}
+  @keyframes ui-jottxx{0%{opacity:0;}100%{opacity:1;}}
 </style>
 `;
 
-exports[`styles.keyframes() returns keyframes name 1`] = `"ui-10r5bpr"`;
+exports[`styles.keyframes() returns keyframes name 1`] = `"ui-jottxx"`;
 
 exports[`styles.keyframes() works with variables callback: 0% blue; 100% red; 1`] = `
 <style
   data-dash="ui"
 >
-  @keyframes ui-1ryth4d{0%{background-color:var(--color-blue);}100%{background-color:var(--color-red);}}
+  @keyframes ui-bami8l{0%{background-color:var(--color-blue);}100%{background-color:var(--color-red);}}
 </style>
 `;
 
-exports[`styles.one() can be called as a function w/ function value 1`] = `"color:var(--color-blue);"`;
+exports[`styles.one() can be called as a function w/ function value 1`] = `"color: var(--color-blue);"`;
 
-exports[`styles.one() can be called as a function w/ string value 1`] = `"ui-1ut9bc3"`;
+exports[`styles.one() can be called as a function w/ string value 1`] = `"ui-1gsnvr5"`;
 
 exports[`styles.one() creates style w/ object 1`] = `
 <style
@@ -398,16 +398,16 @@ exports[`styles.one() creates style w/ template literal 1`] = `
 <style
   data-dash="ui"
 >
-  .ui-1ut9bc3{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;}
+  .ui-1gsnvr5{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;}
 </style>
 `;
 
-exports[`styles.one() returns css when css() is called 1`] = `"display:flex;"`;
+exports[`styles.one() returns css when css() is called 1`] = `"display: flex;"`;
 
 exports[`styles.one() won't create style def if falsy 1`] = `
 <style
   data-dash="ui"
 >
-  .ui-1ut9bc3{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;}
+  .ui-1gsnvr5{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;}
 </style>
 `;

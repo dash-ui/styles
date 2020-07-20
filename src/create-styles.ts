@@ -33,12 +33,12 @@ export function createStyles<
       return [...args]
         .reduce((curr, arg) => {
           if (typeof arg === 'string') {
-            curr += `-${arg}`
+            curr += '-' + arg
           } else if (typeof arg === 'object') {
             const keys = Object.keys(arg).filter((k) => arg[k])
 
             if (keys.length) {
-              curr += `-${keys.join('-')}`
+              curr += '-' + keys.join('-')
             }
           }
 
@@ -95,31 +95,24 @@ export function createStyles<
   }
 
   styles.one = function () {
-    let one =
-      typeof arguments[0] === 'function'
-        ? arguments[0]
-        : compileStyles<V>(compileLiterals.call(null, arguments), variables)
-
-    const css = () =>
-      typeof one === 'string' ? one : (one = compileStyles<V>(one, variables))
-    let name: string
-    let className: string
-
+    const one = compileStyles<V>(compileLiterals(arguments), variables)
+    const name = hash(one)
+    const className = key + '-' + name
     const callback: StylesOne = (createClassName) => {
       if (!createClassName && createClassName !== void 0) return ''
-      const one = css()
-      className = className || key + '-' + (name = name || hash(one))
       insert(name, '.' + className, one)
       return className
     }
-
-    callback.css = css
+    callback.css = () => one
     return callback
   }
 
   styles.cls = function () {
-    // @ts-expect-error
-    return styles.one.apply(this, arguments)()
+    let css = compileStyles<V>(compileLiterals(arguments), variables)
+    const name = hash(css)
+    const className = key + '-' + name
+    insert(name, '.' + className, css)
+    return className
   }
 
   styles.join = function () {
@@ -131,7 +124,7 @@ export function createStyles<
   }
 
   styles.keyframes = function () {
-    let css = compileStyles<V>(compileLiterals.call(null, arguments), variables)
+    let css = compileStyles<V>(compileLiterals(arguments), variables)
     const name = hash(css)
     const animationName = key + '-' + name
     // Adding to a cached sheet here rather than the default sheet because
@@ -141,10 +134,7 @@ export function createStyles<
   }
 
   styles.insertGlobal = function () {
-    const css = compileStyles<V>(
-      compileLiterals.call(null, arguments),
-      variables
-    )
+    const css = compileStyles<V>(compileLiterals(arguments), variables)
 
     if (!css) return noop
     const name = hash(css)
@@ -664,8 +654,7 @@ function compileArguments<
   return nextStyles
 }
 
-const minLeft = /([:;,([{}>~/\s]|\/\*)\s+/g
-const minRight = /\s+([:;,)\]{}>~/!]|\*\/)/g
+const ws = /\s{2,}/g
 
 /**
  * A utility function that will turn style objects and callbacks into
@@ -682,10 +671,7 @@ export function compileStyles<V extends DashVariables = DashVariables>(
   return typeof value === 'object' && value !== null
     ? stringifyStyleObject(value)
     : // TypeScript w/o "strict": true throws here
-      ((value || '') as string)
-        .trim()
-        .replace(minLeft, '$1')
-        .replace(minRight, '$1')
+      ((value || '') as string).trim().replace(ws, ' ')
 }
 
 function compileStylesMemo<
@@ -709,14 +695,16 @@ function stringifyStyleObject(object: StyleObject) {
       string += key + '{' + stringifyStyleObject(value as StyleObject) + '}'
     } else {
       const isCustom = key.charCodeAt(1) === 45
-      string += `${isCustom ? key : cssCase(key)}:${
-        toV !== 'number' ||
+      string +=
+        (isCustom ? key : cssCase(key)) +
+        ':' +
+        (toV !== 'number' ||
         unitless[key as keyof typeof unitless] === 1 ||
         value === 0 ||
         isCustom
           ? value
-          : value + 'px'
-      };`
+          : value + 'px') +
+        ';'
     }
   }
 
@@ -764,7 +752,7 @@ function serializeVariables(
         (mangle === true || (mangle && !mangle[name])
           ? mangled(name)
           : name))})`
-      css += `${name}:${value};`
+      css += name + ':' + value + ';'
     }
   }
 

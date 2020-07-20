@@ -33,6 +33,8 @@
 
 ## Quick Start
 
+[Check out an example on **CodeSandbox**](https://codesandbox.io/s/dash-ui-react-example-029p5)
+
 ```jsx harmony
 // React example
 import * as React from 'react'
@@ -121,8 +123,6 @@ const Component = (props) => (
 ```
 
 ## API
-
-Coming soon. Until then [play with this React example on CodeSandbox](https://codesandbox.io/s/dash-ui-react-example-029p5)
 
 ## LICENSE
 

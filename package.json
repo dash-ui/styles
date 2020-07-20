@@ -152,6 +152,7 @@
     "babel-jest": "latest",
     "crc": "^3.8.0",
     "cz-conventional-changelog": "3.2.0",
+    "emotion": "^10.0.27",
     "eslint": "latest",
     "eslint-config-lunde": "latest",
     "husky": "latest",
