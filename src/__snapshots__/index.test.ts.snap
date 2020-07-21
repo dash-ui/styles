@@ -171,8 +171,6 @@ exports[`styles() returns single class name 2`] = `"ui-qaw0al"`;
 
 exports[`styles() returns single class name 3`] = `"ui-broszf"`;
 
-exports[`styles() shouldn't do anything with unprocessable object values 1`] = `"display:flex;"`;
-
 exports[`styles.cls() creates style and inserts it into the dom right away 1`] = `
 <style
   data-dash="ui"
