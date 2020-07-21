@@ -202,16 +202,6 @@ describe('styles()', () => {
     expect(name.length).toBe(0)
   })
 
-  it(`shouldn't do anything with unprocessable object values`, () => {
-    const style = createStyles()({
-      // @ts-ignore
-      flex: {display: 'flex', meaningless: null},
-    })
-
-    style('flex')
-    expect(style.css('flex')).toMatchSnapshot()
-  })
-
   it('ignores unknown keys', () => {
     const style = createStyles()({
       flex: {display: 'flex'},
