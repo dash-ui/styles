@@ -4,26 +4,66 @@ import {styles} from '../dist/module'
 
 bench('emotion css [object]', ({duration}) => {
   duration(1000)
-  return () => css({display: 'flex'})
+  return () =>
+    css({
+      display: 'flex',
+      color: 'blue',
+      position: 'relative',
+      width: 640,
+      height: 320,
+    })
 })
 
 bench('use cls [object]', ({duration}) => {
   duration(1000)
-  return () => styles.cls({display: 'flex'})
+  return () =>
+    styles.cls({
+      display: 'flex',
+      color: 'blue',
+      position: 'relative',
+      width: 640,
+      height: 320,
+    })
 })
 
 bench('emotion css [string]', ({duration}) => {
   duration(1000)
   return () =>
     css`
-      display: flex;
+      display: inline-block;
+      border: none;
+      background: transparent;
+      padding: 0.5rem 1rem;
+      font-weight: 700;
+
+      /**
+      * Dash uses a CSS preprocessor called stylis so nesting,
+      * autoprefixing, etc. come out of the box.
+      * https://www.npmjs.com/package/stylis
+      */
+      :active {
+        transform: translateY(1px);
+      }
     `
 })
 
 bench('use cls [string]', ({duration}) => {
   duration(1000)
   return () => styles.cls`
-    display: flex;
+    display: inline-block;
+    border: none;
+    background: transparent;
+    padding: 0.5rem 1rem;
+    font-weight: 700;
+
+    /**
+     * Dash uses a CSS preprocessor called stylis so nesting,
+     * autoprefixing, etc. come out of the box.
+     * https://www.npmjs.com/package/stylis
+     */
+    :active {
+      transform: translateY(1px);
+    }
   `
 })
 
@@ -33,7 +73,14 @@ bench('[cold] emotion css [object]', ({duration, before}) => {
   before(() => {
     key = String(Math.random())
   })
-  return () => css({width: key})
+  return () =>
+    css({
+      width: key,
+      display: 'flex',
+      color: 'blue',
+      position: 'relative',
+      height: 320,
+    })
 })
 
 bench('[cold] use cls [object]', ({duration, before}) => {
@@ -42,7 +89,14 @@ bench('[cold] use cls [object]', ({duration, before}) => {
   before(() => {
     key = String(Math.random())
   })
-  return () => styles.cls({width: key})
+  return () =>
+    styles.cls({
+      width: key,
+      display: 'flex',
+      color: 'blue',
+      position: 'relative',
+      height: 320,
+    })
 })
 
 bench('[cold] emotion css [string]', ({duration, before}) => {
@@ -54,6 +108,20 @@ bench('[cold] emotion css [string]', ({duration, before}) => {
   return () =>
     css`
       width: ${key};
+      display: inline-block;
+      border: none;
+      background: transparent;
+      padding: 0.5rem 1rem;
+      font-weight: 700;
+
+      /**
+     * Dash uses a CSS preprocessor called stylis so nesting,
+     * autoprefixing, etc. come out of the box.
+     * https://www.npmjs.com/package/stylis
+     */
+      :active {
+        transform: translateY(1px);
+      }
     `
 })
 
@@ -65,6 +133,20 @@ bench('[cold] use cls [string]', ({duration, before}) => {
   })
   return () => styles.cls`
     width: ${key};
+    display: inline-block;
+    border: none;
+    background: transparent;
+    padding: 0.5rem 1rem;
+    font-weight: 700;
+
+    /**
+     * Dash uses a CSS preprocessor called stylis so nesting,
+     * autoprefixing, etc. come out of the box.
+     * https://www.npmjs.com/package/stylis
+     */
+    :active {
+      transform: translateY(1px);
+    }
   `
 })
 

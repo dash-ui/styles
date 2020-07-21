@@ -660,8 +660,7 @@ function stringifyStyleObject(object: StyleObject) {
   for (const key in object) {
     const value = object[key]
     const toV = typeof value
-    if (value === null) continue
-    else if (toV !== 'object') {
+    if (toV !== 'object') {
       const isCustom = key.charCodeAt(1) === 45
       string +=
         (isCustom ? key : cssCase(key)) +
