@@ -2,7 +2,23 @@ import bench from '@essentials/benchmark'
 import {css} from 'emotion'
 import {styles} from '../dist/module'
 
-bench('emotion css [object]', ({duration}) => {
+bench('emotion css [smol object]', ({duration}) => {
+  duration(1000)
+  return () =>
+    css({
+      display: 'flex',
+    })
+})
+
+bench('use cls [smol object]', ({duration}) => {
+  duration(1000)
+  return () =>
+    styles.cls({
+      display: 'flex',
+    })
+})
+
+bench('emotion css [big object]', ({duration}) => {
   duration(1000)
   return () =>
     css({
@@ -11,10 +27,13 @@ bench('emotion css [object]', ({duration}) => {
       position: 'relative',
       width: 640,
       height: 320,
+      backgroundColor: 'green',
+      transition: 'foo bar',
+      margin: '0 auto',
     })
 })
 
-bench('use cls [object]', ({duration}) => {
+bench('use cls [big object]', ({duration}) => {
   duration(1000)
   return () =>
     styles.cls({
@@ -23,6 +42,9 @@ bench('use cls [object]', ({duration}) => {
       position: 'relative',
       width: 640,
       height: 320,
+      backgroundColor: 'green',
+      transition: 'foo bar',
+      margin: '0 auto',
     })
 })
 
@@ -80,6 +102,9 @@ bench('[cold] emotion css [object]', ({duration, before}) => {
       color: 'blue',
       position: 'relative',
       height: 320,
+      backgroundColor: 'green',
+      transition: 'foo bar',
+      margin: '0 auto',
     })
 })
 
@@ -96,6 +121,9 @@ bench('[cold] use cls [object]', ({duration, before}) => {
       color: 'blue',
       position: 'relative',
       height: 320,
+      backgroundColor: 'green',
+      transition: 'foo bar',
+      margin: '0 auto',
     })
 })
 
