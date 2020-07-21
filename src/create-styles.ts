@@ -95,7 +95,7 @@ export function createStyles<
   }
 
   styles.cls = function () {
-    let css = compileStyles<V>(compileLiterals(arguments), variables)
+    const css = compileStyles<V>(compileLiterals(arguments), variables)
     const name = hash(css)
     const className = key + '-' + name
     insert(name, '.' + className, css)
@@ -104,14 +104,14 @@ export function createStyles<
 
   styles.join = function () {
     const css = Array.prototype.slice.call(arguments).join('')
-    let name = hash(css)
+    const name = hash(css)
     const className = key + '-' + name
     insert(name, '.' + className, css)
     return className
   }
 
   styles.keyframes = function () {
-    let css = compileStyles<V>(compileLiterals(arguments), variables)
+    const css = compileStyles<V>(compileLiterals(arguments), variables)
     const name = hash(css)
     const animationName = key + '-' + name
     // Adding to a cached sheet here rather than the default sheet because
@@ -659,13 +659,13 @@ function stringifyStyleObject(object: StyleObject) {
 
   for (const key in object) {
     const value = object[key]
-    const toV = typeof value
-    if (toV !== 'object') {
+
+    if (typeof value !== 'object') {
       const isCustom = key.charCodeAt(1) === 45
       string +=
         (isCustom ? key : cssCase(key)) +
         ':' +
-        (toV !== 'number' ||
+        (typeof value !== 'number' ||
         unitless[key as keyof typeof unitless] ||
         value === 0 ||
         isCustom
@@ -673,7 +673,7 @@ function stringifyStyleObject(object: StyleObject) {
           : value + 'px') +
         ';'
     } else {
-      string += key + '{' + stringifyStyleObject(value as StyleObject) + '}'
+      string += key + '{' + stringifyStyleObject(value) + '}'
     }
   }
 
