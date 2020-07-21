@@ -1,5 +1,3 @@
-// A huge amount of credit for this library goes to the emotion
-// team
 import unitless from '@dash-ui/unitless'
 import {safeHash, hash as fnv1aHash, noop} from './utils'
 import {createDash} from './create-dash'
@@ -345,7 +343,7 @@ export interface Styles<
     ...placeholders: string[]
   ): string
   /**
-   * Joins CSS, inserts it into the DOM right away, and returns a class name.
+   * A function that joins CSS strings, inserts them into the DOM right away, and returns a class name.
    *
    * @example
    * const Component = () => <div
@@ -356,7 +354,7 @@ export interface Styles<
    *   )}
    * />
    */
-  join(...styleCss: string[]): string
+  join(...css: string[]): string
   /**
    * A function that accepts a tagged template literal, style object, or style callback.
    * Using this will immediately insert a global `@keyframes` defintion into the DOM and
@@ -491,7 +489,7 @@ export interface Styles<
   variables: DashVariables
   /**
    * A hashing function for creating unique selector names
-   * @param string The string you'd like to create a unique has of
+   * @param string The string you'd like to hash
    */
   hash(string: string): string
   /**
@@ -637,15 +635,14 @@ function compileArguments<
 }
 
 /**
- * A utility function that will turn style objects and callbacks into
- * minified strings. It will also minify strings it receives.
+ * A utility function that will compile style objects and callbacks into CSS strings.
  *
  * @param styles A style callback, object, or string
- * @param variables A map of CSS variables accessible by style callbacks
+ * @param variables A map of CSS variables for style callbacks
  */
 export function compileStyles<V extends DashVariables = DashVariables>(
   styles: StyleValue<V> | Falsy,
-  variables: V
+  variables: V = {} as V
 ): string {
   const value = typeof styles === 'function' ? styles(variables) : styles
   return typeof value === 'object' && value !== null
