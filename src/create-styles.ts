@@ -691,8 +691,12 @@ function compileLiterals(args: IArguments) {
 // Variable and theme serialization
 const cssCaseRe = /[A-Z]|^ms/g
 const cssDisallowedRe = /[^\w-]/g
+// We cache the case transformations below because the cache
+// will grow to a predictable size and the regex is slowwwww
+const caseCache: Record<string, string> = {}
 const cssCase = (string: string) =>
-  string.replace(cssCaseRe, '-$&').toLowerCase()
+  caseCache[string] ||
+  (caseCache[string] = string.replace(cssCaseRe, '-$&').toLowerCase())
 
 function serializeVariables(
   variables: Record<string, any>,
