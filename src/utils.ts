@@ -22,12 +22,15 @@ export function hash(string: string): string {
   return (out >>> 0).toString(36)
 }
 
+const minL = /(^|[:;,{}\s])\s+|$/g
+const minR = / +{/g
+
 export function safeHash(key: string, hashFn: typeof hash) {
   const hashCache = new Map<string, string>()
   let value: string | undefined
   return (string: string) => {
     if ((value = hashCache.get(string))) return value
-    value = hashFn(string)
+    value = hashFn(string.replace(minL, '$1').replace(minR, '{'))
     // allows class names to start with numbers
     hashCache.set(
       string,

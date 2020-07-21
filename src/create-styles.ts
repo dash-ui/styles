@@ -636,8 +636,6 @@ function compileArguments<
   return nextStyles
 }
 
-const ws = /\s{2,}/g
-
 /**
  * A utility function that will turn style objects and callbacks into
  * minified strings. It will also minify strings it receives.
@@ -653,7 +651,7 @@ export function compileStyles<V extends DashVariables = DashVariables>(
   return typeof value === 'object' && value !== null
     ? stringifyStyleObject(value)
     : // TypeScript w/o "strict": true throws here
-      ((value || '') as string).trim().replace(ws, ' ')
+      ((value || '') as string)
 }
 
 function stringifyStyleObject(object: StyleObject) {
@@ -662,21 +660,21 @@ function stringifyStyleObject(object: StyleObject) {
   for (const key in object) {
     const value = object[key]
     const toV = typeof value
-    if (value === null || toV === 'boolean') continue
-    if (toV === 'object') {
-      string += key + '{' + stringifyStyleObject(value as StyleObject) + '}'
-    } else {
+    if (value === null) continue
+    else if (toV !== 'object') {
       const isCustom = key.charCodeAt(1) === 45
       string +=
         (isCustom ? key : cssCase(key)) +
         ':' +
         (toV !== 'number' ||
-        unitless[key as keyof typeof unitless] === 1 ||
+        unitless[key as keyof typeof unitless] ||
         value === 0 ||
         isCustom
           ? value
           : value + 'px') +
         ';'
+    } else {
+      string += key + '{' + stringifyStyleObject(value as StyleObject) + '}'
     }
   }
 
