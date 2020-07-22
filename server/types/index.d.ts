@@ -11,10 +11,10 @@
  * @param styles A `styles()` instance
  * @param options Configuration options
  */
-export declare const createStylesFromCache: (
+export declare function createStylesFromCache(
   styles?: any,
-  options?: CreateStylesOptions
-) => StylesResult
+  options?: CreateServerStylesOptions
+): ServerStylesResult
 /**
  * Creates a `<style>` tag w/ CSS based on the dash `inserted` cache. This
  * is an extremely fast way to generate a `<style>` tag.
@@ -26,10 +26,10 @@ export declare const createStylesFromCache: (
  * @param styles A `styles()` instance
  * @param options Configuration options
  */
-export declare const createStyleTagFromCache: (
+export declare function createStyleTagFromCache(
   styles?: any,
-  options?: CreateStylesOptions
-) => string
+  options?: CreateServerStylesOptions
+): string
 /**
  * Writes a CSS to a file based on the dash `inserted` cache. This
  * is an extremely fast way to generate a CSS file.
@@ -43,15 +43,13 @@ export declare const createStyleTagFromCache: (
  * @param styles A `styles()` instance
  * @param options Configuration options
  */
-export declare const writeStylesFromCache: (
+export declare function writeStylesFromCache(
   outputPath?: string,
   styles?: any,
-  options?:
-    | (WriteStylesOptions & {
-        clearCache?: boolean | undefined
-      })
-    | undefined
-) => Promise<WriteStylesResult>
+  options?: WriteServerStylesOptions & {
+    clearCache?: boolean
+  }
+): Promise<WriteServerStylesResult>
 /**
  * Creates a string of CSS based on an HTML string. This function will
  * parse your HTML output for Dash class names and pull the styles associated
@@ -60,13 +58,13 @@ export declare const writeStylesFromCache: (
  *
  * This is a safe way to generate style strings in an asynchronous environment
  *
- * @param string An HTML string
+ * @param html An HTML string
  * @param styles A `styles()` instance
  */
-export declare const createStylesFromString: (
-  string: string,
+export declare function createStylesFromString(
+  html: string,
   styles?: any
-) => StylesResult
+): ServerStylesResult
 /**
  * Creates a `<style>` tag w/ CSS based on an HTML string. This function will
  * parse your HTML output for Dash class names and pull the styles associated
@@ -74,13 +72,13 @@ export declare const createStylesFromString: (
  *
  * This is a safe way to generate `<style>` tags in an asynchronous environment.
  *
+ * @param html An HTML string
  * @param styles A `styles()` instance
- * @param options Configuration options
  */
-export declare const createStyleTagFromString: (
-  string: string,
+export declare function createStyleTagFromString(
+  html: string,
   styles?: any
-) => string
+): string
 /**
  * Writes a CSS to a file based on an HTML string. This function will
  * parse your HTML output for Dash class names and pull the styles associated
@@ -93,13 +91,13 @@ export declare const createStyleTagFromString: (
  *  output the CSS file.
  * @param options Configuration options
  */
-export declare const writeStylesFromString: (
-  string: string,
+export declare function writeStylesFromString(
+  html: string,
   outputPath?: string,
   styles?: any,
-  options?: WriteStylesOptions | undefined
-) => Promise<WriteStylesResult>
-export interface StylesResult {
+  options?: WriteServerStylesOptions
+): Promise<WriteServerStylesResult>
+export interface ServerStylesResult {
   /**
    * A CSS string containing all of the styles that were used
    */
@@ -109,7 +107,7 @@ export interface StylesResult {
    */
   names: string[]
 }
-export interface CreateStylesOptions {
+export interface CreateServerStylesOptions {
   /**
    * Clears the Dash `inserted` cache after styles have been
    * generated. This is useful in synchronous environments when you
@@ -119,7 +117,7 @@ export interface CreateStylesOptions {
    */
   clearCache?: boolean
 }
-export interface WriteStylesOptions {
+export interface WriteServerStylesOptions {
   /**
    * Use this if you want to create your own name for the CSS file.
    * By default, this function will create a filename based on the hash
@@ -133,7 +131,7 @@ export interface WriteStylesOptions {
    */
   hash?: (string: string) => string
 }
-export interface WriteStylesResult {
+export interface WriteServerStylesResult {
   /**
    * The filename of the generated file. This is the `outputPath` joined
    * to the basename of the CSS file that was generated.
