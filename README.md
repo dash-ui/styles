@@ -42,7 +42,7 @@
 - [x] **Minification**
 - [x] **Server rendering** [made easy](#server-rendering)
 - [x] **Flushable globals** make adding and removing global styles a breeze
-- [x] **Avaiable as a [UMD](https://unpkg.com/browse/@dash-ui/styles@latest/dist/umd/) and [ES Module](https://cdn.skypack.dev/@dash-ui/styles/)**
+- [x] **Available as a [UMD](https://unpkg.com/browse/@dash-ui/styles@latest/dist/umd/) and [ES Module](https://cdn.skypack.dev/@dash-ui/styles/)**
 
 ## Quick start
 
