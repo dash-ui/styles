@@ -2,12 +2,19 @@
 
 To contribute to this project, first:
 
-- Fork this repo to your account
-- `mkdir dash-ui`
-- `cd dash-ui`
-- `git clone https://github.com/[your-username]/styles.git`
-- `cd styles`
-- `yarn install`
+1. [Fork this repo to your account](https://docs.github.com/en/github/getting-started-with-github/fork-a-repo)
+2. ```sh
+   # Create a directory for Dash if you don't already have one
+   mkdir dash-ui
+   cd dash-ui
+   # Clone your forked repo
+   git clone https://github.com/[your-username]/styles.git
+   # Install the repo using Yarn
+   cd styles
+   yarn install
+   # Start dev mode
+   yarn dev
+   ```
 
 ## Before you contribute
 
