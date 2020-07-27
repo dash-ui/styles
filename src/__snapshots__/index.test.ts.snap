@@ -29,7 +29,7 @@ exports[`createStyles() changes key to "css": DOM 1`] = `
 
 exports[`createStyles() configures hash algorithm 1`] = `"ui-e038ab58"`;
 
-exports[`createStyles() should initialize w/ variables 1`] = `"width:var(--box-small);height:var(--box-small);"`;
+exports[`createStyles() should initialize w/ tokens 1`] = `"width:var(--box-small);height:var(--box-small);"`;
 
 exports[`createStyles() turns off vendor prefixing: DOM 1`] = `
 <style
@@ -137,7 +137,7 @@ exports[`styles() joins css styles and returns class name: display:flex;display:
 </style>
 `;
 
-exports[`styles() passes variables to style callbacks 1`] = `
+exports[`styles() passes tokens to style callbacks 1`] = `
 Object {
   "colors": Object {
     "bg": "var(--colors-bg)",
@@ -147,9 +147,9 @@ Object {
 }
 `;
 
-exports[`styles() passes variables to style callbacks 2`] = `"ui-dark-theme"`;
+exports[`styles() passes tokens to style callbacks 2`] = `"ui-dark-theme"`;
 
-exports[`styles() passes variables to style callbacks 3`] = `"ui-light-theme"`;
+exports[`styles() passes tokens to style callbacks 3`] = `"ui-light-theme"`;
 
 exports[`styles() replaces disallowed characters in dev labels: 400x400 1`] = `
 <style
@@ -227,7 +227,7 @@ exports[`styles.insertGlobal() injects global style object 2`] = `
 </style>
 `;
 
-exports[`styles.insertGlobal() passes variables to global styles 1`] = `
+exports[`styles.insertGlobal() passes tokens to global styles 1`] = `
 Object {
   "colors": Object {
     "bg": "var(--colors-bg)",
@@ -270,7 +270,7 @@ exports[`styles.insertGlobal() still exists in caches when a global is used more
 </style>
 `;
 
-exports[`styles.insertThemes() creates variables: dark 1`] = `
+exports[`styles.insertThemes() creates tokens: dark 1`] = `
 <style
   data-dash="ui"
 >
@@ -278,7 +278,7 @@ exports[`styles.insertThemes() creates variables: dark 1`] = `
 </style>
 `;
 
-exports[`styles.insertThemes() creates variables: light 1`] = `
+exports[`styles.insertThemes() creates tokens: light 1`] = `
 <style
   data-dash="ui"
 >
@@ -286,7 +286,7 @@ exports[`styles.insertThemes() creates variables: light 1`] = `
 </style>
 `;
 
-exports[`styles.insertThemes() removes variables when eject is called 1`] = `
+exports[`styles.insertThemes() removes tokens when eject is called 1`] = `
 NodeList [
   <style
     data-dash="ui"
@@ -301,7 +301,7 @@ NodeList [
 ]
 `;
 
-exports[`styles.insertVariables() creates variables w/ scales: :root 1`] = `
+exports[`styles.insertTokens() creates tokens w/ scales: :root 1`] = `
 <style
   data-dash="ui"
 >
@@ -309,7 +309,7 @@ exports[`styles.insertVariables() creates variables w/ scales: :root 1`] = `
 </style>
 `;
 
-exports[`styles.insertVariables() creates variables: :root 1`] = `
+exports[`styles.insertTokens() creates tokens: :root 1`] = `
 <style
   data-dash="ui"
 >
@@ -317,7 +317,7 @@ exports[`styles.insertVariables() creates variables: :root 1`] = `
 </style>
 `;
 
-exports[`styles.insertVariables() mangles variables w/ reserved keys: :root 1`] = `
+exports[`styles.insertTokens() mangles tokens w/ reserved keys: :root 1`] = `
 <style
   data-dash="ui"
 >
@@ -325,7 +325,7 @@ exports[`styles.insertVariables() mangles variables w/ reserved keys: :root 1`] 
 </style>
 `;
 
-exports[`styles.insertVariables() mangles variables: :root 1`] = `
+exports[`styles.insertTokens() mangles tokens: :root 1`] = `
 <style
   data-dash="ui"
 >
@@ -333,7 +333,7 @@ exports[`styles.insertVariables() mangles variables: :root 1`] = `
 </style>
 `;
 
-exports[`styles.insertVariables() removes variables when eject is called 1`] = `
+exports[`styles.insertTokens() removes tokens when eject is called 1`] = `
 NodeList [
   <style
     data-dash="ui"
@@ -343,7 +343,7 @@ NodeList [
 ]
 `;
 
-exports[`styles.insertVariables() still exists in caches when used more than once 1`] = `
+exports[`styles.insertTokens() still exists in caches when used more than once 1`] = `
 <style
   data-dash="ui"
 >
@@ -369,7 +369,7 @@ exports[`styles.keyframes() adds keyframes to dom: @keyframes ui-10r5bpr 1`] = `
 
 exports[`styles.keyframes() returns keyframes name 1`] = `"ui-10r5bpr"`;
 
-exports[`styles.keyframes() works with variables callback: 0% blue; 100% red; 1`] = `
+exports[`styles.keyframes() works with tokens callback: 0% blue; 100% red; 1`] = `
 <style
   data-dash="ui"
 >

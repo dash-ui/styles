@@ -96,9 +96,9 @@ describe('createStyleTagFromCache', () => {
     expect(createStyleTagFromCache(myStyles)).toMatchSnapshot()
   })
 
-  it('extracts global variables', () => {
+  it('extracts global tokens', () => {
     const myStyles = createStyles({})
-    myStyles.insertVariables({
+    myStyles.insertTokens({
       colors: {
         blue: '#09a',
       },
@@ -107,7 +107,7 @@ describe('createStyleTagFromCache', () => {
     expect(createStyleTagFromCache(myStyles)).toMatchSnapshot()
   })
 
-  it('extracts theme variables', () => {
+  it('extracts theme tokens', () => {
     const myStyles = createStyles({
       themes: {
         dark: {
@@ -209,9 +209,9 @@ describe('createStyleTagFromString', () => {
     expect(createStyleTagFromString('', myStyles)).toMatchSnapshot()
   })
 
-  it('extracts global variables', () => {
+  it('extracts global tokens', () => {
     const myStyles = createStyles({})
-    myStyles.insertVariables({
+    myStyles.insertTokens({
       colors: {
         blue: '#09a',
       },

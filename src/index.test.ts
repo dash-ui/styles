@@ -107,8 +107,8 @@ describe('createStyles()', () => {
     expect(serializeRules()).toMatchSnapshot()
   })
 
-  it('should initialize w/ variables', () => {
-    const myStyles = createStyles({variables: {box: {small: 100}}})
+  it('should initialize w/ tokens', () => {
+    const myStyles = createStyles({tokens: {box: {small: 100}}})
     const style = myStyles({
       small: ({box}) => ({
         width: box.small,
@@ -278,9 +278,9 @@ describe('styles()', () => {
     expect(document.querySelectorAll(`style[data-dash]`)[1]).toMatchSnapshot()
   })
 
-  it('passes variables to style callbacks', () => {
+  it('passes tokens to style callbacks', () => {
     const myStyles = createStyles({
-      variables: {
+      tokens: {
         colors: {
           bg: '#09a',
           text: '#c12',
@@ -464,9 +464,9 @@ describe('styles.keyframes()', () => {
     )
   })
 
-  it('works with variables callback', () => {
+  it('works with tokens callback', () => {
     const myStyles = createStyles({
-      variables: {
+      tokens: {
         color: {
           blue: 'blue',
           red: 'red',
@@ -485,16 +485,16 @@ describe('styles.keyframes()', () => {
     `
     )
 
-    expect(document.querySelectorAll(`style[data-dash]`).length).toBe(3) // variables + kf
+    expect(document.querySelectorAll(`style[data-dash]`).length).toBe(3) // tokens + kf
     expect(document.querySelectorAll(`style[data-dash]`)[2]).toMatchSnapshot(
       `0% blue; 100% red;`
     )
   })
 })
 
-describe(`styles.insertVariables()`, () => {
-  it('creates variables', () => {
-    createStyles().insertVariables({
+describe(`styles.insertTokens()`, () => {
+  it('creates tokens', () => {
+    createStyles().insertTokens({
       columns: 12,
       colors: {
         blue: '#09a',
@@ -515,9 +515,9 @@ describe(`styles.insertVariables()`, () => {
     )
   })
 
-  it('removes variables when eject is called', () => {
+  it('removes tokens when eject is called', () => {
     const myStyles = createStyles()
-    const eject = myStyles.insertVariables({
+    const eject = myStyles.insertTokens({
       colors: {
         blue: '#09a',
         red: '#c12',
@@ -541,8 +541,8 @@ describe(`styles.insertVariables()`, () => {
     expect(Array.from(myStyles.dash.sheets.keys()).length).toBe(0)
   })
 
-  it('mangles variables', () => {
-    createStyles({mangleVariables: true}).insertVariables({
+  it('mangles tokens', () => {
+    createStyles({mangleTokens: true}).insertTokens({
       columns: 12,
       colors: {
         blue: '#09a',
@@ -563,8 +563,8 @@ describe(`styles.insertVariables()`, () => {
     )
   })
 
-  it('mangles variables w/ reserved keys', () => {
-    createStyles({mangleVariables: {'colors-blue': true}}).insertVariables({
+  it('mangles tokens w/ reserved keys', () => {
+    createStyles({mangleTokens: {'colors-blue': true}}).insertTokens({
       columns: 12,
       colors: {
         blue: '#09a',
@@ -587,7 +587,7 @@ describe(`styles.insertVariables()`, () => {
 
   it('still exists in caches when used more than once', () => {
     const myStyles = createStyles()
-    const ejectA = myStyles.insertVariables({
+    const ejectA = myStyles.insertTokens({
       colors: {
         blue: '#09a',
         red: '#c12',
@@ -600,7 +600,7 @@ describe(`styles.insertVariables()`, () => {
         p: {md: '1rem', xs: '0.25rem', sm: '0.5rem', lg: '2rem', xl: '4rem'},
       },
     })
-    const ejectB = myStyles.insertVariables({
+    const ejectB = myStyles.insertTokens({
       colors: {
         blue: '#09a',
         red: '#c12',
@@ -628,8 +628,8 @@ describe(`styles.insertVariables()`, () => {
     expect(Array.from(myStyles.dash.sheets.keys()).length).toBe(0)
   })
 
-  it('creates variables w/ scales', () => {
-    createStyles().insertVariables({
+  it('creates tokens w/ scales', () => {
+    createStyles().insertTokens({
       spacing: ['1rem', '2rem', '4rem'],
     })
 
@@ -641,7 +641,7 @@ describe(`styles.insertVariables()`, () => {
 })
 
 describe(`styles.insertThemes()`, () => {
-  it('creates variables', () => {
+  it('creates tokens', () => {
     createStyles().insertThemes({
       dark: {
         colors: {
@@ -666,7 +666,7 @@ describe(`styles.insertThemes()`, () => {
     )
   })
 
-  it('removes variables when eject is called', () => {
+  it('removes tokens when eject is called', () => {
     const myStyles = createStyles()
     const eject = myStyles.insertThemes({
       dark: {
@@ -695,9 +695,9 @@ describe(`styles.insertThemes()`, () => {
 })
 
 describe(`styles.insertGlobal()`, () => {
-  it('passes variables to global styles', () => {
+  it('passes tokens to global styles', () => {
     const myStyles = createStyles()
-    myStyles.insertVariables({
+    myStyles.insertTokens({
       colors: {
         blue: '#09a',
         red: '#c12',
@@ -929,13 +929,13 @@ describe('styles.one()', () => {
   })
 
   it(`can be called as a function w/ function value`, () => {
-    type Variables = {
+    type Tokens = {
       color: {
         blue: 'blue'
       }
     }
-    const myStyles = createStyles<Variables>()
-    myStyles.insertVariables({color: {blue: 'blue'}})
+    const myStyles = createStyles<Tokens>()
+    myStyles.insertTokens({color: {blue: 'blue'}})
     const myCls = myStyles.one(({color}) => `color: ${color.blue};`)
     expect(myCls.css()).toMatchSnapshot()
   })
@@ -954,15 +954,15 @@ describe('styles.cls()', () => {
   })
 })
 
-describe('styles.variables', () => {
-  it('should make CSS variables available', () => {
+describe('styles.tokens', () => {
+  it('should make CSS tokens available', () => {
     const myStyles = createStyles({
-      variables: {
+      tokens: {
         spacing: [0, '0.5rem'],
       },
     })
 
-    expect(myStyles.variables).toEqual({
+    expect(myStyles.tokens).toEqual({
       spacing: {
         0: 'var(--spacing-0)',
         1: 'var(--spacing-1)',
