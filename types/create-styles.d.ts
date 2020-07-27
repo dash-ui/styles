@@ -7,11 +7,11 @@ import type {Dash} from './create-dash'
  * @param options Configuration options
  */
 export declare function createStyles<
-  V extends DashVariables = DashVariables,
+  V extends DashTokens = DashTokens,
   T extends string = DashThemeNames
 >(options?: CreateStylesOptions<V, T>): Styles<V, T>
 export interface CreateStylesOptions<
-  V extends DashVariables = DashVariables,
+  V extends DashTokens = DashTokens,
   T extends string = DashThemeNames
 > {
   /**
@@ -20,13 +20,13 @@ export interface CreateStylesOptions<
    */
   dash?: Dash
   /**
-   * Inserts CSS variables into the DOM and makes them available for use in
-   * style callbacks. The name of the CSS variables is automatically generated
+   * Inserts CSS tokens into the DOM and makes them available for use in
+   * style callbacks. The name of the CSS tokens is automatically generated
    * based upon the depth of the mapping i.e. `foo.bar.baz` -> `--foo-bar-baz`.
    *
    * @example
    * const styles = createStyles({
-   *   variables: {
+   *   tokens: {
    *     color: {
    *       // var(--color-light-red)
    *       lightRed: '#c17'
@@ -40,13 +40,13 @@ export interface CreateStylesOptions<
    *
    * const Component = () => <div className={bgRed()} />
    */
-  readonly variables?: V
+  readonly tokens?: V
   /**
    * A mapping of theme name/CSS variable pairs.
    *
-   * This Creates a CSS variable-based theme by defining variables within a
+   * This Creates a CSS variable-based theme by defining tokens within a
    * class name selector matching the theme name. Apart from that it works
-   * the same way `variables` does.
+   * the same way `tokens` does.
    *
    * @example
    * const styles = createStyles({
@@ -64,7 +64,7 @@ export interface CreateStylesOptions<
    *   }
    * })
    *
-   * // CSS variables in the 'dark' theme take precedence in this component
+   * // CSS tokens in the 'dark' theme take precedence in this component
    * const App = () => <div className={styles.theme('dark)}/>
    */
   readonly themes?: {
@@ -77,19 +77,19 @@ export interface CreateStylesOptions<
    *
    * @example
    * const styles = createStyles({
-   *   // All CSS variables will be mangled in production
-   *   mangleVariables: process.env.NODE_ENV === 'production'
+   *   // All CSS tokens will be mangled in production
+   *   mangleTokens: process.env.NODE_ENV === 'production'
    * })
    *
    * @example
    * const styles = createStyles({
-   *   mangleVariables: {
+   *   mangleTokens: {
    *     // --vh will not be mangled
    *     vh: true
    *   }
    * })
    */
-  readonly mangleVariables?: boolean | Record<string, boolean>
+  readonly mangleTokens?: boolean | Record<string, boolean>
   /**
    * Use your own hash function for creating selector names. By default
    * Dash uses an fnv1a hashing algorithm.
@@ -113,7 +113,7 @@ export interface CreateStylesOptions<
  *   blue: {
  *     backgroundColor: 'blue'
  *   },
- *   // Access stored CSS variables when a callback is provided as
+ *   // Access stored CSS tokens when a callback is provided as
  *   // the value
  *   red: ({colors}) => `
  *     background-color: ${colors.red};
@@ -134,7 +134,7 @@ export interface CreateStylesOptions<
  * const Component = () => <div className={bg({red: true, green: true})}/>
  */
 export interface Styles<
-  V extends DashVariables = DashVariables,
+  V extends DashTokens = DashTokens,
   T extends string = DashThemeNames
 > {
   <N extends string>(styleMap: StyleMap<N, V>): Style<N, V>
@@ -220,20 +220,20 @@ export interface Styles<
    */
   theme(name: T): string
   /**
-   * Inserts CSS variables into the DOM and makes them available for use in
-   * style callbacks. The name of the CSS variables is automatically generated
+   * Inserts CSS tokens into the DOM and makes them available for use in
+   * style callbacks. The name of the CSS tokens is automatically generated
    * based upon the depth of the mapping i.e. `foo.bar.baz` -> `--foo-bar-baz`.
    * This function returns a function that will flush the styles inserted by
-   * `insertVariables()` when it is called.
+   * `insertTokens()` when it is called.
    *
-   * @param variables A map of CSS variable name/value pairs
+   * @param tokens A map of CSS variable name/value pairs
    * @param selector Including a selector will only make these CSS variable
    *   definitions take effect within the selector, e.g. a class name or ID. By
    *   default the selector is `":root"`.
    *
    * @example
-   * // Inserts CSS variables into the document `:root`
-   * styles.insertVariables({
+   * // Inserts CSS tokens into the document `:root`
+   * styles.insertTokens({
    *   color: {
    *     // var(--color-indigo)
    *     indigo: '#5c6ac4',
@@ -245,7 +245,7 @@ export interface Styles<
    * })
    *
    * // Overrides the above when they are used within a `.dark` selector
-   * const flushVariables = styles.insertVariables(
+   * const flushTokens = styles.insertTokens(
    *   {
    *     color: {
    *       // var(--color-indigo)
@@ -259,12 +259,12 @@ export interface Styles<
    *   '.dark'
    * )
    */
-  insertVariables(variables: DeepPartial<V>, selector?: string): () => void
+  insertTokens(tokens: DeepPartial<V>, selector?: string): () => void
   /**
-   * Creates a CSS variable-based theme by defining variables within a
+   * Creates a CSS variable-based theme by defining tokens within a
    * class name selector matching the theme name. Apart from that it works
-   * the same way `insertVariables()` does. This function returns a function
-   * that will flush the styles inserted by `insertVariables()` when it is called.
+   * the same way `insertTokens()` does. This function returns a function
+   * that will flush the styles inserted by `insertTokens()` when it is called.
    *
    * @param themes A mapping of theme name/CSS variable pairs.
    *
@@ -282,7 +282,7 @@ export interface Styles<
    *   }
    * })
    *
-   * // "dark" css variables will take precedence within this component
+   * // "dark" css tokens will take precedence within this component
    * const Component = () => <div className={styles.theme('dark)}/>
    */
   insertThemes(
@@ -310,9 +310,9 @@ export interface Styles<
     ...placeholders: string[]
   ): () => void
   /**
-   * The CSS variables currently defined in the instance
+   * The CSS tokens currently defined in the instance
    */
-  variables: DashVariables
+  tokens: DashTokens
   /**
    * A hashing function for creating unique selector names
    * @param string The string you'd like to hash
@@ -346,7 +346,7 @@ export interface Styles<
  */
 export declare type Style<
   N extends string,
-  V extends DashVariables = DashVariables
+  V extends DashTokens = DashTokens
 > = {
   (...args: StyleArguments<N>): string
   /**
@@ -390,7 +390,7 @@ export declare type StylesOne = {
 }
 export declare type StyleMap<
   N extends string,
-  V extends DashVariables = DashVariables
+  V extends DashTokens = DashTokens
 > = {
   [Name in N | 'default']?: StyleValue<V>
 }
@@ -401,15 +401,15 @@ export declare type StyleArguments<N extends string> = (
     }
   | Falsy
 )[]
-export declare type StyleValue<V extends DashVariables = DashVariables> =
+export declare type StyleValue<V extends DashTokens = DashTokens> =
   | string
   | StyleCallback<V>
   | StyleObject
 export declare type StyleObject = {
   [property: string]: StyleObject | string | number
 }
-export declare type StyleCallback<V extends DashVariables = DashVariables> = (
-  variables: V
+export declare type StyleCallback<V extends DashTokens = DashTokens> = (
+  tokens: V
 ) => StyleObject | string
 declare type DeepPartial<T> = T extends (...args: any[]) => any
   ? T
@@ -423,21 +423,21 @@ export declare type Falsy = false | 0 | null | undefined
  * A utility function that will compile style objects and callbacks into CSS strings.
  *
  * @param styles A style callback, object, or string
- * @param variables A map of CSS variables for style callbacks
+ * @param tokens A map of CSS tokens for style callbacks
  */
-export declare function compileStyles<V extends DashVariables = DashVariables>(
+export declare function compileStyles<V extends DashTokens = DashTokens>(
   styles: StyleValue<V> | Falsy,
-  variables?: V
+  tokens?: V
 ): string
-export declare const styles: Styles<DashVariables, DashThemeNames>
+export declare const styles: Styles<DashTokens, DashThemeNames>
 /**
  * These are CSS variable type definitions that tell functions like
- * style callbacks which variables are available. They can be defined
+ * style callbacks which tokens are available. They can be defined
  * globally in your application like so:
  *
  * @example
  * declare module '＠dash-ui/styles' {
- *   export interface DashVariables {
+ *   export interface DashTokens {
  *     color: {
  *       red: string
  *     }
@@ -448,19 +448,19 @@ export declare const styles: Styles<DashVariables, DashThemeNames>
  *
  * @example
  * const styles = createStyles({
- *   variables: {
+ *   tokens: {
  *     foo: 'bar',
  *     bar: 'baz'
  *   }
  * })
  *
  * // "foo" | "bar"
- * type Level1VariableNames = keyof DashVariables
+ * type Level1VariableNames = keyof DashTokens
  */
-export interface DashVariables {}
+export interface DashTokens {}
 /**
  * These are CSS variable theme type definitions that tell functions like
- * style callbacks which variables are available and which themes are available in
+ * style callbacks which tokens are available and which themes are available in
  * `styles.theme()`. They can be defined globally in your application like so:
  *
  * @example

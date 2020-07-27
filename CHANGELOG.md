@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.8.0](https://github.com/dash-ui/styles/compare/v0.7.3...v0.8.0) (2020-07-27)
+
+### ⚠ BREAKING CHANGES
+
+- **styles:** All instances of "variables" in the API was renamed to "tokens", all instances of
+  "Variables" was renamed to "Tokens"
+
+- **styles:** rename all instances of "variables" to "tokens" ([b9c7577](https://github.com/dash-ui/styles/commit/b9c7577825549918cf2c09a2479c8c86d86a6502))
+
 ### [0.7.3](https://github.com/dash-ui/styles/compare/v0.7.2...v0.7.3) (2020-07-22)
 
 ### [0.7.2](https://github.com/dash-ui/styles/compare/v0.7.1...v0.7.2) (2020-07-21)
