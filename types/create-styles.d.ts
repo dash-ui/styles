@@ -312,7 +312,7 @@ export interface Styles<
   /**
    * The CSS tokens currently defined in the instance
    */
-  tokens: DashTokens
+  tokens: V
   /**
    * A hashing function for creating unique selector names
    * @param string The string you'd like to hash
