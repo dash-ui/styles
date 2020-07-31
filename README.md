@@ -111,7 +111,7 @@ const button = styles({
     backgroundColor: color.brand,
   }),
   // Lastly, styles need not use callbacks if they don't need
-  // access to CSS tokens
+  // access to design tokens
   black: {
     backgroundColor: '#000',
   },
@@ -148,10 +148,10 @@ const Component = (props) => (
 | [`styles.keyframes()`](#styleskeyframes)          | A function that accepts a tagged template literal, style object, or style callback. Using this will immediately insert a global `@keyframes` definition into the DOM and return the name of the keyframes instance.                                                                                                                                   |
 | [`styles.theme()`](#stylestheme)                  | A function that returns the generated class name for a given theme when using [`styles.insertThemes()`](#stylesinsertthemes) to create CSS variable-based themes.                                                                                                                                                                                     |
 | [`styles.insertThemes()`](#stylesinsertthemes)    | This creates a CSS variable-based theme by defining tokens within a class name selector matching the theme name. Apart from that it works the same way [`styles.insertTokens()`](#stylesinserttokens) does. This function returns a function that will flush the styles inserted by [`styles.insertTokens()`](#stylesinserttokens) when it is called. |
-| [`styles.insertTokens()`](#stylesinserttokens)    | Inserts CSS tokens into the DOM and makes them available for use in style callbacks. The name of the CSS tokens is automatically generated based upon the depth of the mapping i.e. `foo.bar.baz` -> `--foo-bar-baz`. This function returns a function that will flush the tokens that were inserted when it is called.                               |
+| [`styles.insertTokens()`](#stylesinserttokens)    | Inserts design tokens into the DOM and makes them available for use in style callbacks. The name of the design tokens is automatically generated based upon the depth of the mapping i.e. `foo.bar.baz` -> `--foo-bar-baz`. This function returns a function that will flush the tokens that were inserted when it is called.                         |
 | [`styles.insertGlobal()`](#stylesoneinsertglobal) | A function that accepts a tagged template literal, style object, or style callback. Using this will immediately insert styles into the DOM relative to the root document. This function returns a function that will flush the styles inserted when it is called.                                                                                     |
 | [`styles.hash()`](#styleshash)                    | The hashing function used for creating unique selector names.                                                                                                                                                                                                                                                                                         |
-| [`styles.tokens`](#stylestokens)                  | The CSS tokens configured in the instance.                                                                                                                                                                                                                                                                                                            |
+| [`styles.tokens`](#stylestokens)                  | The design tokens configured in the instance.                                                                                                                                                                                                                                                                                                         |
 | [`styles.dash`](#stylesdash)                      | The instance of underlying the Dash cache used by this instance. This was automatically created by [`createDash()`](#createdash) when [`createStyles()`](#createstyles) was called. Dash controls the caching, style sheets, auto-prefixing, and DOM insertion that happens in the [`styles()`](#styles) instance.                                    |
 
 ### Server rendering
@@ -190,7 +190,7 @@ experience in VSCode and providing solid insurance to your TypeScript applicatio
 
 |                                                 | Description                                                                |
 | ----------------------------------------------- | -------------------------------------------------------------------------- |
-| [Strongly typed tokens](#strongly-typed-tokens) | Learn how to add autocomplete and type safety to your CSS tokens.          |
+| [Strongly typed tokens](#strongly-typed-tokens) | Learn how to add autocomplete and type safety to your design tokens.       |
 | [Strongly typed themes](#strongly-typed-tokens) | Learn how to add autocomplete and type safety to your CSS variable themes. |
 
 ## Awesome @dash-ui libraries
@@ -219,7 +219,7 @@ since to create a library I genuinely liked using. I wanted to create a library 
 simplicity of CSS with the versatility of JavaScript - as CSS-in-JS has always intended.
 
 Dash can be used in React, but doesn't rely on it. It can also be used in Vue, Svelte, and
-anywhere else you can use JavaScript. Themes are created with CSS tokens and selectors,
+anywhere else you can use JavaScript. Themes are created with design tokens and selectors,
 not React context.
 
 I hope you'll give it a chance.
@@ -265,7 +265,7 @@ const button = styles({
     color: color.white,
   }),
   // Lastly, styles need not use callbacks if they don't need
-  // access to CSS tokens
+  // access to design tokens
   black: {
     backgroundColor: '#000',
     color: '#fff',
@@ -603,12 +603,12 @@ import {createStyles} from '@dash-ui/styles'
 // our app
 const styles = createStyles({
   themes: {
-    // Light mode CSS tokens
+    // Light mode design tokens
     light: {
       bgColor: '#FAFAFA',
       primaryColor: '#ee5b5f',
     },
-    // Dark mode CSS tokens
+    // Dark mode design tokens
     dark: {
       bgColor: '#272727',
       primaryColor: '#333',
@@ -692,11 +692,11 @@ import {createStyles} from '@dash-ui/styles'
 // our app
 const styles = createStyles({
   themes: {
-    // Light mode CSS tokens
+    // Light mode design tokens
     light: {
       primaryColor: '#ee5b5f',
     },
-    // Dark mode CSS tokens
+    // Dark mode design tokens
     dark: {
       primaryColor: '#272727',
     },
@@ -797,8 +797,8 @@ insertThemes(
 
 ### styles.insertTokens()
 
-Inserts CSS tokens into the DOM and makes them available for use in style callbacks. The
-name of the CSS tokens is automatically generated based upon the depth of the mapping
+Inserts design tokens into the DOM and makes them available for use in style callbacks. The
+name of the design tokens is automatically generated based upon the depth of the mapping
 i.e. `foo.bar.baz` -> `--foo-bar-baz`. This function returns a function that will flush
 the tokens that were inserted when it is called.
 
@@ -960,7 +960,7 @@ string // A hash of the input string
 
 ### styles.tokens
 
-The CSS tokens configured in the instance
+The design tokens configured in the instance
 
 #### Example
 
@@ -1043,13 +1043,13 @@ Styles<V, T>
 
 ### CreateStylesOptions
 
-| Option       | Type                                  | Required? | Default         | Description                                                                                                                                                                                                           |
-| ------------ | ------------------------------------- | --------- | --------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| dash         | [`Dash`](#createdash)                 | No        | `createDash()`  | An instance of Dash created by the [`createDash()`](#createdash) factory                                                                                                                                              |
-| tokens       | `DashTokens`                          | No        |                 | Inserts CSS tokens into the DOM and makes them available for use in style callbacks. The name of the CSS tokens is automatically generated based upon the depth of the mapping i.e. `foo.bar.baz` -> `--foo-bar-baz`. |
-| themes       | `DashThemes`                          | No        |                 | A mapping of theme name/CSS variable pairs. This Creates a CSS variable-based theme by defining tokens within a class name selector matching the theme name. Apart from that it works the same way `tokens` does.     |
-| mangleTokens | `boolean \| {[key: string]: boolean}` | No        | `false`         | When `true` this will mangle CSS variable names. You can also provide an object with `{key: boolean}` pairs of reserved keys which will not be mangled.                                                               |
-| hash         | `(string: string) => string`          | No        | [`hash`](#hash) | Use your own hash function for creating selector names. By default Dash uses an fnv1a hashing algorithm.                                                                                                              |
+| Option       | Type                                  | Required? | Default         | Description                                                                                                                                                                                                                 |
+| ------------ | ------------------------------------- | --------- | --------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| dash         | [`Dash`](#createdash)                 | No        | `createDash()`  | An instance of Dash created by the [`createDash()`](#createdash) factory                                                                                                                                                    |
+| tokens       | `DashTokens`                          | No        |                 | Inserts design tokens into the DOM and makes them available for use in style callbacks. The name of the design tokens is automatically generated based upon the depth of the mapping i.e. `foo.bar.baz` -> `--foo-bar-baz`. |
+| themes       | `DashThemes`                          | No        |                 | A mapping of theme name/CSS variable pairs. This Creates a CSS variable-based theme by defining tokens within a class name selector matching the theme name. Apart from that it works the same way `tokens` does.           |
+| mangleTokens | `boolean \| {[key: string]: boolean}` | No        | `false`         | When `true` this will mangle CSS variable names. You can also provide an object with `{key: boolean}` pairs of reserved keys which will not be mangled.                                                                     |
+| hash         | `(string: string) => string`          | No        | [`hash`](#hash) | Use your own hash function for creating selector names. By default Dash uses an fnv1a hashing algorithm.                                                                                                                    |
 
 ---
 
@@ -1169,10 +1169,10 @@ console.log(red)
 
 #### Arguments
 
-| Argument | Type                     | Required? | Description                             |
-| -------- | ------------------------ | --------- | --------------------------------------- |
-| styles   | `StyleValue<V> \| Falsy` | Yes       | A style callback, object, or string     |
-| tokens   | `DashTokens`             | No        | A map of CSS tokens for style callbacks |
+| Argument | Type                     | Required? | Description                                |
+| -------- | ------------------------ | --------- | ------------------------------------------ |
+| styles   | `StyleValue<V> \| Falsy` | Yes       | A style callback, object, or string        |
+| tokens   | `DashTokens`             | No        | A map of design tokens for style callbacks |
 
 #### Returns
 
@@ -1628,7 +1628,7 @@ export interface WriteServerStylesResult {
 
 ## Strongly typed tokens
 
-You can strongly type your CSS tokens a couple of ways. The easiest way is to create your
+You can strongly type your design tokens a couple of ways. The easiest way is to create your
 own `styles()` instance with [`createStyles()`](#createstyles):
 
 [Play with this example on **CodeSandbox**](https://codesandbox.io/s/dash-uistyles-strongly-typed-tokens-example-1-8e62y?file=/src/App.tsx)
@@ -1656,7 +1656,7 @@ styles.one(({color}) => ({
 }))
 ```
 
-You can also strongly type your CSS tokens using a module declaration:
+You can also strongly type your design tokens using a module declaration:
 
 [Play with this example on **CodeSandbox**](https://codesandbox.io/s/dash-uistyles-strongly-typed-tokens-example-2-yk9bc?file=/src/App.tsx)
 
