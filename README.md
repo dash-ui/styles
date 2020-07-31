@@ -219,7 +219,7 @@ since to create a library I genuinely liked using. I wanted to create a library 
 simplicity of CSS with the versatility of JavaScript - as CSS-in-JS has always intended.
 
 Dash can be used in React, but doesn't rely on it. It can also be used in Vue, Svelte, and
-anywhere else you can use JavaScript. Themes are created with design tokens and selectors,
+anywhere else you can use JavaScript. Themes are created with CSS variables and selectors,
 not React context.
 
 I hope you'll give it a chance.
