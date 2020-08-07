@@ -165,7 +165,8 @@
   },
   "dependencies": {
     "@dash-ui/stylis": "^1.0.5",
-    "@dash-ui/unitless": "^2.0.0"
+    "@dash-ui/unitless": "^2.0.0",
+    "csstype": "^3.0.2"
   },
   "peerDependencies": {}
 }

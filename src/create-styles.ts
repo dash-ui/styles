@@ -1,8 +1,13 @@
 import unitless from '@dash-ui/unitless'
+import type {
+  PropertiesFallback as CSSProperties,
+  Pseudos as CSSPseudos,
+  HtmlAttributes as CSSHTMLAttributes,
+  SvgAttributes as CSSSvgAttributes,
+} from 'csstype'
 import {safeHash, hash as fnv1aHash, noop} from './utils'
 import {createDash} from './create-dash'
 import type {Dash} from './create-dash'
-
 /**
  * A factory function that returns a new `styles` instance with
  * your custom configuration options.
@@ -578,9 +583,29 @@ export type StyleValue<V extends DashTokens = DashTokens> =
   | StyleCallback<V>
   | StyleObject
 
-export type StyleObject = {
-  [property: string]: StyleObject | string | number
+type KnownStyles = {
+  [property in keyof CSSProperties]?:
+    | CSSProperties[property]
+    // eslint-disable-next-line @typescript-eslint/ban-types
+    | (string & {})
+    // eslint-disable-next-line @typescript-eslint/ban-types
+    | (number & {})
 }
+
+type PseudoStyles = {
+  [property in CSSPseudos | CSSHTMLAttributes | CSSSvgAttributes]?: StyleObject
+}
+
+type SelectorStyles = {
+  [property: string]:
+    | string
+    | number
+    | KnownStyles
+    | PseudoStyles
+    | SelectorStyles
+}
+
+export type StyleObject = KnownStyles & PseudoStyles & SelectorStyles
 
 export type StyleCallback<V extends DashTokens = DashTokens> = (
   tokens: V
@@ -661,7 +686,7 @@ function stringifyStyleObject(object: StyleObject) {
           : value + 'px') +
         ';'
     } else {
-      string += key + '{' + stringifyStyleObject(value) + '}'
+      string += key + '{' + stringifyStyleObject(value as StyleObject) + '}'
     }
   }
 
@@ -803,3 +828,19 @@ export interface DashThemes {}
  * The names of the themes defined in the `DashThemes` type
  */
 export type DashThemeNames = Extract<keyof DashThemes, string>
+
+styles({
+  default: {
+    fontFamily: 'initial',
+    '--foo': 'bar',
+    fontKerning: 'afeo',
+    ':hover': {
+      fontKerning: 'normal',
+      fontFamily: 'any',
+      '[yChannelSelector]': {
+        foo: 'bar',
+      },
+    },
+    width: 300,
+  },
+})
