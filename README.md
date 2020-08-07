@@ -79,7 +79,7 @@ const flushGlobal = styles.insertGlobal`
   }
 `
 
-// `styles` is a function for composing style definitions in a
+// `styles` is a function for composing style variants in a
 // deterministic way. In the example below, you'll see an example
 // of a button with default styles and two variants: one for a
 // 'brand' background color and one for a 'black' background color.
@@ -141,7 +141,7 @@ const Component = (props) => (
 
 |                                                   | Description                                                                                                                                                                                                                                                                                                                                           |
 | ------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| [`styles()`](#styles)                             | `styles()` is a function for composing style definitions in a deterministic way. It returns a function which when called will insert your styles into the DOM and create a unique class name. It also has several utility methods attached to it which accomplish everything you need to scale an application using CSS-in-JS.                        |
+| [`styles()`](#styles)                             | `styles()` is a function for composing style variants in a deterministic way. It returns a function which when called will insert your styles into the DOM and create a unique class name. It also has several utility methods attached to it which accomplish everything you need to scale an application using CSS-in-JS.                           |
 | [`styles.one()`](#stylesone)                      | A function that accepts a tagged template literal, style object, or style callback, and returns a function. That function inserts the style into a `<style>` tag and returns a class name when called.                                                                                                                                                |
 | [`styles.cls()`](#stylescls)                      | A function that accepts a tagged template literal, style object, or style callback. Calling this will immediately insert the CSS into the DOM and return a unique class name for the styles. This is a shortcut for `styles.one({display: 'flex'})()`.                                                                                                |
 | [`styles.join()`](#stylesjoin)                    | A function that joins CSS strings, inserts them into the DOM right away, and returns a class name.                                                                                                                                                                                                                                                    |
@@ -228,7 +228,7 @@ I hope you'll give it a chance.
 
 ### styles()
 
-`styles()` is a function for composing style definitions in a deterministic way. It returns a
+`styles()` is a function for composing style variants in a deterministic way. It returns a
 function which when called will insert your styles into the DOM and create a unique class name.
 It also has several utility methods attached to it which accomplish everything you need to
 scale an application using CSS-in-JS.

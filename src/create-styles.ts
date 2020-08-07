@@ -270,7 +270,7 @@ export interface CreateStylesOptions<
 }
 
 /**
- * `styles()` is a function for composing style definitions in a
+ * `styles()` is a function for composing styles in a
  * deterministic way. It returns a function which when called will insert
  * your styles into the DOM and create a unique class name.
  *
