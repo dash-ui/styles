@@ -828,19 +828,3 @@ export interface DashThemes {}
  * The names of the themes defined in the `DashThemes` type
  */
 export type DashThemeNames = Extract<keyof DashThemes, string>
-
-styles({
-  default: {
-    fontFamily: 'initial',
-    '--foo': 'bar',
-    fontKerning: 'afeo',
-    ':hover': {
-      fontKerning: 'normal',
-      fontFamily: 'any',
-      '[yChannelSelector]': {
-        foo: 'bar',
-      },
-    },
-    width: 300,
-  },
-})
