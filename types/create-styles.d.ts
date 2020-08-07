@@ -1,3 +1,9 @@
+import type {
+  PropertiesFallback as CSSProperties,
+  Pseudos as CSSPseudos,
+  HtmlAttributes as CSSHTMLAttributes,
+  SvgAttributes as CSSSvgAttributes,
+} from 'csstype'
 import {hash as fnv1aHash} from './utils'
 import type {Dash} from './create-dash'
 /**
@@ -405,9 +411,24 @@ export declare type StyleValue<V extends DashTokens = DashTokens> =
   | string
   | StyleCallback<V>
   | StyleObject
-export declare type StyleObject = {
-  [property: string]: StyleObject | string | number
+declare type KnownStyles = {
+  [property in keyof CSSProperties]?:
+    | CSSProperties[property]
+    | (string & {})
+    | (number & {})
 }
+declare type PseudoStyles = {
+  [property in CSSPseudos | CSSHTMLAttributes | CSSSvgAttributes]?: StyleObject
+}
+declare type SelectorStyles = {
+  [property: string]:
+    | string
+    | number
+    | KnownStyles
+    | PseudoStyles
+    | SelectorStyles
+}
+export declare type StyleObject = KnownStyles & PseudoStyles & SelectorStyles
 export declare type StyleCallback<V extends DashTokens = DashTokens> = (
   tokens: V
 ) => StyleObject | string

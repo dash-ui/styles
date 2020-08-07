@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.8.2](https://github.com/dash-ui/styles/compare/v0.8.1...v0.8.2) (2020-08-07)
+
+### Features
+
+- **types:** improve style object autocompletion ([d6d1dab](https://github.com/dash-ui/styles/commit/d6d1dab0bb1ec111b244b3dd78cb58bb88c7ab4c))
+
 ### [0.8.1](https://github.com/dash-ui/styles/compare/v0.8.0...v0.8.1) (2020-07-29)
 
 ### Bug Fixes
