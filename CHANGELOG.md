@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.8.4](https://github.com/dash-ui/styles/compare/v0.8.3...v0.8.4) (2020-08-08)
+
+### Features
+
+- **styles:** add lazy styles ([f963a84](https://github.com/dash-ui/styles/commit/f963a849d4848278a58283aa8a2300bf97818cec))
+
 ### [0.8.3](https://github.com/dash-ui/styles/compare/v0.8.2...v0.8.3) (2020-08-07)
 
 ### Bug Fixes

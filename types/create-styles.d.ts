@@ -103,7 +103,7 @@ export interface CreateStylesOptions<
   readonly hash?: typeof fnv1aHash
 }
 /**
- * `styles()` is a function for composing style definitions in a
+ * `styles()` is a function for composing styles in a
  * deterministic way. It returns a function which when called will insert
  * your styles into the DOM and create a unique class name.
  *
@@ -174,6 +174,20 @@ export interface Styles<
     literals: TemplateStringsArray | string | StyleObject | StyleCallback<V>,
     ...placeholders: string[]
   ): string
+  /**
+   * A function that uses lazy evalution to create styles with indeterminate values.
+   * Calling this will immediately insert the CSS into the DOM and return a unique
+   * class name for the styles.
+   *
+   * @example
+   * const lazyWidth = styles.lazy((width) => ({
+   *   width
+   * }))
+   * const Component = ({width = 200}) => <div className={lazyWidth(width)}/>>
+   */
+  lazy<Value extends LazyValue>(
+    lazyFn: (value: Value) => string | StyleCallback<V> | StyleObject
+  ): StylesLazy<Value>
   /**
    * A function that joins CSS strings, inserts them into the DOM right away, and returns a class name.
    *
@@ -356,7 +370,7 @@ export declare type Style<
 > = {
   (...args: StyleArguments<N>): string
   /**
-   * A function that returns the raw, minified CSS string for a given
+   * A function that returns the raw, CSS string for a given
    * name in the style map.
    *
    * @param names A series of style names or style name/boolean maps which
@@ -389,7 +403,7 @@ export declare type Style<
 export declare type StylesOne = {
   (createClassName?: boolean | number | string | null): string
   /**
-   * A method that returns a minified CSS string of the styles defined
+   * A method that returns a CSS string of the styles defined
    * in the `styles.one()` that generated this callback.
    */
   css(): string
@@ -439,6 +453,34 @@ declare type DeepPartial<T> = T extends (...args: any[]) => any
       [P in keyof T]?: DeepPartial<T[P]>
     }
   : T
+export declare type LazyValue =
+  | string
+  | number
+  | null
+  | undefined
+  | boolean
+  | (string | number | null | undefined | boolean | LazyValue)[]
+  | {
+      [key: string]: LazyValue
+    }
+/**
+ * A function that inserts indeterminate styles based on the value
+ * into the DOM when called.
+ *
+ * @param value A JSON serializable value to create indeterminate
+ *   styles from
+ */
+export declare type StylesLazy<Value extends LazyValue> = {
+  (value?: Value): string
+  /**
+   * A method that returns indeterminate CSS strings based on the value
+   * when called.
+   *
+   * @param value A JSON serializable value to create indeterminate
+   *   styles from
+   */
+  css(value?: Value): string
+}
 export declare type Falsy = false | 0 | null | undefined
 /**
  * A utility function that will compile style objects and callbacks into CSS strings.
