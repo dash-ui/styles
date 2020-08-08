@@ -8,6 +8,7 @@ import type {
 import {safeHash, hash as fnv1aHash, noop} from './utils'
 import {createDash} from './create-dash'
 import type {Dash} from './create-dash'
+
 /**
  * A factory function that returns a new `styles` instance with
  * your custom configuration options.
@@ -94,12 +95,36 @@ export function createStyles<
     return callback
   }
 
-  styles.cls = function () {
+  const cls: Styles['cls'] = function () {
     const css = compileStyles<V>(compileLiterals(arguments), tokens)
     const name = hash(css)
     const className = key + '-' + name
     insert(name, '.' + className, css)
     return className
+  }
+
+  styles.cls = cls
+
+  styles.lazy = function <Value extends LazyValue>(
+    lazyFn: (value: Value) => string | StyleCallback<V> | StyleObject
+  ) {
+    const cache = new Map<string | Value, string>()
+    const css = (value?: Value) => {
+      if (value === undefined) return ''
+      const key = typeof value === 'object' ? JSON.stringify(value) : value
+      let css = cache.get(key)
+
+      if (!css) {
+        css = compileStyles<V>(lazyFn(value), tokens)
+        cache.set(key, css)
+      }
+
+      return css
+    }
+
+    const lazyStyle: StylesLazy<Value> = (value?: Value) => cls(css(value))
+    lazyStyle.css = css
+    return lazyStyle
   }
 
   styles.join = function () {
@@ -342,6 +367,20 @@ export interface Styles<
     ...placeholders: string[]
   ): string
   /**
+   * A function that uses lazy evalution to create styles with indeterminate values.
+   * Calling this will immediately insert the CSS into the DOM and return a unique
+   * class name for the styles.
+   *
+   * @example
+   * const lazyWidth = styles.lazy((width) => ({
+   *   width
+   * }))
+   * const Component = ({width = 200}) => <div className={lazyWidth(width)}/>>
+   */
+  lazy<Value extends LazyValue>(
+    lazyFn: (value: Value) => string | StyleCallback<V> | StyleObject
+  ): StylesLazy<Value>
+  /**
    * A function that joins CSS strings, inserts them into the DOM right away, and returns a class name.
    *
    * @example
@@ -521,7 +560,7 @@ export interface Styles<
 export type Style<N extends string, V extends DashTokens = DashTokens> = {
   (...args: StyleArguments<N>): string
   /**
-   * A function that returns the raw, minified CSS string for a given
+   * A function that returns the raw, CSS string for a given
    * name in the style map.
    *
    * @param names A series of style names or style name/boolean maps which
@@ -555,7 +594,7 @@ export type Style<N extends string, V extends DashTokens = DashTokens> = {
 export type StylesOne = {
   (createClassName?: boolean | number | string | null): string
   /**
-   * A method that returns a minified CSS string of the styles defined
+   * A method that returns a CSS string of the styles defined
    * in the `styles.one()` that generated this callback.
    */
   css(): string
@@ -616,6 +655,34 @@ type DeepPartial<T> = T extends (...args: any[]) => any
   : T extends Record<string, unknown>
   ? {[P in keyof T]?: DeepPartial<T[P]>}
   : T
+
+export type LazyValue =
+  | string
+  | number
+  | null
+  | undefined
+  | boolean
+  | (string | number | null | undefined | boolean | LazyValue)[]
+  | {[key: string]: LazyValue}
+
+/**
+ * A function that inserts indeterminate styles based on the value
+ * into the DOM when called.
+ *
+ * @param value A JSON serializable value to create indeterminate
+ *   styles from
+ */
+export type StylesLazy<Value extends LazyValue> = {
+  (value?: Value): string
+  /**
+   * A method that returns indeterminate CSS strings based on the value
+   * when called.
+   *
+   * @param value A JSON serializable value to create indeterminate
+   *   styles from
+   */
+  css(value?: Value): string
+}
 
 //
 // Utils

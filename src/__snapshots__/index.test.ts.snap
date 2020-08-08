@@ -377,6 +377,46 @@ exports[`styles.keyframes() works with tokens callback: 0% blue; 100% red; 1`] =
 </style>
 `;
 
+exports[`styles.lazy() creates style and inserts it into the dom lazily: 36px 1`] = `
+<style
+  data-dash="ui"
+>
+  .ui-9xjaf3{width:36px;}
+</style>
+`;
+
+exports[`styles.lazy() creates style and inserts it into the dom lazily: 36px 2`] = `
+<style
+  data-dash="ui"
+>
+  .ui-9xjaf3{width:36px;}
+</style>
+`;
+
+exports[`styles.lazy() creates style and inserts it into the dom lazily: 37px 1`] = `
+<style
+  data-dash="ui"
+>
+  .ui-ft3nie{width:37px;}
+</style>
+`;
+
+exports[`styles.lazy() creates style from serializable values: 36px 1`] = `
+<style
+  data-dash="ui"
+>
+  .ui-ft3nie{width:37px;}
+</style>
+`;
+
+exports[`styles.lazy() creates style from serializable values: 36px 2`] = `
+<style
+  data-dash="ui"
+>
+  .ui-ft3nie{width:37px;}
+</style>
+`;
+
 exports[`styles.one() can be called as a function w/ function value 1`] = `"color: var(--color-blue);"`;
 
 exports[`styles.one() can be called as a function w/ string value 1`] = `"ui-1ut9bc3"`;

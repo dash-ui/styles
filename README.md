@@ -144,6 +144,7 @@ const Component = (props) => (
 | [`styles()`](#styles)                             | `styles()` is a function for composing style variants in a deterministic way. It returns a function which when called will insert your styles into the DOM and create a unique class name. It also has several utility methods attached to it which accomplish everything you need to scale an application using CSS-in-JS.                           |
 | [`styles.one()`](#stylesone)                      | A function that accepts a tagged template literal, style object, or style callback, and returns a function. That function inserts the style into a `<style>` tag and returns a class name when called.                                                                                                                                                |
 | [`styles.cls()`](#stylescls)                      | A function that accepts a tagged template literal, style object, or style callback. Calling this will immediately insert the CSS into the DOM and return a unique class name for the styles. This is a shortcut for `styles.one({display: 'flex'})()`.                                                                                                |
+| [`styles.lazy()`](#styleslazy)                    | A function that uses lazy evalution to create styles with indeterminate values. Calling this will immediately insert the CSS into the DOM and return a unique class name for the styles.                                                                                                                                                              |
 | [`styles.join()`](#stylesjoin)                    | A function that joins CSS strings, inserts them into the DOM right away, and returns a class name.                                                                                                                                                                                                                                                    |
 | [`styles.keyframes()`](#styleskeyframes)          | A function that accepts a tagged template literal, style object, or style callback. Using this will immediately insert a global `@keyframes` definition into the DOM and return the name of the keyframes instance.                                                                                                                                   |
 | [`styles.theme()`](#stylestheme)                  | A function that returns the generated class name for a given theme when using [`styles.insertThemes()`](#stylesinsertthemes) to create CSS variable-based themes.                                                                                                                                                                                     |
@@ -316,7 +317,7 @@ styles<N extends string>(styleMap: StyleMap<N, V>): Style<N, V>
 export type Style<N extends string, V extends DashTokens = DashTokens> = {
   (...args: StyleArguments<N>): string
   /**
-   * A function that returns the raw, minified CSS string for a given
+   * A function that returns the raw, CSS string for a given
    * name in the style map.
    *
    * @param names A series of style names or style name/boolean maps which
@@ -413,7 +414,7 @@ export type StylesOne = {
    */
   (createClassName?: boolean | number | string | null): string
   /**
-   * A method that returns a minified CSS string of the styles defined
+   * A method that returns a CSS string of the styles defined
    * in the `styles.one()` that generated this callback.
    */
   css(): string
@@ -462,6 +463,56 @@ const Box = () => (
 
 ```ts
 string // A class name
+```
+
+---
+
+### styles.lazy()
+
+A function that uses lazy evalution to create styles with indeterminate values.
+Calling this will immediately insert the CSS into the DOM and return a unique
+class name for the styles.
+
+#### Example
+
+[Play with an example on **CodeSandbox**](https://codesandbox.io/s/dash-uistyles-styleslazy-example-7kymy?file=/src/App.tsx)
+
+```jsx harmony
+// React example
+import * as React from 'react'
+import clsx from 'clsx'
+import {styles} from '@dash-ui/styles'
+
+// The lazy function can return style objects, style callbacks,
+// and strings
+const bgColor = styles.lazy((colorName) => ({color}) => ({
+  backgroundColor: color[colorName],
+}))
+
+const Box = ({bg = 'primary'}) => <div className={bgColor(bg)} />
+```
+
+#### Returns
+
+```ts
+/**
+ * A function that inserts indeterminate styles based on the value
+ * into the DOM when called.
+ *
+ * @param value A JSON serializable value to create indeterminate
+ *   styles from
+ */
+export type StylesLazy<Value extends LazyValue> = {
+  (value?: Value): string
+  /**
+   * A method that returns indeterminate CSS strings based on the value
+   * when called.
+   *
+   * @param value A JSON serializable value to create indeterminate
+   *   styles from
+   */
+  css(value?: Value): string
+}
 ```
 
 ---

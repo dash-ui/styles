@@ -954,6 +954,59 @@ describe('styles.cls()', () => {
   })
 })
 
+describe('styles.lazy()', () => {
+  it('creates style and inserts it into the dom lazily', () => {
+    const myStyles = createStyles()
+    const lazyWidth = myStyles.lazy((width: number) => ({
+      width,
+    }))
+
+    expect(typeof lazyWidth(36)).toBe('string')
+    expect(document.querySelectorAll(`style[data-dash]`).length).toBe(1)
+    expect(document.querySelectorAll(`style[data-dash]`)[0]).toMatchSnapshot(
+      '36px'
+    )
+    expect(typeof lazyWidth(37)).toBe('string')
+    expect(document.querySelectorAll(`style[data-dash]`).length).toBe(2)
+    expect(document.querySelectorAll(`style[data-dash]`)[1]).toMatchSnapshot(
+      '37px'
+    )
+    expect(typeof lazyWidth(36)).toBe('string')
+    expect(document.querySelectorAll(`style[data-dash]`).length).toBe(2)
+    expect(document.querySelectorAll(`style[data-dash]`)[0]).toMatchSnapshot(
+      '36px'
+    )
+  })
+
+  it('creates style from serializable values', () => {
+    const myStyles = createStyles()
+    const lazyWidth = myStyles.lazy(({width}: {width: number}) => ({
+      width,
+    }))
+
+    expect(typeof lazyWidth({width: 37})).toBe('string')
+    expect(document.querySelectorAll(`style[data-dash]`).length).toBe(1)
+    expect(document.querySelectorAll(`style[data-dash]`)[0]).toMatchSnapshot(
+      '36px'
+    )
+    expect(typeof lazyWidth({width: 36})).toBe('string')
+    expect(document.querySelectorAll(`style[data-dash]`).length).toBe(2)
+    expect(document.querySelectorAll(`style[data-dash]`)[0]).toMatchSnapshot(
+      '36px'
+    )
+  })
+
+  it('should return empty string if undefined value is provided', () => {
+    const myStyles = createStyles()
+    const lazyWidth = myStyles.lazy((width: number) => ({
+      width,
+    }))
+
+    expect(typeof lazyWidth()).toBe('string')
+    expect(document.querySelectorAll(`style[data-dash]`).length).toBe(0)
+  })
+})
+
 describe('styles.tokens', () => {
   it('should make CSS tokens available', () => {
     const myStyles = createStyles({
