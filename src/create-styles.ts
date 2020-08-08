@@ -55,7 +55,7 @@ export function createStyles<
   const styles: Styles<V, T> = <N extends string>(
     styleMap: StyleMap<N, V>
   ): Style<N, V> => {
-    const compiledStyleMap: StyleMapMemo<N, V> = new Map()
+    const compiledStyleMap: StyleMapMemo<string, V> = new Map()
     let styleKey: keyof typeof styleMap
     /* istanbul ignore next */
     for (styleKey in styleMap)
@@ -63,12 +63,11 @@ export function createStyles<
 
     // style('text', {})
     function style() {
-      const css = compileArguments<N, V>(compiledStyleMap, arguments as any)
+      const css = style.css.apply(null, arguments as any)
       if (!css) return ''
       let name = hash(css)
       /* istanbul ignore next */
       if (label) name += label(arguments as any)
-
       const className = key + '-' + name
       insert(name, '.' + className, css)
       return className
@@ -76,7 +75,28 @@ export function createStyles<
 
     style.styles = styleMap
     style.css = function () {
-      return compileArguments<N, V>(compiledStyleMap, arguments as any)
+      const numArgs = arguments.length
+      let nextStyles = compiledStyleMap.get('default') || ''
+
+      if (numArgs === 1 && typeof arguments[0] === 'string') {
+        nextStyles += compiledStyleMap.get(arguments[0]) || ''
+      } else if (numArgs) {
+        let i = 0
+        let arg
+
+        for (; i < numArgs; i++) {
+          arg = arguments[i]
+
+          if (typeof arg === 'string') {
+            nextStyles += compiledStyleMap.get(arg) || ''
+          } else if (typeof arg === 'object') {
+            for (const key in arg)
+              if (arg[key]) nextStyles += compiledStyleMap.get(key) || ''
+          }
+        }
+      }
+
+      return nextStyles
     }
 
     return style
@@ -687,35 +707,6 @@ export type StylesLazy<Value extends LazyValue> = {
 //
 // Utils
 export type Falsy = false | 0 | null | undefined
-
-//
-// Style serialization
-function compileArguments<N extends string, V extends DashTokens = DashTokens>(
-  styleMap: StyleMapMemo<N, V>,
-  args: StyleArguments<N>
-): string {
-  let nextStyles = styleMap.get('default') || ''
-
-  if (args.length === 1 && typeof args[0] === 'string') {
-    nextStyles += styleMap.get(args[0]) || ''
-  } else if (args.length) {
-    let i = 0
-    let arg
-
-    for (; i < args.length; i++) {
-      arg = args[i]
-
-      if (typeof arg === 'string') {
-        nextStyles += styleMap.get(arg as any) || ''
-      } else if (typeof arg === 'object') {
-        for (const key in arg)
-          if (arg[key]) nextStyles += styleMap.get(key as any) || ''
-      }
-    }
-  }
-
-  return nextStyles
-}
 
 /**
  * A utility function that will compile style objects and callbacks into CSS strings.
