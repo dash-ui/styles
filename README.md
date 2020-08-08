@@ -408,16 +408,11 @@ const Heading = () => <h1 className={heading()}>Hello world</h1>
  * not be inserted and a class name will not be returned.
  */
 export type StylesOne = {
-  /**
-   * If falsy, the style will not be created and no class name will be
-   * returned
-   */
   (createClassName?: boolean | number | string | null): string
   /**
-   * A method that returns a CSS string of the styles defined
-   * in the `styles.one()` that generated this callback.
+   * A method that returns a CSS string if the first argument is not falsy.
    */
-  css(): string
+  css(createCss?: boolean | number | string | null): string
 }
 ```
 

@@ -922,6 +922,14 @@ describe('styles.one()', () => {
     expect(myCls.css()).toMatchSnapshot()
   })
 
+  it(`wont return css when css() is called w/ falsy value`, () => {
+    const myStyles = createStyles()
+    const myCls = myStyles.one`
+      display: flex;
+    `
+
+    expect(myCls.css(false)).toBe('')
+  })
   it(`can be called as a function w/ string value`, () => {
     const myStyles = createStyles()
     const myCls = myStyles.one('display: flex;')

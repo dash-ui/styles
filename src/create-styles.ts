@@ -111,7 +111,8 @@ export function createStyles<
       insert(name, '.' + className, one)
       return className
     }
-    callback.css = () => one
+    callback.css = (createCss) =>
+      !createCss && createCss !== void 0 ? '' : one
     return callback
   }
 
@@ -614,10 +615,9 @@ export type Style<N extends string, V extends DashTokens = DashTokens> = {
 export type StylesOne = {
   (createClassName?: boolean | number | string | null): string
   /**
-   * A method that returns a CSS string of the styles defined
-   * in the `styles.one()` that generated this callback.
+   * A method that returns a CSS string if the first argument is not falsy.
    */
-  css(): string
+  css(createCss?: boolean | number | string | null): string
 }
 
 export type StyleMap<N extends string, V extends DashTokens = DashTokens> = {
