@@ -403,10 +403,9 @@ export declare type Style<
 export declare type StylesOne = {
   (createClassName?: boolean | number | string | null): string
   /**
-   * A method that returns a CSS string of the styles defined
-   * in the `styles.one()` that generated this callback.
+   * A method that returns a CSS string if the first argument is not falsy.
    */
-  css(): string
+  css(createCss?: boolean | number | string | null): string
 }
 export declare type StyleMap<
   N extends string,

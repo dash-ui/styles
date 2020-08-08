@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.8.6](https://github.com/dash-ui/styles/compare/v0.8.5...v0.8.6) (2020-08-08)
+
+### Features
+
+- **styles:** return empty string from css() when first argument falsy ([e7628b3](https://github.com/dash-ui/styles/commit/e7628b32a51ec3874c84e3962f3344a05f0a2ae4))
+
 ### [0.8.5](https://github.com/dash-ui/styles/compare/v0.8.4...v0.8.5) (2020-08-08)
 
 ### [0.8.4](https://github.com/dash-ui/styles/compare/v0.8.3...v0.8.4) (2020-08-08)
