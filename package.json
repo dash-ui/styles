@@ -124,7 +124,8 @@
       "@dash-ui/styles": "<rootDir>/src/index.ts"
     },
     "testMatch": [
-      "<rootDir>/{server/src,src}/**/?(*.)test.ts"
+      "<rootDir>/src/**/*(*.)@(spec|test).[jt]s?(x)",
+      "<rootDir>/server/src/**/*(*.)@(spec|test).[jt]s?(x)"
     ],
     "collectCoverageFrom": [
       "**/src/**/*.ts"

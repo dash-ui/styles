@@ -788,8 +788,9 @@ function serializeTokens(
       vars[key] = result.vars
       css += result.css
     } else {
+      const allowedKey = key.replace(/^[^\w-]+/g, '')
       let name = cssCase(
-        names.length > 0 ? names.join('-') + '-' + key : key
+        names.length > 0 ? names.join('-') + '-' + allowedKey : allowedKey
       ).replace(cssDisallowedRe, '-')
       vars[key] =
         'var(' +

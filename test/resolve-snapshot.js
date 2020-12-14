@@ -4,14 +4,16 @@ const snapshots = '__snapshots__'
 module.exports = {
   resolveSnapshotPath: (testPath, snapshotExtension) =>
     path.join(
-      testPath.split('/').slice(0, -1).join('/'),
-      snapshots,
-      testPath.split('/').pop() + snapshotExtension
+      path.join(path.dirname(testPath), snapshots),
+      path.basename(testPath) + snapshotExtension
     ),
+
   resolveTestPath: (snapshotFilePath, snapshotExtension) =>
     path.join(
-      snapshotFilePath.split('/').slice(0, -2).join('/'),
-      snapshotFilePath.split('/').pop().slice(0, -snapshotExtension.length)
+      path.dirname(snapshotFilePath),
+      '..',
+      path.basename(snapshotFilePath, snapshotExtension)
     ),
-  testPathForConsistencyCheck: 'src/foo.test.js',
+
+  testPathForConsistencyCheck: path.join('src', 'foo.test.js'),
 }
