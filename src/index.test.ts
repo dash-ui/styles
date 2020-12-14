@@ -143,6 +143,31 @@ describe('createStyles()', () => {
     expect(style.css('primary')).toEqual('color:var(--color-primary);')
     expect(myStyles.theme('light')).toEqual('ui-light-theme')
   })
+
+  it('should remove special character(s) from the start of the token key.', () => {
+    const myStyles = createStyles({
+      tokens: {
+        space: {
+          $1: '5px',
+          $2: '10px',
+        },
+        color: {
+          red: {$100: 'red'},
+        },
+      },
+    })
+
+    const style = myStyles({
+      primary: ({space, color}) => ({
+        paddingLeft: space.$2,
+        color: color.red.$100,
+      }),
+    })
+
+    expect(style.css('primary')).toEqual(
+      'padding-left:var(--space-2);color:var(--color-red-100);'
+    )
+  })
 })
 
 describe('styles()', () => {
