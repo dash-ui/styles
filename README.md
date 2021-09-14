@@ -1826,6 +1826,10 @@ Coloradan [Kye Hohenberger](https://twitter.com/kyehohenberger).
 I am grateful to have had that base, however, the implementations of the libraries have diverged
 quite a bit by now.
 
+---
+
+![wait its all functions? always has been](https://i.imgflip.com/5mvok2.jpg)
+
 ## LICENSE
 
 MIT
