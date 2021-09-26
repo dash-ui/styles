@@ -1,6 +1,6 @@
 <hr>
   <br/>
-  <img src='https://github.com/dash-ui/styles/raw/master/assets/logo.png'/>
+  <img src='https://github.com/dash-ui/styles/raw/main/assets/logo.png'/>
   <blockquote>A tiny, powerful, framework-agnostic CSS-in-JS library</blockquote>
   
   <pre>npm i @dash-ui/styles</pre>
