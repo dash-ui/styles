@@ -1,3 +1,10 @@
+## [0.8.7](https://github.com/dash-ui/styles/compare/v0.8.6...v0.8.7) (2021-09-27)
+
+
+### Performance Improvements
+
+* improve cold start performance ([#16](https://github.com/dash-ui/styles/issues/16)) ([215f234](https://github.com/dash-ui/styles/commit/215f234f96394bd248bbe2d931fe75af5a673160))
+
 ### [0.8.6](https://github.com/dash-ui/styles/compare/v0.8.5...v0.8.6) (2020-08-08)
 
 ### Features
