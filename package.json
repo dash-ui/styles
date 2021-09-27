@@ -99,6 +99,7 @@
   },
   "eslintIgnore": [
     "node_modules",
+    "benchmark",
     "coverage",
     "dist",
     "test",
