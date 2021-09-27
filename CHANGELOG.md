@@ -1,3 +1,10 @@
+## [0.8.8](https://github.com/dash-ui/styles/compare/v0.8.7...v0.8.8) (2021-09-27)
+
+
+### Bug Fixes
+
+* fix esm output ([5b8ac4d](https://github.com/dash-ui/styles/commit/5b8ac4dba73ce6ae0a54d3ed43da1682d961071c))
+
 ## [0.8.7](https://github.com/dash-ui/styles/compare/v0.8.6...v0.8.7) (2021-09-27)
 
 
