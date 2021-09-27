@@ -160,7 +160,7 @@
     "husky": "^7.0.2",
     "jest": "^27.2.2",
     "lint-staged": "latest",
-    "lundle": "^0.4.9",
+    "lundle": "^0.4.13",
     "prettier": "latest",
     "type-fest": "^2.3.4",
     "typescript": "^4.4.3"

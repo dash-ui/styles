@@ -1,5 +1,5 @@
-import type { JsonValue } from "type-fest";
 import type { HtmlAttributes as CSSHTMLAttributes, PropertiesFallback as CSSProperties, Pseudos as CSSPseudos, SvgAttributes as CSSSvgAttributes } from "csstype";
+import type { JsonValue } from "type-fest";
 import type { Dash } from "./create-dash";
 import { hash as fnv1aHash } from "./utils";
 /**
