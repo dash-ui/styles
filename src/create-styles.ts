@@ -1,196 +1,196 @@
-import unitless from '@dash-ui/unitless'
+import unitless from "@dash-ui/unitless";
 import type {
+  HtmlAttributes as CSSHTMLAttributes,
   PropertiesFallback as CSSProperties,
   Pseudos as CSSPseudos,
-  HtmlAttributes as CSSHTMLAttributes,
   SvgAttributes as CSSSvgAttributes,
-} from 'csstype'
-import {safeHash, hash as fnv1aHash, noop} from './utils'
-import {createDash} from './create-dash'
-import type {Dash} from './create-dash'
+} from "csstype";
+import { createDash } from "./create-dash";
+import type { Dash } from "./create-dash";
+import { hash as fnv1aHash, noop, safeHash } from "./utils";
 
 /**
  * A factory function that returns a new `styles` instance with
  * your custom configuration options.
  *
- * @param options Configuration options
+ * @param options - Configuration options
  */
 export function createStyles<
   V extends DashTokens = DashTokens,
   T extends string = DashThemeNames
 >(options: CreateStylesOptions<V, T> = {}): Styles<V, T> {
-  const dash = options.dash || createDash()
-  const {key, insert, sheets} = dash
-  const themes = {} as Record<T, V>
-  const tokens = {} as V
-  const hash = safeHash(key, options.hash || fnv1aHash)
+  const dash = options.dash || createDash();
+  const { key, insert, sheets } = dash;
+  const themes = {} as Record<T, V>;
+  const tokens = {} as V;
+  const hash = safeHash(key, options.hash || fnv1aHash);
 
-  let label: (args: any[]) => string
+  let label: (args: any[]) => string;
   // explicit here on purpose so it's not in every test
   /* istanbul ignore next */
   if (
-    typeof process !== 'undefined' &&
-    process.env.NODE_ENV === 'development'
+    typeof process !== "undefined" &&
+    process.env.NODE_ENV === "development"
   ) {
     label = (args) => {
       // add helpful labels to the name in development
       return [...args]
         .reduce((curr, arg) => {
-          if (typeof arg === 'string') {
-            curr += '-' + arg
-          } else if (typeof arg === 'object') {
-            const keys = Object.keys(arg).filter((k) => arg[k])
+          if (typeof arg === "string") {
+            curr += "-" + arg;
+          } else if (typeof arg === "object") {
+            const keys = Object.keys(arg).filter((k) => arg[k]);
 
             if (keys.length) {
-              curr += '-' + keys.join('-')
+              curr += "-" + keys.join("-");
             }
           }
 
-          return curr
-        }, '')
-        .replace(/[^\w-]/g, '-')
-    }
+          return curr;
+        }, "")
+        .replace(/[^\w-]/g, "-");
+    };
   }
 
   const styles: Styles<V, T> = <N extends string>(
     styleMap: StyleMap<N, V>
   ): Style<N, V> => {
-    const compiledStyleMap: StyleMapMemo<string, V> = new Map()
-    let styleKey: keyof typeof styleMap
+    const compiledStyleMap: StyleMapMemo<string, V> = new Map();
+    let styleKey: keyof typeof styleMap;
     /* istanbul ignore next */
     for (styleKey in styleMap)
-      compiledStyleMap.set(styleKey, compileStyles(styleMap[styleKey], tokens))
+      compiledStyleMap.set(styleKey, compileStyles(styleMap[styleKey], tokens));
 
     // style('text', {})
     function style() {
-      const css = style.css.apply(null, arguments as any)
-      if (!css) return ''
-      let name = hash(css)
+      const css = style.css.apply(null, arguments as any);
+      if (!css) return "";
+      let name = hash(css);
       /* istanbul ignore next */
-      if (label) name += label(arguments as any)
-      const className = key + '-' + name
-      insert(name, '.' + className, css)
-      return className
+      if (label) name += label(arguments as any);
+      const className = key + "-" + name;
+      insert(name, "." + className, css);
+      return className;
     }
 
-    style.styles = styleMap
+    style.styles = styleMap;
     style.css = function () {
-      const numArgs = arguments.length
-      let nextStyles = compiledStyleMap.get('default') || ''
+      const numArgs = arguments.length;
+      let nextStyles = compiledStyleMap.get("default") || "";
 
-      if (numArgs === 1 && typeof arguments[0] === 'string') {
-        nextStyles += compiledStyleMap.get(arguments[0]) || ''
+      if (numArgs === 1 && typeof arguments[0] === "string") {
+        nextStyles += compiledStyleMap.get(arguments[0]) || "";
       } else if (numArgs) {
-        let i = 0
-        let arg
+        let i = 0;
+        let arg;
 
         for (; i < numArgs; i++) {
-          arg = arguments[i]
+          arg = arguments[i];
 
-          if (typeof arg === 'string') {
-            nextStyles += compiledStyleMap.get(arg) || ''
-          } else if (typeof arg === 'object') {
+          if (typeof arg === "string") {
+            nextStyles += compiledStyleMap.get(arg) || "";
+          } else if (typeof arg === "object") {
             for (const key in arg)
-              if (arg[key]) nextStyles += compiledStyleMap.get(key) || ''
+              if (arg[key]) nextStyles += compiledStyleMap.get(key) || "";
           }
         }
       }
 
-      return nextStyles
-    }
+      return nextStyles;
+    };
 
-    return style
-  }
+    return style;
+  };
 
   styles.one = function () {
-    const one = compileStyles<V>(compileLiterals(arguments), tokens)
-    const name = hash(one)
-    const className = key + '-' + name
+    const one = compileStyles<V>(compileLiterals(arguments), tokens);
+    const name = hash(one);
+    const className = key + "-" + name;
     const callback: StylesOne = (createClassName) => {
-      if (!createClassName && createClassName !== void 0) return ''
-      insert(name, '.' + className, one)
-      return className
-    }
+      if (!createClassName && createClassName !== void 0) return "";
+      insert(name, "." + className, one);
+      return className;
+    };
     callback.css = (createCss) =>
-      !createCss && createCss !== void 0 ? '' : one
-    return callback
-  }
+      !createCss && createCss !== void 0 ? "" : one;
+    return callback;
+  };
 
-  const cls: Styles['cls'] = function () {
-    const css = compileStyles<V>(compileLiterals(arguments), tokens)
-    const name = hash(css)
-    const className = key + '-' + name
-    insert(name, '.' + className, css)
-    return className
-  }
+  const cls: Styles["cls"] = function () {
+    const css = compileStyles<V>(compileLiterals(arguments), tokens);
+    const name = hash(css);
+    const className = key + "-" + name;
+    insert(name, "." + className, css);
+    return className;
+  };
 
-  styles.cls = cls
+  styles.cls = cls;
 
   styles.lazy = function <Value extends LazyValue>(
     lazyFn: (value: Value) => string | StyleCallback<V> | StyleObject
   ) {
-    const cache = new Map<string | Value, string>()
+    const cache = new Map<string | Value, string>();
     const css = (value?: Value) => {
-      if (value === undefined) return ''
-      const key = typeof value === 'object' ? JSON.stringify(value) : value
-      let css = cache.get(key)
+      if (value === undefined) return "";
+      const key = typeof value === "object" ? JSON.stringify(value) : value;
+      let css = cache.get(key);
 
       if (!css) {
-        css = compileStyles<V>(lazyFn(value), tokens)
-        cache.set(key, css)
+        css = compileStyles<V>(lazyFn(value), tokens);
+        cache.set(key, css);
       }
 
-      return css
-    }
+      return css;
+    };
 
-    const lazyStyle: StylesLazy<Value> = (value?: Value) => cls(css(value))
-    lazyStyle.css = css
-    return lazyStyle
-  }
+    const lazyStyle: StylesLazy<Value> = (value?: Value) => cls(css(value));
+    lazyStyle.css = css;
+    return lazyStyle;
+  };
 
   styles.join = function () {
-    const css = Array.prototype.slice.call(arguments).join('')
-    const name = hash(css)
-    const className = key + '-' + name
-    insert(name, '.' + className, css)
-    return className
-  }
+    const css = Array.prototype.slice.call(arguments).join("");
+    const name = hash(css);
+    const className = key + "-" + name;
+    insert(name, "." + className, css);
+    return className;
+  };
 
   styles.keyframes = function () {
-    const css = compileStyles<V>(compileLiterals(arguments), tokens)
-    const name = hash(css)
-    const animationName = key + '-' + name
+    const css = compileStyles<V>(compileLiterals(arguments), tokens);
+    const name = hash(css);
+    const animationName = key + "-" + name;
     // Adding to a cached sheet here rather than the default sheet because
     // we want this to persist between `clearCache()` calls.
     insert(
       name,
-      '',
-      '@keyframes ' + animationName + '{' + css + '}',
+      "",
+      "@keyframes " + animationName + "{" + css + "}",
       sheets.add(name)
-    )
-    return animationName
-  }
+    );
+    return animationName;
+  };
 
   styles.insertGlobal = function () {
-    const css = compileStyles<V>(compileLiterals(arguments), tokens)
+    const css = compileStyles<V>(compileLiterals(arguments), tokens);
 
-    if (!css) return noop
-    const name = hash(css)
-    insert(name, '', css, sheets.add(name))
+    if (!css) return noop;
+    const name = hash(css);
+    insert(name, "", css, sheets.add(name));
     return () => {
-      !sheets.delete(name) && dash.inserted.delete(name)
-    }
-  }
+      !sheets.delete(name) && dash.inserted.delete(name);
+    };
+  };
 
-  styles.insertTokens = (nextTokens, selector = ':root') => {
-    const {css, vars} = serializeTokens(nextTokens, options.mangleTokens)
-    if (!css) return noop
-    mergeTokens<V>(tokens, vars)
-    return styles.insertGlobal(selector + '{' + css + '}')
-  }
+  styles.insertTokens = (nextTokens, selector = ":root") => {
+    const { css, vars } = serializeTokens(nextTokens, options.mangleTokens);
+    if (!css) return noop;
+    mergeTokens<V>(tokens, vars);
+    return styles.insertGlobal(selector + "{" + css + "}");
+  };
 
   styles.insertThemes = (nextThemes) => {
-    const flush: (() => void)[] = []
+    const flush: (() => void)[] = [];
 
     for (const name in nextThemes) {
       flush.push(
@@ -203,30 +203,30 @@ export function createStyles<
                   themes[name as Extract<T, string>],
                   nextThemes[name] as V
                 )) as any,
-          '.' + styles.theme(name as any)
+          "." + styles.theme(name as any)
         )
-      )
+      );
     }
 
-    return () => flush.forEach((e) => e())
-  }
+    return () => flush.forEach((e) => e());
+  };
 
-  styles.theme = (theme) => key + '-' + theme + '-theme'
-  styles.dash = dash
-  styles.hash = hash
-  styles.tokens = emptyObj
-  Object.defineProperty(styles, 'tokens', {
+  styles.theme = (theme) => key + "-" + theme + "-theme";
+  styles.dash = dash;
+  styles.hash = hash;
+  styles.tokens = emptyObj;
+  Object.defineProperty(styles, "tokens", {
     get() {
-      return tokens
+      return tokens;
     },
     configurable: false,
-  })
-  styles.insertTokens(options.tokens || emptyObj)
-  styles.insertThemes(options.themes || emptyObj)
-  return styles
+  });
+  styles.insertTokens(options.tokens || emptyObj);
+  styles.insertThemes(options.themes || emptyObj);
+  return styles;
 }
 
-const emptyObj: any = {}
+const emptyObj: any = {};
 
 export interface CreateStylesOptions<
   V extends DashTokens = DashTokens,
@@ -234,9 +234,10 @@ export interface CreateStylesOptions<
 > {
   /**
    * An instance of dash created by the `createDash()` factory
+   *
    * @default createDash()
    */
-  dash?: Dash
+  dash?: Dash;
   /**
    * Inserts CSS tokens into the DOM and makes them available for use in
    * style callbacks. The name of the CSS tokens is automatically generated
@@ -258,7 +259,7 @@ export interface CreateStylesOptions<
    *
    * const Component = () => <div className={bgRed()} />
    */
-  readonly tokens?: V
+  readonly tokens?: V;
   /**
    * A mapping of theme name/CSS variable pairs.
    *
@@ -286,8 +287,8 @@ export interface CreateStylesOptions<
    * const App = () => <div className={styles.theme('dark)}/>
    */
   readonly themes?: {
-    [Name in T]: V
-  }
+    [Name in T]: V;
+  };
   /**
    * When `true` this will mangle CSS variable names. You can also
    * provide an object with `{key: boolean}` pairs of reserved keys
@@ -298,7 +299,6 @@ export interface CreateStylesOptions<
    *   // All CSS tokens will be mangled in production
    *   mangleTokens: process.env.NODE_ENV === 'production'
    * })
-   *
    * @example
    * const styles = createStyles({
    *   mangleTokens: {
@@ -307,12 +307,12 @@ export interface CreateStylesOptions<
    *   }
    * })
    */
-  readonly mangleTokens?: boolean | Record<string, boolean>
+  readonly mangleTokens?: boolean | Record<string, boolean>;
   /**
    * Use your own hash function for creating selector names. By default
    * Dash uses an fnv1a hashing algorithm.
    */
-  readonly hash?: typeof fnv1aHash
+  readonly hash?: typeof fnv1aHash;
 }
 
 /**
@@ -324,8 +324,7 @@ export interface CreateStylesOptions<
  * which accomplish everything you need to scale an application
  * using CSS-in-JS.
  *
- * @param styleMap A style name/value mapping
- *
+ * @param styleMap - A style name/value mapping
  * @example
  * const bg = styles({
  *   // Define styles using an object
@@ -356,7 +355,7 @@ export interface Styles<
   V extends DashTokens = DashTokens,
   T extends string = DashThemeNames
 > {
-  <N extends string>(styleMap: StyleMap<N, V>): Style<N, V>
+  <N extends string>(styleMap: StyleMap<N, V>): Style<N, V>;
   /**
    * A function that accepts a tagged template literal, style object, or style callback,
    * and returns a function. That function inserts the style into a `<style>` tag and
@@ -374,7 +373,7 @@ export interface Styles<
   one(
     literals: TemplateStringsArray | string | StyleObject | StyleCallback<V>,
     ...placeholders: string[]
-  ): StylesOne
+  ): StylesOne;
   /**
    * A function that accepts a tagged template literal, style object, or style callback.
    * Calling this will immediately insert the CSS into the DOM and return a unique
@@ -386,7 +385,7 @@ export interface Styles<
   cls(
     literals: TemplateStringsArray | string | StyleObject | StyleCallback<V>,
     ...placeholders: string[]
-  ): string
+  ): string;
   /**
    * A function that uses lazy evalution to create styles with indeterminate values.
    * Calling this will immediately insert the CSS into the DOM and return a unique
@@ -400,7 +399,7 @@ export interface Styles<
    */
   lazy<Value extends LazyValue>(
     lazyFn: (value: Value) => string | StyleCallback<V> | StyleObject
-  ): StylesLazy<Value>
+  ): StylesLazy<Value>;
   /**
    * A function that joins CSS strings, inserts them into the DOM right away, and returns a class name.
    *
@@ -413,7 +412,7 @@ export interface Styles<
    *   )}
    * />
    */
-  join(...css: string[]): string
+  join(...css: string[]): string;
   /**
    * A function that accepts a tagged template literal, style object, or style callback.
    * Using this will immediately insert a global `@keyframes` defintion into the DOM and
@@ -433,13 +432,12 @@ export interface Styles<
   keyframes(
     literals: TemplateStringsArray | string | StyleCallback<V> | StyleObject,
     ...placeholders: string[]
-  ): string
+  ): string;
   /**
    * A function that returns the generated class name for a given theme when
    * using `insertThemes()` to create CSS variable-based themes.
    *
-   * @param name The name of the theme
-   *
+   * @param name - The name of the theme
    * @example
    * styles.insertThemes({
    *  dark: {
@@ -451,7 +449,7 @@ export interface Styles<
    *
    * const Component = () => <div className={styles.theme('dark')}/>
    */
-  theme(name: T): string
+  theme(name: T): string;
   /**
    * Inserts CSS tokens into the DOM and makes them available for use in
    * style callbacks. The name of the CSS tokens is automatically generated
@@ -459,11 +457,10 @@ export interface Styles<
    * This function returns a function that will flush the styles inserted by
    * `insertTokens()` when it is called.
    *
-   * @param tokens A map of CSS variable name/value pairs
-   * @param selector Including a selector will only make these CSS variable
+   * @param tokens - A map of CSS variable name/value pairs
+   * @param selector - Including a selector will only make these CSS variable
    *   definitions take effect within the selector, e.g. a class name or ID. By
    *   default the selector is `":root"`.
-   *
    * @example
    * // Inserts CSS tokens into the document `:root`
    * styles.insertTokens({
@@ -492,15 +489,14 @@ export interface Styles<
    *   '.dark'
    * )
    */
-  insertTokens(tokens: DeepPartial<V>, selector?: string): () => void
+  insertTokens(tokens: DeepPartial<V>, selector?: string): () => void;
   /**
    * Creates a CSS variable-based theme by defining tokens within a
    * class name selector matching the theme name. Apart from that it works
    * the same way `insertTokens()` does. This function returns a function
    * that will flush the styles inserted by `insertTokens()` when it is called.
    *
-   * @param themes A mapping of theme name/CSS variable pairs.
-   *
+   * @param themes - A mapping of theme name/CSS variable pairs.
    * @example
    * const flushThemes = styles.insertThemes({
    *   // .ui-light
@@ -519,12 +515,10 @@ export interface Styles<
    * const Component = () => <div className={styles.theme('dark)}/>
    */
   insertThemes(
-    themes: DeepPartial<
-      {
-        [Name in T]: V
-      }
-    >
-  ): () => void
+    themes: DeepPartial<{
+      [Name in T]: V;
+    }>
+  ): () => void;
   /**
    * A function that accepts a tagged template literal, style object, or style callback.
    * Using this will immediately insert styles into the DOM relative to the root document.
@@ -541,33 +535,33 @@ export interface Styles<
   insertGlobal(
     literals: TemplateStringsArray | string | StyleCallback<V> | StyleObject,
     ...placeholders: string[]
-  ): () => void
+  ): () => void;
   /**
    * The CSS tokens currently defined in the instance
    */
-  tokens: V
+  tokens: V;
   /**
    * A hashing function for creating unique selector names
-   * @param string The string you'd like to hash
+   *
+   * @param string - The string you'd like to hash
    */
-  hash(string: string): string
+  hash(string: string): string;
   /**
    * The instance of underlying the Dash cache used by this instance. This was
    * automatically created by `createDash()` when `createStyles()` was called.
    * Dash controls the caching, style sheets, auto-prefixing, and DOM insertion
    * that happens in the `styles()` instance.
    */
-  dash: Dash
+  dash: Dash;
 }
 
 /**
  * A function that inserts styles from the style map into the DOM when called
  * with those style names selected.
  *
- * @param args A series of style names or style name/boolean maps which
+ * @param args - A series of style names or style name/boolean maps which
  *  select the styles from the style map you want to compose into a singular
  *  deterministic style and class name.
- *
  * @example
  * const style = styles({
  *   block: 'display: block',
@@ -579,15 +573,14 @@ export interface Styles<
  * const Component = () => <div className={style('block', 'h100', 'w100')}/>
  */
 export type Style<N extends string, V extends DashTokens = DashTokens> = {
-  (...args: StyleArguments<N>): string
+  (...args: StyleArguments<N>): string;
   /**
    * A function that returns the raw, CSS string for a given
    * name in the style map.
    *
-   * @param names A series of style names or style name/boolean maps which
+   * @param names - A series of style names or style name/boolean maps which
    *  select the styles from the style map you want to compose into a singular
    *  CSS string.
-   *
    * @example
    * const style = styles({
    *   block: 'display: block',
@@ -600,12 +593,12 @@ export type Style<N extends string, V extends DashTokens = DashTokens> = {
    *   default: style.css('block', 'h100', 'w100')
    * })
    */
-  css(...names: StyleArguments<N>): string
+  css(...names: StyleArguments<N>): string;
   /**
    * The style map that this `style()` instance was instantiated with.
    */
-  styles: StyleMap<N, V>
-}
+  styles: StyleMap<N, V>;
+};
 
 /**
  * A function that inserts styles into the DOM when called without
@@ -613,34 +606,34 @@ export type Style<N extends string, V extends DashTokens = DashTokens> = {
  * not be inserted and a class name will not be returned.
  */
 export type StylesOne = {
-  (createClassName?: boolean | number | string | null): string
+  (createClassName?: boolean | number | string | null): string;
   /**
    * A method that returns a CSS string if the first argument is not falsy.
    */
-  css(createCss?: boolean | number | string | null): string
-}
+  css(createCss?: boolean | number | string | null): string;
+};
 
 export type StyleMap<N extends string, V extends DashTokens = DashTokens> = {
-  [Name in N | 'default']?: StyleValue<V>
-}
+  [Name in N | "default"]?: StyleValue<V>;
+};
 
 type StyleMapMemo<N extends string, V extends DashTokens = DashTokens> = Map<
-  N | 'default',
+  N | "default",
   string
->
+>;
 
 export type StyleArguments<N extends string> = (
   | N
   | {
-      [Name in N]?: boolean | null | undefined | string | number
+      [Name in N]?: boolean | null | undefined | string | number;
     }
   | Falsy
-)[]
+)[];
 
 export type StyleValue<V extends DashTokens = DashTokens> =
   | string
   | StyleCallback<V>
-  | StyleObject
+  | StyleObject;
 
 type KnownStyles = {
   [property in keyof CSSProperties]?:
@@ -648,12 +641,12 @@ type KnownStyles = {
     // eslint-disable-next-line @typescript-eslint/ban-types
     | (string & {})
     // eslint-disable-next-line @typescript-eslint/ban-types
-    | (number & {})
-}
+    | (number & {});
+};
 
 type PseudoStyles = {
-  [property in CSSPseudos | CSSHTMLAttributes | CSSSvgAttributes]?: StyleObject
-}
+  [property in CSSPseudos | CSSHTMLAttributes | CSSSvgAttributes]?: StyleObject;
+};
 
 type SelectorStyles = {
   [property: string]:
@@ -661,20 +654,20 @@ type SelectorStyles = {
     | number
     | KnownStyles
     | PseudoStyles
-    | SelectorStyles
-}
+    | SelectorStyles;
+};
 
-export type StyleObject = KnownStyles & PseudoStyles & SelectorStyles
+export type StyleObject = KnownStyles & PseudoStyles & SelectorStyles;
 
 export type StyleCallback<V extends DashTokens = DashTokens> = (
   tokens: V
-) => StyleObject | string
+) => StyleObject | string;
 
 type DeepPartial<T> = T extends (...args: any[]) => any
   ? T
   : T extends Record<string, unknown>
-  ? {[P in keyof T]?: DeepPartial<T[P]>}
-  : T
+  ? { [P in keyof T]?: DeepPartial<T[P]> }
+  : T;
 
 export type LazyValue =
   | string
@@ -683,152 +676,152 @@ export type LazyValue =
   | undefined
   | boolean
   | (string | number | null | undefined | boolean | LazyValue)[]
-  | {[key: string]: LazyValue}
+  | { [key: string]: LazyValue };
 
 /**
  * A function that inserts indeterminate styles based on the value
  * into the DOM when called.
  *
- * @param value A JSON serializable value to create indeterminate
+ * @param value - A JSON serializable value to create indeterminate
  *   styles from
  */
 export type StylesLazy<Value extends LazyValue> = {
-  (value?: Value): string
+  (value?: Value): string;
   /**
    * A method that returns indeterminate CSS strings based on the value
    * when called.
    *
-   * @param value A JSON serializable value to create indeterminate
+   * @param value - A JSON serializable value to create indeterminate
    *   styles from
    */
-  css(value?: Value): string
-}
+  css(value?: Value): string;
+};
 
 //
 // Utils
-export type Falsy = false | 0 | null | undefined
+export type Falsy = false | 0 | null | undefined;
 
 /**
  * A utility function that will compile style objects and callbacks into CSS strings.
  *
- * @param styles A style callback, object, or string
- * @param tokens A map of CSS tokens for style callbacks
+ * @param styles - A style callback, object, or string
+ * @param tokens - A map of CSS tokens for style callbacks
  */
 export function compileStyles<V extends DashTokens = DashTokens>(
   styles: StyleValue<V> | Falsy,
   tokens: V = {} as V
 ): string {
-  const value = typeof styles === 'function' ? styles(tokens) : styles
-  return typeof value === 'object' && value !== null
+  const value = typeof styles === "function" ? styles(tokens) : styles;
+  return typeof value === "object" && value !== null
     ? stringifyStyleObject(value)
     : // TypeScript w/o "strict": true throws here
-      ((value || '') as string)
+      ((value || "") as string);
 }
 
 function stringifyStyleObject(object: StyleObject) {
-  let string = ''
+  let string = "";
 
   for (const key in object) {
-    const value = object[key]
+    const value = object[key];
 
-    if (typeof value !== 'object') {
-      const isCustom = key.charCodeAt(1) === 45
+    if (typeof value !== "object") {
+      const isCustom = key.charCodeAt(1) === 45;
       string +=
         (isCustom ? key : cssCase(key)) +
-        ':' +
-        (typeof value !== 'number' ||
+        ":" +
+        (typeof value !== "number" ||
         unitless[key as keyof typeof unitless] ||
         value === 0 ||
         isCustom
           ? value
-          : value + 'px') +
-        ';'
+          : value + "px") +
+        ";";
     } else {
-      string += key + '{' + stringifyStyleObject(value as StyleObject) + '}'
+      string += key + "{" + stringifyStyleObject(value as StyleObject) + "}";
     }
   }
 
-  return string
+  return string;
 }
 
 function compileLiterals(args: IArguments) {
-  const literals = args[0]
+  const literals = args[0];
   return Array.isArray(literals)
-    ? literals.reduce((curr, next, i) => curr + next + (args[i + 1] || ''), '')
-    : literals
+    ? literals.reduce((curr, next, i) => curr + next + (args[i + 1] || ""), "")
+    : literals;
 }
 
 //
 // Variable and theme serialization
-const cssCaseRe = /[A-Z]|^ms/g
-const cssDisallowedRe = /[^\w-]/g
+const cssCaseRe = /[A-Z]|^ms/g;
+const cssDisallowedRe = /[^\w-]/g;
 // We cache the case transformations below because the cache
 // will grow to a predictable size and the regex is slowwwww
-const caseCache: Record<string, string> = {}
+const caseCache: Record<string, string> = {};
 const cssCase = (string: string) =>
   caseCache[string] ||
-  (caseCache[string] = string.replace(cssCaseRe, '-$&').toLowerCase())
+  (caseCache[string] = string.replace(cssCaseRe, "-$&").toLowerCase());
 
 function serializeTokens(
   tokens: Record<string, any>,
-  mangle?: CreateStylesOptions['mangleTokens'],
+  mangle?: CreateStylesOptions["mangleTokens"],
   names: string[] = []
 ): SerializedTokens {
-  const keys = Object.keys(tokens)
-  const vars: Record<string, any> = {}
-  let css = ''
-  let i = 0
+  const keys = Object.keys(tokens);
+  const vars: Record<string, any> = {};
+  let css = "";
+  let i = 0;
 
   for (; i < keys.length; i++) {
-    const key = keys[i]
-    const value = tokens[key]
+    const key = keys[i];
+    const value = tokens[key];
 
-    if (typeof value === 'object') {
-      const result = serializeTokens(value, mangle, names.concat(key))
-      vars[key] = result.vars
-      css += result.css
+    if (typeof value === "object") {
+      const result = serializeTokens(value, mangle, names.concat(key));
+      vars[key] = result.vars;
+      css += result.css;
     } else {
       let name = cssCase(
-        names.length > 0 ? names.join('-') + '-' + key : key
-      ).replace(cssDisallowedRe, '-')
+        names.length > 0 ? names.join("-") + "-" + key : key
+      ).replace(cssDisallowedRe, "-");
       vars[key] =
-        'var(' +
+        "var(" +
         (name =
-          '--' +
+          "--" +
           (mangle === true || (mangle && !mangle[name])
             ? mangled(name)
             : name)) +
-        ')'
-      css += name + ':' + value + ';'
+        ")";
+      css += name + ":" + value + ";";
     }
   }
 
-  return {vars, css}
+  return { vars, css };
 }
 
-const mangled = safeHash('', fnv1aHash)
+const mangled = safeHash("", fnv1aHash);
 
 type SerializedTokens = {
-  readonly vars: Record<string, Record<string, any> | string | number>
-  readonly css: string
-}
+  readonly vars: Record<string, Record<string, any> | string | number>;
+  readonly css: string;
+};
 
 function mergeTokens<V extends DashTokens = DashTokens>(
   target: Record<string, any>,
   source: Record<string, any>
 ): V {
   for (const key in source) {
-    const value = source[key]
+    const value = source[key];
     target[key] =
-      typeof value === 'object' ? mergeTokens(target[key] || {}, value) : value
+      typeof value === "object" ? mergeTokens(target[key] || {}, value) : value;
   }
 
-  return target as V
+  return target as V;
 }
 
 //
 // Creates and exports default styles() instance
-export const styles: Styles<DashTokens, DashThemeNames> = createStyles()
+export const styles: Styles<DashTokens, DashThemeNames> = createStyles();
 
 /**
  * These are CSS variable type definitions that tell functions like
@@ -845,7 +838,6 @@ export const styles: Styles<DashTokens, DashThemeNames> = createStyles()
  * }
  *
  * They can also be created automatically when you use a `createStyles()` factory.
- *
  * @example
  * const styles = createStyles({
  *   tokens: {
@@ -885,4 +877,4 @@ export interface DashThemes {}
 /**
  * The names of the themes defined in the `DashThemes` type
  */
-export type DashThemeNames = Extract<keyof DashThemes, string>
+export type DashThemeNames = Extract<keyof DashThemes, string>;

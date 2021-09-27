@@ -25,5 +25,8 @@
     "/types",
     "package.json"
   ],
-  "sideEffects": false
+  "sideEffects": false,
+  "peerDependencies": {
+    "@dash-ui/styles": ">=0.0.1"
+  }
 }

@@ -1235,4 +1235,4 @@ export default `
   <div aria-live="polite" class="js-global-screen-reader-notice sr-only"></div>
   </body>
 </html>
-`
+`;

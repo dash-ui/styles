@@ -3,9 +3,9 @@ import type {
   Pseudos as CSSPseudos,
   HtmlAttributes as CSSHTMLAttributes,
   SvgAttributes as CSSSvgAttributes,
-} from 'csstype'
-import {hash as fnv1aHash} from './utils'
-import type {Dash} from './create-dash'
+} from "csstype";
+import { hash as fnv1aHash } from "./utils";
+import type { Dash } from "./create-dash";
 /**
  * A factory function that returns a new `styles` instance with
  * your custom configuration options.
@@ -15,7 +15,7 @@ import type {Dash} from './create-dash'
 export declare function createStyles<
   V extends DashTokens = DashTokens,
   T extends string = DashThemeNames
->(options?: CreateStylesOptions<V, T>): Styles<V, T>
+>(options?: CreateStylesOptions<V, T>): Styles<V, T>;
 export interface CreateStylesOptions<
   V extends DashTokens = DashTokens,
   T extends string = DashThemeNames
@@ -24,7 +24,7 @@ export interface CreateStylesOptions<
    * An instance of dash created by the `createDash()` factory
    * @default createDash()
    */
-  dash?: Dash
+  dash?: Dash;
   /**
    * Inserts CSS tokens into the DOM and makes them available for use in
    * style callbacks. The name of the CSS tokens is automatically generated
@@ -46,7 +46,7 @@ export interface CreateStylesOptions<
    *
    * const Component = () => <div className={bgRed()} />
    */
-  readonly tokens?: V
+  readonly tokens?: V;
   /**
    * A mapping of theme name/CSS variable pairs.
    *
@@ -74,8 +74,8 @@ export interface CreateStylesOptions<
    * const App = () => <div className={styles.theme('dark)}/>
    */
   readonly themes?: {
-    [Name in T]: V
-  }
+    [Name in T]: V;
+  };
   /**
    * When `true` this will mangle CSS variable names. You can also
    * provide an object with `{key: boolean}` pairs of reserved keys
@@ -95,12 +95,12 @@ export interface CreateStylesOptions<
    *   }
    * })
    */
-  readonly mangleTokens?: boolean | Record<string, boolean>
+  readonly mangleTokens?: boolean | Record<string, boolean>;
   /**
    * Use your own hash function for creating selector names. By default
    * Dash uses an fnv1a hashing algorithm.
    */
-  readonly hash?: typeof fnv1aHash
+  readonly hash?: typeof fnv1aHash;
 }
 /**
  * `styles()` is a function for composing styles in a
@@ -143,7 +143,7 @@ export interface Styles<
   V extends DashTokens = DashTokens,
   T extends string = DashThemeNames
 > {
-  <N extends string>(styleMap: StyleMap<N, V>): Style<N, V>
+  <N extends string>(styleMap: StyleMap<N, V>): Style<N, V>;
   /**
    * A function that accepts a tagged template literal, style object, or style callback,
    * and returns a function. That function inserts the style into a `<style>` tag and
@@ -161,7 +161,7 @@ export interface Styles<
   one(
     literals: TemplateStringsArray | string | StyleObject | StyleCallback<V>,
     ...placeholders: string[]
-  ): StylesOne
+  ): StylesOne;
   /**
    * A function that accepts a tagged template literal, style object, or style callback.
    * Calling this will immediately insert the CSS into the DOM and return a unique
@@ -173,7 +173,7 @@ export interface Styles<
   cls(
     literals: TemplateStringsArray | string | StyleObject | StyleCallback<V>,
     ...placeholders: string[]
-  ): string
+  ): string;
   /**
    * A function that uses lazy evalution to create styles with indeterminate values.
    * Calling this will immediately insert the CSS into the DOM and return a unique
@@ -187,7 +187,7 @@ export interface Styles<
    */
   lazy<Value extends LazyValue>(
     lazyFn: (value: Value) => string | StyleCallback<V> | StyleObject
-  ): StylesLazy<Value>
+  ): StylesLazy<Value>;
   /**
    * A function that joins CSS strings, inserts them into the DOM right away, and returns a class name.
    *
@@ -200,7 +200,7 @@ export interface Styles<
    *   )}
    * />
    */
-  join(...css: string[]): string
+  join(...css: string[]): string;
   /**
    * A function that accepts a tagged template literal, style object, or style callback.
    * Using this will immediately insert a global `@keyframes` defintion into the DOM and
@@ -220,7 +220,7 @@ export interface Styles<
   keyframes(
     literals: TemplateStringsArray | string | StyleCallback<V> | StyleObject,
     ...placeholders: string[]
-  ): string
+  ): string;
   /**
    * A function that returns the generated class name for a given theme when
    * using `insertThemes()` to create CSS variable-based themes.
@@ -238,7 +238,7 @@ export interface Styles<
    *
    * const Component = () => <div className={styles.theme('dark')}/>
    */
-  theme(name: T): string
+  theme(name: T): string;
   /**
    * Inserts CSS tokens into the DOM and makes them available for use in
    * style callbacks. The name of the CSS tokens is automatically generated
@@ -279,7 +279,7 @@ export interface Styles<
    *   '.dark'
    * )
    */
-  insertTokens(tokens: DeepPartial<V>, selector?: string): () => void
+  insertTokens(tokens: DeepPartial<V>, selector?: string): () => void;
   /**
    * Creates a CSS variable-based theme by defining tokens within a
    * class name selector matching the theme name. Apart from that it works
@@ -306,12 +306,10 @@ export interface Styles<
    * const Component = () => <div className={styles.theme('dark)}/>
    */
   insertThemes(
-    themes: DeepPartial<
-      {
-        [Name in T]: V
-      }
-    >
-  ): () => void
+    themes: DeepPartial<{
+      [Name in T]: V;
+    }>
+  ): () => void;
   /**
    * A function that accepts a tagged template literal, style object, or style callback.
    * Using this will immediately insert styles into the DOM relative to the root document.
@@ -328,23 +326,23 @@ export interface Styles<
   insertGlobal(
     literals: TemplateStringsArray | string | StyleCallback<V> | StyleObject,
     ...placeholders: string[]
-  ): () => void
+  ): () => void;
   /**
    * The CSS tokens currently defined in the instance
    */
-  tokens: V
+  tokens: V;
   /**
    * A hashing function for creating unique selector names
    * @param string The string you'd like to hash
    */
-  hash(string: string): string
+  hash(string: string): string;
   /**
    * The instance of underlying the Dash cache used by this instance. This was
    * automatically created by `createDash()` when `createStyles()` was called.
    * Dash controls the caching, style sheets, auto-prefixing, and DOM insertion
    * that happens in the `styles()` instance.
    */
-  dash: Dash
+  dash: Dash;
 }
 /**
  * A function that inserts styles from the style map into the DOM when called
@@ -368,7 +366,7 @@ export declare type Style<
   N extends string,
   V extends DashTokens = DashTokens
 > = {
-  (...args: StyleArguments<N>): string
+  (...args: StyleArguments<N>): string;
   /**
    * A function that returns the raw, CSS string for a given
    * name in the style map.
@@ -389,69 +387,69 @@ export declare type Style<
    *   default: style.css('block', 'h100', 'w100')
    * })
    */
-  css(...names: StyleArguments<N>): string
+  css(...names: StyleArguments<N>): string;
   /**
    * The style map that this `style()` instance was instantiated with.
    */
-  styles: StyleMap<N, V>
-}
+  styles: StyleMap<N, V>;
+};
 /**
  * A function that inserts styles into the DOM when called without
  * a falsy value. If the first argument is falsy, the styles will
  * not be inserted and a class name will not be returned.
  */
 export declare type StylesOne = {
-  (createClassName?: boolean | number | string | null): string
+  (createClassName?: boolean | number | string | null): string;
   /**
    * A method that returns a CSS string if the first argument is not falsy.
    */
-  css(createCss?: boolean | number | string | null): string
-}
+  css(createCss?: boolean | number | string | null): string;
+};
 export declare type StyleMap<
   N extends string,
   V extends DashTokens = DashTokens
 > = {
-  [Name in N | 'default']?: StyleValue<V>
-}
+  [Name in N | "default"]?: StyleValue<V>;
+};
 export declare type StyleArguments<N extends string> = (
   | N
   | {
-      [Name in N]?: boolean | null | undefined | string | number
+      [Name in N]?: boolean | null | undefined | string | number;
     }
   | Falsy
-)[]
+)[];
 export declare type StyleValue<V extends DashTokens = DashTokens> =
   | string
   | StyleCallback<V>
-  | StyleObject
+  | StyleObject;
 declare type KnownStyles = {
   [property in keyof CSSProperties]?:
     | CSSProperties[property]
     | (string & {})
-    | (number & {})
-}
+    | (number & {});
+};
 declare type PseudoStyles = {
-  [property in CSSPseudos | CSSHTMLAttributes | CSSSvgAttributes]?: StyleObject
-}
+  [property in CSSPseudos | CSSHTMLAttributes | CSSSvgAttributes]?: StyleObject;
+};
 declare type SelectorStyles = {
   [property: string]:
     | string
     | number
     | KnownStyles
     | PseudoStyles
-    | SelectorStyles
-}
-export declare type StyleObject = KnownStyles & PseudoStyles & SelectorStyles
+    | SelectorStyles;
+};
+export declare type StyleObject = KnownStyles & PseudoStyles & SelectorStyles;
 export declare type StyleCallback<V extends DashTokens = DashTokens> = (
   tokens: V
-) => StyleObject | string
+) => StyleObject | string;
 declare type DeepPartial<T> = T extends (...args: any[]) => any
   ? T
   : T extends Record<string, unknown>
   ? {
-      [P in keyof T]?: DeepPartial<T[P]>
+      [P in keyof T]?: DeepPartial<T[P]>;
     }
-  : T
+  : T;
 export declare type LazyValue =
   | string
   | number
@@ -460,8 +458,8 @@ export declare type LazyValue =
   | boolean
   | (string | number | null | undefined | boolean | LazyValue)[]
   | {
-      [key: string]: LazyValue
-    }
+      [key: string]: LazyValue;
+    };
 /**
  * A function that inserts indeterminate styles based on the value
  * into the DOM when called.
@@ -470,7 +468,7 @@ export declare type LazyValue =
  *   styles from
  */
 export declare type StylesLazy<Value extends LazyValue> = {
-  (value?: Value): string
+  (value?: Value): string;
   /**
    * A method that returns indeterminate CSS strings based on the value
    * when called.
@@ -478,9 +476,9 @@ export declare type StylesLazy<Value extends LazyValue> = {
    * @param value A JSON serializable value to create indeterminate
    *   styles from
    */
-  css(value?: Value): string
-}
-export declare type Falsy = false | 0 | null | undefined
+  css(value?: Value): string;
+};
+export declare type Falsy = false | 0 | null | undefined;
 /**
  * A utility function that will compile style objects and callbacks into CSS strings.
  *
@@ -490,8 +488,8 @@ export declare type Falsy = false | 0 | null | undefined
 export declare function compileStyles<V extends DashTokens = DashTokens>(
   styles: StyleValue<V> | Falsy,
   tokens?: V
-): string
-export declare const styles: Styles<DashTokens, DashThemeNames>
+): string;
+export declare const styles: Styles<DashTokens, DashThemeNames>;
 /**
  * These are CSS variable type definitions that tell functions like
  * style callbacks which tokens are available. They can be defined
@@ -545,5 +543,5 @@ export interface DashThemes {}
 /**
  * The names of the themes defined in the `DashThemes` type
  */
-export declare type DashThemeNames = Extract<keyof DashThemes, string>
-export {}
+export declare type DashThemeNames = Extract<keyof DashThemes, string>;
+export {};

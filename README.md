@@ -1,32 +1,34 @@
 <hr>
-  <br/>
   <img src='https://github.com/dash-ui/styles/raw/main/assets/logo.png'/>
-  <blockquote>A tiny, powerful, framework-agnostic CSS-in-JS library</blockquote>
   
-  <pre>npm i @dash-ui/styles</pre>
-  <br/>
+  > A tiny, powerful, framework-agnostic CSS-in-JS library
+  ```sh
+  npm i @dash-ui/styles
+  ```
   
-  <a href="https://bundlephobia.com/result?p=@dash-ui/styles">
-    <img alt="Bundlephobia" src="https://img.shields.io/bundlephobia/minzip/@dash-ui/styles?style=for-the-badge&labelColor=24292e">
-  </a>
+  <p>
+    <a href="https://bundlephobia.com/result?p=@dash-ui/styles">
+      <img alt="Bundlephobia" src="https://img.shields.io/bundlephobia/minzip/@dash-ui/styles?style=for-the-badge&labelColor=24292e">
+    </a>
+    <a aria-label="Types" href="https://www.npmjs.com/package/@dash-ui/styles">
+      <img alt="Types" src="https://img.shields.io/npm/types/@dash-ui/styles?style=for-the-badge&labelColor=24292e">
+    </a>
+    <a aria-label="Code coverage report" href="https://codecov.io/gh/dash-ui/styles">
+      <img alt="Code coverage" src="https://img.shields.io/codecov/c/gh/dash-ui/styles?style=for-the-badge&labelColor=24292e">
+    </a>
+    <a aria-label="Build status" href="https://travis-ci.com/dash-ui/styles">
+      <img alt="Build status" src="https://img.shields.io/travis/com/dash-ui/styles?style=for-the-badge&labelColor=24292e">
+    </a>
+    <a aria-label="NPM version" href="https://www.npmjs.com/package/@dash-ui/styles">
+      <img alt="NPM Version" src="https://img.shields.io/npm/v/@dash-ui/styles?style=for-the-badge&labelColor=24292e">
+    </a>
+    <a aria-label="License" href="https://jaredlunde.mit-license.org/">
+      <img alt="MIT License" src="https://img.shields.io/npm/l/@dash-ui/styles?style=for-the-badge&labelColor=24292e">
+    </a>
 
-  <a aria-label="Types" href="https://www.npmjs.com/package/@dash-ui/styles">
-    <img alt="Types" src="https://img.shields.io/npm/types/@dash-ui/styles?style=for-the-badge&labelColor=24292e">
-  </a>
-  <a aria-label="Code coverage report" href="https://codecov.io/gh/dash-ui/styles">
-    <img alt="Code coverage" src="https://img.shields.io/codecov/c/gh/dash-ui/styles?style=for-the-badge&labelColor=24292e">
-  </a>
-  <a aria-label="Build status" href="https://travis-ci.com/dash-ui/styles">
-    <img alt="Build status" src="https://img.shields.io/travis/com/dash-ui/styles?style=for-the-badge&labelColor=24292e">
-  </a>
-  <a aria-label="NPM version" href="https://www.npmjs.com/package/@dash-ui/styles">
-    <img alt="NPM Version" src="https://img.shields.io/npm/v/@dash-ui/styles?style=for-the-badge&labelColor=24292e">
-  </a>
-  <a aria-label="License" href="https://jaredlunde.mit-license.org/">
-    <img alt="MIT License" src="https://img.shields.io/npm/l/@dash-ui/styles?style=for-the-badge&labelColor=24292e">
-  </a>
+  </p>
 
-<hr>
+---
 
 ## Features
 
@@ -50,34 +52,34 @@
 
 ```jsx harmony
 // React example
-import * as React from 'react'
-import {styles} from '@dash-ui/styles'
+import * as React from "react";
+import { styles } from "@dash-ui/styles";
 
 // Any global styles or tokens that are inserted into the DOM
 // can be easily ejected by calling the function they return.
 const flushTokens = styles.insertTokens({
   color: {
     // var(--color-brand)
-    brand: '#ee5b5f',
+    brand: "#ee5b5f",
     // var(--color-white)
-    white: '#fafafa',
+    white: "#fafafa",
   },
   elevation: {
     // var(--elevation-resting)
     resting:
-      '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
+      "0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)",
   },
   radius: {
     // var(--radius-primary)
-    primary: '4px',
+    primary: "4px",
   },
-})
+});
 
 const flushGlobal = styles.insertGlobal`
   body {
     min-height: 100vh;
   }
-`
+`;
 
 // `styles` is a function for composing style variants in a
 // deterministic way. In the example below, you'll see an example
@@ -87,7 +89,7 @@ const button = styles({
   // The object in this callback is a mapping to the CSS
   // tokens above. `default` here is a special style name
   // that will be applied to each invocation of `button()`
-  default: ({radius}) => `
+  default: ({ radius }) => `
     display: inline-block;
     border: none;
     background: transparent;
@@ -107,15 +109,15 @@ const button = styles({
     }
   `,
   // Styles can also be defined in the object format
-  brand: ({color}) => ({
+  brand: ({ color }) => ({
     backgroundColor: color.brand,
   }),
   // Lastly, styles need not use callbacks if they don't need
   // access to design tokens
   black: {
-    backgroundColor: '#000',
+    backgroundColor: "#000",
   },
-})
+});
 
 const Component = (props) => (
   <div>
@@ -123,16 +125,16 @@ const Component = (props) => (
      * Styles are composed in the order they're defined in arguments,
      * so they are completely deterministic.
      */}
-    <button className={button('solid', 'brand')}>Solid brand</button>
+    <button className={button("solid", "brand")}>Solid brand</button>
     {/**
      * That is, in the button below `black`'s background color will
      * take precendence over the `brand` background color.
      */}
-    <button className={button({outline: true, brand: true, black: true})}>
+    <button className={button({ outline: true, brand: true, black: true })}>
       Solid black
     </button>
   </div>
-)
+);
 ```
 
 ## API docs
@@ -240,14 +242,14 @@ scale an application using CSS-in-JS.
 
 ```jsx harmony
 // React example
-import * as React from 'react'
-import {styles} from '@dash-ui/styles'
+import * as React from "react";
+import { styles } from "@dash-ui/styles";
 
 const button = styles({
   // The object in this callback is a mapping to the CSS
   // tokens above. `default` here is a special style name
   // that will be applied to each invocation of `button()`
-  default: ({radius}) => `
+  default: ({ radius }) => `
     display: inline-block;
     border: none;
     background: transparent;
@@ -261,17 +263,17 @@ const button = styles({
     }
   `,
   // Styles can also be defined in the object format
-  primary: ({color}) => ({
+  primary: ({ color }) => ({
     backgroundColor: color.primary,
     color: color.white,
   }),
   // Lastly, styles need not use callbacks if they don't need
   // access to design tokens
   black: {
-    backgroundColor: '#000',
-    color: '#fff',
+    backgroundColor: "#000",
+    color: "#fff",
   },
-})
+});
 
 const Component = (props) => (
   <React.Fragment>
@@ -280,17 +282,17 @@ const Component = (props) => (
      * so they are completely deterministic. Calling the `button`
      * function returns a string class name.
      */}
-    <button className={button('solid', 'brand')}>Solid brand</button>
+    <button className={button("solid", "brand")}>Solid brand</button>
     {/**
      * That is, in the button below `black`'s background color will
      * take precendence over the `brand` background color because it
      * is declared after `brand`.
      */}
-    <button className={button({outline: true, brand: true, black: true})}>
+    <button className={button({ outline: true, brand: true, black: true })}>
       Solid black
     </button>
   </React.Fragment>
-)
+);
 ```
 
 #### Arguments
@@ -315,7 +317,7 @@ styles<N extends string>(styleMap: StyleMap<N, V>): Style<N, V>
  *  deterministic style and class name.
  */
 export type Style<N extends string, V extends DashTokens = DashTokens> = {
-  (...args: StyleArguments<N>): string
+  (...args: StyleArguments<N>): string;
   /**
    * A function that returns the raw, CSS string for a given
    * name in the style map.
@@ -324,41 +326,41 @@ export type Style<N extends string, V extends DashTokens = DashTokens> = {
    *  select the styles from the style map you want to compose into a singular
    *  CSS string.
    */
-  css(...names: StyleArguments<N>): string
+  css(...names: StyleArguments<N>): string;
   /**
    * The style map that this `style()` instance was instantiated with.
    */
-  styles: StyleMap<N, V>
-}
+  styles: StyleMap<N, V>;
+};
 
 export type StyleArguments<N extends string> = (
   | N
   | {
-      [Name in N]?: boolean | null | undefined | string | number
+      [Name in N]?: boolean | null | undefined | string | number;
     }
   | Falsy
-)[]
+)[];
 ```
 
 ### StyleMap
 
 ```ts
 export type StyleMap<N extends string, V extends DashTokens = DashTokens> = {
-  [Name in N | 'default']?: StyleValue<V>
-}
+  [Name in N | "default"]?: StyleValue<V>;
+};
 
 export type StyleValue<V extends DashTokens = DashTokens> =
   | string
   | StyleCallback<V>
-  | StyleObject
+  | StyleObject;
 
 export type StyleObject = {
-  [property: string]: StyleObject | string | number
-}
+  [property: string]: StyleObject | string | number;
+};
 
 export type StyleCallback<V extends DashTokens = DashTokens> = (
   tokens: V
-) => StyleObject | string
+) => StyleObject | string;
 ```
 
 ---
@@ -375,28 +377,28 @@ class name when called.
 
 ```jsx harmony
 // React example
-import * as React from 'react'
-import {styles} from '@dash-ui/styles'
+import * as React from "react";
+import { styles } from "@dash-ui/styles";
 
 // Can be a tagged template literal
 const heading = styles.one`
   font-size: 2rem;
   font-weight: bold;
-`
+`;
 
 // Or an object
 const heading = styles.one({
-  fontSize: '2rem',
-  fontWeight: 'bold',
-})
+  fontSize: "2rem",
+  fontWeight: "bold",
+});
 
 // Or a callback
-const heading = styles.one(({font}) => ({
+const heading = styles.one(({ font }) => ({
   fontSize: font.size.heading,
-  fontWeight: 'bold',
-}))
+  fontWeight: "bold",
+}));
 
-const Heading = () => <h1 className={heading()}>Hello world</h1>
+const Heading = () => <h1 className={heading()}>Hello world</h1>;
 ```
 
 #### Returns
@@ -408,12 +410,12 @@ const Heading = () => <h1 className={heading()}>Hello world</h1>
  * not be inserted and a class name will not be returned.
  */
 export type StylesOne = {
-  (createClassName?: boolean | number | string | null): string
+  (createClassName?: boolean | number | string | null): string;
   /**
    * A method that returns a CSS string if the first argument is not falsy.
    */
-  css(createCss?: boolean | number | string | null): string
-}
+  css(createCss?: boolean | number | string | null): string;
+};
 ```
 
 ---
@@ -430,8 +432,8 @@ name for the styles. This is a shortcut for `styles.one({display: 'flex'})()`.
 
 ```jsx harmony
 // React example
-import * as React from 'react'
-import {styles} from '@dash-ui/styles'
+import * as React from "react";
+import { styles } from "@dash-ui/styles";
 
 // The styles here will only be injected into the DOM
 // immediately when the style is created. This is cached
@@ -440,7 +442,7 @@ import {styles} from '@dash-ui/styles'
 const Box = () => (
   <div
     className={styles.cls(
-      ({color}) => `
+      ({ color }) => `
         width: 200px;
         height: 200px;
         background-color: ${color.primary};
@@ -451,13 +453,13 @@ const Box = () => (
       `
     )}
   />
-)
+);
 ```
 
 #### Returns
 
 ```ts
-string // A class name
+string; // A class name
 ```
 
 ---
@@ -474,17 +476,17 @@ class name for the styles.
 
 ```jsx harmony
 // React example
-import * as React from 'react'
-import clsx from 'clsx'
-import {styles} from '@dash-ui/styles'
+import * as React from "react";
+import clsx from "clsx";
+import { styles } from "@dash-ui/styles";
 
 // The lazy function can return style objects, style callbacks,
 // and strings
-const bgColor = styles.lazy((colorName) => ({color}) => ({
+const bgColor = styles.lazy((colorName) => ({ color }) => ({
   backgroundColor: color[colorName],
-}))
+}));
 
-const Box = ({bg = 'primary'}) => <div className={bgColor(bg)} />
+const Box = ({ bg = "primary" }) => <div className={bgColor(bg)} />;
 ```
 
 #### Returns
@@ -498,7 +500,7 @@ const Box = ({bg = 'primary'}) => <div className={bgColor(bg)} />
  *   styles from
  */
 export type StylesLazy<Value extends LazyValue> = {
-  (value?: Value): string
+  (value?: Value): string;
   /**
    * A method that returns indeterminate CSS strings based on the value
    * when called.
@@ -506,8 +508,8 @@ export type StylesLazy<Value extends LazyValue> = {
    * @param value A JSON serializable value to create indeterminate
    *   styles from
    */
-  css(value?: Value): string
-}
+  css(value?: Value): string;
+};
 ```
 
 ---
@@ -523,15 +525,15 @@ class name.
 
 ```jsx harmony
 // React example
-import * as React from 'react'
-import {styles} from '@dash-ui/styles'
+import * as React from "react";
+import { styles } from "@dash-ui/styles";
 
 // Create a style for primary bg color
 const bgPrimary = styles.one(
-  ({color}) => `
+  ({ color }) => `
     background-color: ${color.primary};
   `
-)
+);
 
 // Creates styles for a box with 2 widths
 const box = styles({
@@ -543,14 +545,14 @@ const box = styles({
     width: 400,
     height: 400,
   },
-})
+});
 
 // This joins CSS strings together and immediately
 // inserts them into the DOM while returning a
 // class name
 const PrimaryBox = () => (
-  <div className={styles.join(bgPrimary.css(), box.css('big'))} />
-)
+  <div className={styles.join(bgPrimary.css(), box.css("big"))} />
+);
 ```
 
 #### Arguments
@@ -566,7 +568,7 @@ styles.join(...css: string[]): string
 #### Returns
 
 ```ts
-string // A class name
+string; // A class name
 ```
 
 ---
@@ -583,8 +585,8 @@ name which can then be referenced in other styles.
 
 ```jsx harmony
 // React example
-import * as React from 'react'
-import {styles} from '@dash-ui/styles'
+import * as React from "react";
+import { styles } from "@dash-ui/styles";
 
 // Immediately injects keyframes styles into the
 // DOM and returns an animation name which can then
@@ -605,26 +607,26 @@ const zoomy = styles.keyframes`
   100% {
     transform: scale(0.0);
   }
-`
+`;
 
 // Creates styles for a zoomy box
 const zoomyBox = styles.one({
   animationName: zoomy,
   animationDuration: `2000ms`,
-  animationIterationCount: 'infinite',
-  backgroundColor: '#008489',
+  animationIterationCount: "infinite",
+  backgroundColor: "#008489",
   width: 100,
   height: 100,
-  margin: '48px auto',
-})
+  margin: "48px auto",
+});
 
-const ZoomyBox = () => <div className={zoomyBox()} />
+const ZoomyBox = () => <div className={zoomyBox()} />;
 ```
 
 #### Returns
 
 ```ts
-string // An animation name
+string; // An animation name
 ```
 
 ---
@@ -640,8 +642,8 @@ A function that returns the generated class name for a given theme when using
 
 ```tsx
 // React example
-import * as React from 'react'
-import {createStyles} from '@dash-ui/styles'
+import * as React from "react";
+import { createStyles } from "@dash-ui/styles";
 
 // Creating our own styles instance gives us strong
 // types for `themes` and `tokens` without having
@@ -651,25 +653,25 @@ const styles = createStyles({
   themes: {
     // Light mode design tokens
     light: {
-      bgColor: '#FAFAFA',
-      primaryColor: '#ee5b5f',
+      bgColor: "#FAFAFA",
+      primaryColor: "#ee5b5f",
     },
     // Dark mode design tokens
     dark: {
-      bgColor: '#272727',
-      primaryColor: '#333',
+      bgColor: "#272727",
+      primaryColor: "#333",
     },
   } as const,
-})
+});
 
 export const App = () => {
-  const [mode, setMode] = React.useState<'light' | 'dark'>('light')
+  const [mode, setMode] = React.useState<"light" | "dark">("light");
 
   React.useEffect(() =>
-    styles.insertGlobal(({bgColor}) => ({
-      body: {backgroundColor: bgColor},
+    styles.insertGlobal(({ bgColor }) => ({
+      body: { backgroundColor: bgColor },
     }))
-  )
+  );
 
   return (
     // Sets the theme name on the body element
@@ -679,7 +681,7 @@ export const App = () => {
     <body className={styles.theme(mode)}>
       <div
         className={styles.cls(
-          ({bgColor, primaryColor}) => `
+          ({ bgColor, primaryColor }) => `
             width: 200px;
             height: 200px;
             background-color: ${primaryColor};
@@ -688,13 +690,13 @@ export const App = () => {
       />
 
       <button
-        onClick={() => setMode((mode) => (mode === 'light' ? 'dark' : 'light'))}
+        onClick={() => setMode((mode) => (mode === "light" ? "dark" : "light"))}
       >
-        Switch to {mode === 'light' ? 'dark' : 'light'} mode
+        Switch to {mode === "light" ? "dark" : "light"} mode
       </button>
     </body>
-  )
-}
+  );
+};
 ```
 
 #### Arguments
@@ -710,7 +712,7 @@ theme(name: T): string
 #### Returns
 
 ```typescript
-string // A class name
+string; // A class name
 ```
 
 ---
@@ -729,8 +731,8 @@ when it is called.
 
 ```tsx
 // React example
-import * as React from 'react'
-import {createStyles} from '@dash-ui/styles'
+import * as React from "react";
+import { createStyles } from "@dash-ui/styles";
 
 // Creating our own styles instance gives us strong
 // types for `themes` and `tokens` without having
@@ -740,19 +742,19 @@ const styles = createStyles({
   themes: {
     // Light mode design tokens
     light: {
-      primaryColor: '#ee5b5f',
+      primaryColor: "#ee5b5f",
     },
     // Dark mode design tokens
     dark: {
-      primaryColor: '#272727',
+      primaryColor: "#272727",
     },
   },
-})
+});
 
 export const App = () => {
-  const [mode, setMode] = React.useState<'light' | 'dark'>('light')
-  const [darkModePrimary, setDarkModePrimary] = React.useState('#272727')
-  const [lightModePrimary, setLightModePrimary] = React.useState('#ee5b5f')
+  const [mode, setMode] = React.useState<"light" | "dark">("light");
+  const [darkModePrimary, setDarkModePrimary] = React.useState("#272727");
+  const [lightModePrimary, setLightModePrimary] = React.useState("#ee5b5f");
 
   React.useEffect(
     // Here we are updating our theme values each
@@ -767,7 +769,7 @@ export const App = () => {
         },
       }),
     [darkModePrimary, lightModePrimary]
-  )
+  );
 
   return (
     // Sets the theme name on the body element
@@ -777,7 +779,7 @@ export const App = () => {
     <body className={styles.theme(mode)}>
       <div
         className={styles.cls(
-          ({primaryColor}) => `
+          ({ primaryColor }) => `
             width: 200px;
             height: 200px;
             background-color: ${primaryColor};
@@ -788,10 +790,10 @@ export const App = () => {
       <div>
         <button
           onClick={() =>
-            setMode((mode) => (mode === 'light' ? 'dark' : 'light'))
+            setMode((mode) => (mode === "light" ? "dark" : "light"))
           }
         >
-          Switch to {mode === 'light' ? 'dark' : 'light'} mode
+          Switch to {mode === "light" ? "dark" : "light"} mode
         </button>
       </div>
 
@@ -811,8 +813,8 @@ export const App = () => {
         />
       </label>
     </body>
-  )
-}
+  );
+};
 ```
 
 #### Arguments
@@ -854,20 +856,20 @@ the tokens that were inserted when it is called.
 
 ```tsx
 // React example
-import * as React from 'react'
-import {createStyles} from '@dash-ui/styles'
+import * as React from "react";
+import { createStyles } from "@dash-ui/styles";
 
 // Creating our own styles instance gives us strong
 // types for `tokens` without having to declare
 // DashTokens in our app
 const styles = createStyles({
   tokens: {
-    primaryColor: '#ee5b5f',
+    primaryColor: "#ee5b5f",
   },
-})
+});
 
 export const App = () => {
-  const [primaryColor, setPrimaryColor] = React.useState('#ee5b5f')
+  const [primaryColor, setPrimaryColor] = React.useState("#ee5b5f");
 
   React.useEffect(
     // Here we are updating our variable values each
@@ -877,13 +879,13 @@ export const App = () => {
         primaryColor,
       }),
     [primaryColor]
-  )
+  );
 
   return (
     <div>
       <div
         className={styles.cls(
-          ({primaryColor}) => `
+          ({ primaryColor }) => `
             width: 200px;
             height: 200px;
             background-color: ${primaryColor};
@@ -899,8 +901,8 @@ export const App = () => {
         />
       </label>
     </div>
-  )
-}
+  );
+};
 ```
 
 #### Arguments
@@ -936,21 +938,21 @@ returns a function that will flush the styles inserted when it is called.
 
 ```tsx
 // React example
-import * as React from 'react'
-import {styles} from '@dash-ui/styles'
+import * as React from "react";
+import { styles } from "@dash-ui/styles";
 
 const flushStyles = styles.insertGlobal({
   body: {
-    minHeight: '100vh',
-    backgroundColor: '#ee5b5f',
-    color: '#fff',
-    fontFamily: 'Inter, -apple-system, sans-serif',
+    minHeight: "100vh",
+    backgroundColor: "#ee5b5f",
+    color: "#fff",
+    fontFamily: "Inter, -apple-system, sans-serif",
   },
   h1: {
-    margin: '1rem',
-    fontSize: '3rem',
+    margin: "1rem",
+    fontSize: "3rem",
   },
-})
+});
 
 export const App = () => {
   return (
@@ -958,8 +960,8 @@ export const App = () => {
       <h1>Hello world</h1>
       <button onClick={flushStyles}>Flush styles</button>
     </div>
-  )
-}
+  );
+};
 ```
 
 #### Returns
@@ -980,9 +982,9 @@ configured by creating your own `styles()` instance with [`createStyles()`](#cre
 #### Example
 
 ```js
-import {styles} from '@dash-ui/styles'
+import { styles } from "@dash-ui/styles";
 
-console.log(styles.hash('foo: bar;'))
+console.log(styles.hash("foo: bar;"));
 // 1rcc4tl
 ```
 
@@ -999,7 +1001,7 @@ hash(string: string): string
 #### Returns
 
 ```typescript
-string // A hash of the input string
+string; // A hash of the input string
 ```
 
 ---
@@ -1030,10 +1032,10 @@ in the [`styles()`](#styles) instance.
 #### Example
 
 ```jsx harmony
-import {styles} from '@dash-ui/styles'
+import { styles } from "@dash-ui/styles";
 // Inserts a style named 'foo' under the selector '.foo'
 // into the default style sheet
-styles.dash.insert('foo', '.foo', 'display: flex;')
+styles.dash.insert("foo", ".foo", "display: flex;");
 ```
 
 ---
@@ -1072,7 +1074,7 @@ const oneStyle = styles.one(({gap}) => `
 function createStyles<
   V extends DashTokens = DashTokens,
   T extends string = DashThemeNames
->(options: CreateStylesOptions<V, T> = {}): Styles<V, T>
+>(options: CreateStylesOptions<V, T> = {}): Styles<V, T>;
 ```
 
 | Argument | Type                                          | Required? | Description           |
@@ -1106,18 +1108,18 @@ Dash is a tiny, performant CSS-in-JS style rule sheet manager similar to Emotion
 #### Example
 
 ```js
-import {createDash} from '@dash-ui/styles'
+import { createDash } from "@dash-ui/styles";
 
-const dash = createDash({key: 'css', prefix: false})
+const dash = createDash({ key: "css", prefix: false });
 // Inserts a style named 'flex' under the selector '.flex'
 // into the default style sheet
-dash.insert('flex', '.flex', 'display: flex;')
+dash.insert("flex", ".flex", "display: flex;");
 ```
 
 #### Arguments
 
 ```typescript
-function createDash(options: CreateDashOptions = {}): Dash
+function createDash(options: CreateDashOptions = {}): Dash;
 ```
 
 | Argument | Type                                      | Required? | Description           |
@@ -1132,28 +1134,28 @@ export type Dash = {
   /**
    * The sheet key
    */
-  readonly key: string
+  readonly key: string;
   /**
    * The default style sheet used by this instance of Dash
    */
-  readonly sheet: DashStyleSheet
+  readonly sheet: DashStyleSheet;
   /**
    * Used for tracking external sheets. You can safely add/delete new
    * custom sheets using this. Those sheets can be used in the `insert()`
    * method. The primary reason you'd want to use this is so that you can
    * create independently flushable styles/sheets.
    */
-  readonly sheets: DashSheets
+  readonly sheets: DashSheets;
   /**
    * The instance of Stylis used by this Dash instance
    */
-  readonly stylis: typeof Stylis
+  readonly stylis: typeof Stylis;
   /**
    * A cache of Stylis rules saved by their keys. This is only used
    * on the server for generating CSS files and strings from the keys
    * used in the cache.
    */
-  readonly cache: Map<string, string>
+  readonly cache: Map<string, string>;
   /**
    * A function for inserting style rules into the document and cache.
    *
@@ -1168,13 +1170,13 @@ export type Dash = {
     selector: string,
     styles: string,
     styleSheet?: DashStyleSheet
-  ): void
+  ): void;
   /**
    * An insertion cache. This tracks which keys have already been inserted into
    * the DOM to prevent duplicates.
    */
-  readonly inserted: Set<string>
-}
+  readonly inserted: Set<string>;
+};
 ```
 
 ### CreateDashOptions
@@ -1197,19 +1199,19 @@ A utility function that will compile style objects and callbacks into CSS string
 #### Example
 
 ```js
-import {compileStyles} from '@dash-ui/styles'
+import { compileStyles } from "@dash-ui/styles";
 
 const css = compileStyles({
-  display: 'flex',
-  '> * + *': {
-    marginLeft: '0.5rem',
+  display: "flex",
+  "> * + *": {
+    marginLeft: "0.5rem",
   },
-})
-console.log(css)
+});
+console.log(css);
 // "display:flex;> * + *{margin-left:0.5rem;}"
 
-const red = compileStyles(({red}) => ({color: red}), {red: 'var(--red)'})
-console.log(red)
+const red = compileStyles(({ red }) => ({ color: red }), { red: "var(--red)" });
+console.log(red);
 // "color:var(--red);"
 ```
 
@@ -1223,7 +1225,7 @@ console.log(red)
 #### Returns
 
 ```typescript
-string // A CSS string
+string; // A CSS string
 ```
 
 ---
@@ -1238,16 +1240,16 @@ well-suited for hashing nearly identical strings. This is the default hash used 
 #### Example
 
 ```js
-import {hash} from '@dash-ui/styles'
+import { hash } from "@dash-ui/styles";
 
-console.log(hash('foo: bar;'))
+console.log(hash("foo: bar;"));
 // 1rcc4tl
 ```
 
 #### Arguments
 
 ```typescript
-function hash(string: string): string
+function hash(string: string): string;
 ```
 
 | Argument | Type     | Required? | Description                   |
@@ -1257,7 +1259,7 @@ function hash(string: string): string
 #### Returns
 
 ```typescript
-string // A hash of the input string
+string; // A hash of the input string
 ```
 
 ---
@@ -1275,21 +1277,21 @@ Gatsby, for example.
 #### Example
 
 ```js
-import {styles} from '@dash-ui/styles'
-import {createStylesFromCache} from '@dash-ui/styles/server'
+import { styles } from "@dash-ui/styles";
+import { createStylesFromCache } from "@dash-ui/styles/server";
 
 // Inserts a new class for `display: flex;`
-styles.cls`display: flex;`
+styles.cls`display: flex;`;
 
 // Reads from the cache
-const {css, names} = createStylesFromCache(styles)
+const { css, names } = createStylesFromCache(styles);
 
 // A CSS string generated from the cache
-console.log(css)
+console.log(css);
 // ".ui-1ut9bc3{display:flex;}"
 
 // A list of all of the names that were in the cache
-console.log(names)
+console.log(names);
 // ["1ut9bc3"]
 ```
 
@@ -1297,9 +1299,9 @@ console.log(names)
 
 ```typescript
 export function createStylesFromCache(
-  styles = require('@dash-ui/styles').styles,
+  styles = require("@dash-ui/styles").styles,
   options: CreateServerStylesOptions = {}
-): ServerStylesResult
+): ServerStylesResult;
 ```
 
 | Argument | Type                                                      | Required? | Default               | Description                      |
@@ -1314,11 +1316,11 @@ export interface ServerStylesResult {
   /**
    * A CSS string containing all of the styles that were used
    */
-  css: string
+  css: string;
   /**
    * Hash names of all of the styles used in the generated CSS
    */
-  names: string[]
+  names: string[];
 }
 ```
 
@@ -1342,17 +1344,17 @@ will dirty the results. This means it will not work with Gatsby, for example.
 #### Example
 
 ```js
-import {styles} from '@dash-ui/styles'
-import {createStyleTagFromCache} from '@dash-ui/styles/server'
+import { styles } from "@dash-ui/styles";
+import { createStyleTagFromCache } from "@dash-ui/styles/server";
 
 // Inserts a new class for `display: flex;`
-styles.cls`display: flex;`
+styles.cls`display: flex;`;
 
 // Reads from the cache
-const styleTag = createStyleTagFromCache(styles)
+const styleTag = createStyleTagFromCache(styles);
 
 // A <style> tag generated from the cache
-console.log(styleTag)
+console.log(styleTag);
 // "<style data-dash=\"1ut9bc3\" data-cache=\"ui\">.ui-1ut9bc3{display:flex;}</style>"
 ```
 
@@ -1360,9 +1362,9 @@ console.log(styleTag)
 
 ```typescript
 export function createStyleTagFromCache(
-  styles = require('@dash-ui/styles').styles,
+  styles = require("@dash-ui/styles").styles,
   options: CreateServerStylesOptions = {}
-): string
+): string;
 ```
 
 | Argument | Type                                                      | Required? | Default               | Description                      |
@@ -1373,7 +1375,7 @@ export function createStyleTagFromCache(
 #### Returns
 
 ```typescript
-string // A <style> tag with css generated from the cache
+string; // A <style> tag with css generated from the cache
 ```
 
 ---
@@ -1390,36 +1392,38 @@ means it will not work with Gatsby, for example.
 #### Example
 
 ```js
-import {styles} from '@dash-ui/styles'
-import {writeStylesFromCache} from '@dash-ui/styles/server'
+import { styles } from "@dash-ui/styles";
+import { writeStylesFromCache } from "@dash-ui/styles/server";
 
 // Inserts a new class for `display: flex;`
-styles.cls`display: flex;`
+styles.cls`display: flex;`;
 
 // Reads from the cache
-writeStylesFromCache('../public/css', styles).then(({filename, css, names}) => {
-  // The filename where the file was written
-  console.log(filename)
-  // "../public/css/ui-115aj09.css"
+writeStylesFromCache("../public/css", styles).then(
+  ({ filename, css, names }) => {
+    // The filename where the file was written
+    console.log(filename);
+    // "../public/css/ui-115aj09.css"
 
-  // A CSS string generated from the cache
-  console.log(css)
-  // ".ui-1ut9bc3{display:flex;}"
+    // A CSS string generated from the cache
+    console.log(css);
+    // ".ui-1ut9bc3{display:flex;}"
 
-  // A list of all of the names that were in the cache
-  console.log(names)
-  // ["1ut9bc3"]
-})
+    // A list of all of the names that were in the cache
+    console.log(names);
+    // ["1ut9bc3"]
+  }
+);
 ```
 
 #### Arguments
 
 ```typescript
 async function writeStylesFromCache(
-  outputPath = '',
-  styles = require('@dash-ui/styles').styles,
-  options?: WriteStylesOptions & {clearCache?: boolean}
-): Promise<WriteServerStylesResult>
+  outputPath = "",
+  styles = require("@dash-ui/styles").styles,
+  options?: WriteStylesOptions & { clearCache?: boolean }
+): Promise<WriteServerStylesResult>;
 ```
 
 | Argument   | Type                                                                                | Required? | Default               | Description                                                                   |
@@ -1436,25 +1440,25 @@ export interface WriteServerStylesResult {
    * The filename of the generated file. This is the `outputPath` joined
    * to the basename of the CSS file that was generated.
    */
-  filename: string
+  filename: string;
   /**
    * The basename of the CSS file that was generated.
    */
-  name: string
+  name: string;
   /**
    * The output path of the CSS file excluding the basename.
    */
-  path: string
+  path: string;
   /**
    * The CSS string that was generated and written to the output
    * file.
    */
-  css: string
+  css: string;
   /**
    * The hash names of all of the styles that were inserted into
    * the generated CSS string.
    */
-  names: string[]
+  names: string[];
 }
 ```
 
@@ -1479,26 +1483,26 @@ This is a safe way to generate style strings in an asynchronous environment.
 #### Example
 
 ```js
-import {styles} from '@dash-ui/styles'
-import {createStylesFromString} from '@dash-ui/styles/server'
+import { styles } from "@dash-ui/styles";
+import { createStylesFromString } from "@dash-ui/styles/server";
 
 // Inserts a new class for `display: flex;`
-styles.cls`display: flex;`
+styles.cls`display: flex;`;
 
 // This function will match names in the style cache against
 // class names found in your HTML string. It will create CSS
 // from the names it finds.
-const {css, names} = createStylesFromString(
+const { css, names } = createStylesFromString(
   '<div class="ui-1ut9bc3"></div>',
   styles
-)
+);
 
 // A CSS string generated from the cache
-console.log(css)
+console.log(css);
 // ".ui-1ut9bc3{display:flex;}"
 
 // A list of all of the names that were in the cache
-console.log(names)
+console.log(names);
 // ["1ut9bc3"]
 ```
 
@@ -1507,8 +1511,8 @@ console.log(names)
 ```typescript
 export function createStylesFromString(
   html: string,
-  styles = require('@dash-ui/styles').styles
-): ServerStylesResult
+  styles = require("@dash-ui/styles").styles
+): ServerStylesResult;
 ```
 
 | Argument | Type                  | Required? | Default               | Description                      |
@@ -1523,11 +1527,11 @@ export interface ServerStylesResult {
   /**
    * A CSS string containing all of the styles that were used
    */
-  css: string
+  css: string;
   /**
    * Hash names of all of the styles used in the generated CSS
    */
-  names: string[]
+  names: string[];
 }
 ```
 
@@ -1543,11 +1547,11 @@ This is a safe way to generate `<style>` tags in an asynchronous environment.
 #### Example
 
 ```js
-import {styles} from '@dash-ui/styles'
-import {createStyleTagFromString} from '@dash-ui/styles/server'
+import { styles } from "@dash-ui/styles";
+import { createStyleTagFromString } from "@dash-ui/styles/server";
 
 // Inserts a new class for `display: flex;`
-styles.cls`display: flex;`
+styles.cls`display: flex;`;
 
 // This function will match names in the style cache against
 // class names found in your HTML string. It will create a <style>
@@ -1555,9 +1559,9 @@ styles.cls`display: flex;`
 const styleTag = createStyleTagFromString(
   '<div class="ui-1ut9bc3"></div>',
   styles
-)
+);
 
-console.log(styleTag)
+console.log(styleTag);
 // "<style data-dash=\"1ut9bc3\" data-cache=\"ui\">.ui-1ut9bc3{display:flex;}</style>"
 ```
 
@@ -1566,8 +1570,8 @@ console.log(styleTag)
 ```typescript
 function createStyleTagFromString(
   html: string,
-  styles = require('@dash-ui/styles').styles
-): string
+  styles = require("@dash-ui/styles").styles
+): string;
 ```
 
 | Argument | Type                  | Required? | Default               | Description                      |
@@ -1578,7 +1582,7 @@ function createStyleTagFromString(
 #### Returns
 
 ```typescript
-string // A <style> tag with css generated from the cache
+string; // A <style> tag with css generated from the cache
 ```
 
 ---
@@ -1594,32 +1598,32 @@ This is a safe way to generate CSS files in an asynchronous environment.
 #### Example
 
 ```js
-import {styles} from '@dash-ui/styles'
-import {writeStylesFromString} from '@dash-ui/styles/server'
+import { styles } from "@dash-ui/styles";
+import { writeStylesFromString } from "@dash-ui/styles/server";
 
 // Inserts a new class for `display: flex;`
-styles.cls`display: flex;`
+styles.cls`display: flex;`;
 
 // This function will match names in the style cache against
 // class names found in your HTML string. It will create a CSS
 // file from the names it finds.
 writeStylesFromString(
   '<div class="ui-1ut9bc3"></div>',
-  '../public/css',
+  "../public/css",
   styles
-).then(({filename, css, names}) => {
+).then(({ filename, css, names }) => {
   // The filename where the file was written
-  console.log(filename)
+  console.log(filename);
   // "../public/css/ui-115aj09.css"
 
   // A CSS string generated from the cache
-  console.log(css)
+  console.log(css);
   // ".ui-1ut9bc3{display:flex;}"
 
   // A list of all of the names that were in the cache
-  console.log(names)
+  console.log(names);
   // ["1ut9bc3"]
-})
+});
 ```
 
 #### Arguments
@@ -1627,10 +1631,10 @@ writeStylesFromString(
 ```typescript
 async function writeStylesFromString(
   html: string,
-  outputPath = '',
-  styles = require('@dash-ui/styles').styles,
+  outputPath = "",
+  styles = require("@dash-ui/styles").styles,
   options?: WriteServerStylesOptions
-): Promise<WriteServerStylesResult>
+): Promise<WriteServerStylesResult>;
 ```
 
 | Argument   | Type                                                    | Required? | Default               | Description                                                                   |
@@ -1648,25 +1652,25 @@ export interface WriteServerStylesResult {
    * The filename of the generated file. This is the `outputPath` joined
    * to the basename of the CSS file that was generated.
    */
-  filename: string
+  filename: string;
   /**
    * The basename of the CSS file that was generated.
    */
-  name: string
+  name: string;
   /**
    * The output path of the CSS file excluding the basename.
    */
-  path: string
+  path: string;
   /**
    * The CSS string that was generated and written to the output
    * file.
    */
-  css: string
+  css: string;
   /**
    * The hash names of all of the styles that were inserted into
    * the generated CSS string.
    */
-  names: string[]
+  names: string[];
 }
 ```
 
@@ -1680,7 +1684,7 @@ own `styles()` instance with [`createStyles()`](#createstyles):
 [Play with this example on **CodeSandbox**](https://codesandbox.io/s/dash-uistyles-strongly-typed-tokens-example-1-8e62y?file=/src/App.tsx)
 
 ```typescript
-import {createStyles} from '@dash-ui/styles'
+import { createStyles } from "@dash-ui/styles";
 
 export const styles = createStyles({
   // createStyles() uses these tokens to create a generic
@@ -1688,18 +1692,18 @@ export const styles = createStyles({
   tokens: {
     color: {
       // var(--color-red)
-      red: '#c17',
+      red: "#c17",
     },
   },
-})
+});
 
-styles.one(({color}) => ({
+styles.one(({ color }) => ({
   // Will autocomplete and pass type checking
   color: color.red,
   // bgRed is not in our `tokens` and this will fail
   // type checking
   backgroundColor: color.bgRed,
-}))
+}));
 ```
 
 You can also strongly type your design tokens using a module declaration:
@@ -1709,22 +1713,22 @@ You can also strongly type your design tokens using a module declaration:
 ```typescript
 const tokens = {
   color: {
-    red: '#c17',
+    red: "#c17",
   },
-}
+};
 
-type AppTokens = typeof tokens
+type AppTokens = typeof tokens;
 
-declare module '@dash-ui/styles' {
+declare module "@dash-ui/styles" {
   export interface DashTokens extends AppTokens {}
 }
 
 // OR alternatively
-declare module '@dash-ui/styles' {
+declare module "@dash-ui/styles" {
   export interface DashTokens {
     color: {
-      red: string
-    }
+      red: string;
+    };
   }
 }
 ```
@@ -1737,7 +1741,7 @@ own `styles()` instance with [`createStyles()`](#createstyles):
 [Play with the example on **CodeSandbox**](https://codesandbox.io/s/dash-uistyles-strongly-typed-themes-example-1-mww3c?file=/src/App.tsx)
 
 ```typescript
-import {createStyles} from '@dash-ui/styles'
+import { createStyles } from "@dash-ui/styles";
 
 export const styles = createStyles({
   // createStyles() uses these themes to create a generic
@@ -1746,31 +1750,31 @@ export const styles = createStyles({
     light: {
       color: {
         // var(--color-bg)
-        bg: '#fafafa',
+        bg: "#fafafa",
       },
     },
     dark: {
       color: {
         // var(--color-bg)
-        bg: '#1a1a1a',
+        bg: "#1a1a1a",
       },
     },
   },
-})
+});
 
-styles.one(({color}) => ({
+styles.one(({ color }) => ({
   // Will autocomplete and pass type checking
   backgroundColor: color.bg,
   // "red" is not in our `themes` and this will fail
   // type checking
   color: color.red,
-}))
+}));
 
 // Likewise, this will pass typechecking
-styles.theme('dark')
+styles.theme("dark");
 
 // This will not
-styles.theme('whoami')
+styles.theme("whoami");
 ```
 
 You can also strongly type your CSS variable themes using a module declaration:
@@ -1782,36 +1786,36 @@ const themes = {
   light: {
     color: {
       // var(--color-bg)
-      bg: '#fafafa',
+      bg: "#fafafa",
     },
   },
   dark: {
     color: {
       // var(--color-bg)
-      bg: '#1a1a1a',
+      bg: "#1a1a1a",
     },
   },
-}
+};
 
-type AppThemes = typeof themes
-type AppTokens = AppThemes['dark'] & AppThemes['light']
+type AppThemes = typeof themes;
+type AppTokens = AppThemes["dark"] & AppThemes["light"];
 
-declare module '@dash-ui/styles' {
+declare module "@dash-ui/styles" {
   export interface DashTokens extends AppTokens {}
   export interface DashThemes extends AppThemes {}
 }
 
 // OR alternatively
-declare module '@dash-ui/styles' {
+declare module "@dash-ui/styles" {
   export interface DashTokens {
     color: {
-      bg: string
-    }
+      bg: string;
+    };
   }
 
   export interface DashThemes {
-    light: DashTokens
-    dark: DashTokens
+    light: DashTokens;
+    dark: DashTokens;
   }
 }
 ```

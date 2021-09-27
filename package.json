@@ -1,11 +1,6 @@
 {
   "name": "@dash-ui/styles",
   "version": "0.8.6",
-  "homepage": "https://github.com/dash-ui/styles#readme",
-  "repository": "github:dash-ui/styles",
-  "bugs": "https://github.com/dash-ui/styles/issues",
-  "author": "Jared Lunde <jared.lunde@gmail.com> (https://jaredLunde.com)",
-  "license": "MIT",
   "description": "A tiny, powerful, framework-agnostic CSS-in-JS library.",
   "keywords": [
     "styles",
@@ -26,11 +21,12 @@
     "css-in-vue",
     "css-in-svelte"
   ],
-  "source": "src/index.ts",
-  "main": "dist/main/index.js",
-  "module": "dist/module/index.js",
-  "unpkg": "dist/umd/dash.js",
-  "types": "types/index.d.ts",
+  "homepage": "https://github.com/dash-ui/styles#readme",
+  "bugs": "https://github.com/dash-ui/styles/issues",
+  "repository": "github:dash-ui/styles",
+  "license": "MIT",
+  "author": "Jared Lunde <jared.lunde@gmail.com> (https://jaredLunde.com)",
+  "sideEffects": false,
   "exports": {
     ".": {
       "source": "./src/index.ts",
@@ -52,13 +48,17 @@
     "./package.json": "./package.json",
     "./": "./"
   },
+  "main": "dist/main/index.js",
+  "unpkg": "dist/umd/dash.js",
+  "module": "dist/module/index.js",
+  "source": "src/index.ts",
+  "types": "types/index.d.ts",
   "files": [
     "/src",
     "/dist",
     "/types",
     "/server"
   ],
-  "sideEffects": false,
   "scripts": {
     "bench": "lundle build -f module -e . && NODE_ENV=production babel-node ./benchmark -x .ts,.js,.json",
     "build": "lundle build",
@@ -66,29 +66,21 @@
     "dev": "lundle build -f module,cjs -w",
     "format": "prettier --write \"{,!(node_modules|dist|coverage)/**/}*.{ts,js,md,yml,json}\"",
     "lint": "eslint . --ext .ts",
-    "prerelease": "npm run validate && npm run build",
-    "release": "git add . && standard-version -a",
     "test": "jest",
     "validate": "lundle check-types && lundle build -f module && npm run lint && jest --coverage"
-  },
-  "husky": {
-    "hooks": {
-      "pre-commit": "lundle check-types && lint-staged",
-      "commit-msg": "commitlint -E HUSKY_GIT_PARAMS"
-    }
-  },
-  "lint-staged": {
-    "**/*.{ts,js}": [
-      "eslint",
-      "prettier --write"
-    ],
-    "**/*.{md,yml,json}": [
-      "prettier --write"
-    ]
   },
   "commitlint": {
     "extends": [
       "@commitlint/config-conventional"
+    ]
+  },
+  "lint-staged": {
+    "**/*.{ts,js}": [
+      "eslint --fix",
+      "prettier --write"
+    ],
+    "**/*.{md,yml,json}": [
+      "prettier --write"
     ]
   },
   "config": {
@@ -114,6 +106,12 @@
     "*.config.js"
   ],
   "jest": {
+    "collectCoverageFrom": [
+      "**/src/**/*.ts"
+    ],
+    "globals": {
+      "__DEV__": true
+    },
     "moduleDirectories": [
       "node_modules",
       "src",
@@ -123,30 +121,31 @@
     "moduleNameMapper": {
       "@dash-ui/styles": "<rootDir>/src/index.ts"
     },
+    "setupFilesAfterEnv": [
+      "./test/setup.ts"
+    ],
+    "snapshotResolver": "./test/resolve-snapshot.js",
     "testMatch": [
       "<rootDir>/{server/src,src}/**/?(*.)test.ts"
     ],
-    "collectCoverageFrom": [
-      "**/src/**/*.ts"
-    ],
-    "setupFilesAfterEnv": [
-      "./test/setup.js"
-    ],
-    "snapshotResolver": "./test/resolve-snapshot.js",
-    "globals": {
-      "__DEV__": true
+    "transform": {
+      "^.+\\.(t|j)s?$": [
+        "@swc-node/jest"
+      ]
     }
   },
-  "prettier": {
-    "semi": false,
-    "singleQuote": true,
-    "bracketSpacing": false
+  "dependencies": {
+    "@dash-ui/stylis": "^1.0.5",
+    "@dash-ui/unitless": "^2.0.0",
+    "csstype": "^3.0.2"
   },
   "devDependencies": {
     "@babel/node": "^7.10.4",
     "@commitlint/cli": "^8.3.5",
     "@commitlint/config-conventional": "^8.3.4",
     "@essentials/benchmark": "^1.0.7",
+    "@swc-node/core": "^1.6.0",
+    "@swc-node/jest": "^1.3.2",
     "@types/crc": "^3.4.0",
     "@types/jest": "latest",
     "babel-jest": "latest",
@@ -154,19 +153,12 @@
     "cz-conventional-changelog": "3.2.0",
     "emotion": "^10.0.27",
     "eslint": "latest",
-    "eslint-config-lunde": "latest",
-    "husky": "latest",
+    "eslint-config-lunde": "^0.5.0",
+    "husky": "^7.0.2",
     "jest": "latest",
     "lint-staged": "latest",
     "lundle": "^0.4.9",
     "prettier": "latest",
-    "standard-version": "^8.0.2",
-    "typescript": "latest"
-  },
-  "dependencies": {
-    "@dash-ui/stylis": "^1.0.5",
-    "@dash-ui/unitless": "^2.0.0",
-    "csstype": "^3.0.2"
-  },
-  "peerDependencies": {}
+    "typescript": "^4.4.3"
+  }
 }
