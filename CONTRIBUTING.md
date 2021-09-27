@@ -11,9 +11,9 @@ To contribute to this project, first:
    git clone https://github.com/[your-username]/styles.git
    # Install the repo using Yarn
    cd styles
-   yarn install
+   pnpm install
    # Start dev mode
-   yarn dev
+   pnpm dev
    ```
 
 ## Before you contribute
@@ -29,7 +29,7 @@ Before your PR will be considered I will look for:
 
 - **Documentation** Please submit updates to the docs when public-facing APIs are changed.
 - **Tests** Your PR will not be accepted if it doesn't have well-designed tests. Additionally, make sure
-  that you run `yarn validate` before you submit your PR and make sure your PR passes the linting rules,
+  that you run `pnpm validate` before you submit your PR and make sure your PR passes the linting rules,
   type checking, and tests that already exist.
 - **Types** Your types should be as strong as possible.
 - **Comments** If your PR implements non-obvious logic, I fully expect you to explain the rationale in
@@ -62,22 +62,13 @@ Formats all of the applicable source files with prettier
 
 Runs `eslint` on the package source
 
-#### `prerelease`
-
-Runs before the package is published. This calls `validate` and `build` scripts.
-
-#### `release`
-
-Starts a release using `standard-version`. This must be run before `npm publish`.
-
 #### `test`
 
 Tests the package with `jest`
 
 #### `validate`
 
-Runs `check-types`, `lint`, and `test` scripts. This is used in CI and
-in `prerelease`.
+Runs `check-types`, `lint`, and `test` scripts.
 
 ---
 
@@ -85,7 +76,7 @@ in `prerelease`.
 
 #### `pre-commit`
 
-Runs `lint-staged` and the `build-types` script
+Runs `lint-staged` script
 
 #### `commit-msg`
 
