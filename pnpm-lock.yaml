@@ -24,6 +24,7 @@ specifiers:
   lint-staged: latest
   lundle: ^0.4.9
   prettier: latest
+  type-fest: ^2.3.4
   typescript: ^4.4.3
 
 dependencies:
@@ -52,6 +53,7 @@ devDependencies:
   lint-staged: 11.1.2
   lundle: 0.4.11
   prettier: 2.4.1
+  type-fest: 2.3.4
   typescript: 4.4.3
 
 packages:
@@ -7703,6 +7705,11 @@ packages:
   /type-fest/0.8.1:
     resolution: {integrity: sha512-4dbzIzqvjtgiM5rw1k5rEHtBANKmdudhGyBEajN01fEyhaAIhsoKNy6y7+IN93IfpFtwY9iqi7kD+xwKhQsNJA==}
     engines: {node: '>=8'}
+    dev: true
+
+  /type-fest/2.3.4:
+    resolution: {integrity: sha512-2UdQc7cx8F4Ky81Xj7NYQKPhZVtDFbtorrkairIW66rW7xQj5msAhioXa04HqEdP4MD4K2G6QAF7Zyiw/Hju1Q==}
+    engines: {node: '>=12.20'}
     dev: true
 
   /typedarray-to-buffer/3.1.5:

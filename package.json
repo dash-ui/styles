@@ -162,6 +162,7 @@
     "lint-staged": "latest",
     "lundle": "^0.4.9",
     "prettier": "latest",
+    "type-fest": "^2.3.4",
     "typescript": "^4.4.3"
   },
   "release": {
