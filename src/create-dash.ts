@@ -80,6 +80,22 @@ export function createDash(options: CreateDashOptions = {}): Dash {
     });
   }
 
+  let insert: Dash["insert"] = function (key, selector, styles, styleSheet) {
+    if (inserted.has(key)) return;
+    inserted.add(key);
+    Sheet.x = styleSheet === void 0 ? sheet : styleSheet;
+    stylis(selector, styles);
+  };
+
+  if (typeof document === "undefined") {
+    insert = function (key, selector, styles, styleSheet) {
+      if (inserted.has(key)) return;
+      inserted.add(key);
+      Sheet.x = styleSheet === void 0 ? sheet : styleSheet;
+      cache.set(key, stylis(selector, styles));
+    };
+  }
+
   return {
     key,
     sheet,
@@ -105,16 +121,7 @@ export function createDash(options: CreateDashOptions = {}): Dash {
       keys: sheetsCache.keys.bind(sheetsCache),
     },
     stylis,
-    insert(key, selector, styles, styleSheet) {
-      if (inserted.has(key)) return;
-      inserted.add(key);
-      Sheet.x = styleSheet || sheet;
-      if (typeof document !== "undefined") {
-        stylis(selector, styles);
-      } else {
-        cache.set(key, stylis(selector, styles));
-      }
-    },
+    insert,
     inserted,
     cache,
   };
@@ -429,7 +436,7 @@ function ruleSheet(
   }
   // selector
   else if (context === 2) {
-    if (!ns) return content + RULE_DELIMITER;
+    if (ns === 0) return content + RULE_DELIMITER;
   }
   // at-rule
   else if (context === 3) {
@@ -439,7 +446,7 @@ function ruleSheet(
       return "";
     } else {
       /* istanbul ignore next */
-      return content + (!at ? RULE_DELIMITER : "");
+      return content + (at === 0 ? RULE_DELIMITER : "");
     }
   } else if (context === -2) {
     content.split(RULE_NEEDLE).forEach((block: string) => {

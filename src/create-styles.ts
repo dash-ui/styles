@@ -1,3 +1,4 @@
+import type { JsonValue } from "type-fest";
 import unitless from "@dash-ui/unitless";
 import type {
   HtmlAttributes as CSSHTMLAttributes,
@@ -19,11 +20,11 @@ export function createStyles<
   V extends DashTokens = DashTokens,
   T extends string = DashThemeNames
 >(options: CreateStylesOptions<V, T> = {}): Styles<V, T> {
-  const dash = options.dash || createDash();
+  const dash = options.dash ?? createDash();
   const { key, insert, sheets } = dash;
   const themes = {} as Record<T, V>;
   const tokens = {} as V;
-  const hash = safeHash(key, options.hash || fnv1aHash);
+  const hash = safeHash(key, options.hash ?? fnv1aHash);
 
   let label: (args: any[]) => string;
   // explicit here on purpose so it's not in every test
@@ -32,7 +33,7 @@ export function createStyles<
     typeof process !== "undefined" &&
     process.env.NODE_ENV === "development"
   ) {
-    label = (args) => {
+    label = function (args) {
       // add helpful labels to the name in development
       return [...args]
         .reduce((curr, arg) => {
@@ -52,10 +53,10 @@ export function createStyles<
     };
   }
 
-  const styles: Styles<V, T> = <N extends string>(
+  const styles: Styles<V, T> = function <N extends string>(
     styleMap: StyleMap<N, V>
-  ): Style<N, V> => {
-    const compiledStyleMap: StyleMapMemo<string, V> = new Map();
+  ): Style<N, V> {
+    const compiledStyleMap: StyleMapMemo<string> = new Map();
     let styleKey: keyof typeof styleMap;
     /* istanbul ignore next */
     for (styleKey in styleMap)
@@ -63,24 +64,24 @@ export function createStyles<
 
     // style('text', {})
     function style() {
-      const css = style.css.apply(null, arguments as any);
-      if (!css) return "";
-      let name = hash(css);
+      // eslint-disable-next-line prefer-spread
+      const css_ = css.apply(null, arguments as any);
+      if (!css_) return "";
+      let name = hash(css_);
       /* istanbul ignore next */
       if (label) name += label(arguments as any);
       const className = key + "-" + name;
-      insert(name, "." + className, css);
+      insert(name, "." + className, css_);
       return className;
     }
 
-    style.styles = styleMap;
-    style.css = function () {
+    function css() {
       const numArgs = arguments.length;
-      let nextStyles = compiledStyleMap.get("default") || "";
+      let nextStyles = compiledStyleMap.get("default") ?? "";
 
       if (numArgs === 1 && typeof arguments[0] === "string") {
-        nextStyles += compiledStyleMap.get(arguments[0]) || "";
-      } else if (numArgs) {
+        nextStyles += compiledStyleMap.get(arguments[0]) ?? "";
+      } else if (numArgs > 0) {
         let i = 0;
         let arg;
 
@@ -88,17 +89,19 @@ export function createStyles<
           arg = arguments[i];
 
           if (typeof arg === "string") {
-            nextStyles += compiledStyleMap.get(arg) || "";
+            nextStyles += compiledStyleMap.get(arg) ?? "";
           } else if (typeof arg === "object") {
             for (const key in arg)
-              if (arg[key]) nextStyles += compiledStyleMap.get(key) || "";
+              if (arg[key]) nextStyles += compiledStyleMap.get(key) ?? "";
           }
         }
       }
 
       return nextStyles;
-    };
+    }
 
+    style.styles = styleMap;
+    style.css = css;
     return style;
   };
 
@@ -106,13 +109,14 @@ export function createStyles<
     const one = compileStyles<V>(compileLiterals(arguments), tokens);
     const name = hash(one);
     const className = key + "-" + name;
-    const callback: StylesOne = (createClassName) => {
+    const callback: StylesOne = function (createClassName) {
       if (!createClassName && createClassName !== void 0) return "";
       insert(name, "." + className, one);
       return className;
     };
-    callback.css = (createCss) =>
-      !createCss && createCss !== void 0 ? "" : one;
+    callback.css = function (createCss) {
+      return !createCss && createCss !== void 0 ? "" : one;
+    };
     return callback;
   };
 
@@ -130,26 +134,28 @@ export function createStyles<
     lazyFn: (value: Value) => string | StyleCallback<V> | StyleObject
   ) {
     const cache = new Map<string | Value, string>();
-    const css = (value?: Value) => {
-      if (value === undefined) return "";
+    function css(value?: Value) {
+      if (value === void 0) return "";
       const key = typeof value === "object" ? JSON.stringify(value) : value;
       let css = cache.get(key);
 
-      if (!css) {
+      if (css === void 0) {
         css = compileStyles<V>(lazyFn(value), tokens);
         cache.set(key, css);
       }
 
       return css;
-    };
+    }
 
-    const lazyStyle: StylesLazy<Value> = (value?: Value) => cls(css(value));
+    const lazyStyle: StylesLazy<Value> = function (value?: Value) {
+      return cls(css(value));
+    };
     lazyStyle.css = css;
     return lazyStyle;
   };
 
   styles.join = function () {
-    const css = Array.prototype.slice.call(arguments).join("");
+    const css = "".concat(...Array.prototype.slice.call(arguments));
     const name = hash(css);
     const className = key + "-" + name;
     insert(name, "." + className, css);
@@ -177,19 +183,19 @@ export function createStyles<
     if (!css) return noop;
     const name = hash(css);
     insert(name, "", css, sheets.add(name));
-    return () => {
+    return function () {
       !sheets.delete(name) && dash.inserted.delete(name);
     };
   };
 
-  styles.insertTokens = (nextTokens, selector = ":root") => {
+  styles.insertTokens = function (nextTokens, selector = ":root") {
     const { css, vars } = serializeTokens(nextTokens, options.mangleTokens);
     if (!css) return noop;
     mergeTokens<V>(tokens, vars);
     return styles.insertGlobal(selector + "{" + css + "}");
   };
 
-  styles.insertThemes = (nextThemes) => {
+  styles.insertThemes = function (nextThemes) {
     const flush: (() => void)[] = [];
 
     for (const name in nextThemes) {
@@ -208,10 +214,14 @@ export function createStyles<
       );
     }
 
-    return () => flush.forEach((e) => e());
+    return function () {
+      flush.forEach((e) => e());
+    };
   };
 
-  styles.theme = (theme) => key + "-" + theme + "-theme";
+  styles.theme = function (theme) {
+    return key + "-" + theme + "-theme";
+  };
   styles.dash = dash;
   styles.hash = hash;
   styles.tokens = emptyObj;
@@ -221,8 +231,8 @@ export function createStyles<
     },
     configurable: false,
   });
-  styles.insertTokens(options.tokens || emptyObj);
-  styles.insertThemes(options.themes || emptyObj);
+  styles.insertTokens(options.tokens ?? emptyObj);
+  styles.insertThemes(options.themes ?? emptyObj);
   return styles;
 }
 
@@ -617,10 +627,7 @@ export type StyleMap<N extends string, V extends DashTokens = DashTokens> = {
   [Name in N | "default"]?: StyleValue<V>;
 };
 
-type StyleMapMemo<N extends string, V extends DashTokens = DashTokens> = Map<
-  N | "default",
-  string
->;
+type StyleMapMemo<N extends string> = Map<N | "default", string>;
 
 export type StyleArguments<N extends string> = (
   | N
@@ -669,14 +676,7 @@ type DeepPartial<T> = T extends (...args: any[]) => any
   ? { [P in keyof T]?: DeepPartial<T[P]> }
   : T;
 
-export type LazyValue =
-  | string
-  | number
-  | null
-  | undefined
-  | boolean
-  | (string | number | null | undefined | boolean | LazyValue)[]
-  | { [key: string]: LazyValue };
+export type LazyValue = JsonValue;
 
 /**
  * A function that inserts indeterminate styles based on the value
@@ -813,7 +813,7 @@ function mergeTokens<V extends DashTokens = DashTokens>(
   for (const key in source) {
     const value = source[key];
     target[key] =
-      typeof value === "object" ? mergeTokens(target[key] || {}, value) : value;
+      typeof value === "object" ? mergeTokens(target[key] ?? {}, value) : value;
   }
 
   return target as V;
