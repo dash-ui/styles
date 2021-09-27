@@ -76,7 +76,7 @@
   },
   "lint-staged": {
     "**/*.{ts,js}": [
-      "eslint --fix",
+      "eslint --ext .ts,.js --fix",
       "prettier --write"
     ],
     "**/*.{md,yml,json}": [
@@ -139,7 +139,7 @@
   "dependencies": {
     "@dash-ui/stylis": "^1.0.5",
     "@dash-ui/unitless": "^2.0.0",
-    "csstype": "^3.0.2"
+    "csstype": "^3.0.9"
   },
   "devDependencies": {
     "@babel/node": "^7.10.4",

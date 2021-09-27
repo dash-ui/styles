@@ -1,4 +1,3 @@
-import type { JsonValue } from "type-fest";
 import unitless from "@dash-ui/unitless";
 import type {
   HtmlAttributes as CSSHTMLAttributes,
@@ -6,6 +5,7 @@ import type {
   Pseudos as CSSPseudos,
   SvgAttributes as CSSSvgAttributes,
 } from "csstype";
+import type { JsonValue } from "type-fest";
 import { createDash } from "./create-dash";
 import type { Dash } from "./create-dash";
 import { hash as fnv1aHash, noop, safeHash } from "./utils";

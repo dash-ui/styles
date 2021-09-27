@@ -14,7 +14,7 @@ specifiers:
   '@types/crc': ^3.4.0
   '@types/jest': latest
   crc: ^3.8.0
-  csstype: ^3.0.2
+  csstype: ^3.0.9
   cz-conventional-changelog: 3.2.0
   emotion: ^10.0.27
   eslint: latest
