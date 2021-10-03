@@ -52,7 +52,7 @@ jobs:
         if: always()
         uses: codecov/codecov-action@v2
         with:
-          files: coverage/clover.xml
+          directory: coverage
           verbose: false
           fail_ci_if_error: false
       - name: Build

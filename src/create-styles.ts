@@ -148,7 +148,12 @@ export function createStyles<
     }
 
     const lazyStyle: StylesLazy<Value> = function (value?: Value) {
-      return cls(css(value));
+      const css_ = css(value);
+      if (!css_) return "";
+      const name = hash(css_);
+      const className = key + "-" + name;
+      insert(name, "." + className, css_);
+      return className;
     };
     lazyStyle.css = css;
     return lazyStyle;
