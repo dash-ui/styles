@@ -1,6 +1,6 @@
 {
   "name": "@dash-ui/styles",
-  "version": "0.8.8",
+  "version": "0.8.9",
   "description": "A tiny, powerful, framework-agnostic CSS-in-JS library.",
   "keywords": [
     "styles",

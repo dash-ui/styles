@@ -1,3 +1,10 @@
+## [0.8.9](https://github.com/dash-ui/styles/compare/v0.8.8...v0.8.9) (2021-10-03)
+
+
+### Performance Improvements
+
+* improve lazy evaluation performance ([31a7fa9](https://github.com/dash-ui/styles/commit/31a7fa9a3fbbe3650f2db0dfa1856a18888c681e))
+
 ## [0.8.8](https://github.com/dash-ui/styles/compare/v0.8.7...v0.8.8) (2021-09-27)
 
 
