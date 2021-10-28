@@ -24,7 +24,6 @@ specifiers:
   lint-staged: latest
   lundle: ^0.4.13
   prettier: latest
-  ts-toolbelt: ^9.6.0
   type-fest: ^2.3.4
   typescript: ^4.4.3
 
@@ -32,7 +31,6 @@ dependencies:
   '@dash-ui/stylis': 1.0.5
   '@dash-ui/unitless': 2.0.0
   csstype: 3.0.9
-  ts-toolbelt: 9.6.0
 
 devDependencies:
   '@babel/node': 7.15.4
@@ -7692,10 +7690,6 @@ packages:
     resolution: {integrity: sha512-c1PTsA3tYrIsLGkJkzHF+w9F2EyxfXGo4UyJc4pFL++FMjnq0HJS69T3M7d//gKrFKwy429bouPescbjecU+Zw==}
     engines: {node: '>=8'}
     dev: true
-
-  /ts-toolbelt/9.6.0:
-    resolution: {integrity: sha512-nsZd8ZeNUzukXPlJmTBwUAuABDe/9qtVDelJeT/qW0ow3ZS3BsQJtNkan1802aM9Uf68/Y8ljw86Hu0h5IUW3w==}
-    dev: false
 
   /tsconfig-paths/3.11.0:
     resolution: {integrity: sha512-7ecdYDnIdmv639mmDwslG6KQg1Z9STTz1j7Gcz0xa+nshh/gKDAHcPxRbWOsA3SPp0tXP2leTcY9Kw+NAkfZzA==}
