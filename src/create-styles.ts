@@ -106,7 +106,7 @@ export function createStyles<
   };
 
   styles.one = function () {
-    const one = compileStyles<TokensUnion<Tokens, Themes>>(
+    const one = compileStyles<Tokens, Themes>(
       compileLiterals(arguments),
       tokens
     );
@@ -174,7 +174,7 @@ export function createStyles<
   };
 
   styles.keyframes = function () {
-    const css = compileStyles<TokensUnion<Tokens, Themes>>(
+    const css = compileStyles<Tokens, Themes>(
       compileLiterals(arguments),
       tokens
     );
@@ -192,7 +192,7 @@ export function createStyles<
   };
 
   styles.insertGlobal = function () {
-    const css = compileStyles<TokensUnion<Tokens, Themes>>(
+    const css = compileStyles<Tokens, Themes>(
       compileLiterals(arguments),
       tokens
     );
@@ -208,7 +208,7 @@ export function createStyles<
   styles.insertTokens = function (nextTokens, selector = ":root") {
     const { css, vars } = serializeTokens(nextTokens, options.mangleTokens);
     if (!css) return noop;
-    mergeTokens<TokensUnion<Tokens, Themes>>(tokens, vars);
+    mergeTokens<Tokens, Themes>(tokens, vars);
     return styles.insertGlobal(selector + "{" + css + "}");
   };
 
@@ -756,7 +756,7 @@ export function compileStyles<
   Themes extends DashThemes = DashThemes
 >(
   styles: StyleValue<Tokens, Themes> | Falsy,
-  tokens: TokensUnion<Tokens, Themes> = {} as TokensUnion<Tokens, Themes>
+  tokens: TokensUnion<Tokens, Themes>
 ): string {
   const value = typeof styles === "function" ? styles(tokens) : styles;
   return typeof value === "object" && value !== null
@@ -853,17 +853,17 @@ type SerializedTokens = {
   readonly css: string;
 };
 
-function mergeTokens<V extends DashTokens = DashTokens>(
-  target: Record<string, any>,
-  source: Record<string, any>
-): V {
+function mergeTokens<
+  Tokens extends DashTokens = DashTokens,
+  Themes extends DashThemes = DashThemes
+>(target: Record<string, any>, source: Record<string, any>) {
   for (const key in source) {
     const value = source[key];
     target[key] =
       typeof value === "object" ? mergeTokens(target[key] ?? {}, value) : value;
   }
 
-  return target as V;
+  return target as TokensUnion<Tokens, Themes>;
 }
 
 export type TokensUnion<
