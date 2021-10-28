@@ -5,7 +5,6 @@ import type {
   Pseudos as CSSPseudos,
   SvgAttributes as CSSSvgAttributes,
 } from "csstype";
-import type { O } from "ts-toolbelt";
 import type { JsonValue, ValueOf } from "type-fest";
 import { createDash } from "./create-dash";
 import type { Dash } from "./create-dash";
