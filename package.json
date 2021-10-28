@@ -139,7 +139,8 @@
   "dependencies": {
     "@dash-ui/stylis": "^1.0.5",
     "@dash-ui/unitless": "^2.0.0",
-    "csstype": "^3.0.9"
+    "csstype": "^3.0.9",
+    "ts-toolbelt": "^9.6.0"
   },
   "devDependencies": {
     "@babel/node": "^7.10.4",
@@ -155,7 +156,7 @@
     "crc": "^3.8.0",
     "cz-conventional-changelog": "3.2.0",
     "emotion": "^10.0.27",
-    "eslint": "latest",
+    "eslint": "^7.32.0",
     "eslint-config-lunde": "^0.5.0",
     "husky": "^7.0.2",
     "jest": "^27.2.2",
