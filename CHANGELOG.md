@@ -1,3 +1,32 @@
+# [1.0.0-alpha.1](https://github.com/dash-ui/styles/compare/v0.8.9...v1.0.0-alpha.1) (2021-10-28)
+
+
+### Bug Fixes
+
+* add prerelease properties to semantic release branches ([7e6e567](https://github.com/dash-ui/styles/commit/7e6e567397ebab931d407de8d5e14001fc171104))
+
+
+### chore
+
+* move next to alpha ([#18](https://github.com/dash-ui/styles/issues/18)) ([497f2eb](https://github.com/dash-ui/styles/commit/497f2eba676660af441931768e235491d6790497)), closes [#17](https://github.com/dash-ui/styles/issues/17) [#17](https://github.com/dash-ui/styles/issues/17)
+
+
+### Code Refactoring
+
+* add a variants property and make styles an object ([0348d95](https://github.com/dash-ui/styles/commit/0348d95b9dabd7c84df1919a8fc3e39669dc6df2))
+
+
+### BREAKING CHANGES
+
+* createStyles() no longer returns a function, it returns an object.
+* This will break things that depend on the previous type definitions
+
+* chore(release): 1.0.0
+
+# [1.0.0](https://github.com/dash-ui/styles/compare/v0.8.9...v1.0.0) (2021-10-28)
+
+### Code Refactoring
+
 # [1.0.0](https://github.com/dash-ui/styles/compare/v0.8.9...v1.0.0) (2021-10-28)
 
 
