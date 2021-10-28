@@ -1,6 +1,30 @@
 # [1.0.0](https://github.com/dash-ui/styles/compare/v0.8.9...v1.0.0) (2021-10-28)
 
 
+### chore
+
+* move next to alpha ([#18](https://github.com/dash-ui/styles/issues/18)) ([497f2eb](https://github.com/dash-ui/styles/commit/497f2eba676660af441931768e235491d6790497)), closes [#17](https://github.com/dash-ui/styles/issues/17) [#17](https://github.com/dash-ui/styles/issues/17)
+
+
+### Code Refactoring
+
+* add a variants property and make styles an object ([0348d95](https://github.com/dash-ui/styles/commit/0348d95b9dabd7c84df1919a8fc3e39669dc6df2))
+
+
+### BREAKING CHANGES
+
+* createStyles() no longer returns a function, it returns an object.
+* This will break things that depend on the previous type definitions
+
+* chore(release): 1.0.0
+
+# [1.0.0](https://github.com/dash-ui/styles/compare/v0.8.9...v1.0.0) (2021-10-28)
+
+### Code Refactoring
+
+# [1.0.0](https://github.com/dash-ui/styles/compare/v0.8.9...v1.0.0) (2021-10-28)
+
+
 ### Code Refactoring
 
 * improve typing ([#17](https://github.com/dash-ui/styles/issues/17)) ([9b4f1b1](https://github.com/dash-ui/styles/commit/9b4f1b1d98ec40c815ac1b4a5e185dee2cd14cb6))
