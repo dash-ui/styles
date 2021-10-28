@@ -91,43 +91,43 @@ export interface CreateStylesOptions<Tokens extends DashTokens = DashTokens, The
     readonly hash?: typeof fnv1aHash;
 }
 /**
- * `styles()` is a function for composing styles in a
- * deterministic way. It returns a function which when called will insert
- * your styles into the DOM and create a unique class name.
- *
- * It also has several utility methods attached to it
- * which accomplish everything you need to scale an application
+ * Utility methods that accomplish everything you need to scale an application
  * using CSS-in-JS.
- *
- * @param styleMap - A style name/value mapping
- * @example
- * const bg = styles({
- *   // Define styles using an object
- *   blue: {
- *     backgroundColor: 'blue'
- *   },
- *   // Access stored CSS tokens when a callback is provided as
- *   // the value
- *   red: ({colors}) => `
- *     background-color: ${colors.red};
- *   `,
- *   // Define styles using a string
- *   green: `
- *     background-color: green;
- *   `
- * })
- *
- * // This component will have a "red" background
- * const Component = () => <div className={bg('blue', 'red')}/>
- *
- * // This component will have a "blue" background
- * const Component = () => <div className={bg('red', 'blue')}/>
- *
- * // This component will have a "green" background
- * const Component = () => <div className={bg({red: true, green: true})}/>
  */
 export interface Styles<Tokens extends DashTokens = DashTokens, Themes extends DashThemes = DashThemes> {
-    <Variants extends string>(styleMap: StyleMap<Variants, Tokens, Themes>): Style<Variants, Tokens, Themes>;
+    /**
+     * `styles.variants()` is a function for composing styles in a
+     * deterministic way. It returns a function which when called will insert
+     * your styles into the DOM and create a unique class name.
+     *
+     * @param styleMap - A style name/value mapping
+     * @example
+     * const bg = styles({
+     *   // Define styles using an object
+     *   blue: {
+     *     backgroundColor: 'blue'
+     *   },
+     *   // Access stored CSS tokens when a callback is provided as
+     *   // the value
+     *   red: ({colors}) => `
+     *     background-color: ${colors.red};
+     *   `,
+     *   // Define styles using a string
+     *   green: `
+     *     background-color: green;
+     *   `
+     * })
+     *
+     * // This component will have a "red" background
+     * const Component = () => <div className={bg('blue', 'red')}/>
+     *
+     * // This component will have a "blue" background
+     * const Component = () => <div className={bg('red', 'blue')}/>
+     *
+     * // This component will have a "green" background
+     * const Component = () => <div className={bg({red: true, green: true})}/>
+     */
+    variants<Variants extends string>(styleMap: StyleMap<Variants, Tokens, Themes>): Style<Variants, Tokens, Themes>;
     /**
      * A function that accepts a tagged template literal, style object, or style callback,
      * and returns a function. That function inserts the style into a `<style>` tag and
@@ -306,7 +306,7 @@ export interface Styles<Tokens extends DashTokens = DashTokens, Themes extends D
      * The instance of underlying the Dash cache used by this instance. This was
      * automatically created by `createDash()` when `createStyles()` was called.
      * Dash controls the caching, style sheets, auto-prefixing, and DOM insertion
-     * that happens in the `styles()` instance.
+     * that happens in the `styles` instance.
      */
     dash: Dash;
 }

@@ -53,204 +53,206 @@ export function createStyles<
     };
   }
 
-  const styles: Styles<Tokens, Themes> = function <Variants extends string>(
-    styleMap: StyleMap<Variants, Tokens, Themes>
-  ): Style<Variants, Tokens, Themes> {
-    const compiledStyleMap: StyleMapMemo<string> = new Map();
-    let styleKey: keyof typeof styleMap;
-    /* istanbul ignore next */
-    for (styleKey in styleMap)
-      compiledStyleMap.set(styleKey, compileStyles(styleMap[styleKey], tokens));
-
-    // style('text', {})
-    function style() {
-      // eslint-disable-next-line prefer-spread
-      const css_ = css.apply(null, arguments as any);
-      if (!css_) return "";
-      let name = hash(css_);
+  const styles: Styles<Tokens, Themes> = {
+    variants<Variants extends string>(
+      styleMap: StyleMap<Variants, Tokens, Themes>
+    ): Style<Variants, Tokens, Themes> {
+      const compiledStyleMap: StyleMapMemo<string> = new Map();
+      let styleKey: keyof typeof styleMap;
       /* istanbul ignore next */
-      if (label) name += label(arguments as any);
-      const className = key + "-" + name;
-      insert(name, "." + className, css_);
-      return className;
-    }
+      for (styleKey in styleMap)
+        compiledStyleMap.set(
+          styleKey,
+          compileStyles(styleMap[styleKey], tokens)
+        );
 
-    function css() {
-      const numArgs = arguments.length;
-      let nextStyles = compiledStyleMap.get("default") ?? "";
+      // style('text', {})
+      function style() {
+        // eslint-disable-next-line prefer-spread
+        const css_ = css.apply(null, arguments as any);
+        if (!css_) return "";
+        let name = hash(css_);
+        /* istanbul ignore next */
+        if (label) name += label(arguments as any);
+        const className = key + "-" + name;
+        insert(name, "." + className, css_);
+        return className;
+      }
 
-      if (numArgs === 1 && typeof arguments[0] === "string") {
-        nextStyles += compiledStyleMap.get(arguments[0]) ?? "";
-      } else if (numArgs > 0) {
-        let i = 0;
-        let arg;
+      function css() {
+        const numArgs = arguments.length;
+        let nextStyles = compiledStyleMap.get("default") ?? "";
 
-        for (; i < numArgs; i++) {
-          arg = arguments[i];
+        if (numArgs === 1 && typeof arguments[0] === "string") {
+          nextStyles += compiledStyleMap.get(arguments[0]) ?? "";
+        } else if (numArgs > 0) {
+          let i = 0;
+          let arg;
 
-          if (typeof arg === "string") {
-            nextStyles += compiledStyleMap.get(arg) ?? "";
-          } else if (typeof arg === "object") {
-            for (const key in arg)
-              if (arg[key]) nextStyles += compiledStyleMap.get(key) ?? "";
+          for (; i < numArgs; i++) {
+            arg = arguments[i];
+
+            if (typeof arg === "string") {
+              nextStyles += compiledStyleMap.get(arg) ?? "";
+            } else if (typeof arg === "object") {
+              for (const key in arg)
+                if (arg[key]) nextStyles += compiledStyleMap.get(key) ?? "";
+            }
           }
         }
+
+        return nextStyles;
       }
 
-      return nextStyles;
-    }
-
-    style.styles = styleMap;
-    style.css = css;
-    return style;
-  };
-
-  styles.one = function () {
-    const one = compileStyles<Tokens, Themes>(
-      compileLiterals(arguments),
-      tokens
-    );
-    const name = hash(one);
-    const className = key + "-" + name;
-    const callback: StylesOne = function (createClassName) {
-      if (!createClassName && createClassName !== void 0) return "";
-      insert(name, "." + className, one);
-      return className;
-    };
-    callback.css = function (createCss) {
-      return !createCss && createCss !== void 0 ? "" : one;
-    };
-    return callback;
-  };
-
-  styles.cls = function () {
-    const css = compileStyles<Tokens, Themes>(
-      compileLiterals(arguments),
-      tokens
-    );
-    const name = hash(css);
-    const className = key + "-" + name;
-    insert(name, "." + className, css);
-    return className;
-  };
-
-  styles.lazy = function <Value extends LazyValue>(
-    lazyFn: (
-      value: Value
-    ) => string | StyleCallback<Tokens, Themes> | StyleObject
-  ) {
-    const cache = new Map<string | Value, string>();
-    function css(value?: Value) {
-      if (value === void 0) return "";
-      const key = typeof value === "object" ? JSON.stringify(value) : value;
-      let css = cache.get(key);
-
-      if (css === void 0) {
-        css = compileStyles<Tokens, Themes>(lazyFn(value), tokens);
-        cache.set(key, css);
-      }
-
-      return css;
-    }
-
-    const lazyStyle: StylesLazy<Value> = function (value?: Value) {
-      const css_ = css(value);
-      if (!css_) return "";
-      const name = hash(css_);
-      const className = key + "-" + name;
-      insert(name, "." + className, css_);
-      return className;
-    };
-    lazyStyle.css = css;
-    return lazyStyle;
-  };
-
-  styles.join = function () {
-    const css = "".concat(...Array.prototype.slice.call(arguments));
-    const name = hash(css);
-    const className = key + "-" + name;
-    insert(name, "." + className, css);
-    return className;
-  };
-
-  styles.keyframes = function () {
-    const css = compileStyles<Tokens, Themes>(
-      compileLiterals(arguments),
-      tokens
-    );
-    const name = hash(css);
-    const animationName = key + "-" + name;
-    // Adding to a cached sheet here rather than the default sheet because
-    // we want this to persist between `clearCache()` calls.
-    insert(
-      name,
-      "",
-      "@keyframes " + animationName + "{" + css + "}",
-      sheets.add(name)
-    );
-    return animationName;
-  };
-
-  styles.insertGlobal = function () {
-    const css = compileStyles<Tokens, Themes>(
-      compileLiterals(arguments),
-      tokens
-    );
-
-    if (!css) return noop;
-    const name = hash(css);
-    insert(name, "", css, sheets.add(name));
-    return function () {
-      !sheets.delete(name) && dash.inserted.delete(name);
-    };
-  };
-
-  styles.insertTokens = function (nextTokens, selector = ":root") {
-    const { css, vars } = serializeTokens(nextTokens, options.mangleTokens);
-    if (!css) return noop;
-    mergeTokens<Tokens, Themes>(tokens, vars);
-    return styles.insertGlobal(selector + "{" + css + "}");
-  };
-
-  styles.insertThemes = function (nextThemes) {
-    const flush: (() => void)[] = [];
-
-    for (const name in nextThemes) {
-      flush.push(
-        styles.insertTokens(
-          // God the types here are f'ing stupid. Someone should feel free to fix this.
-          (themes[name as Extract<keyof Themes, string>] =
-            themes[name as Extract<keyof Themes, string>] === void 0
-              ? nextThemes[name]
-              : mergeTokens<any>(
-                  themes[name as Extract<keyof Themes, string>],
-                  nextThemes[name] as any
-                )),
-          "." + styles.theme(name as Extract<keyof Themes, string>)
-        )
+      style.styles = styleMap;
+      style.css = css;
+      return style;
+    },
+    one() {
+      const one = compileStyles<Tokens, Themes>(
+        compileLiterals(arguments),
+        tokens
       );
-    }
+      const name = hash(one);
+      const className = key + "-" + name;
+      const callback: StylesOne = function (createClassName) {
+        if (!createClassName && createClassName !== void 0) return "";
+        insert(name, "." + className, one);
+        return className;
+      };
+      callback.css = function (createCss) {
+        return !createCss && createCss !== void 0 ? "" : one;
+      };
+      return callback;
+    },
+    cls() {
+      const css = compileStyles<Tokens, Themes>(
+        compileLiterals(arguments),
+        tokens
+      );
+      const name = hash(css);
+      const className = key + "-" + name;
+      insert(name, "." + className, css);
+      return className;
+    },
+    lazy<Value extends LazyValue>(
+      lazyFn: (
+        value: Value
+      ) => string | StyleCallback<Tokens, Themes> | StyleObject
+    ) {
+      const cache = new Map<string | Value, string>();
+      function css(value?: Value) {
+        if (value === void 0) return "";
+        const key = typeof value === "object" ? JSON.stringify(value) : value;
+        let css = cache.get(key);
 
-    return function () {
-      flush.forEach((e) => e());
-    };
+        if (css === void 0) {
+          css = compileStyles<Tokens, Themes>(lazyFn(value), tokens);
+          cache.set(key, css);
+        }
+
+        return css;
+      }
+
+      const lazyStyle: StylesLazy<Value> = function (value?: Value) {
+        const css_ = css(value);
+        if (!css_) return "";
+        const name = hash(css_);
+        const className = key + "-" + name;
+        insert(name, "." + className, css_);
+        return className;
+      };
+      lazyStyle.css = css;
+      return lazyStyle;
+    },
+    join() {
+      const css = "".concat(...Array.prototype.slice.call(arguments));
+      const name = hash(css);
+      const className = key + "-" + name;
+      insert(name, "." + className, css);
+      return className;
+    },
+    keyframes() {
+      const css = compileStyles<Tokens, Themes>(
+        compileLiterals(arguments),
+        tokens
+      );
+      const name = hash(css);
+      const animationName = key + "-" + name;
+      // Adding to a cached sheet here rather than the default sheet because
+      // we want this to persist between `clearCache()` calls.
+      insert(
+        name,
+        "",
+        "@keyframes " + animationName + "{" + css + "}",
+        sheets.add(name)
+      );
+      return animationName;
+    },
+    insertGlobal() {
+      const css = compileStyles<Tokens, Themes>(
+        compileLiterals(arguments),
+        tokens
+      );
+
+      if (!css) return noop;
+      const name = hash(css);
+      insert(name, "", css, sheets.add(name));
+      return function () {
+        !sheets.delete(name) && dash.inserted.delete(name);
+      };
+    },
+    insertTokens(nextTokens, selector = ":root") {
+      const { css, vars } = serializeTokens(nextTokens, options.mangleTokens);
+      if (!css) return noop;
+      mergeTokens<Tokens, Themes>(tokens, vars);
+      return styles.insertGlobal(selector + "{" + css + "}");
+    },
+    insertThemes(nextThemes) {
+      const flush: (() => void)[] = [];
+
+      for (const name in nextThemes) {
+        flush.push(
+          styles.insertTokens(
+            // God the types here are f'ing stupid. Someone should feel free to fix this.
+            (themes[name as Extract<keyof Themes, string>] =
+              themes[name as Extract<keyof Themes, string>] === void 0
+                ? nextThemes[name]
+                : mergeTokens<any>(
+                    themes[name as Extract<keyof Themes, string>],
+                    nextThemes[name] as any
+                  )),
+            "." + styles.theme(name as Extract<keyof Themes, string>)
+          )
+        );
+      }
+
+      return function () {
+        flush.forEach((e) => e());
+      };
+    },
+    theme(theme) {
+      return key + "-" + theme + "-theme";
+    },
+    dash,
+    hash,
+    tokens,
   };
 
-  styles.theme = function (theme) {
-    return key + "-" + theme + "-theme";
-  };
-  styles.dash = dash;
-  styles.hash = hash;
-  styles.tokens = emptyObj;
   Object.defineProperty(styles, "tokens", {
     get() {
-      return tokens;
+      return typeof process !== "undefined" &&
+        process.env.NODE_ENV !== "production"
+        ? Object.freeze(tokens)
+        : tokens;
     },
     configurable: false,
   });
   styles.insertTokens(options.tokens ?? emptyObj);
   styles.insertThemes(options.themes ?? emptyObj);
-  return styles;
+  return typeof process !== "undefined" && process.env.NODE_ENV !== "production"
+    ? Object.freeze(styles)
+    : styles;
 }
 
 const emptyObj: any = {};
@@ -341,46 +343,46 @@ export interface CreateStylesOptions<
 }
 
 /**
- * `styles()` is a function for composing styles in a
- * deterministic way. It returns a function which when called will insert
- * your styles into the DOM and create a unique class name.
- *
- * It also has several utility methods attached to it
- * which accomplish everything you need to scale an application
+ * Utility methods that accomplish everything you need to scale an application
  * using CSS-in-JS.
- *
- * @param styleMap - A style name/value mapping
- * @example
- * const bg = styles({
- *   // Define styles using an object
- *   blue: {
- *     backgroundColor: 'blue'
- *   },
- *   // Access stored CSS tokens when a callback is provided as
- *   // the value
- *   red: ({colors}) => `
- *     background-color: ${colors.red};
- *   `,
- *   // Define styles using a string
- *   green: `
- *     background-color: green;
- *   `
- * })
- *
- * // This component will have a "red" background
- * const Component = () => <div className={bg('blue', 'red')}/>
- *
- * // This component will have a "blue" background
- * const Component = () => <div className={bg('red', 'blue')}/>
- *
- * // This component will have a "green" background
- * const Component = () => <div className={bg({red: true, green: true})}/>
  */
 export interface Styles<
   Tokens extends DashTokens = DashTokens,
   Themes extends DashThemes = DashThemes
 > {
-  <Variants extends string>(
+  /**
+   * `styles.variants()` is a function for composing styles in a
+   * deterministic way. It returns a function which when called will insert
+   * your styles into the DOM and create a unique class name.
+   *
+   * @param styleMap - A style name/value mapping
+   * @example
+   * const bg = styles({
+   *   // Define styles using an object
+   *   blue: {
+   *     backgroundColor: 'blue'
+   *   },
+   *   // Access stored CSS tokens when a callback is provided as
+   *   // the value
+   *   red: ({colors}) => `
+   *     background-color: ${colors.red};
+   *   `,
+   *   // Define styles using a string
+   *   green: `
+   *     background-color: green;
+   *   `
+   * })
+   *
+   * // This component will have a "red" background
+   * const Component = () => <div className={bg('blue', 'red')}/>
+   *
+   * // This component will have a "blue" background
+   * const Component = () => <div className={bg('red', 'blue')}/>
+   *
+   * // This component will have a "green" background
+   * const Component = () => <div className={bg({red: true, green: true})}/>
+   */
+  variants<Variants extends string>(
     styleMap: StyleMap<Variants, Tokens, Themes>
   ): Style<Variants, Tokens, Themes>;
   /**
@@ -595,7 +597,7 @@ export interface Styles<
    * The instance of underlying the Dash cache used by this instance. This was
    * automatically created by `createDash()` when `createStyles()` was called.
    * Dash controls the caching, style sheets, auto-prefixing, and DOM insertion
-   * that happens in the `styles()` instance.
+   * that happens in the `styles` instance.
    */
   dash: Dash;
 }
@@ -875,7 +877,7 @@ export type TokensUnion<
   }>;
 
 //
-// Creates and exports default styles() instance
+// Creates and exports default `styles` instance
 export const styles: Styles<DashTokens, DashThemes> = createStyles();
 
 /**

@@ -34,7 +34,7 @@ const serializeRules = (selector = `style[data-dash]`): any[] => {
 describe("createStyles()", () => {
   it("turns off vendor prefixing", () => {
     const myStyles = createStyles({ dash: createDash({ prefix: false }) });
-    const style = myStyles({
+    const style = myStyles.variants({
       flex: { display: "flex" },
     });
 
@@ -49,13 +49,13 @@ describe("createStyles()", () => {
     const customHash = (string: string): string =>
       crc.crc32(string).toString(16);
     const myStyles = createStyles({ hash: customHash });
-    const style = myStyles({
+    const style = myStyles.variants({
       flex: { display: "flex" },
     });
 
     expect(style("flex")).toMatchSnapshot();
 
-    const style2 = createStyles()({
+    const style2 = createStyles().variants({
       flex: { display: "flex" },
     });
 
@@ -66,7 +66,7 @@ describe("createStyles()", () => {
     const myStyles = createStyles({
       dash: createDash({ nonce: "EDNnf03nceIOfn39fn3e9h3sdfa" }),
     });
-    const style = myStyles({
+    const style = myStyles.variants({
       flex: { display: "flex" },
     });
 
@@ -79,7 +79,7 @@ describe("createStyles()", () => {
 
   it('changes key to "css"', () => {
     const myStyles = createStyles({ dash: createDash({ key: "css" }) });
-    const style = myStyles({
+    const style = myStyles.variants({
       flex: { display: "flex" },
     });
 
@@ -94,7 +94,7 @@ describe("createStyles()", () => {
     const myStyles = createStyles({
       dash: createDash({ container: document.body }),
     });
-    const style = myStyles({
+    const style = myStyles.variants({
       flex: { display: "flex" },
     });
 
@@ -107,7 +107,7 @@ describe("createStyles()", () => {
 
   it("turns on speedy", () => {
     const myStyles = createStyles({ dash: createDash({ speedy: true }) });
-    const style = myStyles({
+    const style = myStyles.variants({
       flex: { display: "flex" },
       block: { display: "block" },
     });
@@ -119,7 +119,7 @@ describe("createStyles()", () => {
 
   it("should initialize w/ tokens", () => {
     const myStyles = createStyles({ tokens: { box: { small: 100 } } });
-    const style = myStyles({
+    const style = myStyles.variants({
       small: ({ box }) => ({
         width: box.small,
         height: box.small,
@@ -148,7 +148,7 @@ describe("createStyles()", () => {
       },
     });
 
-    const style = myStyles({
+    const style = myStyles.variants({
       primary: ({ color }) => ({ color: color.primary }),
     });
 
@@ -159,7 +159,7 @@ describe("createStyles()", () => {
 
 describe("styles()", () => {
   it("returns single class name", () => {
-    const style = createStyles()({
+    const style = createStyles().variants({
       flex: { display: "flex" },
       block: { display: "block" },
       inline: "display: inline;",
@@ -171,7 +171,7 @@ describe("styles()", () => {
   });
 
   it("returns css styles", () => {
-    const style = createStyles()({
+    const style = createStyles().variants({
       flex: { display: "flex" },
       block: { display: "block" },
       inline: "display: inline;",
@@ -186,10 +186,10 @@ describe("styles()", () => {
 
   it("joins css styles and returns class name", () => {
     const style = createStyles();
-    const flex = style({
+    const flex = style.variants({
       flex: { display: "flex" },
     });
-    const block = style({
+    const block = style.variants({
       block: { display: "block" },
     });
 
@@ -201,7 +201,7 @@ describe("styles()", () => {
   });
 
   it("returns empty string when falsy", () => {
-    const style = createStyles()({
+    const style = createStyles().variants({
       flex: { display: "flex" },
     });
 
@@ -215,7 +215,7 @@ describe("styles()", () => {
   });
 
   it("ignores unknown keys", () => {
-    const style = createStyles()({
+    const style = createStyles().variants({
       flex: { display: "flex" },
     });
     // @ts-expect-error
@@ -228,7 +228,7 @@ describe("styles()", () => {
     expect(name.length).toBe(0);
   });
   it("allows unitless object values", () => {
-    const style = createStyles()({
+    const style = createStyles().variants({
       box: { width: 200, height: "200px" },
     });
 
@@ -240,7 +240,9 @@ describe("styles()", () => {
   });
 
   it("adds styles by order of definition when called", () => {
-    const style = createStyles({ dash: createDash({ prefix: false }) })({
+    const style = createStyles({
+      dash: createDash({ prefix: false }),
+    }).variants({
       inline: "display: inline;",
       flex: { display: "flex" },
       block: { display: "block" },
@@ -264,7 +266,7 @@ describe("styles()", () => {
   });
 
   it("allows comments", () => {
-    const style = createStyles()({
+    const style = createStyles().variants({
       flex: `
         /* this is a flex style */
         display: flex;
@@ -275,7 +277,7 @@ describe("styles()", () => {
   });
 
   it("allows full capabilities w/ style objects", () => {
-    const style = createStyles()({
+    const style = createStyles().variants({
       flex: {
         display: "flex",
         "&.foo": {
@@ -315,7 +317,7 @@ describe("styles()", () => {
       },
     });
 
-    const style = myStyles({
+    const style = myStyles.variants({
       box: (vars) => {
         expect(vars).toMatchSnapshot();
         return "";
@@ -332,7 +334,7 @@ describe("styles()", () => {
   it("adds dev labels", () => {
     const prevEnv = process.env.NODE_ENV;
     process.env.NODE_ENV = "development";
-    const style = createStyles()({
+    const style = createStyles().variants({
       flex: `display: flex;`,
       block: `display: block;`,
       inline: `display: inline;`,
@@ -349,7 +351,7 @@ describe("styles()", () => {
   it("replaces disallowed characters in dev labels", () => {
     const prevEnv = process.env.NODE_ENV;
     process.env.NODE_ENV = "development";
-    const style = createStyles()({
+    const style = createStyles().variants({
       "box=big": { width: 400, height: "400px" },
     });
 
@@ -362,7 +364,7 @@ describe("styles()", () => {
   });
 
   it("allows default styles", () => {
-    const style = createStyles()({
+    const style = createStyles().variants({
       default: `display: flex;`,
       block: `display: block;`,
     });
@@ -373,7 +375,7 @@ describe("styles()", () => {
   });
 
   it("has a default style that is always applied first", () => {
-    const style = createStyles()({
+    const style = createStyles().variants({
       block: `display: block;`,
       default: `display: flex;`,
     });
@@ -385,7 +387,7 @@ describe("styles()", () => {
 
   it("flushes sheet tags", () => {
     const myStyles = createStyles({});
-    const style = myStyles({
+    const style = myStyles.variants({
       flex: { display: "flex" },
       block: { display: "block" },
     });
@@ -409,7 +411,7 @@ describe("styles()", () => {
     document.head.appendChild(tag);
 
     const myStyles = createStyles({});
-    const style = myStyles({
+    const style = myStyles.variants({
       flex: { display: "flex" },
     });
 
@@ -432,7 +434,7 @@ describe("styles()", () => {
     const myStyles = createStyles({
       dash: createDash({ container: document.body }),
     });
-    const style = myStyles({
+    const style = myStyles.variants({
       flex: { display: "flex" },
     });
 
@@ -1046,7 +1048,7 @@ describe("styles.tokens", () => {
 
 describe("Exceptions", () => {
   it("throws for unterminated comments", () => {
-    const style = createStyles()({
+    const style = createStyles().variants({
       flex: `
         /* this is a flex style with an unterminated comment ;)
         display: flex;

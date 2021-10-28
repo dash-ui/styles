@@ -18,7 +18,7 @@ afterEach(() => {
 describe("Configure", () => {
   it("removes vendor prefixing", () => {
     const myStyles = createStyles({ dash: createDash({ prefix: false }) });
-    const style = myStyles({
+    const style = myStyles.variants({
       flex: { display: "flex" },
     });
 
@@ -34,7 +34,6 @@ describe("Configure", () => {
       switch (key) {
         case "transform":
           return true;
-        // @ts-expect-error
         case "disable":
           if (value !== "flex") throw "fail";
         // eslint-disable-next-line
@@ -44,7 +43,7 @@ describe("Configure", () => {
     };
 
     const myStyles = createStyles({ dash: createDash({ prefix }) });
-    const style = myStyles({
+    const style = myStyles.variants({
       flex: { display: "flex", transform: "translateX(30px)" },
     });
 
@@ -54,7 +53,7 @@ describe("Configure", () => {
 
   it('changes key to "css"', () => {
     const myStyles = createStyles({ dash: createDash({ key: "css" }) });
-    const style = myStyles({
+    const style = myStyles.variants({
       flex: { display: "flex" },
     });
 
@@ -65,7 +64,7 @@ describe("Configure", () => {
 
 describe("createStyleTagFromCache", () => {
   it("uses default styles", () => {
-    const style = styles({
+    const style = styles.variants({
       flex: { display: "flex" },
     });
 
@@ -77,7 +76,7 @@ describe("createStyleTagFromCache", () => {
     const myStyles = createStyles({
       dash: createDash({ nonce: "EDNnf03nceIOfn39fn3e9h3sdfa" }),
     });
-    const style = myStyles({
+    const style = myStyles.variants({
       flex: { display: "flex" },
     });
 
@@ -132,7 +131,7 @@ describe("createStyleTagFromCache", () => {
 
   it("caches styles", () => {
     const myStyles = createStyles({});
-    const style = myStyles({
+    const style = myStyles.variants({
       flex: { display: "flex" },
       btn: `
         border-radius: 1000px;
@@ -150,7 +149,7 @@ describe("createStyleTagFromCache", () => {
 
   it("clears cached styles after render when `clearCache` is true", () => {
     const myStyles = createStyles({});
-    const style = myStyles({
+    const style = myStyles.variants({
       flex: { display: "flex" },
       btn: `
         border-radius: 1000px;
@@ -174,7 +173,7 @@ describe("createStyleTagFromCache", () => {
 
 describe("createStyleTagFromString", () => {
   it("uses default styles instance", () => {
-    const style = styles({
+    const style = styles.variants({
       flex: { display: "flex" },
     });
 
@@ -188,7 +187,7 @@ describe("createStyleTagFromString", () => {
     const myStyles = createStyles({
       dash: createDash({ nonce: "EDNnf03nceIOfn39fn3e9h3sdfa" }),
     });
-    const style = myStyles({
+    const style = myStyles.variants({
       flex: { display: "flex" },
     });
 
@@ -222,7 +221,7 @@ describe("createStyleTagFromString", () => {
 
   it("caches styles", () => {
     const myStyles = createStyles({});
-    const style = myStyles({
+    const style = myStyles.variants({
       flex: { display: "flex" },
       btn: `
         border-radius: 1000px;
@@ -252,7 +251,7 @@ describe("createStyleTagFromString", () => {
 
 describe("writeStylesFromString", () => {
   it("writes from default styles instance", async () => {
-    const style = styles({
+    const style = styles.variants({
       flex: { display: "flex" },
       btn: `
         border-radius: 1000px;
@@ -279,7 +278,7 @@ describe("writeStylesFromString", () => {
 
   it("writes", async () => {
     const myStyles = createStyles({});
-    const style = myStyles({
+    const style = myStyles.variants({
       flex: { display: "flex" },
       btn: `
         border-radius: 1000px;
@@ -306,7 +305,7 @@ describe("writeStylesFromString", () => {
 
   it("writes custom name", async () => {
     const myStyles = createStyles({});
-    const style = myStyles({
+    const style = myStyles.variants({
       flex: { display: "flex" },
       btn: `
         border-radius: 1000px;
@@ -336,7 +335,7 @@ describe("writeStylesFromString", () => {
 
   it("writes custom key", async () => {
     const myStyles = createStyles({ dash: createDash({ key: "css" }) });
-    const style = myStyles({
+    const style = myStyles.variants({
       flex: { display: "flex" },
       btn: `
         border-radius: 1000px;
@@ -365,7 +364,7 @@ describe("writeStylesFromString", () => {
 
   it("writes custom hash", async () => {
     const myStyles = createStyles({ hash: () => "f8bCooDawg" });
-    const style = myStyles({
+    const style = myStyles.variants({
       flex: { display: "flex" },
       btn: `
         border-radius: 1000px;
@@ -395,7 +394,7 @@ describe("writeStylesFromString", () => {
 
 describe("writeStylesFromCache", () => {
   it("writes from default styles instance", async () => {
-    const style = styles({
+    const style = styles.variants({
       flex: { display: "flex" },
       btn: `
         border-radius: 1000px;
@@ -414,7 +413,7 @@ describe("writeStylesFromCache", () => {
 
   it("writes", async () => {
     const myStyles = createStyles({});
-    const style = myStyles({
+    const style = myStyles.variants({
       flex: { display: "flex" },
       btn: `
         border-radius: 1000px;
@@ -433,7 +432,7 @@ describe("writeStylesFromCache", () => {
 
   it("writes custom name", async () => {
     const myStyles = createStyles({});
-    const style = myStyles({
+    const style = myStyles.variants({
       flex: { display: "flex" },
       btn: `
         border-radius: 1000px;
@@ -454,7 +453,7 @@ describe("writeStylesFromCache", () => {
 
   it("writes custom key", async () => {
     const myStyles = createStyles({ dash: createDash({ key: "css" }) });
-    const style = myStyles({
+    const style = myStyles.variants({
       flex: { display: "flex" },
       btn: `
         border-radius: 1000px;
@@ -473,7 +472,7 @@ describe("writeStylesFromCache", () => {
 
   it("writes custom hash", async () => {
     const myStyles = createStyles({ hash: () => "f8bCooDawg" });
-    const style = myStyles({
+    const style = myStyles.variants({
       flex: { display: "flex" },
       btn: `
         border-radius: 1000px;

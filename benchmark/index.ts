@@ -180,12 +180,12 @@ bench("[cold] use cls [string]", ({ duration, before }) => {
 
 bench("create styles [object]", ({ duration }) => {
   duration(1000);
-  return () => styles({ foo: { display: "flex" } });
+  return () => styles.variants({ foo: { display: "flex" } });
 });
 
 bench("create styles [string]", ({ duration }) => {
   duration(1000);
-  return () => styles({ foo: `display: flex;` });
+  return () => styles.variants({ foo: `display: flex;` });
 });
 
 bench("create one [object]", ({ duration }) => {
@@ -205,12 +205,12 @@ bench("use one", ({ duration }) => {
   return () => uno();
 });
 
-const style = styles({ foo: { display: "flex" } });
+const style = styles.variants({ foo: { display: "flex" } });
 bench("style", () => style("foo"));
 bench("multi-style", () => style("foo", "bar"));
 bench("object-style", () => style({ foo: true, bar: false }, "bar"));
 
-const styleCallback = styles({ foo: () => ({ display: "flex" }) });
+const styleCallback = styles.variants({ foo: () => ({ display: "flex" }) });
 bench("style [callback]", () => styleCallback("foo"));
 bench("multi-style [callback]", () => styleCallback("foo", "bar"));
 bench("object-style [callback]", () =>
@@ -222,7 +222,7 @@ bench("[cold] style", ({ before }) => {
   let key;
   before(() => {
     key = String(Math.random());
-    style = styles({ [key]: { width: key } });
+    style = styles.variants({ [key]: { width: key } });
   });
   return () => style(key);
 });
@@ -231,7 +231,7 @@ bench("[cold] multi-style", ({ before }) => {
   let key;
   before(() => {
     key = String(Math.random());
-    style = styles({ [key]: { width: key } });
+    style = styles.variants({ [key]: { width: key } });
   });
   return () => style(key, "bar");
 });
@@ -240,7 +240,7 @@ bench("[cold] object style", ({ before }) => {
   let key;
   before(() => {
     key = String(Math.random());
-    style = styles({ [key]: { width: key } });
+    style = styles.variants({ [key]: { width: key } });
   });
   return () => style({ bar: true, [key]: true }, "bar");
 });
@@ -250,7 +250,7 @@ bench("[cold] style callback", ({ before }) => {
   let key;
   before(() => {
     key = String(Math.random());
-    style = styles({ [key]: () => ({ width: key }) });
+    style = styles.variants({ [key]: () => ({ width: key }) });
   });
   return () => style(key, "bar");
 });

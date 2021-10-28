@@ -85,7 +85,7 @@ const flushGlobal = styles.insertGlobal`
 // deterministic way. In the example below, you'll see an example
 // of a button with default styles and two variants: one for a
 // 'brand' background color and one for a 'black' background color.
-const button = styles({
+const button = styles.variants({
   // The object in this callback is a mapping to the CSS
   // tokens above. `default` here is a special style name
   // that will be applied to each invocation of `button()`
@@ -143,7 +143,7 @@ const Component = (props) => (
 
 |                                                   | Description                                                                                                                                                                                                                                                                                                                                           |
 | ------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| [`styles()`](#styles)                             | `styles()` is a function for composing style variants in a deterministic way. It returns a function which when called will insert your styles into the DOM and create a unique class name. It also has several utility methods attached to it which accomplish everything you need to scale an application using CSS-in-JS.                           |
+| [`styles.variants()`](#stylesvariants)            | `styles.variants()` is a function for composing style variants in a deterministic way. It returns a function which when called will insert your styles into the DOM and create a unique class name.                                                                                                                                                   |
 | [`styles.one()`](#stylesone)                      | A function that accepts a tagged template literal, style object, or style callback, and returns a function. That function inserts the style into a `<style>` tag and returns a class name when called.                                                                                                                                                |
 | [`styles.cls()`](#stylescls)                      | A function that accepts a tagged template literal, style object, or style callback. Calling this will immediately insert the CSS into the DOM and return a unique class name for the styles. This is a shortcut for `styles.one({display: 'flex'})()`.                                                                                                |
 | [`styles.lazy()`](#styleslazy)                    | A function that uses lazy evalution to create styles with indeterminate values. Calling this will immediately insert the CSS into the DOM and return a unique class name for the styles.                                                                                                                                                              |
@@ -155,7 +155,7 @@ const Component = (props) => (
 | [`styles.insertGlobal()`](#stylesoneinsertglobal) | A function that accepts a tagged template literal, style object, or style callback. Using this will immediately insert styles into the DOM relative to the root document. This function returns a function that will flush the styles inserted when it is called.                                                                                     |
 | [`styles.hash()`](#styleshash)                    | The hashing function used for creating unique selector names.                                                                                                                                                                                                                                                                                         |
 | [`styles.tokens`](#stylestokens)                  | The design tokens configured in the instance.                                                                                                                                                                                                                                                                                                         |
-| [`styles.dash`](#stylesdash)                      | The instance of underlying the Dash cache used by this instance. This was automatically created by [`createDash()`](#createdash) when [`createStyles()`](#createstyles) was called. Dash controls the caching, style sheets, auto-prefixing, and DOM insertion that happens in the [`styles()`](#styles) instance.                                    |
+| [`styles.dash`](#stylesdash)                      | The instance of underlying the Dash cache used by this instance. This was automatically created by [`createDash()`](#createdash) when [`createStyles()`](#createstyles) was called. Dash controls the caching, style sheets, auto-prefixing, and DOM insertion that happens in the [`styles.variants()`](#stylesvariants) instance.                   |
 
 ### Server rendering
 
@@ -172,7 +172,7 @@ are even more helpers available for Gatsby, Next.js, etc. available in
 | [`createStyleTagFromString()`](#createstyletagfromstring) | Creates a `<style>` tag w/ CSS based on an HTML string. This function will parse your HTML output for Dash class names and pull the styles associated with them from the Dash cache. This is a safe way to generate `<style>` tags in an asynchronous environment.                                                                                                                                                      |
 | [`writeStylesFromString()`](#writestylesfromstring)       | Writes a CSS to a file based on an HTML string. This function will parse your HTML output for Dash class names and pull the styles associated with them from the Dash cache. This is a safe way to generate CSS files in an asynchronous environment.                                                                                                                                                                   |
 
-### Creating a custom `styles()` instance
+### Creating a custom `styles` instance
 
 |                                   | Description                                                                                     |
 | --------------------------------- | ----------------------------------------------------------------------------------------------- |
@@ -229,12 +229,10 @@ I hope you'll give it a chance.
 
 ---
 
-### styles()
+### styles.variants()
 
-`styles()` is a function for composing style variants in a deterministic way. It returns a
+`styles.variants()` is a function for composing style variants in a deterministic way. It returns a
 function which when called will insert your styles into the DOM and create a unique class name.
-It also has several utility methods attached to it which accomplish everything you need to
-scale an application using CSS-in-JS.
 
 #### Example
 
@@ -245,7 +243,7 @@ scale an application using CSS-in-JS.
 import * as React from "react";
 import { styles } from "@dash-ui/styles";
 
-const button = styles({
+const button = styles.variants({
   // The object in this callback is a mapping to the CSS
   // tokens above. `default` here is a special style name
   // that will be applied to each invocation of `button()`
@@ -536,7 +534,7 @@ const bgPrimary = styles.one(
 );
 
 // Creates styles for a box with 2 widths
-const box = styles({
+const box = styles.variants({
   default: {
     width: 200,
     height: 200,
@@ -977,7 +975,7 @@ export const App = () => {
 ### styles.hash()
 
 The hashing function used for creating unique selector names. This can be
-configured by creating your own `styles()` instance with [`createStyles()`](#createstyles).
+configured by creating your own `styles` instance with [`createStyles()`](#createstyles).
 
 #### Example
 
@@ -1027,7 +1025,7 @@ console.log(styles.tokens)
 The instance of underlying the Dash cache used by this instance. This was automatically
 created by [`createDash()`](#createdash) when [`createStyles()`](#createstyles) was called.
 Dash controls the caching, style sheets, auto-prefixing, and DOM insertion that happens
-in the [`styles()`](#styles) instance.
+in the `styles` instance.
 
 #### Example
 
@@ -1083,7 +1081,7 @@ function createStyles<
 
 #### Returns
 
-[A new `styles()` instance](#styles)
+A new `styles` instance
 
 ```typescript
 Styles<V, T>
@@ -1181,14 +1179,14 @@ export type Dash = {
 
 ### CreateDashOptions
 
-| Option        | Type                                                              | Required? | Default         | Description                                                                                                                                                                         |
-| ------------- | ----------------------------------------------------------------- | --------- | --------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| key           | `string`                                                          | No        | `"ui"`          | Keys in sheets used to associate `<style>` tags with this specific Dash instances via the `dash-cache` property. This is also used as a class name prefix in [`styles()`](#styles). |
-| nonce         | `string`                                                          | No        |                 | For security policies. A nonce is an arbitrary number that can be used just once in a cryptographic communication.                                                                  |
-| stylisPlugins | `Plugable[]`                                                      | No        |                 | An array of Stylis plugins. See: https://www.npmjs.com/package/stylis                                                                                                               |
-| prefix        | `boolean \| ((key: string, value: any, context: any) => boolean)` | No        | `true`          | Turns on/off vendor prefixing. When a boolean, all prefixes will be turned on/off. Use a function to define your own prefixes for a given key/value.                                |
-| container     | `HTMLElement`                                                     | No        | `document.head` | This is the container that `<style>` tags will be injected into when style rules are inserted.                                                                                      |
-| speedy        | `boolean`                                                         | No        | `true` in prod  | Uses speedy mode for `<style>` tag insertion. It's the fastest way to insert new style rules, but will make styles uneditable via dev tools in some browsers.                       |
+| Option        | Type                                                              | Required? | Default         | Description                                                                                                                                                            |
+| ------------- | ----------------------------------------------------------------- | --------- | --------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| key           | `string`                                                          | No        | `"ui"`          | Keys in sheets used to associate `<style>` tags with this specific Dash instances via the `dash-cache` property. This is also used as a class name prefix in `styles`. |
+| nonce         | `string`                                                          | No        |                 | For security policies. A nonce is an arbitrary number that can be used just once in a cryptographic communication.                                                     |
+| stylisPlugins | `Plugable[]`                                                      | No        |                 | An array of Stylis plugins. See: https://www.npmjs.com/package/stylis                                                                                                  |
+| prefix        | `boolean \| ((key: string, value: any, context: any) => boolean)` | No        | `true`          | Turns on/off vendor prefixing. When a boolean, all prefixes will be turned on/off. Use a function to define your own prefixes for a given key/value.                   |
+| container     | `HTMLElement`                                                     | No        | `document.head` | This is the container that `<style>` tags will be injected into when style rules are inserted.                                                                         |
+| speedy        | `boolean`                                                         | No        | `true` in prod  | Uses speedy mode for `<style>` tag insertion. It's the fastest way to insert new style rules, but will make styles uneditable via dev tools in some browsers.          |
 
 ---
 
@@ -1304,10 +1302,10 @@ export function createStylesFromCache(
 ): ServerStylesResult;
 ```
 
-| Argument | Type                                                      | Required? | Default               | Description                      |
-| -------- | --------------------------------------------------------- | --------- | --------------------- | -------------------------------- |
-| styles   | [`styles()`](#styles)                                     | No        | [`styles()`](#styles) | A [`styles()`](#styles) instance |
-| options  | [`CreateServerStylesOptions`](#createserverstylesoptions) | No        | `{clearCache: false}` | Configuration options            |
+| Argument | Type                                                      | Required? | Default               | Description           |
+| -------- | --------------------------------------------------------- | --------- | --------------------- | --------------------- |
+| styles   | `styles`                                                  | No        | `styles`              | A `styles` instance   |
+| options  | [`CreateServerStylesOptions`](#createserverstylesoptions) | No        | `{clearCache: false}` | Configuration options |
 
 #### Returns
 
@@ -1367,10 +1365,10 @@ export function createStyleTagFromCache(
 ): string;
 ```
 
-| Argument | Type                                                      | Required? | Default               | Description                      |
-| -------- | --------------------------------------------------------- | --------- | --------------------- | -------------------------------- |
-| styles   | [`styles()`](#styles)                                     | No        | [`styles()`](#styles) | A [`styles()`](#styles) instance |
-| options  | [`CreateServerStylesOptions`](#createserverstylesoptions) | No        | `{clearCache: false}` | Configuration options            |
+| Argument | Type                                                      | Required? | Default               | Description           |
+| -------- | --------------------------------------------------------- | --------- | --------------------- | --------------------- |
+| styles   | `styles`                                                  | No        | `styles`              | A `styles` instance   |
+| options  | [`CreateServerStylesOptions`](#createserverstylesoptions) | No        | `{clearCache: false}` | Configuration options |
 
 #### Returns
 
@@ -1429,7 +1427,7 @@ async function writeStylesFromCache(
 | Argument   | Type                                                                                | Required? | Default               | Description                                                                   |
 | ---------- | ----------------------------------------------------------------------------------- | --------- | --------------------- | ----------------------------------------------------------------------------- |
 | outputPath | `string`                                                                            | No        | `""`                  | An absolute or relative path dictating where you want to output the CSS file. |
-| styles     | [`styles()`](#styles)                                                               | No        | [`styles()`](#styles) | A [`styles()`](#styles) instance                                              |
+| styles     | `styles`                                                                            | No        | `styles`              | A `styles` instance                                                           |
 | options    | [`WriteServerStylesOptions & CreateServerStylesOptions`](#writeserverstylesoptions) | No        | `{clearCache: false}` | Configuration options                                                         |
 
 #### Returns
@@ -1467,7 +1465,7 @@ export interface WriteServerStylesResult {
 | Option | Type                         | Required? | Description                                                                                                                                                                        |
 | ------ | ---------------------------- | --------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | name   | `string`                     | No        | Use this if you want to create your own name for the CSS file. By default, this function will create a filename based on the hash of the generated CSS string and the key in Dash. |
-| hash   | `(string: string) => string` | No        | Use a custom hash function for creating the name of your CSS file. By default this function will use the hash function attached to your `styles()` instance.                       |
+| hash   | `(string: string) => string` | No        | Use a custom hash function for creating the name of your CSS file. By default this function will use the hash function attached to your `styles` instance.                         |
 
 ---
 
@@ -1515,10 +1513,10 @@ export function createStylesFromString(
 ): ServerStylesResult;
 ```
 
-| Argument | Type                  | Required? | Default               | Description                      |
-| -------- | --------------------- | --------- | --------------------- | -------------------------------- |
-| html     | `string`              | Yes       |                       | An HTML string                   |
-| styles   | [`styles()`](#styles) | No        | [`styles()`](#styles) | A [`styles()`](#styles) instance |
+| Argument | Type     | Required? | Default  | Description         |
+| -------- | -------- | --------- | -------- | ------------------- |
+| html     | `string` | Yes       |          | An HTML string      |
+| styles   | `styles` | No        | `styles` | A `styles` instance |
 
 #### Returns
 
@@ -1574,10 +1572,10 @@ function createStyleTagFromString(
 ): string;
 ```
 
-| Argument | Type                  | Required? | Default               | Description                      |
-| -------- | --------------------- | --------- | --------------------- | -------------------------------- |
-| html     | `string`              | Yes       |                       | An HTML string                   |
-| styles   | [`styles()`](#styles) | No        | [`styles()`](#styles) | A [`styles()`](#styles) instance |
+| Argument | Type     | Required? | Default  | Description         |
+| -------- | -------- | --------- | -------- | ------------------- |
+| html     | `string` | Yes       |          | An HTML string      |
+| styles   | `styles` | No        | `styles` | A `styles` instance |
 
 #### Returns
 
@@ -1637,12 +1635,12 @@ async function writeStylesFromString(
 ): Promise<WriteServerStylesResult>;
 ```
 
-| Argument   | Type                                                    | Required? | Default               | Description                                                                   |
-| ---------- | ------------------------------------------------------- | --------- | --------------------- | ----------------------------------------------------------------------------- |
-| html       | `string`                                                | Yes       |                       | An HTML string                                                                |
-| outputPath | `string`                                                | No        | `""`                  | An absolute or relative path dictating where you want to output the CSS file. |
-| styles     | [`styles()`](#styles)                                   | No        | [`styles()`](#styles) | A [`styles()`](#styles) instance                                              |
-| options    | [`WriteServerStylesOptions`](#writeserverstylesoptions) | No        |                       | Configuration options                                                         |
+| Argument   | Type                                                    | Required? | Default  | Description                                                                   |
+| ---------- | ------------------------------------------------------- | --------- | -------- | ----------------------------------------------------------------------------- |
+| html       | `string`                                                | Yes       |          | An HTML string                                                                |
+| outputPath | `string`                                                | No        | `""`     | An absolute or relative path dictating where you want to output the CSS file. |
+| styles     | `styles`                                                | No        | `styles` | A `styles` instance                                                           |
+| options    | [`WriteServerStylesOptions`](#writeserverstylesoptions) | No        |          | Configuration options                                                         |
 
 #### Returns
 
@@ -1679,7 +1677,7 @@ export interface WriteServerStylesResult {
 ## Strongly typed tokens
 
 You can strongly type your design tokens a couple of ways. The easiest way is to create your
-own `styles()` instance with [`createStyles()`](#createstyles):
+own `styles` instance with [`createStyles()`](#createstyles):
 
 [Play with this example on **CodeSandbox**](https://codesandbox.io/s/dash-uistyles-strongly-typed-tokens-example-1-8e62y?file=/src/App.tsx)
 
@@ -1688,7 +1686,7 @@ import { createStyles } from "@dash-ui/styles";
 
 export const styles = createStyles({
   // createStyles() uses these tokens to create a generic
-  // for variable usage in the styles() instance
+  // for variable usage in the styles instance
   tokens: {
     color: {
       // var(--color-red)
@@ -1736,7 +1734,7 @@ declare module "@dash-ui/styles" {
 ## Strongly typed themes
 
 You can strongly type your CSS variable themes a couple of ways. The easiest way is to create your
-own `styles()` instance with [`createStyles()`](#createstyles):
+own `styles` instance with [`createStyles()`](#createstyles):
 
 [Play with the example on **CodeSandbox**](https://codesandbox.io/s/dash-uistyles-strongly-typed-themes-example-1-mww3c?file=/src/App.tsx)
 
@@ -1745,7 +1743,7 @@ import { createStyles } from "@dash-ui/styles";
 
 export const styles = createStyles({
   // createStyles() uses these themes to create a generic
-  // for variable and theme usage in the styles() instance
+  // for variable and theme usage in the styles instance
   themes: {
     light: {
       color: {
