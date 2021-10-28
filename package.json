@@ -168,8 +168,14 @@
   "release": {
     "branches": [
       "main",
-      "next",
-      "alpha"
+      {
+        "name": "next",
+        "prerelease": true
+      },
+      {
+        "name": "alpha",
+        "prerelease": true
+      }
     ],
     "plugins": [
       "@semantic-release/commit-analyzer",
