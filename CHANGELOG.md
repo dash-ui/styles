@@ -1,3 +1,15 @@
+# [1.0.0](https://github.com/dash-ui/styles/compare/v0.8.9...v1.0.0) (2021-10-28)
+
+
+### Code Refactoring
+
+* improve typing ([#17](https://github.com/dash-ui/styles/issues/17)) ([9b4f1b1](https://github.com/dash-ui/styles/commit/9b4f1b1d98ec40c815ac1b4a5e185dee2cd14cb6))
+
+
+### BREAKING CHANGES
+
+* This will break things that depend on the previous type definitions
+
 ## [0.8.9](https://github.com/dash-ui/styles/compare/v0.8.8...v0.8.9) (2021-10-03)
 
 
