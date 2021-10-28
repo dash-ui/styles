@@ -131,17 +131,19 @@ describe("createStyles()", () => {
 
   it("should initialize w/ themes", () => {
     const myStyles = createStyles({
+      tokens: {},
       themes: {
         light: {
           color: {
             primary: "white",
             secondary: "foo",
-          },
+          } as const,
         },
         dark: {
           color: {
             primary: "black",
-          },
+            secondary: "bar",
+          } as const,
         },
       },
     });

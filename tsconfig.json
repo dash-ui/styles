@@ -8,6 +8,7 @@
     "esModuleInterop": true,
     "strict": true,
     "downlevelIteration": true,
+    "incremental": true,
     "baseUrl": ".",
     "paths": {
       "@dash-ui/styles": ["./src"],
