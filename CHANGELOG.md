@@ -1,3 +1,10 @@
+# [1.0.0-alpha.2](https://github.com/dash-ui/styles/compare/v1.0.0-alpha.1...v1.0.0-alpha.2) (2021-10-29)
+
+
+### Bug Fixes
+
+* stop freezing tokens ([afe70b6](https://github.com/dash-ui/styles/commit/afe70b64d91fcb77652dc7545e13b3069b7d6088))
+
 # [1.0.0-alpha.1](https://github.com/dash-ui/styles/compare/v0.8.9...v1.0.0-alpha.1) (2021-10-28)
 
 
