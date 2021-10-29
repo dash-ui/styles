@@ -75,6 +75,9 @@
     ]
   },
   "lint-staged": {
+    "package.json": [
+      "pnpx -y prettier-package-json --write"
+    ],
     "**/*.{ts,js}": [
       "eslint --ext .ts,.js --fix",
       "prettier --write"
