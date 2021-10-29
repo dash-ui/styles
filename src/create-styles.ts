@@ -868,10 +868,7 @@ function mergeTokens<
 export type TokensUnion<
   Tokens extends DashTokens = DashTokens,
   Themes extends DashThemes = DashThemes
-> = Tokens &
-  ValueOf<{
-    [K in keyof Themes]: Themes[K];
-  }>;
+> = Tokens & ValueOf<Themes>;
 
 //
 // Creates and exports default `styles` instance
