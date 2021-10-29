@@ -414,9 +414,7 @@ export declare type Falsy = false | 0 | null | undefined;
  * @param tokens - A map of CSS tokens for style callbacks
  */
 export declare function compileStyles<Tokens extends DashTokens = DashTokens, Themes extends DashThemes = DashThemes>(styles: StyleValue<Tokens, Themes> | Falsy, tokens: TokensUnion<Tokens, Themes>): string;
-export declare type TokensUnion<Tokens extends DashTokens = DashTokens, Themes extends DashThemes = DashThemes> = Tokens & ValueOf<{
-    [K in keyof Themes]: Themes[K];
-}>;
+export declare type TokensUnion<Tokens extends DashTokens = DashTokens, Themes extends DashThemes = DashThemes> = Tokens & ValueOf<Themes>;
 export declare const styles: Styles<DashTokens, DashThemes>;
 /**
  * These are CSS variable type definitions that tell functions like

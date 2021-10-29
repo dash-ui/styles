@@ -1,3 +1,10 @@
+# [1.0.0-alpha.3](https://github.com/dash-ui/styles/compare/v1.0.0-alpha.2...v1.0.0-alpha.3) (2021-10-29)
+
+
+### Bug Fixes
+
+* simplify token union type ([3e1fad4](https://github.com/dash-ui/styles/commit/3e1fad4d17b8d42d9402fdc1874b6e5680e2cc55))
+
 # [1.0.0-alpha.2](https://github.com/dash-ui/styles/compare/v1.0.0-alpha.1...v1.0.0-alpha.2) (2021-10-29)
 
 
