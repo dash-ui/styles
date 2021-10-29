@@ -241,10 +241,7 @@ export function createStyles<
 
   Object.defineProperty(styles, "tokens", {
     get() {
-      return typeof process !== "undefined" &&
-        process.env.NODE_ENV !== "production"
-        ? Object.freeze(tokens)
-        : tokens;
+      return tokens;
     },
     configurable: false,
   });
