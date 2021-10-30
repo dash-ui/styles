@@ -54,7 +54,7 @@ export function createStyles<
   }
 
   const styles: Styles<Tokens, Themes> = {
-    variants<Variants extends string>(
+    variants<Variants extends string | number>(
       styleMap: StyleMap<Variants, Tokens, Themes>
     ): Style<Variants, Tokens, Themes> {
       const compiledStyleMap: StyleMapMemo<string> = new Map();
@@ -379,7 +379,7 @@ export interface Styles<
    * // This component will have a "green" background
    * const Component = () => <div className={bg({red: true, green: true})}/>
    */
-  variants<Variants extends string>(
+  variants<Variants extends string | number>(
     styleMap: StyleMap<Variants, Tokens, Themes>
   ): Style<Variants, Tokens, Themes>;
   /**
