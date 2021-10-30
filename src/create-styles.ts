@@ -5,7 +5,7 @@ import type {
   Pseudos as CSSPseudos,
   SvgAttributes as CSSSvgAttributes,
 } from "csstype";
-import type { JsonValue, ValueOf } from "type-fest";
+import type { JsonValue, PartialDeep, ValueOf } from "type-fest";
 import { createDash } from "./create-dash";
 import type { Dash } from "./create-dash";
 import { hash as fnv1aHash, noop, safeHash } from "./utils";
@@ -529,7 +529,7 @@ export interface Styles<
    *   '.dark'
    * )
    */
-  insertTokens(tokens: DeepPartial<Tokens>, selector?: string): () => void;
+  insertTokens(tokens: PartialDeep<Tokens>, selector?: string): () => void;
   /**
    * Creates a CSS variable-based theme by defining tokens within a
    * class name selector matching the theme name. Apart from that it works
@@ -555,7 +555,7 @@ export interface Styles<
    * const Component = () => <div className={styles.theme('dark)}/>
    */
   insertThemes(
-    themes: DeepPartial<{
+    themes: PartialDeep<{
       [Name in keyof Themes]: Themes[Name];
     }>
   ): () => void;
@@ -617,7 +617,7 @@ export interface Styles<
  * const Component = () => <div className={style('block', 'h100', 'w100')}/>
  */
 export type Style<
-  Variants extends string,
+  Variants extends string | number,
   Tokens extends DashTokens = DashTokens,
   Themes extends DashThemes = DashThemes
 > = {
@@ -662,19 +662,22 @@ export type StylesOne = {
 };
 
 export type StyleMap<
-  Variants extends string,
+  Variants extends string | number,
   Tokens extends DashTokens = DashTokens,
   Themes extends DashThemes = DashThemes
 > = {
   [Name in Variants | "default"]?: StyleValue<Tokens, Themes>;
 };
 
-type StyleMapMemo<N extends string> = Map<N | "default", string>;
+type StyleMapMemo<Variants extends string | number> = Map<
+  Variants | "default",
+  string
+>;
 
-export type StyleArguments<N extends string> = (
-  | N
+export type StyleArguments<Variants extends string | number> = (
+  | Variants
   | {
-      [Name in N]?: boolean | null | undefined | string | number;
+      [Name in Variants]?: boolean | null | undefined | string | number;
     }
   | Falsy
 )[];
@@ -712,12 +715,6 @@ export type StyleCallback<
   Tokens extends DashTokens = DashTokens,
   Themes extends DashThemes = DashThemes
 > = (tokens: TokensUnion<Tokens, Themes>) => StyleObject | string;
-
-type DeepPartial<T> = T extends (...args: any[]) => any
-  ? T
-  : T extends Record<string, unknown>
-  ? { [P in keyof T]?: DeepPartial<T[P]> }
-  : T;
 
 export type LazyValue = JsonValue;
 
