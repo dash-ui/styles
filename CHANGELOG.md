@@ -1,3 +1,10 @@
+# [1.0.0-alpha.4](https://github.com/dash-ui/styles/compare/v1.0.0-alpha.3...v1.0.0-alpha.4) (2021-10-30)
+
+
+### Bug Fixes
+
+* allow style map to have numeric keys ([ad16a2b](https://github.com/dash-ui/styles/commit/ad16a2b90aa5727f1a2d5c834255a2302405b15a))
+
 # [1.0.0-alpha.3](https://github.com/dash-ui/styles/compare/v1.0.0-alpha.2...v1.0.0-alpha.3) (2021-10-29)
 
 
