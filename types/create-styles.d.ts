@@ -127,7 +127,7 @@ export interface Styles<Tokens extends DashTokens = DashTokens, Themes extends D
      * // This component will have a "green" background
      * const Component = () => <div className={bg({red: true, green: true})}/>
      */
-    variants<Variants extends string>(styleMap: StyleMap<Variants, Tokens, Themes>): Style<Variants, Tokens, Themes>;
+    variants<Variants extends string | number>(styleMap: StyleMap<Variants, Tokens, Themes>): Style<Variants, Tokens, Themes>;
     /**
      * A function that accepts a tagged template literal, style object, or style callback,
      * and returns a function. That function inserts the style into a `<style>` tag and
