@@ -80,21 +80,20 @@ export function createStyles<
       }
 
       function css() {
-        const numArgs = arguments.length;
+        const args = arguments as unknown as StyleArguments<Variants>;
+        const numArgs = args.length;
         let nextStyles = compiledStyleMap.get("default") ?? "";
 
-        if (numArgs === 1 && typeof arguments[0] === "string") {
-          nextStyles += compiledStyleMap.get(arguments[0]) ?? "";
+        if (numArgs === 1 && typeof args[0] !== "object") {
+          nextStyles += compiledStyleMap.get("" + args[0]) ?? "";
         } else if (numArgs > 0) {
-          let i = 0;
           let arg;
 
-          for (; i < numArgs; i++) {
-            arg = arguments[i];
-
-            if (typeof arg === "string") {
-              nextStyles += compiledStyleMap.get(arg) ?? "";
-            } else if (typeof arg === "object") {
+          for (let i = 0; i < numArgs; i++) {
+            arg = args[i];
+            if (typeof arg === "string" || typeof arg === "number") {
+              nextStyles += compiledStyleMap.get("" + arg) ?? "";
+            } else if (typeof arg === "object" && arg !== null) {
               for (const key in arg)
                 if (arg[key]) nextStyles += compiledStyleMap.get(key) ?? "";
             }
@@ -679,7 +678,7 @@ export type StyleArguments<Variants extends string | number> = (
   | {
       [Name in Variants]?: boolean | null | undefined | string | number;
     }
-  | Falsy
+  | Exclude<Falsy, 0 | "">
 )[];
 
 export type StyleValue<
@@ -739,7 +738,7 @@ export type StylesLazy<Value extends LazyValue> = {
 
 //
 // Utils
-export type Falsy = false | 0 | null | undefined;
+export type Falsy = false | null | undefined | "" | 0;
 
 /**
  * A utility function that will compile style objects and callbacks into CSS strings.

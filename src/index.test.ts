@@ -157,7 +157,7 @@ describe("createStyles()", () => {
   });
 });
 
-describe("styles()", () => {
+describe("styles.variants()", () => {
   it("returns single class name", () => {
     const style = createStyles().variants({
       flex: { display: "flex" },
@@ -182,6 +182,22 @@ describe("styles()", () => {
     expect(
       style.css({ flex: true, block: false, inline: true })
     ).toMatchSnapshot();
+  });
+
+  it("works with numeric variants", () => {
+    const style = createStyles().variants({
+      0: { display: "flex" },
+      1: { display: "block" },
+      2: "display: inline;",
+    });
+
+    expect(style.css(0)).toEqual("display:flex;");
+    expect(style.css(0, 1, 2)).toEqual(
+      "display:flex;display:block;display: inline;"
+    );
+    expect(style.css({ 0: true, 1: false, 2: true })).toEqual(
+      "display:flex;display: inline;"
+    );
   });
 
   it("joins css styles and returns class name", () => {
@@ -209,7 +225,7 @@ describe("styles()", () => {
     expect(typeof name).toBe("string");
     expect(name.length).toBe(0);
 
-    name = style(false, null, undefined, 0, { flex: false });
+    name = style(false, null, undefined, { flex: false });
     expect(typeof name).toBe("string");
     expect(name.length).toBe(0);
   });
