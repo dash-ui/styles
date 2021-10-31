@@ -1,3 +1,10 @@
+# [1.0.0-alpha.7](https://github.com/dash-ui/styles/compare/v1.0.0-alpha.6...v1.0.0-alpha.7) (2021-10-31)
+
+
+### Performance Improvements
+
+* improve variants performance ([47703a0](https://github.com/dash-ui/styles/commit/47703a0e329eda4f527c0bbb87afa59f36453364))
+
 # [1.0.0-alpha.6](https://github.com/dash-ui/styles/compare/v1.0.0-alpha.5...v1.0.0-alpha.6) (2021-10-31)
 
 
