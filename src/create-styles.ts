@@ -66,6 +66,8 @@ export function createStyles<
           compileStyles(styleMap[styleKey], tokens)
         );
 
+      const defaultStyles = compiledStyleMap.get("default") ?? "";
+
       // style('text', {})
       function style() {
         // eslint-disable-next-line prefer-spread
@@ -82,11 +84,11 @@ export function createStyles<
       function css() {
         const args = arguments as unknown as StyleArguments<Variants>;
         const numArgs = args.length;
-        let nextStyles = compiledStyleMap.get("default") ?? "";
 
         if (numArgs === 1 && typeof args[0] !== "object") {
-          nextStyles += compiledStyleMap.get("" + args[0]) ?? "";
+          return defaultStyles + (compiledStyleMap.get("" + args[0]) ?? "");
         } else if (numArgs > 0) {
+          let nextStyles = defaultStyles;
           let arg;
 
           for (let i = 0; i < numArgs; i++) {
@@ -98,9 +100,11 @@ export function createStyles<
                 if (arg[key]) nextStyles += compiledStyleMap.get(key) ?? "";
             }
           }
+
+          return nextStyles;
         }
 
-        return nextStyles;
+        return defaultStyles;
       }
 
       style.styles = styleMap;
