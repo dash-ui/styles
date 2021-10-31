@@ -371,7 +371,7 @@ export declare type StyleMap<Variants extends string | number, Tokens extends Da
 };
 export declare type StyleArguments<Variants extends string | number> = (Variants | {
     [Name in Variants]?: boolean | null | undefined | string | number;
-} | Falsy)[];
+} | Exclude<Falsy, 0 | "">)[];
 export declare type StyleValue<Tokens extends DashTokens = DashTokens, Themes extends DashThemes = DashThemes> = string | StyleCallback<Tokens, Themes> | StyleObject;
 declare type KnownStyles = {
     [property in keyof CSSProperties]?: CSSProperties[property] | (string & {}) | (number & {});
@@ -403,7 +403,7 @@ export declare type StylesLazy<Value extends LazyValue> = {
      */
     css(value?: Value): string;
 };
-export declare type Falsy = false | 0 | null | undefined;
+export declare type Falsy = false | null | undefined | "" | 0;
 /**
  * A utility function that will compile style objects and callbacks into CSS strings.
  *

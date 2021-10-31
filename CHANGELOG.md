@@ -1,3 +1,10 @@
+# [1.0.0-alpha.6](https://github.com/dash-ui/styles/compare/v1.0.0-alpha.5...v1.0.0-alpha.6) (2021-10-31)
+
+
+### Bug Fixes
+
+* fix handling of numeric variants ([dce553b](https://github.com/dash-ui/styles/commit/dce553b31635b3f7355e1fb6d44d3b83ca2c0c68))
+
 # [1.0.0-alpha.5](https://github.com/dash-ui/styles/compare/v1.0.0-alpha.4...v1.0.0-alpha.5) (2021-10-30)
 
 
