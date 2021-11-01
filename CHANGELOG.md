@@ -1,3 +1,10 @@
+# [1.0.0-alpha.10](https://github.com/dash-ui/styles/compare/v1.0.0-alpha.9...v1.0.0-alpha.10) (2021-11-01)
+
+
+### Performance Improvements
+
+* swap out es6 map with plain objects in a few places it was consequential ([e228f12](https://github.com/dash-ui/styles/commit/e228f12597ea7f285cf1a17f13d1f998074881f2))
+
 # [1.0.0-alpha.9](https://github.com/dash-ui/styles/compare/v1.0.0-alpha.8...v1.0.0-alpha.9) (2021-11-01)
 
 
