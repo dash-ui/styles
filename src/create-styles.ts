@@ -40,7 +40,9 @@ export function createStyles<
           if (typeof arg === "string") {
             curr += "-" + arg;
           } else if (typeof arg === "object") {
-            const keys = Object.keys(arg).filter((k) => arg[k]);
+            const keys = Object.keys(arg).filter(
+              (k) => typeof arg[k] === "number" || arg[k]
+            );
 
             if (keys.length) {
               curr += "-" + keys.join("-");
@@ -89,10 +91,9 @@ export function createStyles<
           return defaultStyles + (compiledStyleMap.get("" + args[0]) ?? "");
         } else if (numArgs > 0) {
           let nextStyles = defaultStyles;
-          let arg;
 
           for (let i = 0; i < numArgs; i++) {
-            arg = args[i];
+            let arg = args[i];
             if (typeof arg === "string" || typeof arg === "number") {
               nextStyles += compiledStyleMap.get("" + arg) ?? "";
             } else if (typeof arg === "object" && arg !== null) {
@@ -813,13 +814,10 @@ function serializeTokens(
   mangle?: CreateStylesOptions["mangleTokens"],
   names: string[] = []
 ): SerializedTokens {
-  const keys = Object.keys(tokens);
   const vars: Record<string, any> = {};
   let css = "";
-  let i = 0;
 
-  for (; i < keys.length; i++) {
-    const key = keys[i];
+  for (let key in tokens) {
     const value = tokens[key];
 
     if (typeof value === "object") {
