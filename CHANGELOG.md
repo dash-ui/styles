@@ -1,3 +1,10 @@
+# [1.0.0-alpha.9](https://github.com/dash-ui/styles/compare/v1.0.0-alpha.8...v1.0.0-alpha.9) (2021-11-01)
+
+
+### Bug Fixes
+
+* force new release ([ef36377](https://github.com/dash-ui/styles/commit/ef36377833784b208834a839c5b31915e066cc94))
+
 # [1.0.0-alpha.8](https://github.com/dash-ui/styles/compare/v1.0.0-alpha.7...v1.0.0-alpha.8) (2021-11-01)
 
 

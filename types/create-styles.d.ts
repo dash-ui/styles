@@ -318,7 +318,7 @@ export interface Styles<Tokens extends DashTokens = DashTokens, Themes extends D
  *  select the styles from the style map you want to compose into a singular
  *  deterministic style and class name.
  * @example
- * const style = styles({
+ * const style = styles.variants({
  *   block: 'display: block',
  *   w100: 'width: 100px;',
  *   h100: 'height: 100px',
@@ -337,13 +337,13 @@ export declare type Style<Variants extends string | number, Tokens extends DashT
      *  select the styles from the style map you want to compose into a singular
      *  CSS string.
      * @example
-     * const style = styles({
+     * const style = styles.variants({
      *   block: 'display: block',
      *   w100: 'width: 100px;',
      *   h100: 'height: 100px',
      * })
      *
-     * const someOtherStyle = styles({
+     * const someOtherStyle = styles.variants({
      *   // display: block; height: 100px; width: 100px;
      *   default: style.css('block', 'h100', 'w100')
      * })
