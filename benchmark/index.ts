@@ -211,6 +211,16 @@ bench("object-style [callback]", () =>
   styleCallback({ foo: true, bar: false }, "bar")
 );
 
+const styleDefault = styles.variants({
+  default: { display: "block" },
+  flex: { display: "flex" },
+});
+bench("style w/ default", () => styleDefault("flex"));
+bench("multi-style w/ default", () => styleDefault("foo", "flex"));
+bench("object-style w/ default", () =>
+  styleDefault({ foo: true, bar: false }, "flex")
+);
+
 bench_("[cold] style", ({ duration, before }) => {
   duration(1000);
   let style;

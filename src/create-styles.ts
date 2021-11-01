@@ -20,11 +20,11 @@ export function createStyles<
   Tokens extends DashTokens = DashTokens,
   Themes extends DashThemes = DashThemes
 >(options: CreateStylesOptions<Tokens, Themes> = {}): Styles<Tokens, Themes> {
-  const dash = options.dash ?? createDash();
+  const dash = options.dash || createDash();
   const { key, insert, sheets } = dash;
   const themes = {} as Themes;
   const tokens = {} as TokensUnion<Tokens, Themes>;
-  const hash = safeHash(key, options.hash ?? fnv1aHash);
+  const hash = safeHash(key, options.hash || fnv1aHash);
 
   let label: (args: any[]) => string;
   // explicit here on purpose so it's not in every test
@@ -59,16 +59,13 @@ export function createStyles<
     variants<Variants extends string | number>(
       styleMap: StyleMap<Variants, Tokens, Themes>
     ): Style<Variants, Tokens, Themes> {
-      const compiledStyleMap: StyleMapMemo<string> = new Map();
+      const compiledStyleMap: Record<string | number, string> = {};
       let styleKey: keyof typeof styleMap;
       /* istanbul ignore next */
       for (styleKey in styleMap)
-        compiledStyleMap.set(
-          styleKey,
-          compileStyles(styleMap[styleKey], tokens)
-        );
+        compiledStyleMap[styleKey] = compileStyles(styleMap[styleKey], tokens);
 
-      const defaultStyles = compiledStyleMap.get("default") ?? "";
+      const defaultStyles = compiledStyleMap.default || "";
 
       // style('text', {})
       function style() {
@@ -88,17 +85,17 @@ export function createStyles<
         const numArgs = args.length;
 
         if (numArgs === 1 && typeof args[0] !== "object") {
-          return defaultStyles + (compiledStyleMap.get("" + args[0]) ?? "");
+          return defaultStyles + (compiledStyleMap[args[0] as any] || "");
         } else if (numArgs > 0) {
           let nextStyles = defaultStyles;
 
           for (let i = 0; i < numArgs; i++) {
             let arg = args[i];
             if (typeof arg !== "object") {
-              nextStyles += compiledStyleMap.get("" + arg) ?? "";
+              nextStyles += compiledStyleMap[arg as any] || "";
             } else if (arg !== null) {
               for (const key in arg)
-                if (arg[key]) nextStyles += compiledStyleMap.get(key) ?? "";
+                if (arg[key]) nextStyles += compiledStyleMap[key] || "";
             }
           }
 
@@ -145,6 +142,7 @@ export function createStyles<
       ) => string | StyleCallback<Tokens, Themes> | StyleObject
     ) {
       const cache = new Map<string | Value, string>();
+
       function css(value?: Value) {
         if (value === void 0) return "";
         const key = typeof value === "object" ? JSON.stringify(value) : value;
@@ -249,8 +247,8 @@ export function createStyles<
     },
     configurable: false,
   });
-  styles.insertTokens(options.tokens ?? emptyObj);
-  styles.insertThemes(options.themes ?? emptyObj);
+  styles.insertTokens(options.tokens || emptyObj);
+  styles.insertThemes(options.themes || emptyObj);
   return typeof process !== "undefined" && process.env.NODE_ENV !== "production"
     ? Object.freeze(styles)
     : styles;
@@ -673,11 +671,6 @@ export type StyleMap<
   [Name in Variants | "default"]?: StyleValue<Tokens, Themes>;
 };
 
-type StyleMapMemo<Variants extends string | number> = Map<
-  Variants | "default",
-  string
->;
-
 export type StyleArguments<Variants extends string | number> = (
   | Variants
   | {
@@ -806,7 +799,7 @@ const cssDisallowedRe = /[^\w-]/g;
 // will grow to a predictable size and the regex is slowwwww
 const caseCache: Record<string, string> = {};
 const cssCase = (string: string) =>
-  caseCache[string] ||
+  caseCache[string] ??
   (caseCache[string] = string.replace(cssCaseRe, "-$&").toLowerCase());
 
 function serializeTokens(
@@ -857,7 +850,7 @@ function mergeTokens<
   for (const key in source) {
     const value = source[key];
     target[key] =
-      typeof value === "object" ? mergeTokens(target[key] ?? {}, value) : value;
+      typeof value === "object" ? mergeTokens(target[key] || {}, value) : value;
   }
 
   return target as TokensUnion<Tokens, Themes>;
