@@ -1,3 +1,10 @@
+# [1.0.0-alpha.8](https://github.com/dash-ui/styles/compare/v1.0.0-alpha.7...v1.0.0-alpha.8) (2021-11-01)
+
+
+### Bug Fixes
+
+* fix labels for numeric tokens ([8415c81](https://github.com/dash-ui/styles/commit/8415c81977d89bf8d97a4a0e80cc1d0ba07c559c))
+
 # [1.0.0-alpha.7](https://github.com/dash-ui/styles/compare/v1.0.0-alpha.6...v1.0.0-alpha.7) (2021-10-31)
 
 
