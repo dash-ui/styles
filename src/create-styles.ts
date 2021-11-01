@@ -94,9 +94,9 @@ export function createStyles<
 
           for (let i = 0; i < numArgs; i++) {
             let arg = args[i];
-            if (typeof arg === "string" || typeof arg === "number") {
+            if (typeof arg !== "object") {
               nextStyles += compiledStyleMap.get("" + arg) ?? "";
-            } else if (typeof arg === "object" && arg !== null) {
+            } else if (arg !== null) {
               for (const key in arg)
                 if (arg[key]) nextStyles += compiledStyleMap.get(key) ?? "";
             }
