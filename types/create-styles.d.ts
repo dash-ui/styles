@@ -1,5 +1,4 @@
 import type { HtmlAttributes as CSSHTMLAttributes, PropertiesFallback as CSSProperties, Pseudos as CSSPseudos, SvgAttributes as CSSSvgAttributes } from "csstype";
-import { O } from "ts-toolbelt";
 import type { JsonValue, PartialDeep, ValueOf, Primitive } from "type-fest";
 import type { Dash } from "./create-dash";
 import { hash as fnv1aHash } from "./utils";
@@ -417,9 +416,7 @@ export declare function compileStyles<Tokens extends DashTokens = DashTokens, Th
  * into a dash-cased CSS property variable.
  * @param path - A dot-notation string that represents the path to a value
  */
-export declare function pathToToken<Tokens extends DashTokens = DashTokens, Themes extends DashThemes = {
-    default: {};
-}>(path: KeysUnion<O.Merge<Tokens, ValueOf<Themes>, "deep">>): string;
+export declare function pathToToken<Tokens extends Record<string, unknown> = TokensUnion<DashTokens, DashThemes>>(path: KeysUnion<Tokens>): string;
 declare type Concat<Fst, Scd> = Fst extends string ? Scd extends string ? Fst extends "" ? `${Scd}` : `${Fst}.${Scd}` : never : never;
 declare type KeysUnion<T, Cache extends string = ""> = T extends Primitive ? Cache : {
     [P in keyof T]: Concat<Cache, P> | KeysUnion<T[P], Concat<Cache, P>>;

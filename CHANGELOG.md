@@ -1,3 +1,10 @@
+# [1.0.0-alpha.12](https://github.com/dash-ui/styles/compare/v1.0.0-alpha.11...v1.0.0-alpha.12) (2021-11-02)
+
+
+### Bug Fixes
+
+* make pathToToken more closely match real world scenario ([abe91b3](https://github.com/dash-ui/styles/commit/abe91b3928facdf2bd77dca578b10c65d4d1824b))
+
 # [1.0.0-alpha.11](https://github.com/dash-ui/styles/compare/v1.0.0-alpha.10...v1.0.0-alpha.11) (2021-11-02)
 
 
