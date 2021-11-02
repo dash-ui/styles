@@ -1089,22 +1089,10 @@ describe("pathToToken()", () => {
     expect(pathToToken("color.scale.0")).toEqual("var(--color-scale-0)");
 
     expect(
-      pathToToken<
-        {
-          button: { color: { primaryHover: "foo" } };
-          color: { primary: "foo" };
-        },
-        {
-          light: {
-            button: { color: { primaryHover: "foo" } };
-            color: { primary: "foo" };
-          };
-          dark: {
-            button: { color: { primaryHover: "foo" } };
-            color: { primary: "foo"; blue: "bar" };
-          };
-        }
-      >("button.color.primaryHover")
+      pathToToken<{
+        button: { color: { primaryHover: "foo" } };
+        color: { primary: "foo" };
+      }>("button.color.primaryHover")
     ).toEqual("var(--button-color-primary-hover)");
   });
 });

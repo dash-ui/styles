@@ -866,9 +866,8 @@ function mergeTokens<
  * @param path - A dot-notation string that represents the path to a value
  */
 export function pathToToken<
-  Tokens extends DashTokens = DashTokens,
-  Themes extends DashThemes = { default: {} }
->(path: KeysUnion<O.Merge<Tokens, ValueOf<Themes>, "deep">>) {
+  Tokens extends Record<string, unknown> = TokensUnion<DashTokens, DashThemes>
+>(path: KeysUnion<Tokens>) {
   return (
     "var(--" +
     path.replace(/\./g, "-").replace(cssCaseRe, "-$&").toLowerCase() +
