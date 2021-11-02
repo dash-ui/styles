@@ -1,3 +1,10 @@
+# [1.0.0-alpha.11](https://github.com/dash-ui/styles/compare/v1.0.0-alpha.10...v1.0.0-alpha.11) (2021-11-02)
+
+
+### Features
+
+* add pathToToken utility ([c9a844d](https://github.com/dash-ui/styles/commit/c9a844daec45e3ff82e1f7e75e5a6a00f0e69b70))
+
 # [1.0.0-alpha.10](https://github.com/dash-ui/styles/compare/v1.0.0-alpha.9...v1.0.0-alpha.10) (2021-11-01)
 
 
