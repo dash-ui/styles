@@ -876,7 +876,7 @@ export function pathToToken<
 }
 
 type Concat<Fst, Scd> = Fst extends string
-  ? Scd extends string
+  ? Scd extends string | number
     ? Fst extends ""
       ? `${Scd}`
       : `${Fst}.${Scd}`
