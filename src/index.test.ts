@@ -1,5 +1,5 @@
 import crc from "crc";
-import { createDash, createStyles, styles } from "./index";
+import { createDash, createStyles, styles, pathToToken } from "./index";
 
 afterEach(() => {
   styles.dash.sheet.flush();
@@ -1074,5 +1074,37 @@ describe("Exceptions", () => {
     expect(() => {
       style("flex");
     }).toThrowErrorMatchingSnapshot();
+  });
+});
+
+describe("pathToToken()", () => {
+  it("should tokenize an object path", () => {
+    expect(
+      pathToToken<{
+        button: { color: { primaryHover: "foo" } };
+        color: { primary: "foo"; scale: [0, 1, 2, 3] };
+      }>("color.scale.0")
+    ).toEqual("var(--color-scale-0)");
+
+    expect(pathToToken("color.scale.0")).toEqual("var(--color-scale-0)");
+
+    expect(
+      pathToToken<
+        {
+          button: { color: { primaryHover: "foo" } };
+          color: { primary: "foo" };
+        },
+        {
+          light: {
+            button: { color: { primaryHover: "foo" } };
+            color: { primary: "foo" };
+          };
+          dark: {
+            button: { color: { primaryHover: "foo" } };
+            color: { primary: "foo"; blue: "bar" };
+          };
+        }
+      >("button.color.primaryHover")
+    ).toEqual("var(--button-color-primary-hover)");
   });
 });

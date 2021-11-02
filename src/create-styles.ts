@@ -5,7 +5,8 @@ import type {
   Pseudos as CSSPseudos,
   SvgAttributes as CSSSvgAttributes,
 } from "csstype";
-import type { JsonValue, PartialDeep, ValueOf } from "type-fest";
+import { O } from "ts-toolbelt";
+import type { JsonValue, PartialDeep, ValueOf, Primitive } from "type-fest";
 import { createDash } from "./create-dash";
 import type { Dash } from "./create-dash";
 import { hash as fnv1aHash, noop, safeHash } from "./utils";
@@ -798,9 +799,12 @@ const cssDisallowedRe = /[^\w-]/g;
 // We cache the case transformations below because the cache
 // will grow to a predictable size and the regex is slowwwww
 const caseCache: Record<string, string> = {};
-const cssCase = (string: string) =>
-  caseCache[string] ??
-  (caseCache[string] = string.replace(cssCaseRe, "-$&").toLowerCase());
+function cssCase(string: string) {
+  return (
+    caseCache[string] ??
+    (caseCache[string] = string.replace(cssCaseRe, "-$&").toLowerCase())
+  );
+}
 
 function serializeTokens(
   tokens: Record<string, any>,
@@ -855,6 +859,36 @@ function mergeTokens<
 
   return target as TokensUnion<Tokens, Themes>;
 }
+
+/**
+ * A utility function that will convert a camel-cased, dot-notation string
+ * into a dash-cased CSS property variable.
+ * @param path - A dot-notation string that represents the path to a value
+ */
+export function pathToToken<
+  Tokens extends DashTokens = DashTokens,
+  Themes extends DashThemes = { default: {} }
+>(path: KeysUnion<O.Merge<Tokens, ValueOf<Themes>, "deep">>) {
+  return (
+    "var(--" +
+    path.replace(/\./g, "-").replace(cssCaseRe, "-$&").toLowerCase() +
+    ")"
+  );
+}
+
+type Concat<Fst, Scd> = Fst extends string
+  ? Scd extends string
+    ? Fst extends ""
+      ? `${Scd}`
+      : `${Fst}.${Scd}`
+    : never
+  : never;
+
+type KeysUnion<T, Cache extends string = ""> = T extends Primitive
+  ? Cache
+  : {
+      [P in keyof T]: Concat<Cache, P> | KeysUnion<T[P], Concat<Cache, P>>;
+    }[keyof T];
 
 export type TokensUnion<
   Tokens extends DashTokens = DashTokens,

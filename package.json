@@ -142,7 +142,8 @@
   "dependencies": {
     "@dash-ui/stylis": "^1.0.5",
     "@dash-ui/unitless": "^2.0.0",
-    "csstype": "^3.0.9"
+    "csstype": "^3.0.9",
+    "ts-toolbelt": "^9.6.0"
   },
   "devDependencies": {
     "@babel/node": "^7.10.4",
