@@ -417,7 +417,7 @@ export declare function compileStyles<Tokens extends DashTokens = DashTokens, Th
  * @param path - A dot-notation string that represents the path to a value
  */
 export declare function pathToToken<Tokens extends Record<string, unknown> = TokensUnion<DashTokens, DashThemes>>(path: KeysUnion<Tokens>): string;
-declare type Concat<Fst, Scd> = Fst extends string ? Scd extends string ? Fst extends "" ? `${Scd}` : `${Fst}.${Scd}` : never : never;
+declare type Concat<Fst, Scd> = Fst extends string ? Scd extends string | number ? Fst extends "" ? `${Scd}` : `${Fst}.${Scd}` : never : never;
 declare type KeysUnion<T, Cache extends string = ""> = T extends Primitive ? Cache : {
     [P in keyof T]: Concat<Cache, P> | KeysUnion<T[P], Concat<Cache, P>>;
 }[keyof T];

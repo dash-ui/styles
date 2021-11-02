@@ -1,3 +1,10 @@
+# [1.0.0-alpha.13](https://github.com/dash-ui/styles/compare/v1.0.0-alpha.12...v1.0.0-alpha.13) (2021-11-02)
+
+
+### Bug Fixes
+
+* allow number indexes in pathToToken ([f43514b](https://github.com/dash-ui/styles/commit/f43514be92182a21ad114c5896040efaf7ab0bbe))
+
 # [1.0.0-alpha.12](https://github.com/dash-ui/styles/compare/v1.0.0-alpha.11...v1.0.0-alpha.12) (2021-11-02)
 
 
