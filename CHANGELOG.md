@@ -5,6 +5,26 @@
 
 * fix release ([f0263f5](https://github.com/dash-ui/styles/commit/f0263f597568076c2ab6a008ad2206311e191d7c))
 * fix release ([2b7a428](https://github.com/dash-ui/styles/commit/2b7a42886694d25eba379410d1d208717286d39f))
+* for the love of god semantic-release is a pain sometimes ([46fb7e6](https://github.com/dash-ui/styles/commit/46fb7e6e4563dae1f0a7d6c6e9329cb4dc3e2ddb))
+* make the release trigger ([17ae4e5](https://github.com/dash-ui/styles/commit/17ae4e5359a7eb2cfef5312390563208cd8094ae))
+
+
+### Features
+
+* release v1 ([7cf9eb5](https://github.com/dash-ui/styles/commit/7cf9eb5e862cc976e21ac29561bb0ff004a8875f))
+
+
+### BREAKING CHANGES
+
+* - styles() -> styles.variants()
+
+# [1.0.0](https://github.com/dash-ui/styles/compare/v0.8.9...v1.0.0) (2022-06-25)
+
+
+### Bug Fixes
+
+* fix release ([f0263f5](https://github.com/dash-ui/styles/commit/f0263f597568076c2ab6a008ad2206311e191d7c))
+* fix release ([2b7a428](https://github.com/dash-ui/styles/commit/2b7a42886694d25eba379410d1d208717286d39f))
 * make the release trigger ([17ae4e5](https://github.com/dash-ui/styles/commit/17ae4e5359a7eb2cfef5312390563208cd8094ae))
 
 
