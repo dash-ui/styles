@@ -2,10 +2,11 @@
   <img src='https://github.com/dash-ui/styles/raw/main/assets/logo.png'/>
   
   > A tiny, powerful, framework-agnostic CSS-in-JS library
-  ```sh
-  npm i @dash-ui/styles
-  ```
-  
+
+```sh
+npm i @dash-ui/styles
+```
+
   <p>
     <a href="https://bundlephobia.com/result?p=@dash-ui/styles">
       <img alt="Bundlephobia" src="https://img.shields.io/bundlephobia/minzip/@dash-ui/styles?style=for-the-badge&labelColor=24292e">
@@ -201,14 +202,14 @@ experience in VSCode and providing solid insurance to your TypeScript applicatio
 Write something awesome for Dash, [tell me about it](https://twitter.com/jaredLunde), and
 I will put it here.
 
-|                                                                            | Description                                                                                                                                                                 |
-| -------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| [`babel-plugin-dash`](https://github.com/dash-ui/babel-plugin-dash#readme) | A babel plugin for [@dash-ui](https://github.com/dash-ui). Features include string minification, enhanced performance via precompilation, and more.                         |
-| [`@dash-ui/jest`](https://github.com/dash-ui/jest#readme)                  | The easiest way to test React, Preact, and Preact X components with [@dash-ui](https://github.com/dash-ui). This includes snapshot serialization and a custom Jest matcher. |
-| [`@dash-ui/react`](https://github.com/dash-ui/react#readme)                | React components and hooks for [@dash-ui](https://github.com/dash-ui).                                                                                                      |
-| [`@dash-ui/react-layout`](https://github.com/dash-ui/react-layout#readme)  | Layout primitives for React and [@dash-ui](https://github.com/dash-ui), including Box, Cluster, Grid, Row, Column, and Layer.                                               |
-| [`@dash-ui/mq`](https://github.com/dash-ui/mq#readme)                      | A utility function for adding stored media queries and breakpoints to [@dash-ui](https://github.com/dash-ui) styles.                                                        |
-| [`@dash-ui/transition`](https://github.com/dash-ui/transition#readme)      | A library for creating performant and composable CSS transitions with [@dash-ui](https://github.com/dash-ui).                                                               |
+|                                                                           | Description                                                                                                                                                                 |
+| ------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| [`@dash-ui/layout`](https://github.com/dash-ui/layout#readme)             | Framework-agnostic layout primitives for [@dash-ui](https://github.com/dash-ui).                                                                                            |
+| [`@dash-ui/jest`](https://github.com/dash-ui/jest#readme)                 | The easiest way to test React, Preact, and Preact X components with [@dash-ui](https://github.com/dash-ui). This includes snapshot serialization and a custom Jest matcher. |
+| [`@dash-ui/react`](https://github.com/dash-ui/react#readme)               | React components and hooks for [@dash-ui](https://github.com/dash-ui).                                                                                                      |
+| [`@dash-ui/react-layout`](https://github.com/dash-ui/react-layout#readme) | Layout primitives for React and [@dash-ui](https://github.com/dash-ui), including Box, Cluster, Grid, Row, Column, and Layer.                                               |
+| [`@dash-ui/mq`](https://github.com/dash-ui/mq#readme)                     | A utility function for adding stored media queries and breakpoints to [@dash-ui](https://github.com/dash-ui) styles.                                                        |
+| [`@dash-ui/transition`](https://github.com/dash-ui/transition#readme)     | A library for creating performant and composable CSS transitions with [@dash-ui](https://github.com/dash-ui).                                                               |
 
 ## Why does this exist?
 
