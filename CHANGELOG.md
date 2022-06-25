@@ -1,3 +1,10 @@
+## [1.0.1](https://github.com/dash-ui/styles/compare/v1.0.0...v1.0.1) (2022-06-25)
+
+
+### Bug Fixes
+
+* try releasing again ([59b6df4](https://github.com/dash-ui/styles/commit/59b6df4ae744e5fbf40dea329267eba65c7811a4))
+
 # [1.0.0](https://github.com/dash-ui/styles/compare/v0.8.9...v1.0.0) (2022-06-25)
 
 
