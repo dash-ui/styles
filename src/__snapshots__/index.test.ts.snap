@@ -54,123 +54,6 @@ Object {
 }
 `;
 
-exports[`styles() adds dev labels: -flex 1`] = `"ui-1ut9bc3-flex"`;
-
-exports[`styles() adds dev labels: -flex-block 1`] = `"ui-14t38od-flex-block"`;
-
-exports[`styles() adds dev labels: -flex-inline 1`] = `"ui-broszf-flex-inline"`;
-
-exports[`styles() adds styles by order of definition when called: flex, block, inline 1`] = `
-<style
-  data-dash="ui"
->
-  .ui-qaw0al{display:flex;display:block;display:inline;}
-</style>
-`;
-
-exports[`styles() adds styles by order of definition when called: flex, block, inline 2`] = `
-<style
-  data-dash="ui"
->
-  .ui-qaw0al{display:flex;display:block;display:inline;}
-</style>
-`;
-
-exports[`styles() allows comments 1`] = `
-"
-        /* this is a flex style */
-        display: flex;
-      "
-`;
-
-exports[`styles() allows default styles 1`] = `
-NodeList [
-  <style
-    data-dash="ui"
-  >
-    .ui-1ut9bc3{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;}
-  </style>,
-]
-`;
-
-exports[`styles() allows full capabilities w/ style objects 1`] = `
-<style
-  data-dash="ui"
->
-  .ui-7a9ovz{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;}
-</style>
-`;
-
-exports[`styles() allows full capabilities w/ style objects 2`] = `
-<style
-  data-dash="ui"
->
-  .ui-7a9ovz.foo{display:block;}
-</style>
-`;
-
-exports[`styles() allows unitless object values: 200x200 1`] = `
-<style
-  data-dash="ui"
->
-  .ui-haiabg{width:200px;height:200px;}
-</style>
-`;
-
-exports[`styles() has a default style that is always applied first 1`] = `
-NodeList [
-  <style
-    data-dash="ui"
-  >
-    .ui-14t38od{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;display:block;}
-  </style>,
-]
-`;
-
-exports[`styles() joins css styles and returns class name 1`] = `"ui-14t38od"`;
-
-exports[`styles() joins css styles and returns class name: display:flex;display:block; 1`] = `
-<style
-  data-dash="ui"
->
-  .ui-14t38od{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;display:block;}
-</style>
-`;
-
-exports[`styles() passes tokens to style callbacks 1`] = `
-Object {
-  "colors": Object {
-    "bg": "var(--colors-bg)",
-    "lightSpecific": "var(--colors-light-specific)",
-    "text": "var(--colors-text)",
-  },
-}
-`;
-
-exports[`styles() passes tokens to style callbacks 2`] = `"ui-dark-theme"`;
-
-exports[`styles() passes tokens to style callbacks 3`] = `"ui-light-theme"`;
-
-exports[`styles() replaces disallowed characters in dev labels: 400x400 1`] = `
-<style
-  data-dash="ui"
->
-  .ui-49mne8-box-big{width:400px;height:400px;}
-</style>
-`;
-
-exports[`styles() returns css styles 1`] = `"display:flex;"`;
-
-exports[`styles() returns css styles 2`] = `"display:flex;display:block;display: inline;"`;
-
-exports[`styles() returns css styles 3`] = `"display:flex;display: inline;"`;
-
-exports[`styles() returns single class name 1`] = `"ui-1ut9bc3"`;
-
-exports[`styles() returns single class name 2`] = `"ui-qaw0al"`;
-
-exports[`styles() returns single class name 3`] = `"ui-broszf"`;
-
 exports[`styles.cls() creates style and inserts it into the dom right away 1`] = `
 <style
   data-dash="ui"
@@ -458,3 +341,120 @@ exports[`styles.one() won't create style def if falsy 1`] = `
   .ui-1ut9bc3{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;}
 </style>
 `;
+
+exports[`styles.variants() adds dev labels: -flex 1`] = `"ui-1ut9bc3-flex"`;
+
+exports[`styles.variants() adds dev labels: -flex-block 1`] = `"ui-14t38od-flex-block"`;
+
+exports[`styles.variants() adds dev labels: -flex-inline 1`] = `"ui-broszf-flex-inline"`;
+
+exports[`styles.variants() adds styles by order of definition when called: flex, block, inline 1`] = `
+<style
+  data-dash="ui"
+>
+  .ui-qaw0al{display:flex;display:block;display:inline;}
+</style>
+`;
+
+exports[`styles.variants() adds styles by order of definition when called: flex, block, inline 2`] = `
+<style
+  data-dash="ui"
+>
+  .ui-qaw0al{display:flex;display:block;display:inline;}
+</style>
+`;
+
+exports[`styles.variants() allows comments 1`] = `
+"
+        /* this is a flex style */
+        display: flex;
+      "
+`;
+
+exports[`styles.variants() allows default styles 1`] = `
+NodeList [
+  <style
+    data-dash="ui"
+  >
+    .ui-1ut9bc3{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;}
+  </style>,
+]
+`;
+
+exports[`styles.variants() allows full capabilities w/ style objects 1`] = `
+<style
+  data-dash="ui"
+>
+  .ui-7a9ovz{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;}
+</style>
+`;
+
+exports[`styles.variants() allows full capabilities w/ style objects 2`] = `
+<style
+  data-dash="ui"
+>
+  .ui-7a9ovz.foo{display:block;}
+</style>
+`;
+
+exports[`styles.variants() allows unitless object values: 200x200 1`] = `
+<style
+  data-dash="ui"
+>
+  .ui-haiabg{width:200px;height:200px;}
+</style>
+`;
+
+exports[`styles.variants() has a default style that is always applied first 1`] = `
+NodeList [
+  <style
+    data-dash="ui"
+  >
+    .ui-14t38od{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;display:block;}
+  </style>,
+]
+`;
+
+exports[`styles.variants() joins css styles and returns class name 1`] = `"ui-14t38od"`;
+
+exports[`styles.variants() joins css styles and returns class name: display:flex;display:block; 1`] = `
+<style
+  data-dash="ui"
+>
+  .ui-14t38od{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;display:block;}
+</style>
+`;
+
+exports[`styles.variants() passes tokens to style callbacks 1`] = `
+Object {
+  "colors": Object {
+    "bg": "var(--colors-bg)",
+    "lightSpecific": "var(--colors-light-specific)",
+    "text": "var(--colors-text)",
+  },
+}
+`;
+
+exports[`styles.variants() passes tokens to style callbacks 2`] = `"ui-dark-theme"`;
+
+exports[`styles.variants() passes tokens to style callbacks 3`] = `"ui-light-theme"`;
+
+exports[`styles.variants() replaces disallowed characters in dev labels: 400x400 1`] = `
+<style
+  data-dash="ui"
+>
+  .ui-49mne8-box-big{width:400px;height:400px;}
+</style>
+`;
+
+exports[`styles.variants() returns css styles 1`] = `"display:flex;"`;
+
+exports[`styles.variants() returns css styles 2`] = `"display:flex;display:block;display: inline;"`;
+
+exports[`styles.variants() returns css styles 3`] = `"display:flex;display: inline;"`;
+
+exports[`styles.variants() returns single class name 1`] = `"ui-1ut9bc3"`;
+
+exports[`styles.variants() returns single class name 2`] = `"ui-qaw0al"`;
+
+exports[`styles.variants() returns single class name 3`] = `"ui-broszf"`;

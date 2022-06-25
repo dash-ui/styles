@@ -6,7 +6,8 @@
  * @param string - A string you want to hash
  */
 export function hash(string: string): string {
-  let out = 2166136261; // 32-bit offset basis
+  // 32-bit offset basis
+  let out = 2166136261;
   let i = 0;
   let len = string.length;
 
@@ -26,17 +27,14 @@ const minL = /(^|[:;,{}\s])\s+|$/g;
 const minR = / +{/g;
 
 export function safeHash(key: string, hashFn: typeof hash) {
-  const hashCache = new Map<string, string>();
+  const hashCache: Record<string, string> = {};
   let value: string | undefined;
   return (string: string) => {
-    if ((value = hashCache.get(string))) return value;
+    if ((value = hashCache[string])) return value;
     value = hashFn(string.replace(minL, "$1").replace(minR, "{"));
     // allows class names to start with numbers
-    hashCache.set(
-      string,
-      (value = !key && !isNaN(value[0] as any) ? "_" + value : value)
-    );
-    return value;
+    return (hashCache[string] = value =
+      !key && !isNaN(value[0] as any) ? "_" + value : value);
   };
 }
 

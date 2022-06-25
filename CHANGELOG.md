@@ -1,3 +1,152 @@
+# [1.0.0-alpha.13](https://github.com/dash-ui/styles/compare/v1.0.0-alpha.12...v1.0.0-alpha.13) (2021-11-02)
+
+
+### Bug Fixes
+
+* allow number indexes in pathToToken ([f43514b](https://github.com/dash-ui/styles/commit/f43514be92182a21ad114c5896040efaf7ab0bbe))
+
+# [1.0.0-alpha.12](https://github.com/dash-ui/styles/compare/v1.0.0-alpha.11...v1.0.0-alpha.12) (2021-11-02)
+
+
+### Bug Fixes
+
+* make pathToToken more closely match real world scenario ([abe91b3](https://github.com/dash-ui/styles/commit/abe91b3928facdf2bd77dca578b10c65d4d1824b))
+
+# [1.0.0-alpha.11](https://github.com/dash-ui/styles/compare/v1.0.0-alpha.10...v1.0.0-alpha.11) (2021-11-02)
+
+
+### Features
+
+* add pathToToken utility ([c9a844d](https://github.com/dash-ui/styles/commit/c9a844daec45e3ff82e1f7e75e5a6a00f0e69b70))
+
+# [1.0.0-alpha.10](https://github.com/dash-ui/styles/compare/v1.0.0-alpha.9...v1.0.0-alpha.10) (2021-11-01)
+
+
+### Performance Improvements
+
+* swap out es6 map with plain objects in a few places it was consequential ([e228f12](https://github.com/dash-ui/styles/commit/e228f12597ea7f285cf1a17f13d1f998074881f2))
+
+# [1.0.0-alpha.9](https://github.com/dash-ui/styles/compare/v1.0.0-alpha.8...v1.0.0-alpha.9) (2021-11-01)
+
+
+### Bug Fixes
+
+* force new release ([ef36377](https://github.com/dash-ui/styles/commit/ef36377833784b208834a839c5b31915e066cc94))
+
+# [1.0.0-alpha.8](https://github.com/dash-ui/styles/compare/v1.0.0-alpha.7...v1.0.0-alpha.8) (2021-11-01)
+
+
+### Bug Fixes
+
+* fix labels for numeric tokens ([8415c81](https://github.com/dash-ui/styles/commit/8415c81977d89bf8d97a4a0e80cc1d0ba07c559c))
+
+# [1.0.0-alpha.7](https://github.com/dash-ui/styles/compare/v1.0.0-alpha.6...v1.0.0-alpha.7) (2021-10-31)
+
+
+### Performance Improvements
+
+* improve variants performance ([47703a0](https://github.com/dash-ui/styles/commit/47703a0e329eda4f527c0bbb87afa59f36453364))
+
+# [1.0.0-alpha.6](https://github.com/dash-ui/styles/compare/v1.0.0-alpha.5...v1.0.0-alpha.6) (2021-10-31)
+
+
+### Bug Fixes
+
+* fix handling of numeric variants ([dce553b](https://github.com/dash-ui/styles/commit/dce553b31635b3f7355e1fb6d44d3b83ca2c0c68))
+
+# [1.0.0-alpha.5](https://github.com/dash-ui/styles/compare/v1.0.0-alpha.4...v1.0.0-alpha.5) (2021-10-30)
+
+
+### Bug Fixes
+
+* fix missing number variant types ([bf6b466](https://github.com/dash-ui/styles/commit/bf6b466d01d4cca98bbdc5bd2d18bc5c787a35e2))
+
+# [1.0.0-alpha.4](https://github.com/dash-ui/styles/compare/v1.0.0-alpha.3...v1.0.0-alpha.4) (2021-10-30)
+
+
+### Bug Fixes
+
+* allow style map to have numeric keys ([ad16a2b](https://github.com/dash-ui/styles/commit/ad16a2b90aa5727f1a2d5c834255a2302405b15a))
+
+# [1.0.0-alpha.3](https://github.com/dash-ui/styles/compare/v1.0.0-alpha.2...v1.0.0-alpha.3) (2021-10-29)
+
+
+### Bug Fixes
+
+* simplify token union type ([3e1fad4](https://github.com/dash-ui/styles/commit/3e1fad4d17b8d42d9402fdc1874b6e5680e2cc55))
+
+# [1.0.0-alpha.2](https://github.com/dash-ui/styles/compare/v1.0.0-alpha.1...v1.0.0-alpha.2) (2021-10-29)
+
+
+### Bug Fixes
+
+* stop freezing tokens ([afe70b6](https://github.com/dash-ui/styles/commit/afe70b64d91fcb77652dc7545e13b3069b7d6088))
+
+# [1.0.0-alpha.1](https://github.com/dash-ui/styles/compare/v0.8.9...v1.0.0-alpha.1) (2021-10-28)
+
+
+### Bug Fixes
+
+* add prerelease properties to semantic release branches ([7e6e567](https://github.com/dash-ui/styles/commit/7e6e567397ebab931d407de8d5e14001fc171104))
+
+
+### chore
+
+* move next to alpha ([#18](https://github.com/dash-ui/styles/issues/18)) ([497f2eb](https://github.com/dash-ui/styles/commit/497f2eba676660af441931768e235491d6790497)), closes [#17](https://github.com/dash-ui/styles/issues/17) [#17](https://github.com/dash-ui/styles/issues/17)
+
+
+### Code Refactoring
+
+* add a variants property and make styles an object ([0348d95](https://github.com/dash-ui/styles/commit/0348d95b9dabd7c84df1919a8fc3e39669dc6df2))
+
+
+### BREAKING CHANGES
+
+* createStyles() no longer returns a function, it returns an object.
+* This will break things that depend on the previous type definitions
+
+* chore(release): 1.0.0
+
+# [1.0.0](https://github.com/dash-ui/styles/compare/v0.8.9...v1.0.0) (2021-10-28)
+
+### Code Refactoring
+
+# [1.0.0](https://github.com/dash-ui/styles/compare/v0.8.9...v1.0.0) (2021-10-28)
+
+
+### chore
+
+* move next to alpha ([#18](https://github.com/dash-ui/styles/issues/18)) ([497f2eb](https://github.com/dash-ui/styles/commit/497f2eba676660af441931768e235491d6790497)), closes [#17](https://github.com/dash-ui/styles/issues/17) [#17](https://github.com/dash-ui/styles/issues/17)
+
+
+### Code Refactoring
+
+* add a variants property and make styles an object ([0348d95](https://github.com/dash-ui/styles/commit/0348d95b9dabd7c84df1919a8fc3e39669dc6df2))
+
+
+### BREAKING CHANGES
+
+* createStyles() no longer returns a function, it returns an object.
+* This will break things that depend on the previous type definitions
+
+* chore(release): 1.0.0
+
+# [1.0.0](https://github.com/dash-ui/styles/compare/v0.8.9...v1.0.0) (2021-10-28)
+
+### Code Refactoring
+
+# [1.0.0](https://github.com/dash-ui/styles/compare/v0.8.9...v1.0.0) (2021-10-28)
+
+
+### Code Refactoring
+
+* improve typing ([#17](https://github.com/dash-ui/styles/issues/17)) ([9b4f1b1](https://github.com/dash-ui/styles/commit/9b4f1b1d98ec40c815ac1b4a5e185dee2cd14cb6))
+
+
+### BREAKING CHANGES
+
+* This will break things that depend on the previous type definitions
+
 ## [0.8.9](https://github.com/dash-ui/styles/compare/v0.8.8...v0.8.9) (2021-10-03)
 
 
