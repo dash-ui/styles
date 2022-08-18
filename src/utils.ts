@@ -26,10 +26,13 @@ export function hash(string: string): string {
 const minL = /(^|[:;,{}\s])\s+|$/g;
 const minR = / +{/g;
 
-export function safeHash(key: string, hashFn: typeof hash) {
+export function safeHash(
+  key: string,
+  hashFn: typeof hash
+): (string: string) => string {
   const hashCache: Record<string, string> = {};
   let value: string | undefined;
-  return (string: string) => {
+  return (string: string): string => {
     if ((value = hashCache[string])) return value;
     value = hashFn(string.replace(minL, "$1").replace(minR, "{"));
     // allows class names to start with numbers
@@ -38,4 +41,4 @@ export function safeHash(key: string, hashFn: typeof hash) {
   };
 }
 
-export function noop() {}
+export function noop(): void {}

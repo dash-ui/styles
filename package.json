@@ -1,6 +1,6 @@
 {
   "name": "@dash-ui/styles",
-  "version": "1.0.1",
+  "version": "1.0.0",
   "description": "A tiny, powerful, framework-agnostic CSS-in-JS library.",
   "keywords": [
     "styles",
@@ -96,6 +96,12 @@
       "lunde"
     ],
     "rules": {
+      "@typescript-eslint/explicit-function-return-type": [
+        "warn",
+        {
+          "allowExpressions": true
+        }
+      ],
       "prefer-const": "off",
       "prefer-rest-params": "off"
     }
