@@ -1,5 +1,5 @@
 import crc from "crc";
-import { createDash, createStyles, styles, pathToToken } from "./index";
+import { createDash, createStyles, pathToToken, styles } from "./index";
 
 afterEach(() => {
   styles.dash.sheet.flush();

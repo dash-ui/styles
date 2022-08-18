@@ -5,8 +5,7 @@ import type {
   Pseudos as CSSPseudos,
   SvgAttributes as CSSSvgAttributes,
 } from "csstype";
-import { O } from "ts-toolbelt";
-import type { JsonValue, PartialDeep, ValueOf, Primitive } from "type-fest";
+import type { JsonValue, PartialDeep, Primitive, ValueOf } from "type-fest";
 import { createDash } from "./create-dash";
 import type { Dash } from "./create-dash";
 import { hash as fnv1aHash, noop, safeHash } from "./utils";
@@ -69,7 +68,7 @@ export function createStyles<
       const defaultStyles = compiledStyleMap.default || "";
 
       // style('text', {})
-      function style() {
+      function style(): string {
         // eslint-disable-next-line prefer-spread
         const css_ = css.apply(null, arguments as any);
         if (!css_) return "";
@@ -81,7 +80,7 @@ export function createStyles<
         return className;
       }
 
-      function css() {
+      function css(): string {
         const args = arguments as unknown as StyleArguments<Variants>;
         const numArgs = args.length;
 
@@ -141,10 +140,10 @@ export function createStyles<
       lazyFn: (
         value: Value
       ) => string | StyleCallback<Tokens, Themes> | StyleObject
-    ) {
+    ): StylesLazy<Value> {
       const cache = new Map<string | Value, string>();
 
-      function css(value?: Value) {
+      function css(value?: Value): string {
         if (value === void 0) return "";
         const key = typeof value === "object" ? JSON.stringify(value) : value;
         let css = cache.get(key);
@@ -759,7 +758,7 @@ export function compileStyles<
       ((value || "") as string);
 }
 
-function stringifyStyleObject(object: StyleObject) {
+function stringifyStyleObject(object: StyleObject): string {
   let string = "";
 
   for (const key in object) {
@@ -785,7 +784,7 @@ function stringifyStyleObject(object: StyleObject) {
   return string;
 }
 
-function compileLiterals(args: IArguments) {
+function compileLiterals(args: IArguments): string {
   const literals = args[0];
   return Array.isArray(literals)
     ? literals.reduce((curr, next, i) => curr + next + (args[i + 1] || ""), "")
@@ -799,7 +798,7 @@ const cssDisallowedRe = /[^\w-]/g;
 // We cache the case transformations below because the cache
 // will grow to a predictable size and the regex is slowwwww
 const caseCache: Record<string, string> = {};
-function cssCase(string: string) {
+function cssCase(string: string): string {
   return (
     caseCache[string] ??
     (caseCache[string] = string.replace(cssCaseRe, "-$&").toLowerCase())
@@ -850,7 +849,10 @@ type SerializedTokens = {
 function mergeTokens<
   Tokens extends DashTokens = DashTokens,
   Themes extends DashThemes = DashThemes
->(target: Record<string, any>, source: Record<string, any>) {
+>(
+  target: Record<string, any>,
+  source: Record<string, any>
+): TokensUnion<Tokens, Themes> {
   for (const key in source) {
     const value = source[key];
     target[key] =
@@ -863,11 +865,12 @@ function mergeTokens<
 /**
  * A utility function that will convert a camel-cased, dot-notation string
  * into a dash-cased CSS property variable.
+ *
  * @param path - A dot-notation string that represents the path to a value
  */
 export function pathToToken<
   Tokens extends Record<string, unknown> = TokensUnion<DashTokens, DashThemes>
->(path: KeysUnion<Tokens>) {
+>(path: KeysUnion<Tokens>): string {
   return (
     "var(--" +
     path.replace(/\./g, "-").replace(cssCaseRe, "-$&").toLowerCase() +
