@@ -1,5 +1,5 @@
 import type { HtmlAttributes as CSSHTMLAttributes, PropertiesFallback as CSSProperties, Pseudos as CSSPseudos, SvgAttributes as CSSSvgAttributes } from "csstype";
-import type { JsonValue, PartialDeep, ValueOf, Primitive } from "type-fest";
+import type { JsonValue, PartialDeep, Primitive, ValueOf } from "type-fest";
 import type { Dash } from "./create-dash";
 import { hash as fnv1aHash } from "./utils";
 /**
@@ -414,6 +414,7 @@ export declare function compileStyles<Tokens extends DashTokens = DashTokens, Th
 /**
  * A utility function that will convert a camel-cased, dot-notation string
  * into a dash-cased CSS property variable.
+ *
  * @param path - A dot-notation string that represents the path to a value
  */
 export declare function pathToToken<Tokens extends Record<string, unknown> = TokensUnion<DashTokens, DashThemes>>(path: KeysUnion<Tokens>): string;

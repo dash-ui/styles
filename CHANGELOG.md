@@ -1,3 +1,10 @@
+## [1.0.2](https://github.com/dash-ui/styles/compare/v1.0.1...v1.0.2) (2022-08-18)
+
+
+### Bug Fixes
+
+* add explicit function return types ([#20](https://github.com/dash-ui/styles/issues/20)) ([d327470](https://github.com/dash-ui/styles/commit/d32747088aee560129bc974a2db16ddb76a0b258))
+
 ## [1.0.1](https://github.com/dash-ui/styles/compare/v1.0.0...v1.0.1) (2022-06-25)
 
 
