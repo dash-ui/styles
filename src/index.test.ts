@@ -6,30 +6,11 @@ afterEach(() => {
   document.getElementsByTagName("html")[0].innerHTML = "";
 });
 
-const serializeRules = (selector = `style[data-dash]`): any[] => {
-  const els = document.querySelectorAll(selector);
-  // @ts-expect-error
-  return els[0].sheet.cssRules
-    .map(
-      ({
-        selectorText,
-        style: {
-          // eslint-disable-next-line
-          ends,
-          starts,
-          _importants,
-          __starts,
-          parentRule,
-          parentStyleSheet,
-          ...other
-        },
-      }) => [selectorText, other]
-    )
-    .reduce((p, c) => {
-      p[c[0]] = c[1];
-      return p;
-    }, {});
-};
+function cssRules(
+  element: any = document.querySelectorAll(`style[data-dash]`)[0]
+): CSSStyleRule[] {
+  return element.sheet.cssRules;
+}
 
 describe("createStyles()", () => {
   it("turns off vendor prefixing", () => {
@@ -39,10 +20,9 @@ describe("createStyles()", () => {
     });
 
     style("flex");
-    expect(document.querySelectorAll(`style[data-dash]`).length).toBe(1);
-    expect(document.querySelectorAll(`style[data-dash]`)[0]).toMatchSnapshot(
-      "DOM"
-    );
+    expect(
+      cssRules(document.querySelectorAll("style[data-dash]")[1])[0].cssText
+    ).toMatch(/\{display: flex;\}/);
   });
 
   it("configures hash algorithm", () => {
@@ -63,18 +43,13 @@ describe("createStyles()", () => {
   });
 
   it("adds nonce to style tags", () => {
-    const myStyles = createStyles({
+    createStyles({
       dash: createDash({ nonce: "EDNnf03nceIOfn39fn3e9h3sdfa" }),
     });
-    const style = myStyles.variants({
-      flex: { display: "flex" },
-    });
 
-    style("flex");
-    expect(document.querySelectorAll(`style[data-dash]`).length).toBe(1);
-    expect(document.querySelectorAll(`style[data-dash]`)[0]).toMatchSnapshot(
-      "DOM"
-    );
+    expect(
+      document.querySelectorAll(`style[data-dash]`)[0].getAttribute("nonce")
+    ).toBe("EDNnf03nceIOfn39fn3e9h3sdfa");
   });
 
   it('changes key to "css"', () => {
@@ -84,9 +59,8 @@ describe("createStyles()", () => {
     });
 
     style("flex");
-    expect(document.querySelectorAll(`style[data-dash]`).length).toBe(1);
-    expect(document.querySelectorAll(`style[data-dash]`)[0]).toMatchSnapshot(
-      "DOM"
+    expect(cssRules()[0].selectorText).toStrictEqual(
+      expect.stringMatching(/^\.css-/)
     );
   });
 
@@ -100,21 +74,6 @@ describe("createStyles()", () => {
 
     style("flex");
     expect(document.querySelectorAll(`body style[data-dash]`).length).toBe(1);
-    expect(
-      document.querySelectorAll(`body style[data-dash]`)[0]
-    ).toMatchSnapshot();
-  });
-
-  it("turns on speedy", () => {
-    const myStyles = createStyles({ dash: createDash({ speedy: true }) });
-    const style = myStyles.variants({
-      flex: { display: "flex" },
-      block: { display: "block" },
-    });
-
-    style("flex");
-    style("block");
-    expect(serializeRules()).toMatchSnapshot();
   });
 
   it("should initialize w/ tokens", () => {
@@ -209,11 +168,12 @@ describe("styles.variants()", () => {
       block: { display: "block" },
     });
 
-    expect(style.join(flex.css("flex"), block.css("block"))).toMatchSnapshot();
-    expect(document.querySelectorAll(`style[data-dash]`).length).toBe(1);
-    expect(document.querySelectorAll(`style[data-dash]`)[0]).toMatchSnapshot(
-      "display:flex;display:block;"
+    style.join(flex.css("flex"), block.css("block"));
+    expect(style.join(flex.css("flex"), block.css("block"))).not.toBe(
+      flex("flex")
     );
+    expect(cssRules()[0].cssText).not.toMatch(/display: flex;/);
+    expect(cssRules()[0].cssText).toMatch(/display: block;/);
   });
 
   it("returns empty string when falsy", () => {
@@ -249,10 +209,7 @@ describe("styles.variants()", () => {
     });
 
     style("box");
-    expect(document.querySelectorAll(`style[data-dash]`).length).toBe(1);
-    expect(document.querySelectorAll(`style[data-dash]`)[0]).toMatchSnapshot(
-      "200x200"
-    );
+    expect(cssRules()[0].cssText).toMatch(/width: 200px;/);
   });
 
   it("adds styles by order of definition when called", () => {
@@ -266,19 +223,14 @@ describe("styles.variants()", () => {
 
     style("flex", "block", "inline");
 
-    expect(document.querySelectorAll(`style[data-dash]`).length).toBe(1);
-    expect(document.querySelectorAll(`style[data-dash]`)[0]).toMatchSnapshot(
-      "flex, block, inline"
-    );
-
+    expect(cssRules()[0].cssText).not.toMatch(/display: (flex|block);/);
+    expect(cssRules()[0].cssText).toMatch(/display: inline;/);
     styles.dash.inserted.clear();
     styles.dash.sheet.flush();
     style({ flex: true, block: true, inline: true });
 
-    expect(document.querySelectorAll(`style[data-dash]`).length).toBe(1);
-    expect(document.querySelectorAll(`style[data-dash]`)[0]).toMatchSnapshot(
-      "flex, block, inline"
-    );
+    expect(cssRules()[0].cssText).not.toMatch(/display: (flex|block);/);
+    expect(cssRules()[0].cssText).toMatch(/display: inline;/);
   });
 
   it("allows comments", () => {
@@ -303,9 +255,11 @@ describe("styles.variants()", () => {
     });
 
     style("flex");
-    expect(document.querySelectorAll(`style[data-dash]`).length).toBe(2);
-    expect(document.querySelectorAll(`style[data-dash]`)[0]).toMatchSnapshot();
-    expect(document.querySelectorAll(`style[data-dash]`)[1]).toMatchSnapshot();
+
+    const rules = cssRules();
+    expect(rules[0].cssText).toMatch(/display: flex;/);
+    expect(rules[1].selectorText).toMatch(/\.foo/);
+    expect(rules[1].cssText).toMatch(/display: block;/);
   });
 
   it("passes tokens to style callbacks", () => {
@@ -372,10 +326,8 @@ describe("styles.variants()", () => {
     });
 
     style("box=big");
-    expect(document.querySelectorAll(`style[data-dash]`).length).toBe(1);
-    expect(document.querySelectorAll(`style[data-dash]`)[0]).toMatchSnapshot(
-      "400x400"
-    );
+    const rules = cssRules();
+    expect(rules[0].selectorText).toMatch(/box-big/);
     process.env.NODE_ENV = prevEnv;
   });
 
@@ -386,8 +338,8 @@ describe("styles.variants()", () => {
     });
 
     style();
-    expect(document.querySelectorAll(`style[data-dash]`).length).toBe(1);
-    expect(document.querySelectorAll(`style[data-dash]`)).toMatchSnapshot();
+    const rules = cssRules();
+    expect(rules[0].cssText).toMatch(/display: flex;/);
   });
 
   it("has a default style that is always applied first", () => {
@@ -397,8 +349,8 @@ describe("styles.variants()", () => {
     });
 
     style("block");
-    expect(document.querySelectorAll(`style[data-dash]`).length).toBe(1);
-    expect(document.querySelectorAll(`style[data-dash]`)).toMatchSnapshot();
+    const rules = cssRules();
+    expect(rules[0].cssText).toMatch(/display: block;/);
   });
 
   it("flushes sheet tags", () => {
@@ -410,7 +362,7 @@ describe("styles.variants()", () => {
 
     style("flex");
     style("block");
-    expect(document.querySelectorAll(`style[data-dash]`).length).toBe(2);
+    expect(document.querySelectorAll(`style[data-dash]`).length).toBe(1);
     myStyles.dash.sheet.flush();
     expect(document.querySelectorAll(`style[data-dash]`).length).toBe(0);
   });
@@ -432,7 +384,7 @@ describe("styles.variants()", () => {
     });
 
     style("flex");
-    expect(document.querySelectorAll(`style[data-dash]`).length).toBe(1);
+    expect(document.querySelectorAll(`style[data-dash]`).length).toBe(2);
   });
 
   it("rehydrates into custom container", () => {
@@ -456,8 +408,8 @@ describe("styles.variants()", () => {
 
     style("flex");
     expect(document.querySelectorAll(`head style[data-dash]`).length).toBe(0);
-    expect(document.querySelectorAll(`body style[data-dash]`).length).toBe(1);
-    expect(document.querySelectorAll(`style[data-dash]`).length).toBe(1);
+    expect(document.querySelectorAll(`body style[data-dash]`).length).toBe(2);
+    expect(document.querySelectorAll(`style[data-dash]`).length).toBe(2);
   });
 });
 
@@ -486,12 +438,9 @@ describe("styles.keyframes()", () => {
     `);
 
     expect(document.querySelectorAll(`style[data-dash]`).length).toBe(2);
-    expect(document.querySelectorAll(`style[data-dash]`)[0]).toMatchSnapshot(
-      `@-webkit-keyframes ${name}`
-    );
-    expect(document.querySelectorAll(`style[data-dash]`)[1]).toMatchSnapshot(
-      `@keyframes ${name}`
-    );
+    expect(
+      cssRules(document.querySelectorAll(`style[data-dash]`)[1])[0].cssText
+    ).toMatch(new RegExp(`@-webkit-keyframes ${name}`));
   });
 
   it("works with tokens callback", () => {
@@ -516,8 +465,10 @@ describe("styles.keyframes()", () => {
     );
 
     expect(document.querySelectorAll(`style[data-dash]`).length).toBe(3); // tokens + kf
-    expect(document.querySelectorAll(`style[data-dash]`)[2]).toMatchSnapshot(
-      `0% blue; 100% red;`
+    const rule = cssRules(document.querySelectorAll(`style[data-dash]`)[2])[0];
+    expect(rule.cssText).toMatch(/0% {background-color: var\(--color-blue\);}/);
+    expect(rule.cssText).toMatch(
+      /100% {background-color: var\(--color-red\);}/
     );
   });
 });
@@ -539,10 +490,10 @@ describe(`styles.insertTokens()`, () => {
       },
     });
 
-    expect(document.querySelectorAll(`style[data-dash]`).length).toBe(1);
-    expect(document.querySelectorAll(`style[data-dash]`)[0]).toMatchSnapshot(
-      ":root"
-    );
+    const rule = cssRules(document.querySelectorAll(`style[data-dash]`)[1])[0];
+    expect(rule.selectorText).toBe(":root");
+    expect(rule.cssText).toMatch(/--system-p-md: 1rem;/);
+    expect(rule.cssText).toMatch(/--colors-blue: #09a;/);
   });
 
   it("removes tokens when eject is called", () => {
@@ -561,12 +512,11 @@ describe(`styles.insertTokens()`, () => {
       },
     });
 
-    expect(document.querySelectorAll(`style[data-dash]`).length).toBe(1);
-    expect(document.querySelectorAll(`style[data-dash]`)).toMatchSnapshot();
+    expect(document.querySelectorAll(`style[data-dash]`).length).toBe(2);
     expect(myStyles.dash.inserted.size).toBe(1);
     expect(Array.from(myStyles.dash.sheets.keys()).length).toBe(1);
     eject();
-    expect(document.querySelectorAll(`style[data-dash]`).length).toBe(0);
+    expect(document.querySelectorAll(`style[data-dash]`).length).toBe(1);
     expect(myStyles.dash.inserted.size).toBe(0);
     expect(Array.from(myStyles.dash.sheets.keys()).length).toBe(0);
   });
@@ -587,10 +537,9 @@ describe(`styles.insertTokens()`, () => {
       },
     });
 
-    expect(document.querySelectorAll(`style[data-dash]`).length).toBe(1);
-    expect(document.querySelectorAll(`style[data-dash]`)[0]).toMatchSnapshot(
-      ":root"
-    );
+    expect(
+      cssRules(document.querySelectorAll(`style[data-dash]`)[1])[0].cssText
+    ).not.toMatch(/spacing/);
   });
 
   it("mangles tokens w/ reserved keys", () => {
@@ -609,10 +558,12 @@ describe(`styles.insertTokens()`, () => {
       },
     });
 
-    expect(document.querySelectorAll(`style[data-dash]`).length).toBe(1);
-    expect(document.querySelectorAll(`style[data-dash]`)[0]).toMatchSnapshot(
-      ":root"
-    );
+    expect(
+      cssRules(document.querySelectorAll(`style[data-dash]`)[1])[0].cssText
+    ).not.toMatch(/spacing/);
+    expect(
+      cssRules(document.querySelectorAll(`style[data-dash]`)[1])[0].cssText
+    ).toMatch(/colors/);
   });
 
   it("still exists in caches when used more than once", () => {
@@ -644,16 +595,15 @@ describe(`styles.insertTokens()`, () => {
       },
     });
 
-    expect(document.querySelectorAll(`style[data-dash]`).length).toBe(1);
-    expect(document.querySelectorAll(`style[data-dash]`)[0]).toMatchSnapshot();
+    expect(document.querySelectorAll(`style[data-dash]`).length).toBe(2);
     expect(myStyles.dash.inserted.size).toBe(1);
     expect(Array.from(myStyles.dash.sheets.keys()).length).toBe(1);
     ejectA();
-    expect(document.querySelectorAll(`style[data-dash]`).length).toBe(1);
+    expect(document.querySelectorAll(`style[data-dash]`).length).toBe(2);
     expect(myStyles.dash.inserted.size).toBe(1);
     expect(Array.from(myStyles.dash.sheets.keys()).length).toBe(1);
     ejectB();
-    expect(document.querySelectorAll(`style[data-dash]`).length).toBe(0);
+    expect(document.querySelectorAll(`style[data-dash]`).length).toBe(1);
     expect(myStyles.dash.inserted.size).toBe(0);
     expect(Array.from(myStyles.dash.sheets.keys()).length).toBe(0);
   });
@@ -663,10 +613,10 @@ describe(`styles.insertTokens()`, () => {
       spacing: ["1rem", "2rem", "4rem"],
     });
 
-    expect(document.querySelectorAll(`style[data-dash]`).length).toBe(1);
-    expect(document.querySelectorAll(`style[data-dash]`)[0]).toMatchSnapshot(
-      ":root"
-    );
+    const cssText = cssRules(
+      document.querySelectorAll(`style[data-dash]`)[1]
+    )[0].cssText;
+    expect(cssText).toMatch(/--spacing-0: 1rem; --spacing-1: 2rem;/);
   });
 });
 
@@ -687,13 +637,18 @@ describe(`styles.insertThemes()`, () => {
       },
     });
 
-    expect(document.querySelectorAll(`style[data-dash]`).length).toBe(2);
-    expect(document.querySelectorAll(`style[data-dash]`)[0]).toMatchSnapshot(
-      "dark"
-    );
-    expect(document.querySelectorAll(`style[data-dash]`)[0]).toMatchSnapshot(
-      "light"
-    );
+    expect(
+      cssRules(document.querySelectorAll(`style[data-dash]`)[1])[0].selectorText
+    ).toBe(".ui-dark-theme");
+    expect(
+      cssRules(document.querySelectorAll(`style[data-dash]`)[2])[0].selectorText
+    ).toBe(".ui-light-theme");
+    expect(
+      cssRules(document.querySelectorAll(`style[data-dash]`)[1])[0].cssText
+    ).toStrictEqual(expect.stringContaining("--colors-bg: #000;"));
+    expect(
+      cssRules(document.querySelectorAll(`style[data-dash]`)[2])[0].cssText
+    ).toStrictEqual(expect.stringContaining("--colors-bg: #fff;"));
   });
 
   it("removes tokens when eject is called", () => {
@@ -713,12 +668,11 @@ describe(`styles.insertThemes()`, () => {
       },
     });
 
-    expect(document.querySelectorAll(`style[data-dash]`).length).toBe(2);
-    expect(document.querySelectorAll(`style[data-dash]`)).toMatchSnapshot();
+    expect(document.querySelectorAll(`style[data-dash]`).length).toBe(3);
     expect(myStyles.dash.inserted.size).toBe(2);
     expect(Array.from(myStyles.dash.sheets.keys()).length).toBe(2);
     eject();
-    expect(document.querySelectorAll(`style[data-dash]`).length).toBe(0);
+    expect(document.querySelectorAll(`style[data-dash]`).length).toBe(1);
     expect(myStyles.dash.inserted.size).toBe(0);
     expect(Array.from(myStyles.dash.sheets.keys()).length).toBe(0);
   });
@@ -766,47 +720,12 @@ describe(`styles.insertGlobal()`, () => {
       },
     });
 
-    expect(document.querySelectorAll(`style[data-dash]`).length).toBe(2);
-    expect(document.querySelectorAll(`style[data-dash]`)[0]).toMatchSnapshot();
-    expect(document.querySelectorAll(`style[data-dash]`)[1]).toMatchSnapshot();
-  });
-
-  it("should inject global styles once", () => {
-    const { insertGlobal } = createStyles();
-    insertGlobal(`
-      :root {
-        --spacing-0: 0;
-      }
-      
-      html {
-        font-size: 100%;
-      }
-    `);
-    insertGlobal`
-      :root {
-        --spacing-0: 0;
-      }
-      
-      html {
-        font-size: 100%;
-      }
-    `;
-    insertGlobal`
-      :root {
-        --spacing-1: 0.5rem;
-      }
-    `;
-
-    expect(document.querySelectorAll(`style[data-dash]`).length).toBe(3);
-    expect(document.querySelectorAll(`style[data-dash]`)[0]).toMatchSnapshot(
-      ":root"
-    );
-    expect(document.querySelectorAll(`style[data-dash]`)[1]).toMatchSnapshot(
-      "html"
-    );
-    expect(document.querySelectorAll(`style[data-dash]`)[2]).toMatchSnapshot(
-      ":root"
-    );
+    expect(
+      cssRules(document.querySelectorAll(`style[data-dash]`)[1])[0].selectorText
+    ).toStrictEqual(expect.stringContaining("html"));
+    expect(
+      cssRules(document.querySelectorAll(`style[data-dash]`)[1])[1].selectorText
+    ).toStrictEqual(expect.stringContaining("html .foo"));
   });
 
   it("ejects global styles when callback is called", () => {
@@ -817,12 +736,11 @@ describe(`styles.insertGlobal()`, () => {
       }
     `);
 
-    expect(document.querySelectorAll(`style[data-dash]`).length).toBe(1);
-    expect(document.querySelectorAll(`style[data-dash]`)[0]).toMatchSnapshot();
+    expect(document.querySelectorAll(`style[data-dash]`).length).toBe(2);
     expect(myStyles.dash.inserted.size).toBe(1);
     expect(Array.from(myStyles.dash.sheets.keys()).length).toBe(1);
     eject();
-    expect(document.querySelectorAll(`style[data-dash]`).length).toBe(0);
+    expect(document.querySelectorAll(`style[data-dash]`).length).toBe(1);
     expect(myStyles.dash.inserted.size).toBe(0);
     expect(Array.from(myStyles.dash.sheets.keys()).length).toBe(0);
   });
@@ -840,16 +758,21 @@ describe(`styles.insertGlobal()`, () => {
       }
     `);
 
-    expect(document.querySelectorAll(`style[data-dash]`).length).toBe(1);
-    expect(document.querySelectorAll(`style[data-dash]`)[0]).toMatchSnapshot();
+    expect(document.querySelectorAll(`style[data-dash]`).length).toBe(2);
+    expect(
+      cssRules(document.querySelectorAll(`style[data-dash]`)[1])[0].selectorText
+    ).toBe("html");
+    expect(
+      cssRules(document.querySelectorAll(`style[data-dash]`)[1])[0].cssText
+    ).toStrictEqual(expect.stringContaining("font-size: 100%;"));
     expect(myStyles.dash.inserted.size).toBe(1);
     expect(Array.from(myStyles.dash.sheets.keys()).length).toBe(1);
     ejectA();
-    expect(document.querySelectorAll(`style[data-dash]`).length).toBe(1);
+    expect(document.querySelectorAll(`style[data-dash]`).length).toBe(2);
     expect(myStyles.dash.inserted.size).toBe(1);
     expect(Array.from(myStyles.dash.sheets.keys()).length).toBe(1);
     ejectB();
-    expect(document.querySelectorAll(`style[data-dash]`).length).toBe(0);
+    expect(document.querySelectorAll(`style[data-dash]`).length).toBe(1);
     expect(myStyles.dash.inserted.size).toBe(0);
     expect(Array.from(myStyles.dash.sheets.keys()).length).toBe(0);
   });
@@ -864,8 +787,9 @@ describe(`styles.insertGlobal()`, () => {
       }
     `;
 
-    expect(document.querySelectorAll(`style[data-dash]`).length).toBe(1);
-    expect(document.querySelectorAll(`style[data-dash]`)[0]).toMatchSnapshot();
+    expect(
+      cssRules(document.querySelectorAll(`style[data-dash]`)[1])[0].cssText
+    ).toStrictEqual(expect.stringContaining("@font-face"));
   });
 
   it("allows @import", () => {
@@ -874,8 +798,9 @@ describe(`styles.insertGlobal()`, () => {
       @import url("navigation.css");
     `;
 
-    expect(document.querySelectorAll(`style[data-dash]`).length).toBe(1);
-    expect(document.querySelectorAll(`style[data-dash]`)[0]).toMatchSnapshot();
+    expect(
+      cssRules(document.querySelectorAll(`style[data-dash]`)[1])[0].cssText
+    ).toBe("@import url(navigation.css);");
   });
 
   it("allows style object", () => {
@@ -886,8 +811,13 @@ describe(`styles.insertGlobal()`, () => {
       },
     });
 
-    expect(document.querySelectorAll(`style[data-dash]`).length).toBe(1);
-    expect(document.querySelectorAll(`style[data-dash]`)[0]).toMatchSnapshot();
+    expect(document.querySelectorAll(`style[data-dash]`).length).toBe(2);
+    expect(
+      cssRules(document.querySelectorAll(`style[data-dash]`)[1])[0].selectorText
+    ).toBe(":root");
+    expect(
+      cssRules(document.querySelectorAll(`style[data-dash]`)[1])[0].cssText
+    ).toStrictEqual(expect.stringContaining("--foo: bar;"));
   });
 });
 
@@ -899,8 +829,9 @@ describe("styles.one()", () => {
     `;
 
     myCls();
-    expect(document.querySelectorAll(`style[data-dash]`).length).toBe(1);
-    expect(document.querySelectorAll(`style[data-dash]`)[0]).toMatchSnapshot();
+    expect(cssRules()[0].cssText).toStrictEqual(
+      expect.stringContaining("display: flex;")
+    );
   });
 
   it("creates style w/ object", () => {
@@ -913,9 +844,15 @@ describe("styles.one()", () => {
     });
 
     myCls();
-    expect(document.querySelectorAll(`style[data-dash]`).length).toBe(2);
-    expect(document.querySelectorAll(`style[data-dash]`)[0]).toMatchSnapshot();
-    expect(document.querySelectorAll(`style[data-dash]`)[1]).toMatchSnapshot();
+    expect(cssRules()[0].cssText).toStrictEqual(
+      expect.stringContaining("display: block;")
+    );
+    expect(cssRules()[1].selectorText).toStrictEqual(
+      expect.stringContaining(" span")
+    );
+    expect(cssRules()[1].cssText).toStrictEqual(
+      expect.stringContaining("display: flex;")
+    );
   });
 
   it(`won't create style def if falsy`, () => {
@@ -925,8 +862,9 @@ describe("styles.one()", () => {
     `;
 
     myCls();
-    expect(document.querySelectorAll(`style[data-dash]`).length).toBe(1);
-    expect(document.querySelectorAll(`style[data-dash]`)[0]).toMatchSnapshot();
+    expect(cssRules()[0].cssText).toStrictEqual(
+      expect.stringContaining("display: flex;")
+    );
   });
 
   it(`won't create style if function call is provided falsy value`, () => {
@@ -940,7 +878,7 @@ describe("styles.one()", () => {
     myCls(0);
     myCls("");
 
-    expect(document.querySelectorAll(`style[data-dash]`).length).toBe(0);
+    expect(cssRules().length).toBe(0);
   });
 
   it(`returns css when css() is called`, () => {
@@ -949,7 +887,9 @@ describe("styles.one()", () => {
       display: flex;
     `;
 
-    expect(myCls.css()).toMatchSnapshot();
+    expect(myCls.css()).toStrictEqual(
+      expect.stringContaining("display: flex;")
+    );
   });
 
   it(`wont return css when css() is called w/ falsy value`, () => {
@@ -963,7 +903,9 @@ describe("styles.one()", () => {
   it(`can be called as a function w/ string value`, () => {
     const myStyles = createStyles();
     const myCls = myStyles.one("display: flex;");
-    expect(myCls()).toMatchSnapshot();
+    expect(myCls.css()).toStrictEqual(
+      expect.stringContaining("display: flex;")
+    );
   });
 
   it(`can be called as a function w/ function value`, () => {
@@ -975,7 +917,9 @@ describe("styles.one()", () => {
     const myStyles = createStyles<Tokens>();
     myStyles.insertTokens({ color: { blue: "blue" } });
     const myCls = myStyles.one(({ color }) => `color: ${color.blue};`);
-    expect(myCls.css()).toMatchSnapshot();
+    expect(myCls.css()).toStrictEqual(
+      expect.stringContaining("color: var(--color-blue);")
+    );
   });
 });
 
@@ -987,35 +931,13 @@ describe("styles.cls()", () => {
       display: flex;
     `
     ).toBe("string");
-    expect(document.querySelectorAll(`style[data-dash]`).length).toBe(1);
-    expect(document.querySelectorAll(`style[data-dash]`)[0]).toMatchSnapshot();
+    expect(cssRules()[0].cssText).toStrictEqual(
+      expect.stringContaining("display: flex;")
+    );
   });
 });
 
 describe("styles.lazy()", () => {
-  it("creates style and inserts it into the dom lazily", () => {
-    const myStyles = createStyles();
-    const lazyWidth = myStyles.lazy((width: number) => ({
-      width,
-    }));
-
-    expect(typeof lazyWidth(36)).toBe("string");
-    expect(document.querySelectorAll(`style[data-dash]`).length).toBe(1);
-    expect(document.querySelectorAll(`style[data-dash]`)[0]).toMatchSnapshot(
-      "36px"
-    );
-    expect(typeof lazyWidth(37)).toBe("string");
-    expect(document.querySelectorAll(`style[data-dash]`).length).toBe(2);
-    expect(document.querySelectorAll(`style[data-dash]`)[1]).toMatchSnapshot(
-      "37px"
-    );
-    expect(typeof lazyWidth(36)).toBe("string");
-    expect(document.querySelectorAll(`style[data-dash]`).length).toBe(2);
-    expect(document.querySelectorAll(`style[data-dash]`)[0]).toMatchSnapshot(
-      "36px"
-    );
-  });
-
   it("creates style from serializable values", () => {
     const myStyles = createStyles();
     const lazyWidth = myStyles.lazy(({ width }: { width: number }) => ({
@@ -1023,14 +945,12 @@ describe("styles.lazy()", () => {
     }));
 
     expect(typeof lazyWidth({ width: 37 })).toBe("string");
-    expect(document.querySelectorAll(`style[data-dash]`).length).toBe(1);
-    expect(document.querySelectorAll(`style[data-dash]`)[0]).toMatchSnapshot(
-      "36px"
+    expect(cssRules()[0].cssText).toStrictEqual(
+      expect.stringContaining("width: 37px;")
     );
     expect(typeof lazyWidth({ width: 36 })).toBe("string");
-    expect(document.querySelectorAll(`style[data-dash]`).length).toBe(2);
-    expect(document.querySelectorAll(`style[data-dash]`)[0]).toMatchSnapshot(
-      "36px"
+    expect(cssRules()[1].cssText).toStrictEqual(
+      expect.stringContaining("width: 36px;")
     );
   });
 
@@ -1041,7 +961,7 @@ describe("styles.lazy()", () => {
     }));
 
     expect(typeof lazyWidth()).toBe("string");
-    expect(document.querySelectorAll(`style[data-dash]`).length).toBe(0);
+    expect(cssRules().length).toBe(0);
   });
 });
 

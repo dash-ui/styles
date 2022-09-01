@@ -11,19 +11,13 @@ export function createDash(options: CreateDashOptions = {}): Dash {
   let {
     key = "ui",
     nonce,
-    speedy,
     stylisPlugins,
     prefix = true,
+    batchInserts,
+    speedy,
     container = typeof document !== "undefined" ? document.head : void 0,
   } = options;
   const stylis = new Stylis({ prefix });
-  speedy =
-    speedy === void 0 || speedy === null
-      ? !(
-          typeof process !== "undefined" &&
-          process.env.NODE_ENV !== "production"
-        )
-      : speedy;
   const inserted: Dash["inserted"] = new Set<string>();
   const cache: Dash["cache"] = new Map();
   const sheetsCache = new Map<string, DashSheet>();
@@ -32,6 +26,7 @@ export function createDash(options: CreateDashOptions = {}): Dash {
     container,
     nonce,
     speedy,
+    batchInserts,
   });
 
   if (typeof document !== "undefined") {
@@ -162,10 +157,14 @@ export interface CreateDashOptions {
    */
   readonly container?: HTMLElement;
   /**
-   * Uses speedy mode for `<style>` tag insertion. It's the fastest way
-   * to insert new style rules, but will make styles uneditable in some browsers.
+   * Batch `insertRule` calls to improve performance by reducing the number of
+   * style recalculations.
+   */
+  readonly batchInserts?: boolean;
+  /**
+   * Does nothing now.
    *
-   * @default false
+   * @deprecated
    */
   readonly speedy?: boolean;
 }
@@ -259,63 +258,52 @@ interface DashSheet {
 // Stylesheet
 export function styleSheet(options: DashStyleSheetOptions): DashStyleSheet {
   // Based off emotion and glamor's StyleSheet
-  const { key, container, nonce, speedy = false } = options;
-  const tags: HTMLStyleElement[] = [];
-  let size = 0;
+  const { key, container, nonce, batchInserts, speedy } = options;
+  let tag: HTMLStyleElement | null = null;
+  let sheet: CSSStyleSheet | null = null;
+
+  if (typeof document !== "undefined") {
+    tag = document.createElement("style");
+    tag.setAttribute(`data-dash`, key);
+
+    if (nonce) {
+      tag.setAttribute("nonce", nonce);
+    }
+
+    container?.appendChild(tag);
+    sheet = tag.sheet;
+
+    /* istanbul ignore next */
+    if (!sheet) {
+      // this weirdness brought to you by firefox
+      const { styleSheets } = document;
+      for (let i = 0; i < styleSheets.length; i++)
+        if (styleSheets[i].ownerNode === tag) {
+          sheet = styleSheets[i];
+          break;
+        }
+    }
+  }
 
   return {
-    // include all keys so it the object can be cloned via styleSheet(sheet)
     key,
     nonce,
     container,
     speedy,
     insert(rule) {
-      // the max length is how many rules we have per style tag, it's 65000 in
-      // speedy mode it's 1 in dev because we insert source maps that map a
-      // single rule to a location and you can only have one source map per
-      // style tag
-      if (size % (speedy ? 65000 : 1) === 0) {
-        const tag = document.createElement("style");
-        tag.setAttribute(`data-dash`, key);
-        if (nonce) tag.setAttribute("nonce", nonce);
-        tag.textContent = "";
-        container &&
-          container.insertBefore(
-            tag,
-            !tags.length ? null : tags[tags.length - 1].nextSibling
-          );
-        tags.push(tag);
-      }
-
-      const tag = tags[tags.length - 1];
-
-      if (!speedy) {
-        tag.textContent += rule;
-      } else {
-        let sheet: StyleSheet | CSSStyleSheet | null = tag.sheet;
-        let i = 0;
-        /* istanbul ignore next */
-        if (!sheet) {
-          // this weirdness brought to you by firefox
-          const { styleSheets } = document;
-          for (; i < styleSheets.length; i++)
-            if (styleSheets[i].ownerNode === tag) {
-              sheet = styleSheets[i];
-              break;
-            }
-        }
-
-        /* istanbul ignore next */
-        try {
+      /* istanbul ignore next */
+      try {
+        const insertRule = (): void => {
           // this is a really hot path
           // we check the second character first because having "i"
           // as the second character will happen less often than
           // having "@" as the first character
           const isImportRule =
             rule.charCodeAt(1) === 105 && rule.charCodeAt(0) === 64;
+
           // this is the ultrafast version, works across browsers
           // the big drawback is that the css won't be editable in devtools
-          (sheet as CSSStyleSheet).insertRule(
+          sheet!.insertRule(
             rule,
             // we need to insert @import rules before anything else
             // otherwise there will be an error
@@ -327,32 +315,56 @@ export function styleSheet(options: DashStyleSheetOptions): DashStyleSheet {
             // and etc. so while this could be technically correct then it
             // would be slower and larger for a tiny bit of correctness that
             // won't matter in the real world
-            isImportRule ? 0 : (sheet as CSSStyleSheet).cssRules.length
+            isImportRule ? 0 : sheet!.cssRules.length
           );
-        } catch (e) {
-          if (
-            typeof process !== "undefined" &&
-            process.env.NODE_ENV !== "production"
-          ) {
-            console.warn(
-              'There was a problem inserting the following rule: "' +
-                rule +
-                '"',
-              e
-            );
-          }
+        };
+
+        if (batchInserts) {
+          tasks.push(insertRule);
+          scheduleFlush();
+        } else {
+          insertRule();
+        }
+      } catch (e) {
+        if (
+          typeof process !== "undefined" &&
+          process.env.NODE_ENV !== "production"
+        ) {
+          console.warn(
+            'There was a problem inserting the following rule: "' + rule + '"',
+            e
+          );
         }
       }
-
-      size++;
     },
     flush() {
-      tags.forEach((tag) => (tag.parentNode as HTMLElement).removeChild(tag));
-      tags.length = 0;
-      size = 0;
+      if (tag && tag.parentNode) {
+        tag.parentNode.removeChild(tag);
+      }
     },
   };
 }
+
+let scheduled = false;
+const tasks: Task[] = [];
+
+function scheduleFlush(): void {
+  if (!scheduled) {
+    scheduled = true;
+
+    requestAnimationFrame(() => {
+      let task: Task | undefined;
+      while ((task = tasks.shift())) task();
+      scheduled = false;
+
+      if (tasks.length) {
+        scheduleFlush();
+      }
+    });
+  }
+}
+
+type Task = () => void;
 
 export interface DashStyleSheetOptions {
   /**
@@ -371,10 +383,14 @@ export interface DashStyleSheetOptions {
    */
   readonly nonce?: string;
   /**
-   * Uses speedy mode for `<style>` tag insertion. It's the fastest way
-   * to insert new style rules, but will make styles uneditable in some browsers.
+   * Batch `insertRule` calls to improve performance by reducing the number of
+   * style recalculations.
+   */
+  readonly batchInserts?: boolean;
+  /**
+   * Does nothing now.
    *
-   * @default false
+   * @deprecated
    */
   readonly speedy?: boolean;
 }
@@ -393,9 +409,11 @@ export interface DashStyleSheet {
    */
   readonly container?: HTMLElement;
   /**
-   * `true` if speedy mode is turned on
+   * Does nothing now.
+   *
+   * @deprecated
    */
-  readonly speedy: boolean;
+  readonly speedy?: boolean;
   /**
    * Inserts a style rule into your sheet
    *
