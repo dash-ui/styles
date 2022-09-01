@@ -39,12 +39,10 @@ export interface CreateDashOptions {
      */
     readonly container?: HTMLElement;
     /**
-     * Uses speedy mode for `<style>` tag insertion. It's the fastest way
-     * to insert new style rules, but will make styles uneditable in some browsers.
-     *
-     * @default false
+     * Batch `insertRule` calls to improve performance by reducing the number of
+     * style recalculations.
      */
-    readonly speedy?: boolean;
+    readonly batchInserts?: boolean;
 }
 export declare type Dash = {
     /**
@@ -141,12 +139,10 @@ export interface DashStyleSheetOptions {
      */
     readonly nonce?: string;
     /**
-     * Uses speedy mode for `<style>` tag insertion. It's the fastest way
-     * to insert new style rules, but will make styles uneditable in some browsers.
-     *
-     * @default false
+     * Batch `insertRule` calls to improve performance by reducing the number of
+     * style recalculations.
      */
-    readonly speedy?: boolean;
+    readonly batchInserts?: boolean;
 }
 export interface DashStyleSheet {
     /**
@@ -161,10 +157,6 @@ export interface DashStyleSheet {
      * The sheet container
      */
     readonly container?: HTMLElement;
-    /**
-     * `true` if speedy mode is turned on
-     */
-    readonly speedy: boolean;
     /**
      * Inserts a style rule into your sheet
      *

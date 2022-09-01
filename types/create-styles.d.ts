@@ -210,7 +210,7 @@ export interface Styles<Tokens extends DashTokens = DashTokens, Themes extends D
      *
      * const Component = () => <div className={styles.theme('dark')}/>
      */
-    theme(name: keyof Themes): string;
+    theme(name: Extract<keyof Themes, string>): string;
     /**
      * Inserts CSS tokens into the DOM and makes them available for use in
      * style callbacks. The name of the CSS tokens is automatically generated

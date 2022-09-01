@@ -1187,7 +1187,6 @@ export type Dash = {
 | stylisPlugins | `Plugable[]`                                                      | No        |                 | An array of Stylis plugins. See: https://www.npmjs.com/package/stylis                                                                                                  |
 | prefix        | `boolean \| ((key: string, value: any, context: any) => boolean)` | No        | `true`          | Turns on/off vendor prefixing. When a boolean, all prefixes will be turned on/off. Use a function to define your own prefixes for a given key/value.                   |
 | container     | `HTMLElement`                                                     | No        | `document.head` | This is the container that `<style>` tags will be injected into when style rules are inserted.                                                                         |
-| speedy        | `boolean`                                                         | No        | `true` in prod  | Uses speedy mode for `<style>` tag insertion. It's the fastest way to insert new style rules, but will make styles uneditable via dev tools in some browsers.          |
 
 ---
 
