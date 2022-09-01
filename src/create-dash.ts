@@ -292,15 +292,15 @@ export function styleSheet(options: DashStyleSheetOptions): DashStyleSheet {
     speedy,
     insert(rule) {
       /* istanbul ignore next */
-      try {
-        const insertRule = (): void => {
-          // this is a really hot path
-          // we check the second character first because having "i"
-          // as the second character will happen less often than
-          // having "@" as the first character
-          const isImportRule =
-            rule.charCodeAt(1) === 105 && rule.charCodeAt(0) === 64;
+      const insertRule = (): void => {
+        // this is a really hot path
+        // we check the second character first because having "i"
+        // as the second character will happen less often than
+        // having "@" as the first character
+        const isImportRule =
+          rule.charCodeAt(1) === 105 && rule.charCodeAt(0) === 64;
 
+        try {
           // this is the ultrafast version, works across browsers
           // the big drawback is that the css won't be editable in devtools
           sheet!.insertRule(
@@ -317,24 +317,26 @@ export function styleSheet(options: DashStyleSheetOptions): DashStyleSheet {
             // won't matter in the real world
             isImportRule ? 0 : sheet!.cssRules.length
           );
-        };
+        } catch (e) {
+          if (
+            typeof process !== "undefined" &&
+            process.env.NODE_ENV !== "production"
+          ) {
+            console.warn(
+              'There was a problem inserting the following rule: "' +
+                rule +
+                '"',
+              e
+            );
+          }
+        }
+      };
 
-        if (batchInserts) {
-          tasks.push(insertRule);
-          scheduleFlush();
-        } else {
-          insertRule();
-        }
-      } catch (e) {
-        if (
-          typeof process !== "undefined" &&
-          process.env.NODE_ENV !== "production"
-        ) {
-          console.warn(
-            'There was a problem inserting the following rule: "' + rule + '"',
-            e
-          );
-        }
+      if (batchInserts) {
+        tasks.push(insertRule);
+        scheduleFlush();
+      } else {
+        insertRule();
       }
     },
     flush() {
