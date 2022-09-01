@@ -43,6 +43,12 @@ export interface CreateDashOptions {
      * style recalculations.
      */
     readonly batchInserts?: boolean;
+    /**
+     * Does nothing now.
+     *
+     * @deprecated
+     */
+    readonly speedy?: boolean;
 }
 export declare type Dash = {
     /**
@@ -143,6 +149,12 @@ export interface DashStyleSheetOptions {
      * style recalculations.
      */
     readonly batchInserts?: boolean;
+    /**
+     * Does nothing now.
+     *
+     * @deprecated
+     */
+    readonly speedy?: boolean;
 }
 export interface DashStyleSheet {
     /**
@@ -157,6 +169,12 @@ export interface DashStyleSheet {
      * The sheet container
      */
     readonly container?: HTMLElement;
+    /**
+     * Does nothing now.
+     *
+     * @deprecated
+     */
+    readonly speedy?: boolean;
     /**
      * Inserts a style rule into your sheet
      *

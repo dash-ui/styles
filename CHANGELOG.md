@@ -1,3 +1,10 @@
+# [1.1.0](https://github.com/dash-ui/styles/compare/v1.0.2...v1.1.0) (2022-09-01)
+
+
+### Features
+
+* add insertRule batching optimization ([#21](https://github.com/dash-ui/styles/issues/21)) ([d460435](https://github.com/dash-ui/styles/commit/d460435a64252b8a5941b16d7c1684b27d8c0120))
+
 ## [1.0.2](https://github.com/dash-ui/styles/compare/v1.0.1...v1.0.2) (2022-08-18)
 
 
