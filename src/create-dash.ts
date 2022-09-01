@@ -163,6 +163,7 @@ export interface CreateDashOptions {
   readonly batchInserts?: boolean;
   /**
    * Does nothing now.
+   *
    * @deprecated
    */
   readonly speedy?: boolean;
@@ -388,6 +389,7 @@ export interface DashStyleSheetOptions {
   readonly batchInserts?: boolean;
   /**
    * Does nothing now.
+   *
    * @deprecated
    */
   readonly speedy?: boolean;
@@ -408,6 +410,7 @@ export interface DashStyleSheet {
   readonly container?: HTMLElement;
   /**
    * Does nothing now.
+   *
    * @deprecated
    */
   readonly speedy?: boolean;
