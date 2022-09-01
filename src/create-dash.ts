@@ -14,6 +14,7 @@ export function createDash(options: CreateDashOptions = {}): Dash {
     stylisPlugins,
     prefix = true,
     batchInserts,
+    speedy,
     container = typeof document !== "undefined" ? document.head : void 0,
   } = options;
   const stylis = new Stylis({ prefix });
@@ -24,6 +25,7 @@ export function createDash(options: CreateDashOptions = {}): Dash {
     key,
     container,
     nonce,
+    speedy,
     batchInserts,
   });
 
@@ -159,6 +161,11 @@ export interface CreateDashOptions {
    * style recalculations.
    */
   readonly batchInserts?: boolean;
+  /**
+   * Does nothing now.
+   * @deprecated
+   */
+  readonly speedy?: boolean;
 }
 
 export type Dash = {
@@ -250,7 +257,7 @@ interface DashSheet {
 // Stylesheet
 export function styleSheet(options: DashStyleSheetOptions): DashStyleSheet {
   // Based off emotion and glamor's StyleSheet
-  const { key, container, nonce, batchInserts } = options;
+  const { key, container, nonce, batchInserts, speedy } = options;
   let tag: HTMLStyleElement | null = null;
   let sheet: CSSStyleSheet | null = null;
 
@@ -281,6 +288,7 @@ export function styleSheet(options: DashStyleSheetOptions): DashStyleSheet {
     key,
     nonce,
     container,
+    speedy,
     insert(rule) {
       /* istanbul ignore next */
       try {
@@ -378,6 +386,11 @@ export interface DashStyleSheetOptions {
    * style recalculations.
    */
   readonly batchInserts?: boolean;
+  /**
+   * Does nothing now.
+   * @deprecated
+   */
+  readonly speedy?: boolean;
 }
 
 export interface DashStyleSheet {
@@ -393,6 +406,11 @@ export interface DashStyleSheet {
    * The sheet container
    */
   readonly container?: HTMLElement;
+  /**
+   * Does nothing now.
+   * @deprecated
+   */
+  readonly speedy?: boolean;
   /**
    * Inserts a style rule into your sheet
    *
