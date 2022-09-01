@@ -1,3 +1,10 @@
+## [1.1.1](https://github.com/dash-ui/styles/compare/v1.1.0...v1.1.1) (2022-09-01)
+
+
+### Bug Fixes
+
+* fix try/catch block ([#22](https://github.com/dash-ui/styles/issues/22)) ([4a6b6a3](https://github.com/dash-ui/styles/commit/4a6b6a3433cfdf24e6c9c83f46f8124aab45d2d9))
+
 # [1.1.0](https://github.com/dash-ui/styles/compare/v1.0.2...v1.1.0) (2022-09-01)
 
 
