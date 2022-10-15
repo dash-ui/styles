@@ -39,6 +39,7 @@ npm i @dash-ui/styles
 - [x] **Strongly typed** with TypeScript
 - [x] **CSS variables** are a first-class citizen
 - [x] **Themes** are easy and built with design tokens (CSS variables) and selectors
+- [x] [**Constructable Stylesheets**](https://web.dev/constructable-stylesheets/) are used when available
 - [x] **_Fast_**, some may say blazing™
 - [x] **Autoprefixing** for vendor-specific styles
 - [x] **Nesting** `div { > * + * { margin-left: 4px; } }`

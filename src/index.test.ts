@@ -792,17 +792,6 @@ describe(`styles.insertGlobal()`, () => {
     ).toStrictEqual(expect.stringContaining("@font-face"));
   });
 
-  it("allows @import", () => {
-    const { insertGlobal } = createStyles();
-    insertGlobal`
-      @import url("navigation.css");
-    `;
-
-    expect(
-      cssRules(document.querySelectorAll(`style[data-dash]`)[1])[0].cssText
-    ).toBe("@import url(navigation.css);");
-  });
-
   it("allows style object", () => {
     const { insertGlobal } = createStyles();
     insertGlobal({
