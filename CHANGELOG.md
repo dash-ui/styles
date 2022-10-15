@@ -1,3 +1,10 @@
+# [1.2.0](https://github.com/dash-ui/styles/compare/v1.1.1...v1.2.0) (2022-10-15)
+
+
+### Features
+
+* support constructable stylesheets ([#23](https://github.com/dash-ui/styles/issues/23)) ([086a081](https://github.com/dash-ui/styles/commit/086a0817e845b6cddccd69d71bcc35741f5b6a62))
+
 ## [1.1.1](https://github.com/dash-ui/styles/compare/v1.1.0...v1.1.1) (2022-09-01)
 
 
