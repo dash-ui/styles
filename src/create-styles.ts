@@ -217,13 +217,12 @@ export function createStyles<
         flush.push(
           styles.insertTokens(
             // God the types here are f'ing stupid. Someone should feel free to fix this.
-            (themes[name as Extract<keyof Themes, string>] =
-              themes[name as Extract<keyof Themes, string>] === void 0
-                ? nextThemes[name]
-                : mergeTokens<any>(
-                    themes[name as Extract<keyof Themes, string>],
-                    nextThemes[name] as any
-                  )),
+            // @ts-expect-error
+            (themes[name] =
+              themes[name] === void 0
+                ? // @ts-expect-error
+                  nextThemes[name]
+                : mergeTokens<any>(themes[name], nextThemes[name] as any)),
             "." + styles.theme(name as Extract<keyof Themes, string>)
           )
         );

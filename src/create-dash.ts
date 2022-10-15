@@ -261,27 +261,38 @@ export function styleSheet(options: DashStyleSheetOptions): DashStyleSheet {
   const { key, container, nonce, batchInserts, speedy } = options;
   let tag: HTMLStyleElement | null = null;
   let sheet: CSSStyleSheet | null = null;
+  let supportsConstructableStylesheets = false;
 
   if (typeof document !== "undefined") {
-    tag = document.createElement("style");
-    tag.setAttribute(`data-dash`, key);
+    supportsConstructableStylesheets =
+      "CSSStyleSheet" in window &&
+      "replace" in CSSStyleSheet.prototype &&
+      "adoptedStyleSheets" in Document.prototype;
 
-    if (nonce) {
-      tag.setAttribute("nonce", nonce);
-    }
+    if (!supportsConstructableStylesheets) {
+      tag = document.createElement("style");
+      tag.setAttribute(`data-dash`, key);
 
-    container?.appendChild(tag);
-    sheet = tag.sheet;
+      if (nonce) {
+        tag.setAttribute("nonce", nonce);
+      }
 
-    /* istanbul ignore next */
-    if (!sheet) {
-      // this weirdness brought to you by firefox
-      const { styleSheets } = document;
-      for (let i = 0; i < styleSheets.length; i++)
-        if (styleSheets[i].ownerNode === tag) {
-          sheet = styleSheets[i];
-          break;
-        }
+      container?.appendChild(tag);
+      sheet = tag.sheet;
+
+      /* istanbul ignore next */
+      if (!sheet) {
+        // this weirdness brought to you by firefox
+        const { styleSheets } = document;
+        for (let i = 0; i < styleSheets.length; i++)
+          if (styleSheets[i].ownerNode === tag) {
+            sheet = styleSheets[i];
+            break;
+          }
+      }
+    } else {
+      sheet = new CSSStyleSheet();
+      document.adoptedStyleSheets = [...document.adoptedStyleSheets, sheet];
     }
   }
 
@@ -293,30 +304,10 @@ export function styleSheet(options: DashStyleSheetOptions): DashStyleSheet {
     insert(rule) {
       /* istanbul ignore next */
       const insertRule = (): void => {
-        // this is a really hot path
-        // we check the second character first because having "i"
-        // as the second character will happen less often than
-        // having "@" as the first character
-        const isImportRule =
-          rule.charCodeAt(1) === 105 && rule.charCodeAt(0) === 64;
-
         try {
           // this is the ultrafast version, works across browsers
           // the big drawback is that the css won't be editable in devtools
-          sheet!.insertRule(
-            rule,
-            // we need to insert @import rules before anything else
-            // otherwise there will be an error
-            // technically this means that the @import rules will
-            // _usually_(not always since there could be multiple style tags)
-            // be the first ones in prod and generally later in dev
-            // this shouldn't really matter in the real world though
-            // @import is generally only used for font faces from google fonts
-            // and etc. so while this could be technically correct then it
-            // would be slower and larger for a tiny bit of correctness that
-            // won't matter in the real world
-            isImportRule ? 0 : sheet!.cssRules.length
-          );
+          sheet!.insertRule(rule, sheet!.cssRules.length);
         } catch (e) {
           if (
             typeof process !== "undefined" &&
@@ -342,6 +333,10 @@ export function styleSheet(options: DashStyleSheetOptions): DashStyleSheet {
     flush() {
       if (tag && tag.parentNode) {
         tag.parentNode.removeChild(tag);
+      } else if (supportsConstructableStylesheets) {
+        document.adoptedStyleSheets = document.adoptedStyleSheets.filter(
+          (s) => s !== sheet
+        );
       }
     },
   };
@@ -446,16 +441,8 @@ function ruleSheet(
   depth: number,
   at: number
 ): string | undefined {
-  // property
-  if (context === 1) {
-    if (content.charCodeAt(0) === 64) {
-      // @import
-      Sheet.x.insert(content + ";");
-      return "";
-    }
-  }
   // selector
-  else if (context === 2) {
+  if (context === 2) {
     if (ns === 0) return content + RULE_DELIMITER;
   }
   // at-rule
