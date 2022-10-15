@@ -304,13 +304,6 @@ export function styleSheet(options: DashStyleSheetOptions): DashStyleSheet {
     insert(rule) {
       /* istanbul ignore next */
       const insertRule = (): void => {
-        // this is a really hot path
-        // we check the second character first because having "i"
-        // as the second character will happen less often than
-        // having "@" as the first character
-        const isImportRule =
-          rule.charCodeAt(1) === 105 && rule.charCodeAt(0) === 64;
-
         try {
           // this is the ultrafast version, works across browsers
           // the big drawback is that the css won't be editable in devtools
