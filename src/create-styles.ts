@@ -238,11 +238,18 @@ export function createStyles<
     dash,
     hash,
     tokens,
+    themes,
   };
 
   Object.defineProperty(styles, "tokens", {
     get() {
       return tokens;
+    },
+    configurable: false,
+  });
+  Object.defineProperty(styles, "themes", {
+    get() {
+      return themes;
     },
     configurable: false,
   });
@@ -585,6 +592,10 @@ export interface Styles<
    * The CSS tokens currently defined in the instance
    */
   tokens: TokensUnion<Tokens, Themes>;
+  /**
+   * The themes defined in the instance
+   */
+  themes: Themes;
   /**
    * A hashing function for creating unique selector names
    *
