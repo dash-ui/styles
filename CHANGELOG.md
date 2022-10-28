@@ -1,3 +1,10 @@
+## [1.3.1](https://github.com/dash-ui/styles/compare/v1.3.0...v1.3.1) (2022-10-28)
+
+
+### Bug Fixes
+
+* revert adding themes to style object ([#25](https://github.com/dash-ui/styles/issues/25)) ([0712080](https://github.com/dash-ui/styles/commit/07120809125a1a8f934e441467556af1ed8e9168))
+
 # [1.3.0](https://github.com/dash-ui/styles/compare/v1.2.0...v1.3.0) (2022-10-28)
 
 
