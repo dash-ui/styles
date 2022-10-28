@@ -69,7 +69,7 @@ export declare type Dash = {
     /**
      * The instance of Stylis used by this Dash instance
      */
-    readonly stylis: typeof Stylis;
+    readonly stylis: Stylis;
     /**
      * A cache of Stylis rules saved by their keys. This is only used
      * on the server for generating CSS files and strings from the keys

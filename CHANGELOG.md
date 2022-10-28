@@ -1,3 +1,10 @@
+## [1.3.2](https://github.com/dash-ui/styles/compare/v1.3.1...v1.3.2) (2022-10-28)
+
+
+### Bug Fixes
+
+* fix stylis type in dash ([#26](https://github.com/dash-ui/styles/issues/26)) ([94d3d85](https://github.com/dash-ui/styles/commit/94d3d8545a6a77034ed88ac4e23ce9481601fbfc))
+
 ## [1.3.1](https://github.com/dash-ui/styles/compare/v1.3.0...v1.3.1) (2022-10-28)
 
 
