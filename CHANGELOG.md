@@ -1,3 +1,10 @@
+# [1.3.0](https://github.com/dash-ui/styles/compare/v1.2.0...v1.3.0) (2022-10-28)
+
+
+### Features
+
+* add themes to styles object ([#24](https://github.com/dash-ui/styles/issues/24)) ([0da9f76](https://github.com/dash-ui/styles/commit/0da9f762da0927b0d6f922342486c6deba212181))
+
 # [1.2.0](https://github.com/dash-ui/styles/compare/v1.1.1...v1.2.0) (2022-10-15)
 
 

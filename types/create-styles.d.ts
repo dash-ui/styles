@@ -297,6 +297,10 @@ export interface Styles<Tokens extends DashTokens = DashTokens, Themes extends D
      */
     tokens: TokensUnion<Tokens, Themes>;
     /**
+     * The themes defined in the instance
+     */
+    themes: Themes;
+    /**
      * A hashing function for creating unique selector names
      *
      * @param string - The string you'd like to hash
